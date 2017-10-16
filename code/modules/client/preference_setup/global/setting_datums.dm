@@ -69,12 +69,19 @@ var/list/_client_preferences_by_type
 		preference_mob.client.media.stop_music()
 
 /datum/client_preference/play_ambiance
-	description ="Play ambience"
+	description ="Play random ambient sounds"
 	key = "SOUND_AMBIENCE"
 
 /datum/client_preference/play_ambiance/toggled(var/mob/preference_mob, var/enabled)
 	if(!enabled)
 		preference_mob << sound(null, repeat = 0, wait = 0, volume = 0, channel = 1)
+
+/datum/client_preference/play_looping_ambiance
+	description ="Play ambient white noise"
+	key = "SOUND_LOOPING_AMBIENCE"
+
+/datum/client_preference/play_white_noise/toggled(var/mob/preference_mob, var/enabled)
+	if(!enabled)
 		preference_mob << sound(null, repeat = 0, wait = 0, volume = 0, channel = 2)
 
 /datum/client_preference/play_jukebox
