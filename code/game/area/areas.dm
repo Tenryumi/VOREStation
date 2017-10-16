@@ -252,10 +252,6 @@ var/list/mob/living/forced_ambiance_list = new
 		L << sound(null, channel = 1)
 		forced_ambiance_list -= L
 
-	if(!L.client.ambience_playing)
-		L.client.ambience_playing = 1
-		L << sound('sound/ambience/shipambience.ogg', repeat = 1, wait = 0, volume = 35, channel = 2)
-
 	if(forced_ambience)
 		if(forced_ambience.len)
 			forced_ambiance_list |= L
@@ -270,6 +266,19 @@ var/list/mob/living/forced_ambiance_list = new
 			var/sound = pick(ambience)
 			L << sound(sound, repeat = 0, wait = 0, volume = 25, channel = 1)
 			L.client.played = world.time
+
+			//Check if player has ambient white noise enabled.
+			if(!(L && L.is_preference_enabled(/datum/client_preference/play_looping_ambiance)))	return
+
+			if(!L.client.ambience_playing)
+				L.client.ambience_playing = 1
+
+				var/sound/chosen_looping_ambience = looping_ambience
+				if(!istype(chosen_looping_ambience))
+					chosen_looping_ambience = sound(chosen_looping_ambience, repeat = 1, wait = 0, volume = 35, channel = 2)
+				L << chosen_looping_ambience
+			else
+				L << sound(null, channel = 2)
 
 /area/proc/gravitychange(var/gravitystate = 0, var/area/A)
 	A.has_gravity = gravitystate

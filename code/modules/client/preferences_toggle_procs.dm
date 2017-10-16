@@ -150,19 +150,35 @@
 	feedback_add_details("admin_verb","TAMidis") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
 
 /client/verb/toggle_ambience()
-	set name = "Toggle Ambience"
+	set name = "Toggle Random Ambience"
 	set category = "Preferences"
-	set desc = "Toggles the playing of ambience."
+	set desc = "Toggles the playing of random ambient sounds."
 
 	var/pref_path = /datum/client_preference/play_ambiance
 
 	toggle_preference(pref_path)
 
-	src << "You will [ (is_preference_enabled(pref_path)) ? "now" : " no longer"] hear ambient noise."
+	src << "You will [ (is_preference_enabled(pref_path)) ? "now" : " no longer"] hear random ambient noises."
 
 	prefs.save_preferences()
 
-	feedback_add_details("admin_verb","TBeSpecial") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
+	feedback_add_details("admin_verb","TRandomAmbience") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
+
+	/client/verb/toggle_looping_ambience()
+		set name = "Toggle White Noise"
+		set category = "Preferences"
+		set desc = "Toggles the playing of ambient white noise."
+
+		var/pref_path = /datum/client_preference/play_looping_ambiance
+
+		toggle_preference(pref_path)
+
+		src << "You will [ (is_preference_enabled(pref_path)) ? "now" : " no longer"] hear ambient white noise."
+
+		prefs.save_preferences()
+
+		feedback_add_details("admin_verb","TAmbientWhiteNoise") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
+
 
 /client/verb/toggle_jukebox()
 	set name = "Toggle Jukebox"
