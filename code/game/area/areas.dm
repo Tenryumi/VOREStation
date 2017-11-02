@@ -225,6 +225,7 @@
 
 
 var/list/mob/living/forced_ambiance_list = new
+var/list/mob/living/looping_ambiance_list = new
 
 /area/Entered(A)
 	if(!istype(A,/mob/living))	return
@@ -242,6 +243,7 @@ var/list/mob/living/forced_ambiance_list = new
 
 	L.lastarea = newarea
 	play_ambience(L)
+	play_looping_ambience(L)
 
 /area/proc/play_ambience(var/mob/living/L)
 	// Ambience goes down here -- make sure to list each area seperately for ease of adding things in later, thanks! Note: areas adjacent to each other should have the same sounds to prevent cutoff when possible.- LastyScratch
@@ -267,18 +269,20 @@ var/list/mob/living/forced_ambiance_list = new
 			L << sound(sound, repeat = 0, wait = 0, volume = 25, channel = 1)
 			L.client.played = world.time
 
-			//Check if player has ambient white noise enabled.
-			if(!(L && L.is_preference_enabled(/datum/client_preference/play_looping_ambiance)))	return
+/area/proc/play_looping_ambience(var/mob/living/L)
+	if(src.looping_ambience.len)
+		//Check if player has ambient white noise enabled.
+		if(!(L && L.is_preference_enabled(/datum/client_preference/play_looping_ambiance)))	return
 
-			if(!L.client.ambience_playing)
-				L.client.ambience_playing = 1
+		if(!L.client.ambience_playing)
+			L.client.ambience_playing = 1
 
-				var/sound/chosen_looping_ambience = looping_ambience
-				if(!istype(chosen_looping_ambience))
-					chosen_looping_ambience = sound(chosen_looping_ambience, repeat = 1, wait = 0, volume = 35, channel = 2)
-				L << chosen_looping_ambience
-			else
-				L << sound(null, channel = 2)
+			var/sound/chosen_looping_ambience = pick(looping_ambience)
+			if(!istype(chosen_looping_ambience))
+				chosen_looping_ambience = sound(chosen_looping_ambience, repeat = 1, wait = 0, volume = 35, channel = 2)
+			L << chosen_looping_ambience
+		else
+			L << sound(null, channel = 2)
 
 /area/proc/gravitychange(var/gravitystate = 0, var/area/A)
 	A.has_gravity = gravitystate

@@ -348,6 +348,8 @@
 
 /area/hallway/station
 	icon_state = "hallC1"
+	looping_ambience = list('sound/ambience/loopambivent.ogg')
+
 /area/hallway/station/port
 	name = "\improper Main Port Hallway"
 /area/hallway/station/starboard

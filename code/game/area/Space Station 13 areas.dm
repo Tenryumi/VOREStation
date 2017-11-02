@@ -50,7 +50,7 @@ NOTE: there are two lists of areas in the end of this file: centcom and station 
 //	var/list/lights				// list of all lights on this area
 	var/list/all_doors = null		//Added by Strumpetplaya - Alarm Change - Contains a list of doors adjacent to this area
 	var/firedoors_closed = 0
-	var/list/ambience = list('sound/ambience/ambigen1.ogg','sound/ambience/ambigen3.ogg','sound/ambience/ambigen4.ogg','sound/ambience/ambigen5.ogg','sound/ambience/ambigen6.ogg','sound/ambience/ambigen7.ogg','sound/ambience/ambigen8.ogg','sound/ambience/ambigen9.ogg','sound/ambience/ambigen10.ogg','sound/ambience/ambigen11.ogg','sound/ambience/ambigen12.ogg','sound/ambience/ambigen14.ogg')
+	var/list/ambience = null
 	var/list/forced_ambience = null
 	var/list/looping_ambience = null
 	var/sound_env = STANDARD_STATION
@@ -1195,6 +1195,7 @@ area/space/atmosalert()
 	name = "\improper Dormitories"
 	icon_state = "Sleep"
 	flags = RAD_SHIELDED
+	looping_ambience = list('sound/ambience/loopambivent.ogg')
 
 /area/crew_quarters/toilet
 	name = "\improper Dormitory Toilets"
@@ -1422,6 +1423,7 @@ area/space/atmosalert()
 	name = "\improper Bar"
 	icon_state = "bar"
 	sound_env = LARGE_SOFTFLOOR
+	looping_ambience = list('sound/ambience/loopambivent.ogg')
 
 /area/crew_quarters/barrestroom
 	name = "\improper Cafeteria Restroom"

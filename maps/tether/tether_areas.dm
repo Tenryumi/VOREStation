@@ -14,17 +14,20 @@
 /area/tether/surfacebase/tether
 	icon = 'icons/turf/areas_vr.dmi'
 	icon_state = "tether1"
+	looping_ambience = list('sound/ambience/loopambivent.ogg')
 /area/tether/transit/tether
 	icon = 'icons/turf/areas_vr.dmi'
 	icon_state = "tether2"
+	looping_ambience = list('sound/ambience/loopambivent.ogg')
 /area/tether/space/tether
 	icon = 'icons/turf/areas_vr.dmi'
 	icon_state = "tether3"
+	looping_ambience = list('sound/ambience/loopambivent.ogg')
 
 // Elevator areas.
 /area/turbolift
 	delay_time = 2 SECONDS
-	forced_ambience = list('sound/music/elevator.ogg')
+	looping_ambience = list('sound/music/elevator.ogg')
 
 /area/turbolift/tether/transit
 	name = "tether (midway)"
