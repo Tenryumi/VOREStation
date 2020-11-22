@@ -338,6 +338,17 @@
 			src.forceMove(prig)
 			return
 
+/mob/living/proc/usehardsuit()
+	set name = "Utilize Hardsuit Interface"
+	set desc = "Allows a protean blob to open their hardsuit interface."
+	set category = "Abilities"
+
+	if(istype(loc, /obj/item/rig/protean))
+		var/obj/item/rig/protean/prig = loc
+		to_chat(src, "You attempt to interface with the [prig].")
+		prig.ui_interact(src, nano_state = interactive_state)
+	else
+		to_chat(src, "You are not in RIG form.")
 
 /// /// /// A helper to reuse
 /mob/living/proc/nano_get_refactory(obj/item/organ/internal/nano/refactory/R)

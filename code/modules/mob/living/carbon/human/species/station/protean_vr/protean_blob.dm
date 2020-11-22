@@ -489,11 +489,14 @@ var/global/list/disallowed_protean_accessories = list(
 	
 	if(buckled)
 		buckled.unbuckle_mob()
+	
 	if(LAZYLEN(buckled_mobs))
 		for(var/buckledmob in buckled_mobs)
 			riding_datum.force_dismount(buckledmob)
+	
 	if(pulledby)
 		pulledby.stop_pulling()
+	
 	stop_pulling()
 
 	//Stop healing if we are
