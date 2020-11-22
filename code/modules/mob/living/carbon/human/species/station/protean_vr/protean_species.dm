@@ -133,7 +133,7 @@
 	H.synth_color = TRUE
 
 /datum/species/protean/equip_survival_gear(var/mob/living/carbon/human/H)
-	var/obj/weapon/item/storage/box/box = new /obj/item/weapon/storage/box/survival/synth(H)
+	var/obj/item/weapon/storage/box/survival/synth/box = new(get_turf(H.loc))
 	var/obj/item/stack/material/steel/metal_stack = new(box)
 	metal_stack.amount = 3
 	new /obj/item/device/fbp_backup_cell(box)

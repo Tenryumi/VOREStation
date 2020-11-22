@@ -322,15 +322,15 @@
 	set desc = "Allows a protean to solidify its form into one extremely similar to a hardsuit."
 	set category = "Abilities"
 
-	if(istype(loc, /obj/item/rig/protean))
-		var/obj/item/rig/protean/prig = loc
+	if(istype(loc, /obj/item/weapon/rig/protean))
+		var/obj/item/weapon/rig/protean/prig = loc
 		src.forceMove(get_turf(prig))
 		prig.forceMove(src)
 		return
 
 	if(isturf(loc))
-		var/obj/item/rig/protean/prig
-		for(var/obj/item/rig/protean/O in contents)
+		var/obj/item/weapon/rig/protean/prig
+		for(var/obj/item/weapon/rig/protean/O in contents)
 			prig = O
 			break
 		if(prig)
@@ -343,10 +343,10 @@
 	set desc = "Allows a protean blob to open their hardsuit interface."
 	set category = "Abilities"
 
-	if(istype(loc, /obj/item/rig/protean))
-		var/obj/item/rig/protean/prig = loc
+	if(istype(loc, /obj/item/weapon/rig/protean))
+		var/obj/item/weapon/rig/protean/prig = loc
 		to_chat(src, "You attempt to interface with the [prig].")
-		prig.ui_interact(src, nano_state = interactive_state)
+		prig.tgui_interact(src)
 	else
 		to_chat(src, "You are not in RIG form.")
 
