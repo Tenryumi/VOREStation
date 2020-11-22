@@ -66,6 +66,8 @@
 		refactory = locate() in humanform.internal_organs
 		verbs |= /mob/living/proc/ventcrawl
 		verbs |= /mob/living/proc/hide
+		verbs |= /mob/living/simple_mob/protean_blob/proc/rig_transform
+		verbs |= /mob/living/proc/usehardsuit
 	else
 		update_icon()
 
@@ -268,9 +270,10 @@
 		var/obj/item/stack/material/S = A
 		var/substance = S.material.name
 		var/list/edible_materials = list("steel", "plasteel", "diamond", "mhydrogen") //Can't eat all materials, just useful ones.
-		var allowed = FALSE
+		var/allowed = FALSE
 		for(var/material in edible_materials)
-			if(material == substance) allowed = TRUE
+			if(material == substance)
+				allowed = TRUE
 		if(!allowed)
 			return
 		if(refactory.add_stored_material(S.material.name,1*S.perunit) && S.use(1))
@@ -283,13 +286,39 @@
 		var/obj/item/stack/material/S = O
 		var/substance = S.material.name
 		var/list/edible_materials = list("steel", "plasteel", "diamond", "mhydrogen") //Can't eat all materials, just useful ones.
-		var allowed = FALSE
+		var/allowed = FALSE
 		for(var/material in edible_materials)
-			if(material == substance) allowed = TRUE
+			if(material == substance)
+				allowed = TRUE
 		if(!allowed)
 			return
 		if(refactory.add_stored_material(S.material.name,1*S.perunit) && S.use(1))
 			visible_message("<b>[name]</b> gloms over some of \the [S], absorbing it.")
+	else if(isitem(A) && a_intent == "grab")
+		var/obj/item/I = A
+		if(!vore_selected)
+			to_chat(src,"<span class='warning'>You either don't have a belly selected, or don't have a belly!</span>")
+			return FALSE
+		if(is_type_in_list(I,GLOB.item_vore_blacklist) || I.anchored)
+			to_chat(src, "<span class='warning'>You can't eat this.</span>")
+			return
+
+		if(is_type_in_list(I,edible_trash) | adminbus_trash)
+			if(I.hidden_uplink)
+				to_chat(src, "<span class='warning'>You really should not be eating this.</span>")
+				message_admins("[key_name(src)] has attempted to ingest an uplink item. ([src ? "<a href='?_src_=holder;adminplayerobservecoodjump=1;X=[src.x];Y=[src.y];Z=[src.z]'>JMP</a>" : "null"])")
+				return
+		visible_message("<b>[name]</b> stretches itself over the [I], engulfing it whole!")
+		I.forceMove(vore_selected)
+	else
+		return ..()
+
+/mob/living/simple_mob/protean_blob/MouseDrop(var/atom/over_object)
+	if(loc == /obj/item/rig/protean)
+		return
+	if(ishuman(over_object) && usr == src)
+		var/mob/living/carbon/human/H = over_object
+		get_scooped(H, TRUE)
 	else
 		return ..()
 
@@ -341,6 +370,8 @@ var/global/list/disallowed_protean_accessories = list(
 	things_to_drop -= things_to_not_drop //Crunch the lists
 	things_to_drop -= organs //Mah armbs
 	things_to_drop -= internal_organs //Mah sqeedily spooch
+	for(var/obj/item/rig/protean/O in things_to_drop)
+	things_to_drop -= O
 
 	for(var/obj/item/I in things_to_drop) //rip hoarders
 		drop_from_inventory(I)
@@ -395,8 +426,45 @@ var/global/list/disallowed_protean_accessories = list(
 		if(istype(I, /obj/item/weapon/holder))
 			root.remove_from_mob(I)
 
+// Rig Transformation
+/mob/living/simple_mob/protean_blob/proc/rig_transform()
+	set name = "Modify Form - Hardsuit"
+	set desc = "Allows a protean blob to solidify its form into one extremely similar to a hardsuit."
+	set category = "Abilities"
+
+	if(istype(loc, /obj/item/rig/protean))
+		var/obj/item/rig/protean/prig = loc
+		src.forceMove(get_turf(prig))
+		prig.forceMove(humanform)
+		return
+
+	if(isturf(loc))
+		var/obj/item/rig/protean/prig
+		for(var/obj/item/rig/protean/O in humanform.contents)
+			prig = O
+			break
+		if(prig)
+			prig.forceMove(get_turf(src))
+			src.forceMove(prig)
+			return
+
+/mob/living/proc/usehardsuit()
+	set name = "Utilize Hardsuit Interface"
+	set desc = "Allows a protean blob to open their hardsuit interface."
+	set category = "Abilities"
+
+	if(istype(loc, /obj/item/rig/protean))
+		var/obj/item/rig/protean/prig = loc
+		to_chat(src, "You attempt to interface with the [prig].")
+		prig.ui_interact(src, nano_state = interactive_state)
+	else
+		to_chat(src, "You are not in RIG form.")
+
 /mob/living/carbon/human/proc/nano_outofblob(var/mob/living/simple_mob/protean_blob/blob)
 	if(!istype(blob))
+		return
+
+	if(blob.loc == /obj/item/rig/protean)
 		return
 
 	var/panel_was_up = FALSE

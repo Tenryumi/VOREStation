@@ -136,7 +136,7 @@
 
 				if("cell")
 
-					if(cell)
+					if(cell && !unremovable_cell) // VOREStation Edit - Unremovable cell check
 						to_chat(user, "You detach \the [cell] from \the [src]'s battery mount.")
 						for(var/obj/item/rig_module/module in installed_modules)
 							module.deactivate()

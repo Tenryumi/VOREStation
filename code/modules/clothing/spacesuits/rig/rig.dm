@@ -45,6 +45,8 @@
 	var/cell_type =  /obj/item/weapon/cell/high
 	var/air_type =   /obj/item/weapon/tank/oxygen
 
+	var/unremovable_cell = FALSE // VOREStation Edit - prevents the rig cell from being removed if set to true.
+
 	//Component/device holders.
 	var/obj/item/weapon/tank/air_supply                       // Air tank, if any.
 	var/obj/item/clothing/shoes/boots = null                  // Deployable boots, if any.

@@ -313,6 +313,32 @@
 
 	user.visible_message("<span class='notice'>Black mist swirls around [user] as they change size.</span>")
 
+////
+//  Rig Transformation
+////
+
+/mob/living/carbon/human/proc/rig_transform()
+	set name = "Modify Form - Hardsuit"
+	set desc = "Allows a protean to solidify its form into one extremely similar to a hardsuit."
+	set category = "Abilities"
+
+	if(istype(loc, /obj/item/rig/protean))
+		var/obj/item/rig/protean/prig = loc
+		src.forceMove(get_turf(prig))
+		prig.forceMove(src)
+		return
+
+	if(isturf(loc))
+		var/obj/item/rig/protean/prig
+		for(var/obj/item/rig/protean/O in contents)
+			prig = O
+			break
+		if(prig)
+			prig.forceMove(get_turf(src))
+			src.forceMove(prig)
+			return
+
+
 /// /// /// A helper to reuse
 /mob/living/proc/nano_get_refactory(obj/item/organ/internal/nano/refactory/R)
 	if(istype(R))

@@ -130,18 +130,17 @@
 	H.synth_color = TRUE
 
 /datum/species/protean/equip_survival_gear(var/mob/living/carbon/human/H)
-	var/obj/item/stack/material/steel/metal_stack = new()
+	var/obj/weapon/item/storage/box/box = new /obj/item/weapon/storage/box/survival/synth(H)
+	var/obj/item/stack/material/steel/metal_stack = new(box)
 	metal_stack.amount = 3
-
-	var/obj/item/clothing/accessory/permit/nanotech/permit = new()
+	new /obj/item/device/fbp_backup_cell(box)
+	var/obj/item/clothing/accessory/permit/nanotech/permit = new(box)
 	permit.set_name(H.real_name)
 
 	if(H.backbag == 1) //Somewhat misleading, 1 == no bag (not boolean)
-		H.equip_to_slot_or_del(permit, slot_l_hand)
-		H.equip_to_slot_or_del(metal_stack, slot_r_hand)
+		H.equip_to_slot_or_del(box, slot_l_hand)
 	else
-		H.equip_to_slot_or_del(permit, slot_in_backpack)
-		H.equip_to_slot_or_del(metal_stack, slot_in_backpack)
+		H.equip_to_slot_or_del(box, slot_in_backpack)
 
 	spawn(0) //Let their real nif load if they have one
 		if(!H) //Human could have been deleted in this amount of time. Observing does this, mannequins, etc.
@@ -151,6 +150,9 @@
 			new_nif.quick_implant(H)
 		else
 			H.nif.durability = rand(21,25)
+
+	var/obj/item/weapon/rig/protean/prig = new /obj/item/weapon/rig/protean(H)
+	prig.myprotean = H
 
 /datum/species/protean/hug(var/mob/living/carbon/human/H, var/mob/living/target)
 	return ..() //Wut
