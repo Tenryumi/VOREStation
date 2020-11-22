@@ -60,6 +60,8 @@
 //Constructor allows passing the human to sync damages
 /mob/living/simple_mob/protean_blob/New(var/newloc, var/mob/living/carbon/human/H)
 	..()
+	mob_radio = new(src)
+	myid = new(src)
 	if(H)
 		humanform = H
 		updatehealth()
@@ -68,6 +70,8 @@
 		verbs |= /mob/living/proc/hide
 		verbs |= /mob/living/simple_mob/protean_blob/proc/rig_transform
 		verbs |= /mob/living/proc/usehardsuit
+		verbs |= /mob/living/simple_mob/protean_blob/proc/useradio
+		verbs |= /mob/living/simple_mob/protean_blob/proc/appearanceswitch
 	else
 		update_icon()
 
@@ -95,6 +99,7 @@
 	if(humanform)
 		humanform.species.Stat(humanform)
 
+/*
 /mob/living/simple_mob/protean_blob/update_icon()
 	if(humanform)
 		//Still have a refactory
@@ -110,7 +115,7 @@
 		icon_living = "puddle0"
 
 	..()
-
+*/
 /mob/living/simple_mob/protean_blob/updatehealth()
 	if(!humanform)
 		return ..()
@@ -371,7 +376,7 @@ var/global/list/disallowed_protean_accessories = list(
 	things_to_drop -= organs //Mah armbs
 	things_to_drop -= internal_organs //Mah sqeedily spooch
 	for(var/obj/item/rig/protean/O in things_to_drop)
-	things_to_drop -= O
+		things_to_drop -= O
 
 	for(var/obj/item/I in things_to_drop) //rip hoarders
 		drop_from_inventory(I)
@@ -428,6 +433,14 @@ var/global/list/disallowed_protean_accessories = list(
 		remove_micros(I, root) //Recursion. I'm honestly depending on there being no containment loop, but at the cost of performance that can be fixed too.
 		if(istype(I, /obj/item/weapon/holder))
 			root.remove_from_mob(I)
+
+/mob/living/simple_mob/protean_blob/proc/useradio()
+	set name = "Utilize Radio"
+	set desc = "Allows a protean blob to interact with its internal radio."
+	set category = "Abilities"
+
+	if(mob_radio)
+		mob_radio.ui_interact(src, state = interactive_state)
 
 // Rig Transformation
 /mob/living/simple_mob/protean_blob/proc/rig_transform()
@@ -530,3 +543,20 @@ var/global/list/disallowed_protean_accessories = list(
 
 	//Return ourselves in case someone wants it
 	return src
+
+/mob/living/simple_mob/protean_blob/proc/appearanceswitch()
+	set name = "Switch Appearance"
+	set desc = "Allows a protean blob to switch its outwards appearance."
+	set category = "Abilities"
+
+	var/blobstyle = input(src, "Which blob style would you like?") in list("Red and Blue Stars", "Blue Star", "Plain")
+	switch(blobstyle)
+		if("Red and Blue Stars")
+			icon_living = "puddle2"
+			update_icon()
+		if("Blue Star")
+			icon_living = "puddle1"
+			update_icon()
+		if("Plain")
+			icon_living = "puddle0"
+			update_icon()
