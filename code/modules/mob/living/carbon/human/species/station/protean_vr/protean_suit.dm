@@ -1,6 +1,32 @@
-/*
- proteans
-*/
+// Okay but what if protean blobs could turn into a suit tho.........
+
+
+/mob/living/carbon/human/proc/nano_intosuit()
+    var/obj/item/clothing/suit/space/protean/psuit = loc
+    src.forceMove(get_turf(psuit))
+    psuit.forceMove(src)
+    psuit.icon_state = "from_suit"
+    psuit.visible_message = "<b>[src.name]</b>' collapses and reforms their body into a suit!"
+    sleep(13) // The # of frames of both animations
+    psuit.update_icon()
+    return
+
+/mob/living/carbon/human/proc/nano_outofsuit()
+    var/obj/item/clothing/suit/space/protean/psuit
+    for(var/obj/item/clothing/suit/space/protean/O in contents)
+        psuit = O
+        break
+    if(psuit)
+        psuit.forceMove(get_turf(src))
+        src.forceMove(psuit)
+    psuit.icon_state = "to_suit"
+    psuit.visible_message = "<b>[src.name]</b>' collapses and reforms their body into a suit!"
+    sleep(13) // The # of frames of both animations
+    psuit.update_icon()
+    return
+
+// The actual suit
+
 /obj/item/clothing/head/helmet/space/protean
 	name = "nanite helmet"
 	desc = "A tough shell of nanomachines morphed into the form of a helmet."

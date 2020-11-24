@@ -321,22 +321,13 @@
 	set name = "Modify Form - Voidsuit"
 	set desc = "Allows a protean to solidify its form into one extremely similar to a voidsuit."
 	set category = "Abilities"
-
+	// TF from suit
 	if(istype(loc, /obj/item/clothing/suit/space/protean))
-		var/obj/item/clothing/suit/space/protean/psuit = loc
-		src.forceMove(get_turf(psuit))
-		psuit.forceMove(src)
-		return
-
+		nano_intosuit()
+	// TF to suit
 	if(isturf(loc))
-		var/obj/item/clothing/suit/space/protean/psuit
-		for(var/obj/item/clothing/suit/space/protean/O in contents)
-			psuit = O
-			break
-		if(psuit)
-			psuit.forceMove(get_turf(src))
-			src.forceMove(psuit)
-			return
+		nano_outofsuit()
+	return
 
 /// /// /// A helper to reuse
 /mob/living/proc/nano_get_refactory(obj/item/organ/internal/nano/refactory/R)
@@ -353,7 +344,6 @@
 
 /mob/living/carbon/human/nano_get_refactory()
 	return ..(locate(/obj/item/organ/internal/nano/refactory) in internal_organs)
-
 
 
 /// /// /// Ability objects for stat panel
