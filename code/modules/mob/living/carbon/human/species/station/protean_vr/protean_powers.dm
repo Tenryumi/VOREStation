@@ -318,37 +318,25 @@
 ////
 
 /mob/living/carbon/human/proc/rig_transform()
-	set name = "Modify Form - Hardsuit"
-	set desc = "Allows a protean to solidify its form into one extremely similar to a hardsuit."
+	set name = "Modify Form - Voidsuit"
+	set desc = "Allows a protean to solidify its form into one extremely similar to a voidsuit."
 	set category = "Abilities"
 
 	if(istype(loc, /obj/item/weapon/rig/protean))
-		var/obj/item/weapon/rig/protean/prig = loc
-		src.forceMove(get_turf(prig))
-		prig.forceMove(src)
+		var/obj/item/weapon/rig/protean/psuit = loc
+		src.forceMove(get_turf(psuit))
+		psuit.forceMove(src)
 		return
 
 	if(isturf(loc))
-		var/obj/item/weapon/rig/protean/prig
+		var/obj/item/weapon/rig/protean/psuit
 		for(var/obj/item/weapon/rig/protean/O in contents)
-			prig = O
+			psuit = O
 			break
-		if(prig)
-			prig.forceMove(get_turf(src))
-			src.forceMove(prig)
+		if(psuit)
+			psuit.forceMove(get_turf(src))
+			src.forceMove(psuit)
 			return
-
-/mob/living/proc/usehardsuit()
-	set name = "Utilize Hardsuit Interface"
-	set desc = "Allows a protean blob to open their hardsuit interface."
-	set category = "Abilities"
-
-	if(istype(loc, /obj/item/weapon/rig/protean))
-		var/obj/item/weapon/rig/protean/prig = loc
-		to_chat(src, "You attempt to interface with the [prig].")
-		prig.tgui_interact(src)
-	else
-		to_chat(src, "You are not in RIG form.")
 
 /// /// /// A helper to reuse
 /mob/living/proc/nano_get_refactory(obj/item/organ/internal/nano/refactory/R)
