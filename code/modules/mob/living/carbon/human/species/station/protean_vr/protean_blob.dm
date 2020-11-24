@@ -68,8 +68,6 @@
 		refactory = locate() in humanform.internal_organs
 		verbs |= /mob/living/proc/ventcrawl
 		verbs |= /mob/living/proc/hide
-		verbs |= /mob/living/simple_mob/protean_blob/proc/voidsuit_transform
-		verbs |= /mob/living/proc/usehardsuit
 		verbs |= /mob/living/simple_mob/protean_blob/proc/useradio
 		verbs |= /mob/living/simple_mob/protean_blob/proc/appearanceswitch
 	else

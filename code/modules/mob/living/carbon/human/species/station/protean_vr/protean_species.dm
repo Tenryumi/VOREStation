@@ -99,8 +99,7 @@
 		/mob/living/carbon/human/proc/shapeshifter_select_ears,
 		/mob/living/proc/eat_trash,
 		/mob/living/carbon/human/proc/slime_feed,
-		/mob/living/carbon/human/proc/voidsuit_transform,
-		/mob/living/proc/usehardsuit
+		/mob/living/carbon/human/proc/voidsuit_transform
 		)
 
 	var/global/list/abilities = list()
