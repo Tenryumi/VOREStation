@@ -14,7 +14,7 @@
 /obj/item/clothing/suit/space/protean
 	name = "nanite suit"
 	desc = "A swarm of nanomachines packed tightly together to create a space suit. It looks like it clings a little tightly..."
-	icon = 'icons/obj/clothing/spacesuits_vr.dmi'
+	icon = 'icons/mob/species/protean/protean.dmi' // this way we can use the transformation animations
 	icon_override = 'icons/mob/spacesuit_vr.dmi'
 	icon_state = "protean"
 	siemens_coefficient= 0
