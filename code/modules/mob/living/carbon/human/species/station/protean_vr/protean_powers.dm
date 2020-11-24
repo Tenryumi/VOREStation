@@ -317,20 +317,20 @@
 //  Rig Transformation
 ////
 
-/mob/living/carbon/human/proc/rig_transform()
+/mob/living/carbon/human/proc/voidsuit_transform()
 	set name = "Modify Form - Voidsuit"
 	set desc = "Allows a protean to solidify its form into one extremely similar to a voidsuit."
 	set category = "Abilities"
 
-	if(istype(loc, /obj/item/weapon/rig/protean))
-		var/obj/item/weapon/rig/protean/psuit = loc
+	if(istype(loc, /obj/item/clothing/suit/space/protean))
+		var/obj/item/clothing/suit/space/protean/psuit = loc
 		src.forceMove(get_turf(psuit))
 		psuit.forceMove(src)
 		return
 
 	if(isturf(loc))
-		var/obj/item/weapon/rig/protean/psuit
-		for(var/obj/item/weapon/rig/protean/O in contents)
+		var/obj/item/clothing/suit/space/protean/psuit
+		for(var/obj/item/clothing/suit/space/protean/O in contents)
 			psuit = O
 			break
 		if(psuit)

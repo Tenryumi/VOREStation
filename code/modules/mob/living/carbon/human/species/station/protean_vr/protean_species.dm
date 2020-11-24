@@ -99,7 +99,7 @@
 		/mob/living/carbon/human/proc/shapeshifter_select_ears,
 		/mob/living/proc/eat_trash,
 		/mob/living/carbon/human/proc/slime_feed,
-		/mob/living/carbon/human/proc/rig_transform,
+		/mob/living/carbon/human/proc/voidsuit_transform,
 		/mob/living/proc/usehardsuit
 		)
 
@@ -154,8 +154,8 @@
 		else
 			H.nif.durability = rand(21,25)
 
-	var/obj/item/weapon/rig/protean/prig = new /obj/item/weapon/rig/protean(H)
-	prig.myprotean = H
+	var/obj/item/clothing/suit/space/protean/psuit = new /obj/item/clothing/suit/space/protean(H)
+	psuit.myprotean = H
 
 /datum/species/protean/hug(var/mob/living/carbon/human/H, var/mob/living/target)
 	return ..() //Wut

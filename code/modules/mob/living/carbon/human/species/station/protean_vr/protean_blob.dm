@@ -68,7 +68,7 @@
 		refactory = locate() in humanform.internal_organs
 		verbs |= /mob/living/proc/ventcrawl
 		verbs |= /mob/living/proc/hide
-		verbs |= /mob/living/simple_mob/protean_blob/proc/rig_transform
+		verbs |= /mob/living/simple_mob/protean_blob/proc/voidsuit_transform
 		verbs |= /mob/living/proc/usehardsuit
 		verbs |= /mob/living/simple_mob/protean_blob/proc/useradio
 		verbs |= /mob/living/simple_mob/protean_blob/proc/appearanceswitch
@@ -319,7 +319,7 @@
 		return ..()
 
 /mob/living/simple_mob/protean_blob/MouseDrop(var/atom/over_object)
-	if(loc == /obj/item/weapon/rig/protean)
+	if(loc == /obj/item/clothing/suit/space/protean)
 		return
 	if(ishuman(over_object) && usr == src)
 		var/mob/living/carbon/human/H = over_object
@@ -375,7 +375,7 @@ var/global/list/disallowed_protean_accessories = list(
 	things_to_drop -= things_to_not_drop //Crunch the lists
 	things_to_drop -= organs //Mah armbs
 	things_to_drop -= internal_organs //Mah sqeedily spooch
-	for(var/obj/item/weapon/rig/protean/O in things_to_drop)
+	for(var/obj/item/clothing/suit/space/protean/O in things_to_drop)
 		things_to_drop -= O
 
 	for(var/obj/item/I in things_to_drop) //rip hoarders
@@ -443,25 +443,25 @@ var/global/list/disallowed_protean_accessories = list(
 		mob_radio.tgui_interact(src)
 
 // Rig Transformation
-/mob/living/simple_mob/protean_blob/proc/rig_transform()
-	set name = "Modify Form - Hardsuit"
-	set desc = "Allows a protean blob to solidify its form into one extremely similar to a hardsuit."
+/mob/living/simple_mob/protean_blob/proc/voidsuit_transform()
+	set name = "Modify Form - Voidsuit"
+	set desc = "Allows a protean blob to solidify its form into one extremely similar to a voidsuit."
 	set category = "Abilities"
 
-	if(istype(loc, /obj/item/weapon/rig/protean))
-		var/obj/item/weapon/rig/protean/prig = loc
-		src.forceMove(get_turf(prig))
-		prig.forceMove(humanform)
+	if(istype(loc, /obj/item/clothing/suit/space/protean))
+		var/obj/item/clothing/suit/space/protean/psuit = loc
+		src.forceMove(get_turf(psuit))
+		psuit.forceMove(humanform)
 		return
 
 	if(isturf(loc))
-		var/obj/item/weapon/rig/protean/prig
-		for(var/obj/item/weapon/rig/protean/O in humanform.contents)
-			prig = O
+		var/obj/item/clothing/suit/space/protean/psuit
+		for(var/obj/item/clothing/suit/space/protean/O in humanform.contents)
+			psuit = O
 			break
-		if(prig)
-			prig.forceMove(get_turf(src))
-			src.forceMove(prig)
+		if(psuit)
+			psuit.forceMove(get_turf(src))
+			src.forceMove(psuit)
 			return
 
 
@@ -469,7 +469,7 @@ var/global/list/disallowed_protean_accessories = list(
 	if(!istype(blob))
 		return
 
-	if(blob.loc == /obj/item/weapon/rig/protean)
+	if(blob.loc == /obj/item/clothing/suit/space/protean)
 		return
 
 	var/panel_was_up = FALSE
