@@ -322,7 +322,7 @@
 	set desc = "Allows a protean to solidify its form into one extremely similar to a voidsuit."
 	set category = "Abilities"
 	// TF from suit
-	if(istype(loc, /obj/item/clothing/suit/space/protean))
+	if(istype(loc, /obj/item/clothing/suit/space/void/autolok/protean))
 		nano_intosuit()
 	// TF to suit
 	if(isturf(loc))

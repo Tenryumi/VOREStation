@@ -150,6 +150,7 @@
 	icon = 'icons/obj/clothing/suits_vr.dmi'
 	breach_threshold = 6 //this thing is basically tissue paper
 	w_class = ITEMSIZE_NORMAL //if it's snug, high-tech, and made of relatively soft materials, it should be much easier to store!
+	var/helmet_type = /obj/item/clothing/head/helmet/space/void/autolok
 
 /obj/item/clothing/suit/space/void/autolok
 	sprite_sheets = list(
@@ -180,7 +181,7 @@
 
 /obj/item/clothing/suit/space/void/autolok/Initialize()
 	..()
-	helmet = new /obj/item/clothing/head/helmet/space/void/autolok //autoinstall the helmet
+	helmet = new helmet_type //autoinstall the helmet
 
 //override the attackby screwdriver proc so that people can't remove the helmet
 /obj/item/clothing/suit/space/void/autolok/attackby(obj/item/W as obj, mob/user as mob)

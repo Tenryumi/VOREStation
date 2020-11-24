@@ -317,7 +317,7 @@
 		return ..()
 
 /mob/living/simple_mob/protean_blob/MouseDrop(var/atom/over_object)
-	if(loc == /obj/item/clothing/suit/space/protean)
+	if(loc == /obj/item/clothing/suit/space/void/autolok/protean)
 		return
 	if(ishuman(over_object) && usr == src)
 		var/mob/living/carbon/human/H = over_object
@@ -373,7 +373,7 @@ var/global/list/disallowed_protean_accessories = list(
 	things_to_drop -= things_to_not_drop //Crunch the lists
 	things_to_drop -= organs //Mah armbs
 	things_to_drop -= internal_organs //Mah sqeedily spooch
-	for(var/obj/item/clothing/suit/space/protean/O in things_to_drop)
+	for(var/obj/item/clothing/suit/space/void/autolok/protean/O in things_to_drop)
 		things_to_drop -= O
 
 	for(var/obj/item/I in things_to_drop) //rip hoarders
@@ -446,15 +446,15 @@ var/global/list/disallowed_protean_accessories = list(
 	set desc = "Allows a protean blob to solidify its form into one extremely similar to a voidsuit."
 	set category = "Abilities"
 
-	if(istype(loc, /obj/item/clothing/suit/space/protean))
-		var/obj/item/clothing/suit/space/protean/psuit = loc
+	if(istype(loc, /obj/item/clothing/suit/space/void/autolok/protean))
+		var/obj/item/clothing/suit/space/void/autolok/protean/psuit = loc
 		src.forceMove(get_turf(psuit))
 		psuit.forceMove(humanform)
 		return
 
 	if(isturf(loc))
-		var/obj/item/clothing/suit/space/protean/psuit
-		for(var/obj/item/clothing/suit/space/protean/O in humanform.contents)
+		var/obj/item/clothing/suit/space/void/autolok/protean/psuit
+		for(var/obj/item/clothing/suit/space/void/autolok/protean/O in humanform.contents)
 			psuit = O
 			break
 		if(psuit)
@@ -467,7 +467,7 @@ var/global/list/disallowed_protean_accessories = list(
 	if(!istype(blob))
 		return
 
-	if(blob.loc == /obj/item/clothing/suit/space/protean)
+	if(blob.loc == /obj/item/clothing/suit/space/void/autolok/protean)
 		return
 
 	var/panel_was_up = FALSE

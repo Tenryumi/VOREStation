@@ -153,7 +153,7 @@
 		else
 			H.nif.durability = rand(21,25)
 
-	var/obj/item/clothing/suit/space/protean/psuit = new /obj/item/clothing/suit/space/protean(H)
+	var/obj/item/clothing/suit/space/void/autolok/protean(H)
 	psuit.myprotean = H
 
 /datum/species/protean/hug(var/mob/living/carbon/human/H, var/mob/living/target)
