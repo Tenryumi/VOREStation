@@ -314,7 +314,7 @@
 	user.visible_message("<span class='notice'>Black mist swirls around [user] as they change size.</span>")
 
 ////
-//  Rig Transformation
+//  Voidsuit Transformation
 ////
 
 /mob/living/carbon/human/proc/voidsuit_transform()
