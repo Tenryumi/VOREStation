@@ -155,7 +155,6 @@
 
 	var/obj/item/clothing/suit/space/void/autolok/protean/psuit = new /obj/item/clothing/suit/space/void/autolok/protean(H)
 	psuit.myprotean = H
-	to_chat(H, "<span class='notice'>You have [psuit]! Hello fren!</span>")
 
 /datum/species/protean/hug(var/mob/living/carbon/human/H, var/mob/living/target)
 	return ..() //Wut
