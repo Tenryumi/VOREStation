@@ -153,7 +153,7 @@
 		else
 			H.nif.durability = rand(21,25)
 
-	var/obj/item/clothing/suit/space/void/autolok/protean(H)
+	var/obj/item/clothing/suit/space/void/autolok/protean/psuit = new /obj/item/clothing/suit/space/void/autolok/protean(H)
 	psuit.myprotean = H
 
 /datum/species/protean/hug(var/mob/living/carbon/human/H, var/mob/living/target)
@@ -173,6 +173,10 @@
 		H.forceMove(H.temporary_form.drop_location())
 		H.ckey = H.temporary_form.ckey
 		QDEL_NULL(H.temporary_form)
+	
+	if(H.temporary_item_form)
+		H.forceMove(H.temporary_item_form.drop_location())
+		QDEL_NULL(H.temporary_item_form)
 	
 	to_chat(H, "<span class='warning'>You died as a Protean. Please sit out of the round for at least 60 minutes before respawning, to represent the time it would take to ship a new-you to the station.</span>")
 

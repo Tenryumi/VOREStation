@@ -321,13 +321,28 @@
 	set name = "Modify Form - Voidsuit"
 	set desc = "Allows a protean to solidify its form into one extremely similar to a voidsuit."
 	set category = "Abilities"
-	// TF from suit
+	set hidden = TRUE
+	var/obj/item/clothing/suit/space/void/autolok/protean/psuit
+	psuit.transforming = TRUE
+
+	// Suit form
 	if(istype(loc, /obj/item/clothing/suit/space/void/autolok/protean))
 		nano_intosuit()
-	// TF to suit
+	
+	// Human form
+	else if(stat)
+		to_chat(src,"<span class='warning'>You can only do this while not stunned.</span>")
+		return
+
 	if(isturf(loc))
 		nano_outofsuit()
+	psuit.transforming = FALSE
 	return
+
+/mob/living/carbon/human/proc/voidsuit_glow_toggle()
+	set name = "Toggle Voidsuit Glow"
+	set desc = "Your voidsuit form has components that glow brightly! This toggles them if you don't feel like bieng glowy."
+	set category = "Abilities"
 
 /// /// /// A helper to reuse
 /mob/living/proc/nano_get_refactory(obj/item/organ/internal/nano/refactory/R)
@@ -383,6 +398,13 @@
 	desc = "Discard your shape entirely, changing to a low-energy blob that can fit into small spaces. You'll consume steel to repair yourself in this form."
 	icon_state = "blob"
 	to_call = /mob/living/carbon/human/proc/nano_blobform
+
+/obj/effect/protean_ability/into_suit
+	ability_name = "Toggle Suit Form"
+	desc = "Alter your shape into that of a space suit that others can wear."
+	icon = 'icons/mob/species/protean/protean.dmi'
+	icon_state = "psuit"
+	to_call = /mob/living/carbon/human/proc/voidsuit_transform
 
 /obj/effect/protean_ability/change_volume
 	ability_name = "Change Volume"

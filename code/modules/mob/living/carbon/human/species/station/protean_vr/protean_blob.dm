@@ -440,29 +440,6 @@ var/global/list/disallowed_protean_accessories = list(
 	if(mob_radio)
 		mob_radio.tgui_interact(src)
 
-// Rig Transformation
-/mob/living/simple_mob/protean_blob/proc/voidsuit_transform()
-	set name = "Modify Form - Voidsuit"
-	set desc = "Allows a protean blob to solidify its form into one extremely similar to a voidsuit."
-	set category = "Abilities"
-
-	if(istype(loc, /obj/item/clothing/suit/space/void/autolok/protean))
-		var/obj/item/clothing/suit/space/void/autolok/protean/psuit = loc
-		src.forceMove(get_turf(psuit))
-		psuit.forceMove(humanform)
-		return
-
-	if(isturf(loc))
-		var/obj/item/clothing/suit/space/void/autolok/protean/psuit
-		for(var/obj/item/clothing/suit/space/void/autolok/protean/O in humanform.contents)
-			psuit = O
-			break
-		if(psuit)
-			psuit.forceMove(get_turf(src))
-			src.forceMove(psuit)
-			return
-
-
 /mob/living/carbon/human/proc/nano_outofblob(var/mob/living/simple_mob/protean_blob/blob)
 	if(!istype(blob))
 		return
