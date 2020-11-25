@@ -1,27 +1,59 @@
-// Okay but what if protean blobs could turn into a suit tho.........
+// Okay but what if proteans could turn into a suit tho.........
 
-/mob/living/carbon/human/proc/nano_intosuit()
-	var/obj/item/clothing/suit/space/void/autolok/protean/psuit = loc
-	src.forceMove(get_turf(psuit))
-	psuit.forceMove(src)
-	psuit.icon_state = "from_suit"
+/mob/living/carbon/human/proc/nano_intosuit(var/obj/item/clothing/suit/space/void/autolok/protean/psuit)
+	//Starting checks
+	if(!psuit)
+		return
+	psuit.transforming = TRUE
+	
+	// So that we don't see the glow mid-transformation 'cause that looks silly
+	if (psuit.glowy)
+		psuit.glowy = FALSE
+		psuit.update_icon()
+		psuit.glowy = TRUE
+	
+	//Suit moves onto the player's turf
+	psuit.forceMove(get_turf(src))
+	
+	//Player moves inside of the suit
+	src.forceMove(psuit)
+	
+	//Play animation of turning into a SUIT!
+	psuit.icon_state = "to_suit"
 	psuit.visible_message("<b>[src.name]</b> collapses and reforms their body into a suit!")
+	
+	// Wait for the animation please!
 	sleep(13) // The # of frames of both animations
+
 	psuit.update_icon()
+	psuit.transforming = FALSE
 	return
 
 /mob/living/carbon/human/proc/nano_outofsuit()
-	var/obj/item/clothing/suit/space/void/autolok/protean/psuit
-	for(var/obj/item/clothing/suit/space/void/autolok/protean/O in contents)
-		psuit = O
-		break
-	if(psuit)
-		psuit.forceMove(get_turf(src))
-		src.forceMove(psuit)
-	psuit.icon_state = "to_suit"
+	var/obj/item/clothing/suit/space/void/autolok/protean/psuit = loc
+	psuit.transforming = TRUE
+
+	// So that we don't see the glow mid-transformation 'cause that looks silly
+	if (psuit.glowy)
+		psuit.glowy = FALSE
+		psuit.update_icon()
+		psuit.glowy = TRUE
+	
+	//Play animation of turning back into a hu-mon
+	psuit.icon_state = "from_suit"
 	psuit.visible_message("<b>[src.name]</b> reshapes into a humanoid appearance!")
+	
+	//Wait for a moment so the animation I spent a whole day on can finish *SOB*
 	sleep(13) // The # of frames of both animations
+
+	//Player moves to the turf of the suit
+	src.forceMove(get_turf(psuit))
+
+	//Suit moves inside of the player
+	psuit.forceMove(src)
+
 	psuit.update_icon()
+	psuit.transforming = FALSE
 	return
 
 // The actual suit
@@ -29,7 +61,6 @@
 	name = "nanite helmet"
 	desc = "A tough shell of nanomachines morphed into the form of a helmet."
 	icon = 'icons/obj/clothing/hats_vr.dmi'
-	icon_override = 'icons/mob/head_vr.dmi'
 	icon_state = "phelm"
 	light_overlay = "should not use a light overlay"
 	var/glowy = TRUE // Whether or not the protean wants us to use the fancy glow mode
@@ -81,7 +112,6 @@
 	name = "nanite suit"
 	desc = "A swarm of nanomachines packed tightly together to create a space suit. It looks like it clings a little tightly..."
 	icon = 'icons/mob/species/protean/protean.dmi' // this way we can use the transformation animations
-	icon_override = 'icons/mob/spacesuit_vr.dmi'
 	icon_state = "psuit"
 	can_breach = 0 // Please do not breach the Protean
 	slowdown = 0 // This is about as lightweight as it gets, proteans can make themselves EXTREMELY lightweight if they want to
@@ -125,15 +155,18 @@
 	..()
 
 /obj/item/clothing/suit/space/void/autolok/protean/update_icon()
+	to_chat(myprotean, "<span class='notice'>Updating icon for [src]!</span>")
 	if (!overlay)
 		overlay = image(icon, "psuit_glow")
 		overlay.plane = PLANE_LIGHTING_ABOVE
 	
 	overlays.Cut()
 	if (glowy)
+		to_chat(myprotean, "<span class='notice'>Glowy found!</span>")
 		overlays += overlay
 		icon_state = "psuit_glowing"
 		set_light(2, 0.1,  "#74fff8")
 	else
+		to_chat(myprotean, "<span class='warning'>No glowy found!</span>")
 		icon_state = "psuit"
 		set_light(0)

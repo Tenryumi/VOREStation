@@ -321,22 +321,32 @@
 	set name = "Modify Form - Voidsuit"
 	set desc = "Allows a protean to solidify its form into one extremely similar to a voidsuit."
 	set category = "Abilities"
-	set hidden = TRUE
-	var/obj/item/clothing/suit/space/void/autolok/protean/psuit
-	psuit.transforming = TRUE
 
-	// Suit form
-	if(istype(loc, /obj/item/clothing/suit/space/void/autolok/protean))
-		nano_intosuit()
-	
-	// Human form
-	else if(stat)
-		to_chat(src,"<span class='warning'>You can only do this while not stunned.</span>")
+	var/obj/item/clothing/suit/space/void/autolok/protean/psuit
+
+	// Blobs can't turn into a suit silly!
+	if(temporary_form)
+		to_chat(src, "<span class='warning'>You can only do this in your base form.</span>")
 		return
 
-	if(isturf(loc))
+	// If suit form
+	to_chat(src,"<span class='notice'>Checking suit form?</span>")
+	if(istype(loc, /obj/item/clothing/suit/space/void/autolok/protean))
 		nano_outofsuit()
-	psuit.transforming = FALSE
+		return
+	
+	// If human form
+	if(stat)
+		to_chat(src,"<span class='warning'>You can only do this while not stunned.</span>")
+		return
+	if(isturf(loc))
+		for(var/obj/item/clothing/suit/space/void/autolok/protean/O in contents)
+			psuit = O
+			break
+		nano_intosuit(psuit)
+		return
+		
+	to_chat(src,"<span class='notice'>Proc ended! It uh, it worked right?</span>")
 	return
 
 /mob/living/carbon/human/proc/voidsuit_glow_toggle()
