@@ -56,15 +56,25 @@
 	psuit.transforming = FALSE
 	return
 
-// The actual suit
+/* -------------------------------------------------------------------------- */
+/*                               Protean Helmet                               */
+/* -------------------------------------------------------------------------- */
+
 /obj/item/clothing/head/helmet/space/void/autolok/protean
 	name = "nanite helmet"
 	desc = "A tough shell of nanomachines morphed into the form of a helmet."
 	icon = 'icons/obj/clothing/hats_vr.dmi'
 	icon_state = "phelm"
+	item_state = "phelm"
+	flags_inv = HIDEMASK|HIDEEARS|HIDEEYES|HIDEFACE|BLOCKHAIR
 	light_overlay = "should not use a light overlay"
-	var/glowy = TRUE // Whether or not the protean wants us to use the fancy glow mode
-	var/image/overlay
+	
+	var/mob/living/carbon/human/myprotean = null	// The protean who, well... IS the suit.
+	var/mob/living/carbon/human/wearer = null		// The wearer of the suit. Used for onmob tomfoolery.
+	var/glowy = TRUE 								// Whether or not the protean wants us to use the fancy glow mode
+	var/image/overlay								// The glow for the item specifically
+	var/image/mob_overlay							// The glow that goes on the onmob sprites!
+	var/image/mob_icon								// The onmob sprite! Here for the sake of hopefully making the glowy onmob overlays play nice with the sprite.
 	
 	sprite_sheets = list(
 		SPECIES_HUMAN			= 'icons/mob/head_vr.dmi',
@@ -94,33 +104,86 @@
 	sprite_sheets_refit = list()	//have to nullify this as well just to be thorough
 
 /obj/item/clothing/head/helmet/space/void/autolok/protean/update_icon()
+	overlays.Cut()
+	var/species_icon = 'icons/mob/head_vr.dmi'
+	// Since setting mob_icon will override the species checks in
+	// update_inv_wear_suit(), handle species checks here.
+	if(wearer && sprite_sheets && sprite_sheets[wearer.species.get_bodytype(wearer)])
+		species_icon =  sprite_sheets[wearer.species.get_bodytype(wearer)]
+	mob_icon = icon(icon = species_icon, icon_state = "[icon_state]")
+
+	// After that, add the appropriate glow overlays onto the mob icon!
+	if (glowy)
+		mob_overlay = image(mob_icon, "phelm_glow")
+		mob_overlay.plane = PLANE_LIGHTING_ABOVE
+		mob_overlay.appearance_flags = wearer.appearance_flags
+		add_overlay(mob_overlay)
+
+
 	if (!overlay)
 		overlay = image(icon, "phelm_glow")
 		overlay.plane = PLANE_LIGHTING_ABOVE
 	
-	overlays.Cut()
 	if (glowy)
-		overlays += overlay
+		add_overlay(overlay)
 		icon_state = "phelm_glowing"
-		set_light(2, 0.1,  "#74fff8")
+		item_state = "phelm_glowing"
+		set_light(2, 0.5,  "#74fff8")
 	else
 		icon_state = "phelm"
+		item_state = "phelm"
 		set_light(0)
-	
+
+/obj/item/clothing/head/helmet/space/void/autolok/protean/New(var/owner_protean)
+	..()
+	if (owner_protean)
+		myprotean = owner_protean
+	update_icon()
+
+/obj/item/clothing/head/helmet/space/void/autolok/protean/relaymove()
+	if(recent_struggle)
+		return
+
+	recent_struggle = 1
+
+	spawn(100)
+		recent_struggle = 0
+
+	if(ishuman(src.loc))
+		var/mob/living/carbon/human/H = src.loc
+		H.visible_message("<span class='notice'>[src] wiggles its sleeves and leggings a little. What in the goddamn...?</span>", "You wiggle your arms and legs.")
+
+/* -------------------------------------------------------------------------- */
+/*                                Protean Suit                                */
+/* -------------------------------------------------------------------------- */
 
 /obj/item/clothing/suit/space/void/autolok/protean
 	name = "nanite suit"
 	desc = "A swarm of nanomachines packed tightly together to create a space suit. It looks like it clings a little tightly..."
 	icon = 'icons/mob/species/protean/protean.dmi' // this way we can use the transformation animations
 	icon_state = "psuit"
-	can_breach = 0 // Please do not breach the Protean
-	slowdown = 0 // This is about as lightweight as it gets, proteans can make themselves EXTREMELY lightweight if they want to
-	allowed = list(/obj/item/weapon/gun,/obj/item/device/flashlight,/obj/item/weapon/tank,/obj/item/device/suit_cooling_unit,/obj/item/weapon/melee/baton,/obj/item/weapon/storage/backpack,/obj/item/device/bluespaceradio)
+	item_state = "psuit"
+	can_breach = 0 		// Please do not breach the Protean
+	slowdown = 0 		// This is about as lightweight as it gets, proteans can make themselves EXTREMELY lightweight if they want to
+	species_restricted = list("exclude",SPECIES_DIONA,SPECIES_VOX)
+	
+	allowed = list(/obj/item/weapon/gun, 	\
+	/obj/item/device/flashlight, 			\
+	/obj/item/weapon/tank, 					\
+	/obj/item/device/suit_cooling_unit, 	\
+	/obj/item/weapon/melee/baton, 			\
+	/obj/item/weapon/storage/backpack, 		\
+	/obj/item/device/bluespaceradio)
+	
 	helmet_type = /obj/item/clothing/head/helmet/space/void/autolok/protean
-	var/glowy = TRUE // Whether or not the protean wants us to use the fancy glow mode
-	var/image/overlay // The glowy overlay effect, wowowow!
-	var/transforming = FALSE // so that people can't grab us while we're mid-animation
-	var/mob/living/carbon/human/myprotean = null
+
+	var/mob/living/carbon/human/myprotean = null	// The protean who, well... IS the suit.
+	var/mob/living/carbon/human/wearer = null		// The wearer of the suit. Used for onmob tomfoolery.
+	var/glowy = TRUE 								// Whether or not the protean wants us to use the fancy glow mode
+	var/transforming = FALSE						// so that people can't grab us while we're mid-animation
+	var/image/overlay 								// The glowy overlay effect, wowowow!
+	var/image/mob_overlay							// The glow that goes on the onmob sprites!
+	var/image/mob_icon								// The onmob sprite! Here for the sake of hopefully making the glowy onmob overlays play nice with the sprite.
 
 	sprite_sheets = list(
 		SPECIES_HUMAN			= 'icons/mob/spacesuit_vr.dmi',
@@ -149,24 +212,57 @@
 		)
 	sprite_sheets_refit = list()	//have to nullify this as well just to be thorough
 
-/obj/item/clothing/suit/space/void/autolok/protean/attack_hand(var/mob/user)
+/obj/item/clothing/suit/space/void/autolok/protean/equipped(mob/living/carbon/human/M)
+	..()
+	if(istype(M) && M.wear_suit == src)
+		wearer = M
+		update_icon()
+
+/obj/item/clothing/suit/space/void/autolok/protean/attack_hand()
 	if (transforming)
 		return
 	..()
 
+// Item icon-specific icon glow-ination 
 /obj/item/clothing/suit/space/void/autolok/protean/update_icon()
-	to_chat(myprotean, "<span class='notice'>Updating icon for [src]!</span>")
+	overlays.Cut()
 	if (!overlay)
 		overlay = image(icon, "psuit_glow")
 		overlay.plane = PLANE_LIGHTING_ABOVE
 	
-	overlays.Cut()
 	if (glowy)
-		to_chat(myprotean, "<span class='notice'>Glowy found!</span>")
-		overlays += overlay
+		add_overlay(overlay)
 		icon_state = "psuit_glowing"
-		set_light(2, 0.1,  "#74fff8")
+		item_state = "psuit_glowing"
+		set_light(2, 0.5,  "#74fff8")
 	else
-		to_chat(myprotean, "<span class='warning'>No glowy found!</span>")
 		icon_state = "psuit"
+		item_state = "psuit"
 		set_light(0)
+
+// Onmob icon-specific icon glow-ination 
+/obj/item/clothing/suit/space/void/autolok/protean/make_worn_icon(var/body_type,var/slot_name,var/inhands,var/default_icon,var/default_layer = 0,var/icon/clip_mask)
+	var/image/standing = ..()
+	if(slot_name == slot_wear_suit_str)
+		var/species_icon = 'icons/mob/spacesuit_vr.dmi'
+		
+		// Since setting mob_icon will override the species checks in
+		// update_inv_wear_suit(), handle species checks here.
+		if(wearer && sprite_sheets && sprite_sheets[wearer.species.get_bodytype(wearer)])
+			species_icon =  sprite_sheets[wearer.species.get_bodytype(wearer)]
+		standing = icon(icon = species_icon, icon_state = "[icon_state]")
+		
+		// After that, add the appropriate glow overlays onto the mob icon!
+		if (glowy)
+			mob_overlay = image(species_icon, "psuit_glow")
+			mob_overlay.plane = PLANE_LIGHTING_ABOVE
+			mob_overlay.appearance_flags = wearer.appearance_flags
+			standing.add_overlay(mob_overlay)
+		
+	return standing
+
+/obj/item/clothing/suit/space/void/autolok/protean/New(var/owner_protean)
+	..()
+	if (owner_protean)
+		myprotean = owner_protean
+	update_icon()

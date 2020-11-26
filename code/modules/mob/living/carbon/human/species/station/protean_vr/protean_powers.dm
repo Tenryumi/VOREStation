@@ -324,13 +324,12 @@
 
 	var/obj/item/clothing/suit/space/void/autolok/protean/psuit
 
-	// Blobs can't turn into a suit silly!
+	// I don't know if this would ever actually be needed since it's called by humans only? Better safe than sorry tho
 	if(temporary_form)
 		to_chat(src, "<span class='warning'>You can only do this in your base form.</span>")
 		return
 
 	// If suit form
-	to_chat(src,"<span class='notice'>Checking suit form?</span>")
 	if(istype(loc, /obj/item/clothing/suit/space/void/autolok/protean))
 		nano_outofsuit()
 		return
@@ -346,7 +345,6 @@
 		nano_intosuit(psuit)
 		return
 		
-	to_chat(src,"<span class='notice'>Proc ended! It uh, it worked right?</span>")
 	return
 
 /mob/living/carbon/human/proc/voidsuit_glow_toggle()
