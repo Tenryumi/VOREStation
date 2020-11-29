@@ -56,6 +56,8 @@
 	psuit.transforming = FALSE
 	return
 
+
+
 /* -------------------------------------------------------------------------- */
 /*                               Protean Helmet                               */
 /* -------------------------------------------------------------------------- */
@@ -67,7 +69,7 @@
 	icon_state = "phelm"
 	item_state = "phelm"
 	flags_inv = HIDEMASK|HIDEEARS|HIDEEYES|HIDEFACE|BLOCKHAIR
-	light_overlay = "should not use a light overlay"
+	light_overlay = "should not use a light overlay"// After all, it already comes with its own glow as dictated by the Protean.
 	
 	var/mob/living/carbon/human/myprotean = null	// The protean who, well... IS the suit.
 	var/mob/living/carbon/human/wearer = null		// The wearer of the suit. Used for onmob tomfoolery.
@@ -105,34 +107,32 @@
 
 /obj/item/clothing/head/helmet/space/void/autolok/protean/update_icon()
 	overlays.Cut()
-	var/species_icon = 'icons/mob/head_vr.dmi'
-	// Since setting mob_icon will override the species checks in
-	// update_inv_wear_suit(), handle species checks here.
-	if(wearer && sprite_sheets && sprite_sheets[wearer.species.get_bodytype(wearer)])
-		species_icon =  sprite_sheets[wearer.species.get_bodytype(wearer)]
-	mob_icon = icon(icon = species_icon, icon_state = "[icon_state]")
-
-	// After that, add the appropriate glow overlays onto the mob icon!
-	if (glowy)
-		mob_overlay = image(mob_icon, "phelm_glow")
-		mob_overlay.plane = PLANE_LIGHTING_ABOVE
-		mob_overlay.appearance_flags = wearer.appearance_flags
-		add_overlay(mob_overlay)
-
-
 	if (!overlay)
 		overlay = image(icon, "phelm_glow")
 		overlay.plane = PLANE_LIGHTING_ABOVE
-	
 	if (glowy)
 		add_overlay(overlay)
-		icon_state = "phelm_glowing"
-		item_state = "phelm_glowing"
-		set_light(2, 0.5,  "#74fff8")
+		set_light(3, 1,  "#74fff8")
 	else
-		icon_state = "phelm"
-		item_state = "phelm"
 		set_light(0)
+
+/obj/item/clothing/head/helmet/space/void/autolok/protean/make_worn_icon(var/body_type,var/slot_name,var/inhands,var/default_icon,var/default_layer = 0,var/icon/clip_mask)
+	var/image/standing = ..()
+	if(slot_name == slot_head_str)
+		var/species_icon = 'icons/mob/spacesuit_vr.dmi'
+
+		// Get the mob's species icon, if any.
+		if(wearer && sprite_sheets && sprite_sheets[wearer.species.get_bodytype(wearer)])
+			species_icon =  sprite_sheets[wearer.species.get_bodytype(wearer)]
+		
+		// After that, add the appropriate glow overlays onto the mob icon!
+		if (glowy)
+			mob_overlay = image(species_icon, "phelm_glow")
+			mob_overlay.appearance_flags = wearer.appearance_flags
+			mob_overlay.plane = PLANE_LIGHTING_ABOVE
+			standing.add_overlay(mob_overlay)
+		
+	return standing
 
 /obj/item/clothing/head/helmet/space/void/autolok/protean/New(var/owner_protean)
 	..()
@@ -151,7 +151,10 @@
 
 	if(ishuman(src.loc))
 		var/mob/living/carbon/human/H = src.loc
-		H.visible_message("<span class='notice'>[src] wiggles its sleeves and leggings a little. What in the goddamn...?</span>", "You wiggle your arms and legs.")
+		H.visible_message("<span class='notice'>[src] wiggles its sleeves and leggings a little. That's... totally not creepy.</span>", \
+						"You wiggle your arms and legs... Which at the moment are sleeves and leggings. This probably looks very weird.")
+
+
 
 /* -------------------------------------------------------------------------- */
 /*                                Protean Suit                                */
@@ -229,15 +232,10 @@
 	if (!overlay)
 		overlay = image(icon, "psuit_glow")
 		overlay.plane = PLANE_LIGHTING_ABOVE
-	
 	if (glowy)
 		add_overlay(overlay)
-		icon_state = "psuit_glowing"
-		item_state = "psuit_glowing"
-		set_light(2, 0.5,  "#74fff8")
+		set_light(3, 1,  "#74fff8")
 	else
-		icon_state = "psuit"
-		item_state = "psuit"
 		set_light(0)
 
 // Onmob icon-specific icon glow-ination 
@@ -246,16 +244,9 @@
 	if(slot_name == slot_wear_suit_str)
 		var/species_icon = 'icons/mob/spacesuit_vr.dmi'
 		
-		// Since setting mob_icon will override the species checks in
-		// update_inv_wear_suit(), handle species checks here.
-		if(wearer && sprite_sheets && sprite_sheets[wearer.species.get_bodytype(wearer)])
-			species_icon =  sprite_sheets[wearer.species.get_bodytype(wearer)]
-		standing = icon(icon = species_icon, icon_state = "[icon_state]")
-		
 		// After that, add the appropriate glow overlays onto the mob icon!
 		if (glowy)
 			mob_overlay = image(species_icon, "psuit_glow")
-			mob_overlay.plane = PLANE_LIGHTING_ABOVE
 			mob_overlay.appearance_flags = wearer.appearance_flags
 			standing.add_overlay(mob_overlay)
 		
@@ -266,3 +257,8 @@
 	if (owner_protean)
 		myprotean = owner_protean
 	update_icon()
+
+/obj/item/clothing/suit/space/void/autolok/protean/Initialize()
+	..()
+	sleep(1)
+	helmet.myprotean = myprotean
