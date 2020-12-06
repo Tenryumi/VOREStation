@@ -2244,7 +2244,8 @@ Departamental Swimsuits, for general use
 //Vitoras: Verie
 /obj/item/clothing/suit/storage/hooded/fluff/verie
 	name = "distressingly cyan hoodie"
-	desc = "A cute, brightly colored hoodie perfect for occasional concealment of a verie silly nerd."
+	desc = "A cute, brightly colored hoodie perfect for occasional concealment of a verie silly nerd. A little tag inside \
+	the collar bears only the letters \"VW.\""
 	icon = 'icons/vore/custom_clothes_vr.dmi'
 	icon_state = "verie_hoodie"
 
