@@ -248,6 +248,7 @@
 		if (glowy)
 			mob_overlay = image(species_icon, "psuit_glow")
 			mob_overlay.appearance_flags = wearer.appearance_flags
+			mob_overlay.plane = PLANE_LIGHTING_ABOVE
 			standing.add_overlay(mob_overlay)
 		
 	return standing
