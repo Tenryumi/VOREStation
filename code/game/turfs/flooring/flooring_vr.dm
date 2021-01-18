@@ -1,12 +1,12 @@
 /turf/simulated/floor/flesh
 	name = "flesh"
-	desc = "This slick flesh ripples and squishes under your touch"
+	desc = "This slick flesh ripples and squishes under your touch."
 	icon = 'icons/turf/stomach_vr.dmi'
-	icon_state = "flesh_floor"
+	icon_state = "flesh-floor"
 	initial_flooring = /decl/flooring/flesh
 
 /turf/simulated/floor/flesh/colour
-	icon_state = "c_flesh_floor"
+	icon_state = "colorable-floor"
 	initial_flooring = /decl/flooring/flesh
 
 /turf/simulated/floor/flesh/attackby()
@@ -14,6 +14,6 @@
 
 /decl/flooring/flesh
 	name = "flesh"
-	desc = "This slick flesh ripples and squishes under your touch"
+	desc = "This slick flesh ripples and squishes under your touch."
 	icon = 'icons/turf/stomach_vr.dmi'
-	icon_base = "flesh_floor"
+	icon_base = "flesh-floor"
