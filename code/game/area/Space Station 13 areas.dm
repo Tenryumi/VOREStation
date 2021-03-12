@@ -1104,6 +1104,10 @@ NOTE: there are two lists of areas in the end of this file: centcom and station 
 	name = "\improper Dormitory Room 10"
 	icon_state = "Sleep"
 
+/area/crew_quarters/sleep/Dorm_deluxe
+	name = "\improper Deluxe Dormitory Room"
+	icon_state = "Sleep"
+
 /area/crew_quarters/sleep/vistor_room_1
 	name = "\improper Visitor Room 1"
 	icon_state = "Sleep"
