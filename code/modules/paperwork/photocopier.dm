@@ -278,7 +278,7 @@
 				temp_img = icon('icons/obj/butts_vr.dmi', "vox")
 			if(SPECIES_DIONA)
 				temp_img = icon('icons/obj/butts_vr.dmi', "diona")
-			if(SPECIES_PROMETHEAN)
+			if(SPECIES_PROMETHEAN || SPECIES_PROMETHEAN_WATER) //VOREStation Edit: Pisces Prommies!
 				temp_img = icon('icons/obj/butts_vr.dmi', "slime")
 			if(SPECIES_VULPKANIN)
 				temp_img = icon('icons/obj/butts_vr.dmi', "vulp")

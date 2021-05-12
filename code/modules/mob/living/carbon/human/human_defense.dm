@@ -607,6 +607,11 @@ emp_act
 	return CLAMP(1-converted_protection, 0, 1)
 
 /mob/living/carbon/human/water_act(amount)
+	//VOREStation Edit Begin: Pisces Prometheans are made of water!!!
+	if(species.get_bodytype() == SPECIES_PROMETHEAN_WATER)
+		species.water_heal()
+		return
+	//VOREStation Edit End
 	adjust_fire_stacks(-amount * 5)
 	for(var/atom/movable/AM in contents)
 		AM.water_act(amount)

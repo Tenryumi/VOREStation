@@ -23,6 +23,7 @@
 #define SPECIES_ALRAUNE			"Alraune"
 #define SPECIES_NEVREAN			"Nevrean"
 #define SPECIES_PROTEAN			"Protean"
+#define SPECIES_PROMETHEAN_WATER"Pisces Promethean"
 #define SPECIES_RAPALA			"Rapala"
 #define SPECIES_SERGAL			"Sergal"
 #define SPECIES_SHADEKIN_CREW	"Black-Eyed Shadekin"

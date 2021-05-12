@@ -175,6 +175,8 @@
 			var/mob/living/carbon/human/H = AM
 			if(istype(H.species, /datum/species/monkey)) // istype() is so they'll eat the alien monkeys too.
 				return TRUE // Monkeys are always food (sorry Pun Pun).
+			else if(H.species && H.species.name == SPECIES_PROMETHEAN_WATER) // VOREStation Edit: PEOPLE MADE OF WATER?! We know better than to mess with them, even if we hate them!
+				return FALSE // VOREStation Edit
 			else if(H.species && H.species.name == SPECIES_PROMETHEAN) // Prometheans are always our friends.
 				if(!(H in grudges)) // Unless they're an ass.
 					return FALSE

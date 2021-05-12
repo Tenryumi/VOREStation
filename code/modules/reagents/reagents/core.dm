@@ -49,7 +49,7 @@
 		if(H.species.organic_food_coeff == 0)
 			H.adjust_nutrition(removed)
 			is_vampire = 1 //VOREStation Edit END
-	if(alien == IS_SLIME)	// Treat it like nutriment for the jello, but not equivalent.
+	if(alien == IS_SLIME || IS_WATER)	// Treat it like nutriment for the jello, but not equivalent. //VOREStation Edit: Added IS_WATER.
 		if(data["species"] == M.species.name)	// Unless it's Promethean goo, then refill this one's goo.
 			M.inject_blood(src, volume * volume_mod)
 			remove_self(volume)
@@ -58,7 +58,8 @@
 		M.heal_organ_damage(0.2 * removed * volume_mod, 0)	// More 'effective' blood means more usable material.
 		M.adjust_nutrition(20 * removed * volume_mod)
 		M.add_chemical_effect(CE_BLOODRESTORE, 4 * removed)
-		M.adjustToxLoss(removed / 2)	// Still has some water in the form of plasma.
+		if(IS_SLIME) //VOREStation edit: Only slime people get tox damage! Water people are fine!
+			M.adjustToxLoss(removed / 2)	// Still has some water in the form of plasma.
 		return
 
 	if(effective_dose > 5)
