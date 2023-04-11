@@ -2917,6 +2917,8 @@
 #include "code\modules\mob\living\carbon\human\species\station\protean_vr\protean_powers.dm"
 #include "code\modules\mob\living\carbon\human\species\station\protean_vr\protean_species.dm"
 #include "code\modules\mob\living\carbon\human\species\station\protean_vr\protean_suit.dm"
+#include "code\modules\mob\living\carbon\human\species\station\protean_vr\protean_tf.dm"
+#include "code\modules\mob\living\carbon\human\species\station\protean_vr\protean_tf_suit.dm"
 #include "code\modules\mob\living\carbon\human\species\station\traits_vr\_traits.dm"
 #include "code\modules\mob\living\carbon\human\species\station\traits_vr\negative.dm"
 #include "code\modules\mob\living\carbon\human\species\station\traits_vr\neutral.dm"
