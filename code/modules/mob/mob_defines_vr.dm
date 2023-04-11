@@ -1,6 +1,8 @@
 /mob
 	var/vantag_hud = 0			// Do I have the HUD enabled?
 	var/mob/temporary_form		// For holding onto a temporary form
+	var/list/temporary_forms = list()	// Stores transformation abilities the mob may possess
+	var/temporary_transformation/current_form = null // Stores which temporary TF is currently active.
 
 	var/disconnect_time = null		//Time of client loss, set by Logout(), for timekeeping
 
