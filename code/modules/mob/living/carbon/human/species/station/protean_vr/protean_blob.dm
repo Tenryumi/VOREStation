@@ -59,8 +59,6 @@
 //Constructor allows passing the human to sync damages
 /mob/living/simple_mob/protean_blob/New(var/newloc, var/mob/living/carbon/human/H)
 	..()
-	mob_radio = new(src)
-	myid = new(src)
 	if(H)
 		humanform = H
 		updatehealth()
@@ -285,7 +283,7 @@
 	if(refactory && istype(A,/obj/item/stack/material))
 		var/obj/item/stack/material/S = A
 		var/substance = S.material.name
-		var/allowed = FALSE
+		var allowed = FALSE
 		for(var/material in PROTEAN_EDIBLE_MATERIALS)
 			if(material == substance)
 				allowed = TRUE
@@ -296,11 +294,11 @@
 	else
 		return ..()
 
-/mob/living/simple_mob/protean_blob/attackby(var/atom/A)
-	if(refactory && istype(A,/obj/item/stack/material))
-		var/obj/item/stack/material/S = A
+/mob/living/simple_mob/protean_blob/attackby(var/obj/item/O, var/mob/user)
+	if(refactory && istype(O,/obj/item/stack/material))
+		var/obj/item/stack/material/S = O
 		var/substance = S.material.name
-		var/allowed = FALSE
+		var allowed = FALSE
 		for(var/material in PROTEAN_EDIBLE_MATERIALS)
 			if(material == substance)
 				allowed = TRUE
@@ -308,31 +306,6 @@
 			return
 		if(refactory.add_stored_material(S.material.name,1*S.perunit) && S.use(1))
 			visible_message("<b>[name]</b> gloms over some of \the [S], absorbing it.")
-	else if(isitem(A) && a_intent == "grab")
-		var/obj/item/I = A
-		if(!vore_selected)
-			to_chat(src,"<span class='warning'>You either don't have a belly selected, or don't have a belly!</span>")
-			return FALSE
-		if(is_type_in_list(I,item_vore_blacklist) || I.anchored)
-			to_chat(src, "<span class='warning'>You can't eat this.</span>")
-			return
-
-		if(is_type_in_list(I,edible_trash) | adminbus_trash)
-			if(I.hidden_uplink)
-				to_chat(src, "<span class='warning'>You really should not be eating this.</span>")
-				message_admins("[key_name(src)] has attempted to ingest an uplink item. ([src ? "<a href='?_src_=holder;adminplayerobservecoodjump=1;X=[src.x];Y=[src.y];Z=[src.z]'>JMP</a>" : "null"])")
-				return
-		visible_message("<b>[name]</b> stretches itself over the [I], engulfing it whole!")
-		I.forceMove(vore_selected)
-	else
-		return ..()
-
-/mob/living/simple_mob/protean_blob/MouseDrop(var/atom/over_object)
-	if(loc == /obj/item/clothing/suit/space/void/autolok/protean)
-		return
-	if(ishuman(over_object) && usr == src)
-		var/mob/living/carbon/human/H = over_object
-		get_scooped(H, TRUE)
 	else
 		return ..()
 
