@@ -102,8 +102,9 @@
 		/mob/living/carbon/human/proc/shapeshifter_select_gender,
 		/mob/living/carbon/human/proc/shapeshifter_select_wings,
 		/mob/living/carbon/human/proc/shapeshifter_select_tail,
-		/mob/living/carbon/human/proc/shapeshifter_select_ears
-		/mob/living/carbon/human/proc/voidsuit_transform
+		/mob/living/carbon/human/proc/shapeshifter_select_ears,
+		/mob/living/carbon/human/proc/voidsuit_transform,
+		/mob/living/carbon/human/proc/voidsuit_glow_toggle
 		)
 
 	var/global/list/abilities = list()

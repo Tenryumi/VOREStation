@@ -334,34 +334,46 @@
 	set category = "Abilities"
 
 	var/obj/item/clothing/suit/space/void/autolok/protean/psuit
+	for(var/obj/item/clothing/suit/space/void/autolok/protean/O in contents)
+		psuit = O
+		break
 
-	// I don't know if this would ever actually be needed since it's called by humans only? Better safe than sorry tho
 	if(temporary_form)
 		to_chat(src, "<span class='warning'>You can only do this in your base form.</span>")
 		return
 
 	// If suit form
 	if(istype(loc, /obj/item/clothing/suit/space/void/autolok/protean))
-		nano_outofsuit()
+		nano_outofsuit(psuit)
 		return
-	
+
 	// If human form
 	if(stat)
-		to_chat(src,"<span class='warning'>You can only do this while not stunned.</span>")
-		return
-	if(isturf(loc))
-		for(var/obj/item/clothing/suit/space/void/autolok/protean/O in contents)
-			psuit = O
-			break
+		to_chat(src,"<span class='warning'>You can't transform while stunned.</span>")
+	else if(isturf(loc))
+		if (!psuit)
+			to_chat(src, "<span class='danger'>Your voidsuit form could not be found in your mob. This is a bug. You will need to be respawned to regain this ability.</span>")
+			log_debug("Protean void suit was not found in Protean player mob. This player therefore cannot use void suit transformation!")
+			return
 		nano_intosuit(psuit)
-		return
-		
 	return
 
 /mob/living/carbon/human/proc/voidsuit_glow_toggle()
 	set name = "Toggle Voidsuit Glow"
 	set desc = "Your voidsuit form has components that glow brightly! This toggles them if you don't feel like bieng glowy."
 	set category = "Abilities"
+	var/obj/item/clothing/suit/space/void/autolok/protean/S = locate() in contents
+	if (S)
+		S.myprotean_wants_glow = !S.myprotean_wants_glow
+		if (S.is_suit_deployed())
+			to_chat(src, "<span class='notice'>You turn the lights on your visor and shoulder pads <b>[(S.myprotean_wants_glow ? "on" : "off")]</b>.</span>")
+		else
+			to_chat(src, "<span class='notice'>You change a setting in your voidsuit configuration. Your voidsuit form [(S.myprotean_wants_glow ? "<b>will</b>" : "will <b>not</b>")] glow when deployed.</span>")
+		S.set_glow(S.myprotean_wants_glow)
+	else
+		to_chat(src, "<span class='danger'>Your voidsuit form could not be found in your mob. This is a bug. You will need to be respawned to regain this ability.</span>")
+		log_debug("Protean void suit was not found in Protean player mob. This player therefore cannot use void suit transformation!")
+
 
 /// /// /// A helper to reuse
 /mob/living/proc/nano_get_refactory(obj/item/organ/internal/nano/refactory/R)
@@ -420,7 +432,7 @@
 
 /obj/effect/protean_ability/into_suit
 	ability_name = "Toggle Suit Form"
-	desc = "Alter your shape into that of a space suit that others can wear."
+	desc = "Alter your shape into that of a space-worthy suit that others can wear."
 	icon = 'icons/mob/species/protean/protean.dmi'
 	icon_state = "psuit"
 	to_call = /mob/living/carbon/human/proc/voidsuit_transform
