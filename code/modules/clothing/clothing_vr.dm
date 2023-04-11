@@ -5,9 +5,9 @@
 	var/list/inside_emotes = list()
 	var/recent_squish = 0
 	sprite_sheets = list(
-		SPECIES_TESHARI = 'icons/mob/species/seromi/shoes.dmi',
-		SPECIES_VOX = 'icons/mob/species/vox/shoes.dmi',
-		SPECIES_WEREBEAST = 'icons/mob/species/werebeast/feet.dmi')
+		SPECIES_TESHARI = 'icons/inventory/feet/mob_teshari.dmi',
+		SPECIES_VOX = 'icons/inventory/feet/mob_vox.dmi',
+		SPECIES_WEREBEAST = 'icons/inventory/feet/mob_vr_werebeast.dmi')
 
 /obj/item/clothing/shoes/New()
 	inside_emotes = list(
@@ -35,20 +35,26 @@
 	if(istype(I,/obj/item/weapon/holder/micro))
 		var/full = 0
 		for(var/mob/M in src)
+			if(istype(M,/mob/living/voice)) //Don't count voices as people!
+				continue
 			full++
 		if(full >= 2)
 			to_chat(user, "<span class='warning'>You can't fit anyone else into \the [src]!</span>")
 		else
 			var/obj/item/weapon/holder/micro/holder = I
-			if(holder.held_mob && holder.held_mob in holder)
-				to_chat(holder.held_mob, "<span class='warning'>[user] stuffs you into \the [src]!</span>")
-				holder.held_mob.forceMove(src)
-				to_chat(user, "<span class='notice'>You stuff \the [holder.held_mob] into \the [src]!</span>")
+			if(holder.held_mob && (holder.held_mob in holder))
+				var/mob/living/M = holder.held_mob
+				holder.dump_mob()
+				to_chat(M, "<span class='warning'>[user] stuffs you into \the [src]!</span>")
+				M.forceMove(src)
+				to_chat(user, "<span class='notice'>You stuff \the [M] into \the [src]!</span>")
 	else
 		..()
 
 /obj/item/clothing/shoes/attack_self(var/mob/user)
 	for(var/mob/M in src)
+		if(istype(M,/mob/living/voice)) //Don't knock voices out!
+			continue
 		M.forceMove(get_turf(user))
 		to_chat(M, "<span class='warning'>[user] shakes you out of \the [src]!</span>")
 		to_chat(user, "<span class='notice'>You shake [M] out of \the [src]!</span>")
@@ -57,6 +63,8 @@
 
 /obj/item/clothing/shoes/container_resist(mob/living/micro)
 	var/mob/living/carbon/human/macro = loc
+	if(istype(micro,/mob/living/voice)) //Voices shouldn't be able to resist but we have this here just in case.
+		return
 	if(!istype(macro))
 		to_chat(micro, "<span class='notice'>You start to climb out of [src]!</span>")
 		if(do_after(micro, 50, src))
@@ -85,14 +93,15 @@
 
 /obj/item/clothing/gloves
 	sprite_sheets = list(
-		SPECIES_TESHARI = 'icons/mob/species/seromi/gloves.dmi',
-		SPECIES_VOX = 'icons/mob/species/vox/gloves.dmi',
-		SPECIES_WEREBEAST = 'icons/mob/species/werebeast/hands.dmi')
+		SPECIES_TESHARI = 'icons/inventory/hands/mob_teshari.dmi',
+		SPECIES_VOX = 'icons/inventory/hands/mob_vox.dmi',
+		SPECIES_WEREBEAST = 'icons/inventory/hands/mob_vr_werebeast.dmi')
 
 /obj/item/clothing/ears
 	sprite_sheets = list(
-		SPECIES_TESHARI = 'icons/mob/species/seromi/ears.dmi',
-		SPECIES_WEREBEAST = 'icons/mob/species/werebeast/ears.dmi')
+		SPECIES_TESHARI = 'icons/inventory/ears/mob_teshari.dmi',
+		SPECIES_VOX = 'icons/inventory/ears/mob_vox.dmi',
+		SPECIES_WEREBEAST = 'icons/inventory/ears/mob_vr_werebeast.dmi')
 
 /obj/item/clothing/relaymove(var/mob/living/user,var/direction)
 
@@ -104,14 +113,20 @@
 	spawn(100)
 		recent_struggle = 0
 
-	if(ishuman(src.loc))
+	if(ishuman(src.loc)) //Is this on a person?
 		var/mob/living/carbon/human/H = src.loc
-		if(H.shoes == src)
+		if(istype(user,/mob/living/voice)) //Is this a possessed item? Spooky. It can move on it's own!
+			to_chat(H, "<font color='red'>The [src] shifts about, almost as if squirming!</font>")
+			to_chat(user, "<font color='red'>You cause the [src] to shift against [H]'s form! Well, what little you can get to, given your current state!</font>")
+		else if(H.shoes == src)
 			to_chat(H, "<font color='red'>[user]'s tiny body presses against you in \the [src], squirming!</font>")
 			to_chat(user, "<font color='red'>Your body presses out against [H]'s form! Well, what little you can get to!</font>")
 		else
 			to_chat(H, "<font color='red'>[user]'s form shifts around in the \the [src], squirming!</font>")
 			to_chat(user, "<font color='red'>You move around inside the [src], to no avail.</font>")
+	else if(istype(user,/mob/living/voice)) //Possessed!
+		src.visible_message("<font color='red'>The [src] shifts about!</font>")
+		to_chat(user, "<font color='red'>You cause the [src] to shift about!</font>")
 	else
 		src.visible_message("<font color='red'>\The [src] moves a little!</font>")
 		to_chat(user, "<font color='red'>You throw yourself against the inside of \the [src]!</font>")
@@ -119,7 +134,7 @@
 //Mask
 /obj/item/clothing/mask
 	name = "mask"
-	icon = 'icons/obj/clothing/masks_vr.dmi' // This is intentional because of our custom species.
+	icon = 'icons/inventory/face/item_vr.dmi' // This is intentional because of our custom species.
 	item_icons = list(
 		slot_l_hand_str = 'icons/mob/items/lefthand_masks.dmi',
 		slot_r_hand_str = 'icons/mob/items/righthand_masks.dmi',
@@ -128,78 +143,39 @@
 	slot_flags = SLOT_MASK
 	body_parts_covered = FACE|EYES
 	item_icons = list(
-		slot_wear_mask_str = 'icons/mob/mask_vr.dmi'
+		slot_wear_mask_str = 'icons/inventory/face/mob_vr.dmi'
 		)
 	sprite_sheets = list(
-		SPECIES_TESHARI		= 'icons/mob/species/seromi/masks_vr.dmi',
-		SPECIES_VOX 		= 'icons/mob/species/vox/masks.dmi',
-		SPECIES_TAJ 		= 'icons/mob/species/tajaran/mask_vr.dmi',
-		SPECIES_UNATHI 		= 'icons/mob/species/unathi/mask_vr.dmi',
-		SPECIES_SERGAL 		= 'icons/mob/species/sergal/mask_vr.dmi',
-		SPECIES_NEVREAN 	= 'icons/mob/species/nevrean/mask_vr.dmi',
-		SPECIES_ZORREN_HIGH	= 'icons/mob/species/fox/mask_vr.dmi',
-		SPECIES_ZORREN_FLAT = 'icons/mob/species/fennec/mask_vr.dmi',
-		SPECIES_AKULA 		= 'icons/mob/species/akula/mask_vr.dmi',
-		SPECIES_VULPKANIN 	= 'icons/mob/species/vulpkanin/mask.dmi',
-		SPECIES_XENOCHIMERA	= 'icons/mob/species/tajaran/mask_vr.dmi',
-		SPECIES_WEREBEAST	= 'icons/mob/species/werebeast/masks.dmi'
+		SPECIES_TESHARI		= 'icons/inventory/face/mob_teshari.dmi',
+		SPECIES_VOX 		= 'icons/inventory/face/mob_vox.dmi',
+		SPECIES_TAJ 		= 'icons/inventory/face/mob_tajaran.dmi',
+		SPECIES_UNATHI 		= 'icons/inventory/face/mob_unathi.dmi',
+		SPECIES_SERGAL 		= 'icons/inventory/face/mob_vr_sergal.dmi',
+		SPECIES_NEVREAN 	= 'icons/inventory/face/mob_vr_nevrean.dmi',
+		SPECIES_ZORREN_HIGH	= 'icons/inventory/face/mob_vr_fox.dmi',
+		SPECIES_ZORREN_FLAT = 'icons/inventory/face/mob_vr_fennec.dmi',
+		SPECIES_AKULA 		= 'icons/inventory/face/mob_vr_akula.dmi',
+		SPECIES_VULPKANIN 	= 'icons/inventory/face/mob_vr_vulpkanin.dmi',
+		SPECIES_XENOCHIMERA	= 'icons/inventory/face/mob_vr_tajaran.dmi',
+		SPECIES_WEREBEAST	= 'icons/inventory/face/mob_vr_werebeast.dmi'
 		)
-//"Spider" 		= 'icons/mob/species/spider/mask_vr.dmi' Add this later when they have custom mask sprites and everything.
+//"Spider" 		= 'icons/inventory/mask/mob_spider.dmi' Add this later when they have custom mask sprites and everything.
 
 //Switch to taur sprites if a taur equips
 /obj/item/clothing/suit
-	var/taurized = FALSE //Easier than trying to 'compare icons' to see if it's a taur suit
 	sprite_sheets = list(
-		SPECIES_TESHARI = 'icons/mob/species/seromi/suit.dmi',
-		SPECIES_VOX = 'icons/mob/species/vox/suit.dmi',
-		SPECIES_WEREBEAST = 'icons/mob/species/werebeast/suit.dmi')
+		SPECIES_TESHARI = 'icons/inventory/suit/mob_teshari.dmi',
+		SPECIES_VOX = 'icons/inventory/suit/mob_vox.dmi',
+		SPECIES_WEREBEAST = 'icons/inventory/suit/mob_vr_werebeast.dmi')
 
-/obj/item/clothing/suit/equipped(var/mob/user, var/slot)
-	var/normalize = TRUE
-
-	//Pyramid of doom-y. Improve somehow?
-	if(!taurized && slot == slot_wear_suit && ishuman(user))
-		var/mob/living/carbon/human/H = user
-		if(isTaurTail(H.tail_style))
-			var/datum/sprite_accessory/tail/taur/taurtail = H.tail_style
-			if(taurtail.suit_sprites && (get_worn_icon_state(slot_wear_suit_str) in cached_icon_states(taurtail.suit_sprites)))
-				icon_override = taurtail.suit_sprites
-				normalize = FALSE
-				taurized = TRUE
-
-	if(normalize && taurized)
-		icon_override = initial(icon_override)
-		taurized = FALSE
-
-	return ..()
-
-// Taur suits need to be shifted so its centered on their taur half.
-/obj/item/clothing/suit/make_worn_icon(var/body_type,var/slot_name,var/inhands,var/default_icon,var/default_layer = 0,var/icon/clip_mask)
-	var/image/standing = ..()
-	if(taurized) //Special snowflake var on suits
-		standing.pixel_x = -16
-		standing.layer = BODY_LAYER + 15 // 15 is above tail layer, so will not be covered by taurbody.
-	return standing
-
-/obj/item/clothing/suit/apply_accessories(var/image/standing)
-	if(LAZYLEN(accessories) && taurized)
-		for(var/obj/item/clothing/accessory/A in accessories)
-			var/image/I = new(A.get_mob_overlay())
-			I.pixel_x = 16 //Opposite of the pixel_x on the suit (-16) from taurization to cancel it out and puts the accessory in the correct place on the body.
-			standing.add_overlay(I)
-	else
-		return ..()
-
-//TFF 5/8/19 - sets Vorestation /obj/item/clothing/under sensor setting default?
 /obj/item/clothing/under
 	sensor_mode = 3
 	var/sensorpref = 5
 	sprite_sheets = list(
-		SPECIES_TESHARI = 'icons/mob/species/seromi/uniform.dmi',
-		SPECIES_VOX = 'icons/mob/species/vox/uniform.dmi',
-		SPECIES_WEREBEAST = 'icons/mob/species/werebeast/uniform.dmi')
+		SPECIES_TESHARI = 'icons/inventory/uniform/mob_teshari.dmi',
+		SPECIES_VOX = 'icons/inventory/uniform/mob_vox.dmi',
+		SPECIES_WEREBEAST = 'icons/inventory/uniform/mob_vr_werebeast.dmi')
 
-//TFF 5/8/19 - define numbers and specifics for suit sensor settings
 /obj/item/clothing/under/New(var/mob/living/carbon/human/H)
 	..()
 	sensorpref = isnull(H) ? 1 : (ishuman(H) ? H.sensorpref : 1)
@@ -215,6 +191,6 @@
 
 /obj/item/clothing/head
 	sprite_sheets = list(
-		SPECIES_TESHARI = 'icons/mob/species/seromi/head.dmi',
-		SPECIES_VOX = 'icons/mob/species/vox/head.dmi',
-		SPECIES_WEREBEAST = 'icons/mob/species/werebeast/head.dmi')
+		SPECIES_TESHARI = 'icons/inventory/head/mob_teshari.dmi',
+		SPECIES_VOX = 'icons/inventory/head/mob_vox.dmi',
+		SPECIES_WEREBEAST = 'icons/inventory/head/mob_vr_werebeast.dmi')

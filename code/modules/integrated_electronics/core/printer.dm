@@ -11,10 +11,20 @@
 	var/debug = FALSE // If true, metal is infinite.
 
 	var/upgraded = FALSE		// When hit with an upgrade disk, will turn true, allowing it to print the higher tier circuits.
+	var/illegal_upgraded = FALSE // When hit with an illegal upgrade disk, will turn true, allowing it to print the illegal circuits.
 	var/can_clone = FALSE		// Same for above, but will allow the printer to duplicate a specific assembly. (Not implemented)
 //	var/static/list/recipe_list = list()
 	var/obj/item/device/electronic_assembly/assembly_to_clone = null // Not implemented x3
 	var/dirty_items = FALSE
+
+/obj/item/device/integrated_circuit_printer/all_upgrades
+	upgraded = TRUE
+	illegal_upgraded = TRUE
+	can_clone = TRUE
+
+/obj/item/device/integrated_circuit_printer/illegal
+	illegal_upgraded = TRUE
+	can_clone = TRUE
 
 /obj/item/device/integrated_circuit_printer/upgraded
 	upgraded = TRUE
@@ -24,23 +34,24 @@
 	name = "fractal integrated circuit printer"
 	desc = "A portable(ish) machine that makes modular circuitry seemingly out of thin air."
 	upgraded = TRUE
+	illegal_upgraded = TRUE
 	can_clone = TRUE
 	debug = TRUE
 
 /obj/item/device/integrated_circuit_printer/attack_robot(mob/user as mob)
 	if(Adjacent(user))
-		return interact(user)
+		return tgui_interact(user)
 	else
 		return ..()
 
 /obj/item/device/integrated_circuit_printer/attackby(var/obj/item/O, var/mob/user)
 	if(istype(O,/obj/item/stack/material))
 		var/obj/item/stack/material/stack = O
-		if(stack.material.name == DEFAULT_WALL_MATERIAL)
+		if(stack.material.name == MAT_STEEL)
 			if(debug)
 				to_chat(user, span("warning", "\The [src] does not need any material."))
 				return
-			var/num = min((max_metal - metal) / metal_per_sheet, stack.amount)
+			var/num = min((max_metal - metal) / metal_per_sheet, stack.get_amount())
 			if(num < 1)
 				to_chat(user, span("warning", "\The [src] is too full to add more metal."))
 				return
@@ -68,6 +79,16 @@
 		attack_self(user)
 		return TRUE
 
+	if(istype(O,/obj/item/weapon/disk/integrated_circuit/upgrade/illegal))
+		if(illegal_upgraded)
+			to_chat(user, span("warning", "\The [src] already has this upgrade."))
+			return TRUE
+		to_chat(user, span("notice", "You install \the [O] into  \the [src]."))
+		illegal_upgraded = TRUE
+		dirty_items = TRUE
+		attack_self(user)
+		return TRUE
+
 	if(istype(O,/obj/item/weapon/disk/integrated_circuit/upgrade/clone))
 		if(can_clone)
 			to_chat(user, span("warning", "\The [src] already has this upgrade."))
@@ -86,11 +107,10 @@
 	return ..()
 
 /obj/item/device/integrated_circuit_printer/attack_self(var/mob/user)
-	interact(user)
 	tgui_interact(user)
 
 /obj/item/device/integrated_circuit_printer/tgui_state(mob/user)
-	return GLOB.tgui_inventory_state
+	return GLOB.tgui_physical_state
 
 /obj/item/device/integrated_circuit_printer/tgui_interact(mob/user, datum/tgui/ui)
 	if(dirty_items)
@@ -109,12 +129,16 @@
 	for(var/category in SScircuit.circuit_fabricator_recipe_list)
 		var/list/cat_obj = list(
 			"name" = category,
-			"items" = list()
+			"items" = null
 		)
+		if(cat_obj["name"] == "Illegal Parts" && !illegal_upgraded)
+			continue
 		var/list/circuit_list = SScircuit.circuit_fabricator_recipe_list[category]
+		var/list/items = list()
 		for(var/path in circuit_list)
 			var/obj/O = path
 			var/can_build = TRUE
+			
 			if(ispath(path, /obj/item/integrated_circuit))
 				var/obj/item/integrated_circuit/IC = path
 				if((initial(IC.spawn_flags) & IC_SPAWN_RESEARCH) && (!(initial(IC.spawn_flags) & IC_SPAWN_DEFAULT)) && !upgraded)
@@ -128,13 +152,15 @@
 				var/obj/item/I = path
 				cost = initial(I.w_class)
 
-			cat_obj["items"].Add(list(list(
+			items.Add(list(list(
 				"name" = initial(O.name),
 				"desc" = initial(O.desc),
 				"can_build" = can_build,
 				"cost" = cost,
 				"path" = path,
 			)))
+		
+		cat_obj["items"] = items
 		categories.Add(list(cat_obj))
 	data["categories"] = categories
 
@@ -208,6 +234,12 @@
 /obj/item/weapon/disk/integrated_circuit/upgrade/advanced
 	name = "integrated circuit printer upgrade disk - advanced designs"
 	desc = "Install this into your integrated circuit printer to enhance it.  This one adds new, advanced designs to the printer."
+
+/obj/item/weapon/disk/integrated_circuit/upgrade/illegal
+	name = "integrated circuit printer upgrade disk - illegal designs"
+	desc = "Install this into your integrated circuit printer to enhance it.  This one adds new, but illegal designs to the printer."
+	icon_state = "upgrade_disk_illegal"
+	origin_tech = list(TECH_ENGINEERING = 3, TECH_DATA = 4, TECH_ILLEGAL = 1)
 
 // To be implemented later.
 /obj/item/weapon/disk/integrated_circuit/upgrade/clone

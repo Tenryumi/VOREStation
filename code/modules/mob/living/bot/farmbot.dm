@@ -6,11 +6,11 @@
 /mob/living/bot/farmbot
 	name = "Farmbot"
 	desc = "The botanist's best friend."
-	icon = 'icons/obj/aibots.dmi'
+	icon = 'icons/obj/chemical_tanks.dmi'
 	icon_state = "farmbot0"
 	health = 50
 	maxHealth = 50
-	req_one_access = list(access_robotics, access_hydroponics, access_xenobiology)	//TFF 11/7/19 - adds Xenobio access on behalf of Nalarac
+	req_one_access = list(access_robotics, access_hydroponics, access_xenobiology)
 
 	var/action = "" // Used to update icon
 	var/waters_trays = 1
@@ -38,7 +38,7 @@
 
 /mob/living/bot/farmbot/tgui_data(mob/user, datum/tgui/ui, datum/tgui_state/state)
 	var/list/data = ..()
-	
+
 	data["on"] = on
 	data["tank"] = !!tank
 	if(tank)
@@ -286,8 +286,8 @@
 	var/datum/effect/effect/system/spark_spread/s = new /datum/effect/effect/system/spark_spread
 	s.set_up(3, 1, src)
 	s.start()
-	qdel(src)
-	return
+	//qdel(src)
+	return ..()
 
 
 /mob/living/bot/farmbot/confirmTarget(var/atom/targ)
@@ -330,7 +330,7 @@
 /obj/item/weapon/farmbot_arm_assembly
 	name = "water tank/robot arm assembly"
 	desc = "A water tank with a robot arm permanently grafted to it."
-	icon = 'icons/obj/aibots.dmi'
+	icon = 'icons/obj/chemical_tanks.dmi'
 	icon_state = "water_arm"
 	var/build_step = 0
 	var/created_name = "Farmbot"
@@ -409,7 +409,7 @@
 		qdel(src)
 
 	else if(istype(W, /obj/item/weapon/pen))
-		var/t = input(user, "Enter new robot name", name, created_name) as text
+		var/t = tgui_input_text(user, "Enter new robot name", name, created_name, MAX_NAME_LEN)
 		t = sanitize(t, MAX_NAME_LEN)
 		if(!t)
 			return

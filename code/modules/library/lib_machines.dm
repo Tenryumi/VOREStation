@@ -11,7 +11,7 @@
 /*
  * Borrowbook datum
  */
-datum/borrowbook // Datum used to keep track of who has borrowed what when and for how long.
+/datum/borrowbook // Datum used to keep track of who has borrowed what when and for how long.
 	var/bookname
 	var/mobname
 	var/getdate
@@ -24,8 +24,8 @@ datum/borrowbook // Datum used to keep track of who has borrowed what when and f
 	name = "visitor computer"
 	icon = 'icons/obj/library.dmi'
 	icon_state = "computer"
-	anchored = 1
-	density = 1
+	anchored = TRUE
+	density = TRUE
 	var/screenstate = 0
 	var/title
 	var/category = "Any"
@@ -73,21 +73,21 @@ datum/borrowbook // Datum used to keep track of who has borrowed what when and f
 		return
 
 	if(href_list["settitle"])
-		var/newtitle = input("Enter a title to search for:") as text|null
+		var/newtitle = tgui_input_text(usr, "Enter a title to search for:")
 		if(newtitle)
 			title = sanitize(newtitle)
 		else
 			title = null
 		title = sanitizeSQL(title)
 	if(href_list["setcategory"])
-		var/newcategory = input("Choose a category to search for:") in list("Any", "Fiction", "Non-Fiction", "Adult", "Reference", "Religion")
+		var/newcategory = tgui_input_list(usr, "Choose a category to search for:", "Category", list("Any", "Fiction", "Non-Fiction", "Adult", "Reference", "Religion"))
 		if(newcategory)
 			category = sanitize(newcategory)
 		else
 			category = "Any"
 		category = sanitizeSQL(category)
 	if(href_list["setauthor"])
-		var/newauthor = input("Enter an author to search for:") as text|null
+		var/newauthor = tgui_input_text(usr, "Enter an author to search for:")
 		if(newauthor)
 			author = sanitize(newauthor)
 		else
@@ -119,8 +119,8 @@ datum/borrowbook // Datum used to keep track of who has borrowed what when and f
 	desc = "Print books from the archives! (You aren't quite sure how they're printed by it, though.)"
 	icon = 'icons/obj/library.dmi'
 	icon_state = "computer"
-	anchored = 1
-	density = 1
+	anchored = TRUE
+	density = TRUE
 	var/arcanecheckout = 0
 	var/screenstate = 0 // 0 - Main Menu, 1 - Inventory, 2 - Checked Out, 3 - Check Out a Book
 	var/sortby = "author"
@@ -139,7 +139,7 @@ datum/borrowbook // Datum used to keep track of who has borrowed what when and f
 	var/static/list/base_genre_books
 
 /obj/machinery/librarycomp/Initialize()
-	..()
+	. = ..()
 
 	if(!base_genre_books || !base_genre_books.len)
 		base_genre_books = list(
@@ -187,7 +187,7 @@ datum/borrowbook // Datum used to keep track of who has borrowed what when and f
 				new /obj/item/weapon/book/tome(src.loc)
 				var/datum/gender/T = gender_datums[user.get_visible_gender()]
 				to_chat(user, "<span class='warning'>Your sanity barely endures the seconds spent in the vault's browsing window. The only thing to remind you of this when you stop browsing is a dusty old tome sitting on the desk. You don't really remember printing it.</span>")
-				user.visible_message("<span class='notice'>\The [user] stares at the blank screen for a few moments, [T.his] expression frozen in fear. When [T.he] finally awakens from it, [T.he] looks a lot older.</span>", 2)
+				user.visible_message("<b>\The [user]</b> stares at the blank screen for a few moments, [T.his] expression frozen in fear. When [T.he] finally awakens from it, [T.he] looks a lot older.", 2)
 				src.arcanecheckout = 0
 		if(1)
 			// Inventory
@@ -286,18 +286,60 @@ datum/borrowbook // Datum used to keep track of who has borrowed what when and f
 				var/DBQuery/query = dbcon_old.NewQuery("SELECT id, author, title, category FROM library ORDER BY [sortby]")
 				query.Execute()
 
+				var/show_admin_options = check_rights(R_ADMIN, show_msg = FALSE)
+
 				while(query.NextRow())
 					var/id = query.item[1]
 					var/author = query.item[2]
 					var/title = query.item[3]
 					var/category = query.item[4]
-					dat += "<tr><td>[author]</td><td>[title]</td><td>[category]</td><td><A href='?src=\ref[src];targetid=[id]'>\[Order\]</A></td></tr>"
+					dat += "<tr><td>[author]</td><td>[title]</td><td>[category]</td><td><A href='?src=\ref[src];targetid=[id]'>\[Order\]</A>"
+					if(show_admin_options) // This isn't the only check, since you can just href-spoof press this button. Just to tidy things up.
+						dat += "<A href='?src=\ref[src];delid=[id]'>\[Del\]</A>"
+					dat += "</td></tr>"
 				dat += "</table>"
 			dat += "<BR><A href='?src=\ref[src];switchscreen=0'>(Return to main menu)</A><BR>"
 
 	//dat += "<A HREF='?src=\ref[user];mach_close=library'>Close</A><br><br>"
 	user << browse(dat, "window=library")
 	onclose(user, "library")
+
+//VOREStation Addition Start
+/obj/machinery/librarycomp/attack_ghost(mob/user)
+
+	var/show_admin_options = check_rights(R_ADMIN, show_msg = FALSE)
+	if(!show_admin_options)
+		. = ..()
+
+	else
+		usr.set_machine(src)
+		var/dat = "<HEAD><TITLE>Book Inventory Management</TITLE></HEAD><BODY>\n" // <META HTTP-EQUIV='Refresh' CONTENT='10'>
+
+		dat += "<h3>ADMINISTRATIVE MANAGEMENT</h3>"
+		establish_old_db_connection()
+
+		if(!dbcon_old.IsConnected())
+			dat += "<font color=red><b>ERROR</b>: Unable to contact External Archive. Please contact your system administrator for assistance.</font>"
+		else
+			dat += {"<A href='?src=\ref[src];orderbyid=1'>(Order book by SS<sup>13</sup>BN)</A><BR><BR>
+			<table>
+			<tr><td><A href='?src=\ref[src];sort=author>AUTHOR</A></td><td><A href='?src=\ref[src];sort=title>TITLE</A></td><td><A href='?src=\ref[src];sort=category>CATEGORY</A></td><td></td></tr>"}
+			var/DBQuery/query = dbcon_old.NewQuery("SELECT id, author, title, category FROM library ORDER BY [sortby]")
+			query.Execute()
+
+			while(query.NextRow())
+				var/id = query.item[1]
+				var/author = query.item[2]
+				var/title = query.item[3]
+				var/category = query.item[4]
+				dat += "<tr><td>[author]</td><td>[title]</td><td>[category]</td><td><A href='?src=\ref[src];delid=[id]'>\[Del\]</A>"
+				dat += "</td></tr>"
+			dat += "</table>"
+		dat += "<BR><A href='?src=\ref[src];switchscreen=0'>(Return to main menu)</A><BR>"
+
+		user << browse(dat, "window=library")
+		onclose(user, "library")
+//VOREStation Addition End
 
 /obj/machinery/librarycomp/emag_act(var/remaining_charges, var/mob/user)
 	if (src.density && !src.emagged)
@@ -336,14 +378,7 @@ datum/borrowbook // Datum used to keep track of who has borrowed what when and f
 				screenstate = 5
 			if("6")
 				if(!bibledelay)
-
-					var/obj/item/weapon/storage/bible/B = new /obj/item/weapon/storage/bible(src.loc)
-					if(GLOB.religion)
-						B.icon_state = GLOB.bible_icon_state
-						B.item_state = GLOB.bible_item_state
-						B.name = GLOB.bible_name
-						B.deity_name = GLOB.deity
-
+					new /obj/item/weapon/storage/bible(src.loc)
 					bibledelay = 1
 					spawn(60)
 						bibledelay = 0
@@ -367,9 +402,9 @@ datum/borrowbook // Datum used to keep track of who has borrowed what when and f
 		if(checkoutperiod < 1)
 			checkoutperiod = 1
 	if(href_list["editbook"])
-		buffer_book = sanitizeSafe(input("Enter the book's title:") as text|null)
+		buffer_book = sanitizeSafe(tgui_input_text(usr, "Enter the book's title:"))
 	if(href_list["editmob"])
-		buffer_mob = sanitize(input("Enter the recipient's name:") as text|null, MAX_NAME_LEN)
+		buffer_mob = sanitize(tgui_input_text(usr, "Enter the recipient's name:", null, null, MAX_NAME_LEN), MAX_NAME_LEN)
 	if(href_list["checkout"])
 		var/datum/borrowbook/b = new /datum/borrowbook
 		b.bookname = sanitizeSafe(buffer_book)
@@ -384,11 +419,11 @@ datum/borrowbook // Datum used to keep track of who has borrowed what when and f
 		var/obj/item/weapon/book/b = locate(href_list["delbook"])
 		inventory.Remove(b)
 	if(href_list["setauthor"])
-		var/newauthor = sanitize(input("Enter the author's name: ") as text|null)
+		var/newauthor = sanitize(tgui_input_text(usr, "Enter the author's name: "))
 		if(newauthor)
 			scanner.cache.author = newauthor
 	if(href_list["setcategory"])
-		var/newcategory = input("Choose a category: ") in list("Fiction", "Non-Fiction", "Adult", "Reference", "Religion")
+		var/newcategory = tgui_input_list(usr, "Choose a category: ", "Category", list("Fiction", "Non-Fiction", "Adult", "Reference", "Religion"))
 		if(newcategory)
 			upload_category = newcategory
 
@@ -396,14 +431,14 @@ datum/borrowbook // Datum used to keep track of who has borrowed what when and f
 	if(href_list["upload"])
 		if(scanner)
 			if(scanner.cache)
-				var/choice = input("Are you certain you wish to upload this title to the Archive?") in list("Confirm", "Abort")
+				var/choice = tgui_alert(usr, "Are you certain you wish to upload this title to the Archive?", "Confirmation", list("Confirm", "Abort"))
 				if(choice == "Confirm")
 					if(scanner.cache.unique)
-						alert("This book has been rejected from the database. Aborting!")
+						tgui_alert_async(usr, "This book has been rejected from the database. Aborting!")
 					else
 						establish_old_db_connection()
 						if(!dbcon_old.IsConnected())
-							alert("Connection to Archive has been severed. Aborting.")
+							tgui_alert_async(usr, "Connection to Archive has been severed. Aborting.")
 						else
 							/*
 							var/sqltitle = dbcon.Quote(scanner.cache.name)
@@ -420,14 +455,14 @@ datum/borrowbook // Datum used to keep track of who has borrowed what when and f
 								to_chat(usr,query.ErrorMsg())
 							else
 								log_game("[usr.name]/[usr.key] has uploaded the book titled [scanner.cache.name], [length(scanner.cache.dat)] signs")
-								alert("Upload Complete.")
+								tgui_alert_async(usr, "Upload Complete.")
 	//VOREStation Edit End
 
 	if(href_list["targetid"])
 		var/sqlid = sanitizeSQL(href_list["targetid"])
 		establish_old_db_connection()
 		if(!dbcon_old.IsConnected())
-			alert("Connection to Archive has been severed. Aborting.")
+			tgui_alert_async(usr, "Connection to Archive has been severed. Aborting.")
 		if(bibledelay)
 			for (var/mob/V in hearers(src))
 				V.show_message("<b>[src]</b>'s monitor flashes, \"Printer unavailable. Please allow a short time before attempting to print.\"")
@@ -451,8 +486,21 @@ datum/borrowbook // Datum used to keep track of who has borrowed what when and f
 				B.item_state = B.icon_state
 				src.visible_message("[src]'s printer hums as it produces a completely bound book. How did it do that?")
 				break
+
+	if(href_list["delid"])
+		if(!check_rights(R_ADMIN))
+			return
+		var/sqlid = sanitizeSQL(href_list["delid"])
+		establish_old_db_connection()
+		if(!dbcon_old.IsConnected())
+			tgui_alert_async(usr, "Connection to Archive has been severed. Aborting.")
+		else
+			var/DBQuery/query = dbcon_old.NewQuery("DELETE FROM library WHERE id=[sqlid]")
+			query.Execute()
+			log_admin("[usr.key] has deleted the book [sqlid]")	//VOREStation Addition
+
 	if(href_list["orderbyid"])
-		var/orderid = input("Enter your order:") as num|null
+		var/orderid = tgui_input_number(usr, "Enter your order:")
 		if(orderid)
 			if(isnum(orderid))
 				var/nhref = "src=\ref[src];targetid=[orderid]"
@@ -475,8 +523,8 @@ datum/borrowbook // Datum used to keep track of who has borrowed what when and f
 	desc = "A scanner for scanning in books and papers."
 	icon = 'icons/obj/library.dmi'
 	icon_state = "bigscanner"
-	anchored = 1
-	density = 1
+	anchored = TRUE
+	density = TRUE
 	var/obj/item/weapon/book/cache		// Last scanned book
 
 /obj/machinery/libraryscanner/attackby(var/obj/O as obj, var/mob/user as mob)
@@ -527,8 +575,8 @@ datum/borrowbook // Datum used to keep track of who has borrowed what when and f
 	desc = "Bundles up a stack of inserted paper into a convenient book format."
 	icon = 'icons/obj/library.dmi'
 	icon_state = "binder"
-	anchored = 1
-	density = 1
+	anchored = TRUE
+	density = TRUE
 
 /obj/machinery/bookbinder/attackby(var/obj/O as obj, var/mob/user as mob)
 	if(istype(O, /obj/item/weapon/paper) || istype(O, /obj/item/weapon/paper_bundle))

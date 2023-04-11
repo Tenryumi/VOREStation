@@ -82,13 +82,13 @@
 	//use up stored charges
 	if(charges >= 10)
 		charges -= 10
-		new /obj/effect/spider/eggcluster(pick(view(1,src)))
+		new /obj/effect/spider/eggcluster(pick(RANGE_TURFS(1,src)))
 
 	if(charges >= 3)
 		if(prob(5))
 			charges -= 1
 			var/spawn_type = pick(/mob/living/simple_mob/creature)
-			new spawn_type(pick(view(1,src)))
+			new spawn_type(pick(RANGE_TURFS(1,src)))
 			playsound(src, pick('sound/hallucinations/growl1.ogg','sound/hallucinations/growl2.ogg','sound/hallucinations/growl3.ogg'), 50, 1, -3)
 
 	if(charges >= 1)
@@ -99,7 +99,7 @@
 
 	if(charges >= 0.1)
 		if(prob(5))
-			src.visible_message("<font color='red'>[bicon(src)] [src]'s eyes glow ruby red for a moment!</font>")
+			src.visible_message("<font color='red'>\icon[src][bicon(src)] [src]'s eyes glow ruby red for a moment!</font>")
 			charges -= 0.1
 
 	//check on our shadow wights
@@ -118,7 +118,7 @@
 
 /obj/item/weapon/vampiric/hear_talk(mob/M, list/message_pieces, verb)
 	..()
-	if(world.time - last_bloodcall >= bloodcall_interval && M in view(7, src))
+	if(world.time - last_bloodcall >= bloodcall_interval && (M in view(7, src)))
 		bloodcall(M)
 
 /obj/item/weapon/vampiric/proc/bloodcall(var/mob/living/carbon/human/M)
@@ -170,7 +170,7 @@
 	name = "shadow wight"
 	icon = 'icons/mob/mob.dmi'
 	icon_state = "shade"
-	density = 1
+	density = TRUE
 
 /obj/effect/shadow_wight/New()
 	START_PROCESSING(SSobj, src)

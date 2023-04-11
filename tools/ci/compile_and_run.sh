@@ -11,9 +11,26 @@ cp config/example/* config/
 # Define any unit test defines that need to run
 echo "#define ${TEST_DEFINE} 1" > ${TEST_FILE}
 
-# Compile a copy of the codebase
-DreamMaker $BASENAME.dme
+replace=${REPLACE}
+# Messy map compile code
+if grep -q '#include[[:space:]]\"maps\\tether\\tether.dm\"' $BASENAME.dme && $replace; then
+  sed -i 's/#include[[:space:]]\"maps\\tether\\tether.dm\"/#include\ \"maps\\'${MAP}'\\'${MAP}'.dm\"/g' $BASENAME.dme
+  replace=false
+elif grep -q '#include[[:space:]]\"maps\\stellardelight\\stellar_delight.dm\"' $BASENAME.dme && $replace; then
+  sed -i 's/#include[[:space:]]\"maps\\stellardelight\\stellar_delight.dm\"/#include\ \"maps\\'${MAP}'\\'${MAP}'.dm\"/g' $BASENAME.dme
+  replace=false
+elif grep -q '#include[[:space:]]\"maps\\groundbase\\groundbase.dm\"' $BASENAME.dme && $replace; then
+  sed -i 's/#include[[:space:]]\"maps\\groundbase\\groundbase.dm\"/#include\ \"maps\\'${MAP}'\\'${MAP}'.dm\"/g' $BASENAME.dme
+  replace=false
+fi
+
+# Compile a copy of the codebase, and print errors as Github Actions annotations
+DreamMaker $BASENAME.dme > compile.log
 exitVal=$?
+cat compile.log
+if [ $exitVal -gt 0 ]; then
+	sed -E -n 's/^(.+?\.dm):([0-9]+):(error|warning): (.+)$/::\3 file=\1,line=\2::\4/gp' < compile.log
+fi
 
 # Compile failed on map_test
 if [ $exitVal -gt 0 ] && [ $TEST_DEFINE = "MAP_TEST" ]; then

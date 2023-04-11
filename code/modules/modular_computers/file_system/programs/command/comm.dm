@@ -12,10 +12,11 @@
 	tguimodule_path =  /datum/tgui_module/communications/ntos
 	extended_desc = "Used to command and control. Can relay long-range communications. This program can not be run on tablet computers."
 	required_access = access_heads
-	requires_ntnet = 1
+	requires_ntnet = TRUE
 	size = 12
 	usage_flags = PROGRAM_CONSOLE | PROGRAM_LAPTOP
 	network_destination = "long-range communication array"
+	category = PROG_COMMAND
 	var/datum/comm_message_listener/message_core = new
 
 /datum/computer_file/program/comm/clone()
@@ -31,11 +32,11 @@ var/list/comm_message_listeners = list() //We first have to initialize list then
 var/datum/comm_message_listener/global_message_listener = new //May be used by admins
 var/last_message_id = 0
 
-proc/get_comm_message_id()
+/proc/get_comm_message_id()
 	last_message_id = last_message_id + 1
 	return last_message_id
 
-proc/post_comm_message(var/message_title, var/message_text)
+/proc/post_comm_message(var/message_title, var/message_text)
 	var/list/message = list()
 	message["id"] = get_comm_message_id()
 	message["title"] = message_title

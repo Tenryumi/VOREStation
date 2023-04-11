@@ -1,12 +1,14 @@
+/**
+ * @file
+ * @copyright 2020 Aleksej Komarov
+ * @license MIT
+ */
+
 // UI states, which are mirrored from the BYOND code.
 export const UI_INTERACTIVE = 2;
 export const UI_UPDATE = 1;
 export const UI_DISABLED = 0;
 export const UI_CLOSE = -1;
-
-// Atmospheric helpers
-/** 0.0 Degrees Celsius in Kelvin */
-export const T0C = 273.15;
 
 // All game related colors are stored here
 export const COLORS = {
@@ -21,24 +23,31 @@ export const COLORS = {
     centcom: '#00c100',
     other: '#c38312',
   },
+  // VOREStation Addition begin
   manifest: {
-    command: "#3333FF",
-    security: "#8e0000",
-    medical: "#006600",
-    engineering: "#b27300",
-    science: "#a65ba6",
-    cargo: "#bb9040",
-    planetside: "#555555",
-    civilian: "#a32800",
-    miscellaneous: "#666666",
-    silicon: "#222222",
+    command: '#3333FF',
+    security: '#8e0000',
+    medical: '#006600',
+    engineering: '#b27300',
+    science: '#a65ba6',
+    cargo: '#bb9040',
+    planetside: '#555555',
+    civilian: '#a32800',
+    miscellaneous: '#666666',
+    silicon: '#222222',
   },
+  // VOREStation Addition end
   // Damage type colors
   damageType: {
     oxy: '#3498db',
     toxin: '#2ecc71',
     burn: '#e67e22',
     brute: '#e74c3c',
+  },
+  // reagent / chemistry related colours
+  reagent: {
+    acidicbuffer: '#fbc314',
+    basicbuffer: '#3853a4',
   },
 };
 
@@ -64,99 +73,99 @@ export const CSS_COLORS = [
   'label',
 ];
 
-
+// VOREStation Edit Start
 // If you ever add a new radio channel, you can either manually update this, or
 // go use /client/verb/generate_tgui_radio_constants() in communications.dm.
 export const RADIO_CHANNELS = [
   {
-    "name": "Mercenary",
-    "freq": 1213,
-    "color": "#6D3F40",
+    'name': 'Mercenary',
+    'freq': 1213,
+    'color': '#6D3F40',
   },
   {
-    "name": "Raider",
-    "freq": 1277,
-    "color": "#6D3F40",
+    'name': 'Raider',
+    'freq': 1277,
+    'color': '#6D3F40',
   },
   {
-    "name": "Special Ops",
-    "freq": 1341,
-    "color": "#5C5C8A",
+    'name': 'Special Ops',
+    'freq': 1341,
+    'color': '#5C5C8A',
   },
   {
-    "name": "AI Private",
-    "freq": 1343,
-    "color": "#FF00FF",
+    'name': 'AI Private',
+    'freq': 1343,
+    'color': '#FF00FF',
   },
   {
-    "name": "Response Team",
-    "freq": 1345,
-    "color": "#5C5C8A",
+    'name': 'Response Team',
+    'freq': 1345,
+    'color': '#5C5C8A',
   },
   {
-    "name": "Supply",
-    "freq": 1347,
-    "color": "#5F4519",
+    'name': 'Supply',
+    'freq': 1347,
+    'color': '#5F4519',
   },
   {
-    "name": "Service",
-    "freq": 1349,
-    "color": "#6eaa2c",
+    'name': 'Service',
+    'freq': 1349,
+    'color': '#6eaa2c',
   },
   {
-    "name": "Science",
-    "freq": 1351,
-    "color": "#993399",
+    'name': 'Science',
+    'freq': 1351,
+    'color': '#993399',
   },
   {
-    "name": "Command",
-    "freq": 1353,
-    "color": "#193A7A",
+    'name': 'Command',
+    'freq': 1353,
+    'color': '#193A7A',
   },
   {
-    "name": "Medical",
-    "freq": 1355,
-    "color": "#008160",
+    'name': 'Medical',
+    'freq': 1355,
+    'color': '#008160',
   },
   {
-    "name": "Engineering",
-    "freq": 1357,
-    "color": "#A66300",
+    'name': 'Engineering',
+    'freq': 1357,
+    'color': '#A66300',
   },
   {
-    "name": "Security",
-    "freq": 1359,
-    "color": "#A30000",
+    'name': 'Security',
+    'freq': 1359,
+    'color': '#A30000',
   },
   {
-    "name": "Explorer",
-    "freq": 1361,
-    "color": "#555555",
+    'name': 'Explorer',
+    'freq': 1361,
+    'color': '#555555',
   },
   {
-    "name": "Talon",
-    "freq": 1363,
-    "color": "#555555",
+    'name': 'Talon',
+    'freq': 1363,
+    'color': '#555555',
   },
   {
-    "name": "Common",
-    "freq": 1459,
-    "color": "#008000",
+    'name': 'Common',
+    'freq': 1459,
+    'color': '#008000',
   },
   {
-    "name": "Entertainment",
-    "freq": 1461,
-    "color": "#339966",
+    'name': 'Entertainment',
+    'freq': 1461,
+    'color': '#339966',
   },
   {
-    "name": "Security(I)",
-    "freq": 1475,
-    "color": "#008000",
+    'name': 'Security(I)',
+    'freq': 1475,
+    'color': '#008000',
   },
   {
-    "name": "Medical(I)",
-    "freq": 1485,
-    "color": "#008000",
+    'name': 'Medical(I)',
+    'freq': 1485,
+    'color': '#008000',
   },
 ];
 
@@ -265,18 +274,21 @@ const GASES = [
   },
 ];
 
+// VOREStation Edit End
+
 export const getGasLabel = (gasId, fallbackValue) => {
   const gasSearchString = String(gasId).toLowerCase();
-  const gas = GASES.find(gas => gas.id === gasSearchString
-    || gas.name.toLowerCase() === gasSearchString);
-  return gas && gas.label
-    || fallbackValue
-    || gasId;
+  const gas = GASES.find((gas) => gas.id === gasSearchString || gas.name.toLowerCase() === gasSearchString);
+  return (gas && gas.label) || fallbackValue || gasId;
 };
 
-export const getGasColor = gasId => {
+export const getGasColor = (gasId) => {
   const gasSearchString = String(gasId).toLowerCase();
-  const gas = GASES.find(gas => gas.id === gasSearchString
-    || gas.name.toLowerCase() === gasSearchString);
+  const gas = GASES.find((gas) => gas.id === gasSearchString || gas.name.toLowerCase() === gasSearchString);
   return gas && gas.color;
 };
+
+// VOREStation Addition start
+/** 0.0 Degrees Celsius in Kelvin */
+export const T0C = 273.15;
+// VOREStation Addition end

@@ -25,6 +25,7 @@ SUBSYSTEM_DEF(persist)
 		return
 	if(!resumed)
 		src.currentrun = human_mob_list.Copy()
+		src.currentrun += silicon_mob_list.Copy()
 
 	//cache for sanic speed (lists are references anyways)
 	var/list/currentrun = src.currentrun
@@ -41,9 +42,7 @@ SUBSYSTEM_DEF(persist)
 				return
 			continue
 
-		// Do not collect useless PTO
 		var/department_earning = J.pto_type
-		clear_unused_pto(M)
 
 		// Determine special PTO types and convert properly
 		if(department_earning == PTO_CYBORG)
@@ -60,6 +59,8 @@ SUBSYSTEM_DEF(persist)
 		var/client/C = M.client
 		var/wait_in_hours = wait / (1 HOUR)
 		var/pto_factored = wait_in_hours * J.timeoff_factor
+		if(J.playtime_only)
+			pto_factored = 0
 		LAZYINITLIST(C.department_hours)
 		LAZYINITLIST(C.play_hours)
 		var/dept_hours = C.department_hours
@@ -104,11 +105,3 @@ SUBSYSTEM_DEF(persist)
 	// Let's check the mind.
 	if(M.mind && M.mind.assigned_role)
 		. = job_master.GetJob(M.mind.assigned_role)
-
-// This proc tries makes sure old Command PTO doesn't linger
-/datum/controller/subsystem/persist/proc/clear_unused_pto(var/mob/M)
-	var/client/C = M.client
-	LAZYINITLIST(C.department_hours)
-	if(C.department_hours[DEPARTMENT_COMMAND])
-		C.department_hours[DEPARTMENT_COMMAND] = null
-		C.department_hours.Remove(DEPARTMENT_COMMAND)

@@ -70,10 +70,12 @@ won't update every console in existence) but it's more of a hassle to do. Also, 
 	return return_name
 
 /obj/machinery/computer/rdconsole/proc/CallReagentName(var/ID)
-	var/datum/reagent/R = SSchemistry.chemical_reagents["[ID]"]
-	if(!R)
-		return ID
-	return R.name
+	var/return_name = ID
+	for(var/datum/reagent/R in SSchemistry.chemical_reagents)
+		if(R.id == ID)
+			return_name = R.name
+			break
+	return return_name
 
 /obj/machinery/computer/rdconsole/proc/SyncRDevices() //Makes sure it is properly sync'ed up with the devices attached to it (if any).
 	for(var/obj/machinery/r_n_d/D in range(3, src))
@@ -117,7 +119,7 @@ won't update every console in existence) but it's more of a hassle to do. Also, 
 	//Loading a disk into it.
 	if(istype(D, /obj/item/weapon/disk))
 		if(t_disk || d_disk)
-			to_chat(user, "A disk is already loaded into the machine.")
+			to_chat(user, "<span class='filter_notice'>A disk is already loaded into the machine.</span>")
 			return
 
 		if(istype(D, /obj/item/weapon/disk/tech_disk))

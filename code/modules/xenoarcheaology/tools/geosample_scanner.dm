@@ -1,8 +1,8 @@
 /obj/machinery/radiocarbon_spectrometer
 	name = "radiocarbon spectrometer"
 	desc = "A specialised, complex scanner for gleaning information on all manner of small things."
-	anchored = 1
-	density = 1
+	anchored = TRUE
+	density = TRUE
 	icon = 'icons/obj/virology_vr.dmi' //VOREStation Edit
 	icon_state = "analyser"
 
@@ -64,7 +64,7 @@
 		to_chat(user, "<span class='warning'>You can't do that while [src] is scanning!</span>")
 	else
 		if(istype(I, /obj/item/stack/nanopaste))
-			var/choice = alert("What do you want to do with the nanopaste?","Radiometric Scanner","Scan nanopaste","Fix seal integrity")
+			var/choice = tgui_alert(usr, "What do you want to do with the nanopaste?","Radiometric Scanner",list("Scan nanopaste","Fix seal integrity"))
 			if(choice == "Fix seal integrity")
 				var/obj/item/stack/nanopaste/N = I
 				var/amount_used = min(N.get_amount(), 10 - scanner_seal_integrity / 10)
@@ -75,7 +75,7 @@
 			var/obj/item/weapon/reagent_containers/glass/G = I
 			if(!G.is_open_container())
 				return
-			var/choice = alert("What do you want to do with the container?","Radiometric Scanner","Add coolant","Empty coolant","Scan container")
+			var/choice = tgui_alert(usr, "What do you want to do with the container?","Radiometric Scanner",list("Add coolant","Empty coolant","Scan container"))
 			if(choice == "Add coolant")
 				var/amount_transferred = min(src.reagents.maximum_volume - src.reagents.total_volume, G.reagents.total_volume)
 				var/trans = G.reagents.trans_to_obj(src, amount_transferred)
@@ -126,7 +126,7 @@
 
 /obj/machinery/radiocarbon_spectrometer/tgui_data(mob/user, datum/tgui/ui, datum/tgui_state/state)
 	var/list/data = ..()
-	
+
 	// this is the data which will be sent to the ui
 	data["scanned_item"] = (scanned_item ? scanned_item.name : "")
 	data["scanned_item_desc"] = (scanned_item ? (scanned_item.desc ? scanned_item.desc : "No information on record.") : "")
@@ -268,16 +268,16 @@
 			//emergency stop if seal integrity reaches 0
 			if(scanner_seal_integrity <= 0 || (scanner_temperature >= 1273 && !rad_shield))
 				stop_scanning()
-				src.visible_message("<font color='blue'>[bicon(src)] buzzes unhappily. It has failed mid-scan!</font>", 2)
+				src.visible_message("<font color='blue'>\icon[src][bicon(src)] buzzes unhappily. It has failed mid-scan!</font>", 2)
 
 			if(prob(5))
-				src.visible_message("<font color='blue'>[bicon(src)] [pick("whirrs","chuffs","clicks")][pick(" excitedly"," energetically"," busily")].</font>", 2)
+				src.visible_message("<font color='blue'>\icon[src][bicon(src)] [pick("whirrs","chuffs","clicks")][pick(" excitedly"," energetically"," busily")].</font>", 2)
 	else
 		//gradually cool down over time
 		if(scanner_temperature > 0)
 			scanner_temperature = max(scanner_temperature - 5 - 10 * rand(), 0)
 		if(prob(0.75))
-			src.visible_message("<font color='blue'>[bicon(src)] [pick("plinks","hisses")][pick(" quietly"," softly"," sadly"," plaintively")].</font>", 2)
+			src.visible_message("<font color='blue'>\icon[src][bicon(src)] [pick("plinks","hisses")][pick(" quietly"," softly"," sadly"," plaintively")].</font>", 2)
 			playsound(src, 'sound/effects/ding.ogg', 25)
 	last_process_worldtime = world.time
 
@@ -296,14 +296,14 @@
 		used_coolant = 0
 
 /obj/machinery/radiocarbon_spectrometer/proc/complete_scan()
-	src.visible_message("<font color='blue'>[bicon(src)] makes an insistent chime.</font>", 2)
+	src.visible_message("<font color='blue'>\icon[src][bicon(src)] makes an insistent chime.</font>", 2)
 
 	if(scanned_item)
 		//create report
 		var/obj/item/weapon/paper/P = new(src)
 		P.name = "[src] report #[++report_num]: [scanned_item.name]"
 		P.stamped = list(/obj/item/weapon/stamp)
-		P.overlays = list("paper_stamped")
+		P.add_overlay("paper_stamped")
 
 		//work out data
 		var/data = " - Mundane object: [scanned_item.desc ? scanned_item.desc : "No information on record."]<br>"

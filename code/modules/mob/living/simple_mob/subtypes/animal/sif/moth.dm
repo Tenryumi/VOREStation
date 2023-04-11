@@ -41,12 +41,14 @@
 
 	hovering = TRUE
 
-	movement_cooldown = 0.5
+	movement_cooldown = -1
 
 	melee_damage_lower = 5
 	melee_damage_upper = 10
 	base_attack_cooldown = 1.5 SECONDS
 	attacktext = list("nipped", "bit", "pinched")
+
+	organ_names = /decl/mob_organ_names/moth
 
 	projectiletype = /obj/item/projectile/energy/blob
 
@@ -77,7 +79,6 @@
 
 	threaten_sound = 'sound/effects/spray3.ogg'
 	stand_down_sound = 'sound/effects/squelch1.ogg'
-
 
 /obj/effect/effect/smoke/elemental/mothspore
 	name = "spore cloud"
@@ -116,7 +117,7 @@
 			return FALSE
 
 /mob/living/simple_mob/animal/sif/tymisian/Initialize()
-	..()
+	. = ..()
 	smoke_spore = new
 	verbs += /mob/living/proc/ventcrawl
 	verbs += /mob/living/proc/hide
@@ -141,3 +142,6 @@
 	if(energy >= 20)
 		return TRUE
 	return FALSE
+
+/decl/mob_organ_names/moth
+	hit_zones = list("head", "thorax", "abdomen", "left forewing", "left hindwing", "right forewing", "right hindwing", "left foreleg", "right foreleg", "left hindleg", "right hindleg")

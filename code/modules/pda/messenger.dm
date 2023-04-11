@@ -33,8 +33,7 @@
 	else
 		var/convopdas[0]
 		var/pdas[0]
-		for(var/A in PDAs)
-			var/obj/item/device/pda/P = A
+		for(var/obj/item/device/pda/P as anything in PDAs)
 			var/datum/data/pda/app/messenger/PM = P.find_program(/datum/data/pda/app/messenger)
 
 			if(!P.owner || PM.toff || P == pda || PM.m_hidden)
@@ -49,8 +48,7 @@
 
 		var/list/plugins = list()
 		if(pda.cartridge)
-			for(var/A in pda.cartridge.messenger_plugins)
-				var/datum/data/pda/messenger_plugin/P = A
+			for(var/datum/data/pda/messenger_plugin/P as anything in pda.cartridge.messenger_plugins)
 				plugins += list(list(name = P.name, icon = P.icon, ref = "\ref[P]"))
 		data["plugins"] = plugins
 
@@ -119,10 +117,10 @@
 			create_message(usr, P)
 			if(href_list["target"] in conversations)            // Need to make sure the message went through, if not welp.
 				active_conversation = href_list["target"]
-	
+
 
 /datum/data/pda/app/messenger/proc/create_message(var/mob/living/U, var/obj/item/device/pda/P)
-	var/t = input(U, "Please enter message", name, null) as text|null
+	var/t = tgui_input_text(U, "Please enter message", name, null)
 	if(!t)
 		return
 	t = sanitize(copytext(t, 1, MAX_MESSAGE_LEN))
@@ -148,8 +146,7 @@
 	//var/telecomms_intact = telecomms_process(P.owner, owner, t)
 	var/obj/machinery/message_server/useMS = null
 	if(message_servers)
-		for(var/A in message_servers)
-			var/obj/machinery/message_server/MS = A
+		for(var/obj/machinery/message_server/MS as anything in message_servers)
 		//PDAs are now dependent on the Message Server.
 			if(MS.active)
 				useMS = MS
@@ -181,6 +178,7 @@
 
 		SStgui.update_user_uis(U, P) // Update the sending user's PDA UI so that they can see the new message
 		log_pda("(PDA: [src.name]) sent \"[t]\" to [P.name]", usr)
+		to_chat(U, "\icon[pda][bicon(pda)] <b>Sent message to [P.owner] ([P.ownjob]), </b>\"[t]\"")
 	else
 		to_chat(U, "<span class='notice'>ERROR: Messaging server is not responding.</span>")
 
@@ -193,8 +191,7 @@
 		to_chat(usr, "Turn on your receiver in order to send messages.")
 		return
 
-	for(var/A in PDAs)
-		var/obj/item/device/pda/P = A
+	for(var/obj/item/device/pda/P as anything in PDAs)
 		var/datum/data/pda/app/messenger/PM = P.find_program(/datum/data/pda/app/messenger)
 
 		if(!P.owner || !PM || PM.hidden || P == pda || PM.toff)
@@ -227,7 +224,7 @@
 /datum/data/pda/app/messenger/multicast
 /datum/data/pda/app/messenger/multicast/receive_message(list/data, ref)
 	. = ..()
-	
+
 	var/obj/item/device/pda/multicaster/M = pda
 	if(!istype(M))
 		return

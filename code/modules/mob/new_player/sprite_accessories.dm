@@ -23,17 +23,26 @@
 	var/icon_state		// the icon_state of the accessory
 	var/preview_state	// a custom preview state for whatever reason
 
-	var/name			// the preview name of the accessory
+	var/name = "ERROR - FIXME" // the preview name of the accessory
 
 	// Determines if the accessory will be skipped or included in random hair generations
 	var/gender = NEUTER
 
-	// Restrict some styles to specific species
-	var/list/species_allowed = list(SPECIES_HUMAN,SPECIES_PROMETHEAN,SPECIES_HUMAN_VATBORN)
+	// Restrict some styles to specific species. Set to null to perform no checking.
+	var/list/species_allowed = list()
 
 	// Whether or not the accessory can be affected by colouration
 	var/do_colouration = 1
 
+	var/color_blend_mode = ICON_MULTIPLY	// If checked.
+
+	// Ckey of person allowed to use this, if defined.
+	var/list/ckeys_allowed = null
+
+	/// Should this sprite block emissives?
+	var/em_block = FALSE
+
+	var/list/hide_body_parts = list() //Uses organ tag defines. Bodyparts in this list do not have their icons rendered, allowing for more spriter freedom when doing taur/digitigrade stuff.
 
 /*
 ////////////////////////////
@@ -49,7 +58,7 @@
 	var/flags
 
 /datum/sprite_accessory/hair/eighties
-	name = "80's"
+	name = "80s"
 	icon_state = "hair_80s"
 	flags = HAIR_TIEABLE
 
@@ -64,9 +73,44 @@
 	flags = HAIR_TIEABLE
 
 /datum/sprite_accessory/hair/afro_large
-	name = "Big Afro"
+	name = "Afro, Big"
 	icon_state = "hair_bigafro"
 	flags = HAIR_TIEABLE
+
+/datum/sprite_accessory/hair/afropuffdouble
+	name = "Afropuff, Double"
+	icon_state = "hair_afropuffdouble"
+	flags = HAIR_TIEABLE
+
+/datum/sprite_accessory/hair/afropuffleft
+	name = "Afropuff, Left"
+	icon_state = "hair_afropuffleft"
+	flags = HAIR_TIEABLE
+
+/datum/sprite_accessory/hair/afropuffright
+	name = "Afropuff, Right"
+	icon_state = "hair_afropuffright"
+	flags = HAIR_TIEABLE
+
+/datum/sprite_accessory/hair/angelique
+	name = "Angelique"
+	icon_state = "hair_angelique"
+	flags = HAIR_TIEABLE
+
+/datum/sprite_accessory/hair/antonio
+	name = "Antonio"
+	icon_state = "hair_antonio"
+	flags = HAIR_VERY_SHORT
+
+/datum/sprite_accessory/hair/aradia
+	name = "Aradia"
+	icon_state = "hair_aradia"
+	flags = HAIR_TIEABLE
+
+/datum/sprite_accessory/hair/messyhair
+	name = "All Up"
+	icon_state = "hair_messyhair"
+	flags = HAIR_VERY_SHORT
 
 /datum/sprite_accessory/hair/amazon
 	name = "Amazon"
@@ -76,6 +120,17 @@
 /datum/sprite_accessory/hair/antenna
 	name = "Antenna"
 	icon_state = "hair_antenna"
+
+/datum/sprite_accessory/hair/astolfo
+	name = "Astolfo"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "hair_astolfo"
+
+/datum/sprite_accessory/hair/averagejoe
+	name = "Average Joe"
+	icon_state = "hair_averagejoe"
+	flags = HAIR_VERY_SHORT
 
 /datum/sprite_accessory/hair/bald
 	name = "Bald"
@@ -92,6 +147,11 @@
 	name = "Balding Hair"
 	icon_state = "hair_e"
 	flags = HAIR_VERY_SHORT
+
+/datum/sprite_accessory/hair/band
+	name = "Band"
+	icon_state = "hair_band"
+	flags = HAIR_TIEABLE
 
 /datum/sprite_accessory/hair/beachwave
 	name = "Beach Waves"
@@ -133,6 +193,10 @@
 	icon_state = "hair_beehive2"
 	flags = HAIR_TIEABLE
 
+/datum/sprite_accessory/hair/bieber
+	name = "Bieber"
+	icon_state = "hair_bieb"
+
 /datum/sprite_accessory/hair/belenko
 	name = "Belenko"
 	icon_state = "hair_belenko"
@@ -141,6 +205,11 @@
 /datum/sprite_accessory/hair/belenkotied
 	name = "Belenko Tied"
 	icon_state = "hair_belenkotied"
+	flags = HAIR_TIEABLE
+
+/datum/sprite_accessory/hair/bigcurls
+	name = "Big Curls"
+	icon_state = "hair_bigcurls"
 	flags = HAIR_TIEABLE
 
 /datum/sprite_accessory/hair/bob
@@ -152,6 +221,11 @@
 /datum/sprite_accessory/hair/bobcutalt
 	name = "Bob Chin Length"
 	icon_state = "hair_bobcutalt"
+	flags = HAIR_TIEABLE
+
+/datum/sprite_accessory/hair/midb
+	name = "Bob, Mid-length"
+	icon_state = "hair_midb"
 	flags = HAIR_TIEABLE
 
 /datum/sprite_accessory/hair/bobcurl
@@ -180,6 +254,16 @@
 /datum/sprite_accessory/hair/braid2
 	name = "Braid Long"
 	icon_state = "hair_hbraid"
+	flags = HAIR_TIEABLE
+
+/datum/sprite_accessory/hair/longbraid
+	name = "Braid Long, Alt"
+	icon_state = "hair_longbraid"
+	flags = HAIR_TIEABLE
+
+/datum/sprite_accessory/hair/longbraidalt
+	name = "Braid Long, Alt 2"
+	icon_state = "hair_braidalt"
 	flags = HAIR_TIEABLE
 
 /datum/sprite_accessory/hair/mbraid
@@ -263,6 +347,13 @@
 	icon_state = "hair_celebcurls"
 	flags = HAIR_TIEABLE
 
+/datum/sprite_accessory/hair/citheronia_colorable
+	name = "Citheronia"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "citheronia_hair_c"
+	do_colouration = 1
+
 /datum/sprite_accessory/hair/crono
 	name = "Chrono"
 	icon_state = "hair_toriyama"
@@ -281,6 +372,11 @@
 /datum/sprite_accessory/hair/combover
 	name = "Combover"
 	icon_state = "hair_combover"
+
+/datum/sprite_accessory/hair/cornbun
+	name = "Cornbun"
+	icon_state = "hair_cornbun"
+	flags = HAIR_TIEABLE
 
 /datum/sprite_accessory/hair/country
 	name = "Country"
@@ -302,6 +398,11 @@
 	icon_state = "hair_c"
 	flags = HAIR_VERY_SHORT
 
+/datum/sprite_accessory/hair/darcy
+	name = "Darcy"
+	icon_state = "hair_darcy"
+	flags = HAIR_VERY_SHORT
+
 /datum/sprite_accessory/hair/dave
 	name = "Dave"
 	icon_state = "hair_dave"
@@ -309,6 +410,11 @@
 /datum/sprite_accessory/hair/devillock
 	name = "Devil Lock"
 	icon_state = "hair_devilock"
+
+/datum/sprite_accessory/hair/dirk
+	name = "Dirk"
+	icon_state = "hair_dirk"
+	flags = HAIR_VERY_SHORT
 
 /datum/sprite_accessory/hair/donutbun
 	name = "Donut Bun"
@@ -319,10 +425,24 @@
 	icon_state = "hair_dreads"
 	flags = HAIR_TIEABLE
 
+/datum/sprite_accessory/hair/dreadslong
+	name = "Dreads Long"
+	icon_state = "hair_dreadslong"
+	flags = HAIR_TIEABLE
+
+/datum/sprite_accessory/hair/dreadslongalt
+	name = "Dreads Long, Alt"
+	icon_state = "hair_dreadlongalt"
+	flags = HAIR_TIEABLE
+
 /datum/sprite_accessory/hair/mahdrills
 	name = "Drillruru"
 	icon_state = "hair_drillruru"
 	flags = HAIR_TIEABLE
+
+/datum/sprite_accessory/hair/elize
+	name = "Elize"
+	icon_state = "hair_elize"
 
 /datum/sprite_accessory/hair/emo
 	name = "Emo"
@@ -344,9 +464,26 @@
 	icon_state = "hair_halfshaved"
 	flags = HAIR_TIEABLE
 
+/datum/sprite_accessory/hair/halfshavedlong
+	name = "Emo Half-Shaved Long"
+	icon_state = "hair_halfshavedL"
+
+/datum/sprite_accessory/hair/emoright
+	name = "Emo Mid-length"
+	icon_state = "hair_emoright"
+
 /datum/sprite_accessory/hair/longemo
 	name = "Emo Long"
 	icon_state = "hair_emolong"
+	flags = HAIR_TIEABLE
+
+/datum/sprite_accessory/hair/equius
+	name = "Equius"
+	icon_state = "hair_equius"
+
+/datum/sprite_accessory/hair/fabio
+	name = "Fabio"
+	icon_state = "hair_fabio"
 	flags = HAIR_TIEABLE
 
 /datum/sprite_accessory/hair/highfade
@@ -385,15 +522,30 @@
 	icon_state = "hair_feather"
 	flags = HAIR_TIEABLE
 
+/datum/sprite_accessory/hair/feferi
+	name = "Feferi"
+	icon_state = "hair_feferi"
+	flags = HAIR_TIEABLE
+
 /datum/sprite_accessory/hair/flair
 	name = "Flaired Hair"
 	icon_state = "hair_flair"
 	flags = HAIR_TIEABLE
 
+/datum/sprite_accessory/hair/flipped
+	name = "Flipped"
+	icon_state = "hair_flipped"
+
 /datum/sprite_accessory/hair/sargeant
 	name = "Flat Top"
 	icon_state = "hair_sargeant"
 	flags = HAIR_VERY_SHORT
+
+/datum/sprite_accessory/hair/braid
+	name = "Floorlength Braid"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "hair_braid"
 
 /datum/sprite_accessory/hair/flowhair
 	name = "Flow Hair"
@@ -414,6 +566,15 @@
 	icon_state = "hair_fringetail"
 	flags = HAIR_TIEABLE|HAIR_VERY_SHORT
 
+/datum/sprite_accessory/hair/froofy_long
+	name = "Froofy Long"
+	icon_state = "hair_froofy_long"
+	flags = HAIR_TIEABLE
+
+/datum/sprite_accessory/hair/gamzee
+	name = "Gamzee"
+	icon_state = "hair_gamzee"
+
 /datum/sprite_accessory/hair/gelled
 	name = "Gelled Back"
 	icon_state = "hair_gelled"
@@ -427,6 +588,11 @@
 /datum/sprite_accessory/hair/gentle2
 	name = "Gentle 2, Long"
 	icon_state = "hair_gentle2long"
+	flags = HAIR_TIEABLE
+
+/datum/sprite_accessory/hair/glammetal
+	name = "Glam Metal Long"
+	icon_state = "hair_glammetal"
 	flags = HAIR_TIEABLE
 
 /datum/sprite_accessory/hair/glossy
@@ -471,10 +637,13 @@
 	icon_state = "hair_jade"
 	flags = HAIR_TIEABLE
 
+/datum/sprite_accessory/hair/jane
+	name = "Jane"
+	icon_state = "hair_jane"
+
 /datum/sprite_accessory/hair/jensen
 	name = "Jensen"
 	icon_state = "hair_jensen"
-
 
 /datum/sprite_accessory/hair/jessica
 	name = "Jessica"
@@ -485,10 +654,19 @@
 	name = "Joestar"
 	icon_state = "hair_joestar"
 
+/datum/sprite_accessory/hair/judge
+	name = "Judge"
+	icon_state = "hair_judge"
+	flags = HAIR_TIEABLE
+
 /datum/sprite_accessory/hair/kagami
 	name = "Kagami"
 	icon_state = "hair_kagami"
 	flags = HAIR_TIEABLE
+
+/datum/sprite_accessory/hair/kanaya
+	name = "Kanaya"
+	icon_state = "hair_kanaya"
 
 /datum/sprite_accessory/hair/keanu
 	name = "Keanu Hair"
@@ -543,6 +721,15 @@
 	name = "Mary Sue"
 	icon_state = "hair_marysue"
 
+/datum/sprite_accessory/hair/mia
+	name = "Mia"
+	icon_state = "hair_mia"
+
+/datum/sprite_accessory/hair/mialong
+	name = "Mia Long"
+	icon_state = "hair_mialong"
+	flags = HAIR_TIEABLE
+
 /datum/sprite_accessory/hair/miles
 	name = "Miles Hair"
 	icon_state = "hair_miles"
@@ -573,6 +760,10 @@
 /datum/sprite_accessory/hair/mulder
 	name = "Mulder"
 	icon_state = "hair_mulder"
+
+/datum/sprite_accessory/hair/nepeta
+	name = "Nepeta"
+	icon_state = "hair_nepeta"
 
 /datum/sprite_accessory/hair/newyou
 	name = "New You"
@@ -713,6 +904,16 @@
 	icon_state = "hair_newyou"
 	flags = HAIR_TIEABLE
 
+/datum/sprite_accessory/hair/rockandroll
+	name = "Rock and Roll"
+	icon_state = "hair_rockandroll"
+	flags = HAIR_TIEABLE
+
+/datum/sprite_accessory/hair/rockstarcurls
+	name = "Rockstar Curls"
+	icon_state = "hair_rockstarcurls"
+	flags = HAIR_TIEABLE
+
 /datum/sprite_accessory/hair/ronin
 	name = "Ronin"
 	icon_state = "hair_ronin"
@@ -722,6 +923,10 @@
 	name = "Rosa"
 	icon_state = "hair_rosa"
 	flags = HAIR_TIEABLE
+
+/datum/sprite_accessory/hair/rose
+	name = "Rose"
+	icon_state = "hair_rose"
 
 /datum/sprite_accessory/hair/rows
 	name = "Rows"
@@ -748,6 +953,10 @@
 	icon_state = "hair_rowbraid"
 	flags = HAIR_TIEABLE
 
+/datum/sprite_accessory/hair/roxy
+	name = "Roxy"
+	icon_state = "hair_roxy"
+
 /datum/sprite_accessory/hair/sabitsuki
 	name = "Sabitsuki"
 	icon_state = "hair_sabitsuki"
@@ -766,6 +975,11 @@
 	name = "Short Bangs"
 	icon_state = "hair_shortbangs"
 
+/datum/sprite_accessory/hair/shortflip
+	name = "Short Flip"
+	icon_state = "hair_shortflip"
+	flags = HAIR_VERY_SHORT
+
 /datum/sprite_accessory/hair/short
 	name = "Short Hair"	  // try to capatilize the names please~
 	icon_state = "hair_a" // you do not need to define _s or _l sub-states, game automatically does this for you
@@ -781,6 +995,12 @@
 	icon_state = "hair_shorthair4"
 	flags = HAIR_VERY_SHORT
 
+/datum/sprite_accessory/hair/awoohair
+	name = "Shoulder-length Messy"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "momijihair"
+
 /datum/sprite_accessory/hair/shy
 	name = "Shy"
 	icon_state = "hair_shy"
@@ -794,6 +1014,16 @@
 /datum/sprite_accessory/hair/sideponytail4 //Not happy about this... but it's for the save files.
 	name = "Side Ponytail 2"
 	icon_state = "hair_ponytailf"
+	flags = HAIR_TIEABLE
+
+/datum/sprite_accessory/hair/sideponytail5
+	name = "Side Ponytail 3"
+	icon_state = "hair_sidetail"
+	flags = HAIR_TIEABLE
+
+/datum/sprite_accessory/hair/sideponytail6
+	name = "Side Ponytail 4"
+	icon_state = "hair_sidetail2"
 	flags = HAIR_TIEABLE
 
 /datum/sprite_accessory/hair/sideponytail2
@@ -836,9 +1066,27 @@
 	icon_state = "hair_straightlong"
 	flags = HAIR_TIEABLE
 
+/datum/sprite_accessory/hair/suave
+	name = "Suave"
+	icon_state = "hair_suave"
+
+/datum/sprite_accessory/hair/suavetwo
+	name = "Suave 2"
+	icon_state = "hair_suave2"
+
 /datum/sprite_accessory/hair/sweepshave
 	name = "Sweep Shave"
 	icon_state = "hair_sweepshave"
+
+/datum/sprite_accessory/hair/sweptfringe
+	name = "Swept Fringe"
+	icon_state = "hair_sweptfringe"
+	flags = HAIR_TIEABLE
+
+/datum/sprite_accessory/hair/terezi
+	name = "Terezi"
+	icon_state = "hair_terezi"
+	flags = HAIR_TIEABLE
 
 /datum/sprite_accessory/hair/thinning
 	name = "Thinning"
@@ -872,9 +1120,20 @@
 	gender = MALE
 	flags = HAIR_VERY_SHORT
 
+/datum/sprite_accessory/hair/twindrills
+	name = "Twin Drills"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "hair_twincurl"
+
 /datum/sprite_accessory/hair/twintail
 	name = "Twintail"
 	icon_state = "hair_twintail"
+	flags = HAIR_TIEABLE
+
+/datum/sprite_accessory/hair/twinbob
+	name = "Twinbun Bob"
+	icon_state = "hair_bunbob"
 	flags = HAIR_TIEABLE
 
 /datum/sprite_accessory/hair/undercut1
@@ -895,6 +1154,11 @@
 	gender = MALE
 	flags = HAIR_VERY_SHORT
 
+/datum/sprite_accessory/hair/longundercut
+	name = "Undercut Long"
+	icon_state = "hair_undercutlong"
+	flags = HAIR_VERY_SHORT
+
 /datum/sprite_accessory/hair/unkept
 	name = "Unkept"
 	icon_state = "hair_unkept"
@@ -908,6 +1172,11 @@
 /datum/sprite_accessory/hair/vegeta
 	name = "Vegeta"
 	icon_state = "hair_toriyama2"
+
+/datum/sprite_accessory/hair/vriska
+	name = "Vriska"
+	icon_state = "hair_vriska"
+	flags = HAIR_TIEABLE
 
 /datum/sprite_accessory/hair/vivi
 	name = "Vivi"
@@ -928,6 +1197,327 @@
 	icon_state = "hair_ziegler"
 	flags = HAIR_TIEABLE
 
+/datum/sprite_accessory/hair/zone
+	name = "Zone Braid"
+	icon_state = "hair_zone"
+	flags = HAIR_TIEABLE
+
+/datum/sprite_accessory/hair/una_hood
+	name = "Cobra Hood"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "soghun_hood"
+	species_allowed = list(SPECIES_UNATHI, SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+
+/datum/sprite_accessory/hair/una_doublehorns
+	name = "Double Unathi Horns"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "soghun_dubhorns"
+	species_allowed = list(SPECIES_UNATHI, SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+
+/datum/sprite_accessory/hair/sergal_plain
+	name = "Sergal Plain"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "serg_plain"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+
+/datum/sprite_accessory/hair/sergal_medicore
+	name = "Sergal Medicore"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "serg_medicore"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+
+/datum/sprite_accessory/hair/sergal_tapered
+	name = "Sergal Tapered"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "serg_tapered"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+
+/datum/sprite_accessory/hair/sergal_fairytail
+	name = "Sergal Fairytail"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "serg_fairytail"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+
+// Vulpa stuffs
+
+/datum/sprite_accessory/hair/vulp_hair_none
+	name = "None"
+	icon_state = "bald"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+
+/datum/sprite_accessory/hair/vulp_hair_kajam
+	name = "Kajam"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "kajam"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+
+/datum/sprite_accessory/hair/vulp_hair_keid
+	name = "Keid"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "keid"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+
+/datum/sprite_accessory/hair/vulp_hair_adhara
+	name = "Adhara"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "adhara"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+
+/datum/sprite_accessory/hair/vulp_hair_kleeia
+	name = "Kleeia"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "kleeia"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+
+/datum/sprite_accessory/hair/vulp_hair_mizar
+	name = "Mizar"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "mizar"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+
+/datum/sprite_accessory/hair/vulp_hair_apollo
+	name = "Apollo"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "apollo"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+
+/datum/sprite_accessory/hair/vulp_hair_belle
+	name = "Belle"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "belle"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+
+/datum/sprite_accessory/hair/vulp_hair_bun
+	name = "Vulp Bun"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "bun"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+
+/datum/sprite_accessory/hair/vulp_hair_jagged
+	name = "Jagged"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "jagged"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+
+/datum/sprite_accessory/hair/vulp_hair_curl
+	name = "Curl"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "curl"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+
+/datum/sprite_accessory/hair/vulp_hair_hawk
+	name = "Hawk"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "hawk"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+
+/datum/sprite_accessory/hair/vulp_hair_anita
+	name = "Anita"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "anita"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+
+/datum/sprite_accessory/hair/vulp_hair_short
+	name = "Short"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "short"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+
+/datum/sprite_accessory/hair/vulp_hair_spike
+	name = "Spike"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "spike"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+
+//xeno stuffs
+/datum/sprite_accessory/hair/xeno_head_drone_color
+	name = "Drone dome"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "cxeno_drone"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+// figure this one out for better coloring
+/datum/sprite_accessory/hair/xeno_head_sentinel_color
+	name = "Sentinal dome"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "cxeno_sentinel"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+
+/datum/sprite_accessory/hair/xeno_head_queen_color
+	name = "Queen dome"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "cxeno_queen"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+
+/datum/sprite_accessory/hair/xeno_head_hunter_color
+	name = "Hunter dome"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "cxeno_hunter"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+
+/datum/sprite_accessory/hair/xeno_head_praetorian_color
+	name = "Praetorian dome"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "cxeno_praetorian"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+
+// Shadekin stuffs
+
+/datum/sprite_accessory/hair/shadekin_hair_short
+	name = "Shadekin Short Hair"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "shadekin_short"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+
+/datum/sprite_accessory/hair/shadekin_hair_poofy
+	name = "Shadekin Poofy Hair"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "shadekin_poofy"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+
+/datum/sprite_accessory/hair/shadekin_hair_long
+	name = "Shadekin Long Hair"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_add = 'icons/mob/human_face_alt_add.dmi'
+	icon_state = "shadekin_long"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+
+/*
+shaved
+	name = "Shaved"
+	icon_state = "bald"
+	gender = NEUTER
+	species_allowed = list(SPECIES_HUMAN, SPECIES_UNATHI, SPECIES_TAJ, SPECIES_TESHARI, SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+*/
+/datum/sprite_accessory/facial_hair/neck_fluff
+	name = "Neck Fluff"
+	icon = 'icons/mob/human_face_or_alt.dmi'
+	icon_state = "facial_neckfluff"
+	gender = NEUTER
+	species_allowed = list(SPECIES_TAJ, SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	color_blend_mode = ICON_MULTIPLY
+
+/datum/sprite_accessory/facial_hair/vulp_none
+	name = "None"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_state = "none"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+	color_blend_mode = ICON_MULTIPLY
+
+/datum/sprite_accessory/facial_hair/vulp_blaze
+	name = "Blaze"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_state = "vulp_facial_blaze"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+	color_blend_mode = ICON_MULTIPLY
+
+/datum/sprite_accessory/facial_hair/vulp_vulpine
+	name = "Vulpine"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_state = "vulp_facial_vulpine"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+	color_blend_mode = ICON_MULTIPLY
+
+/datum/sprite_accessory/facial_hair/vulp_earfluff
+	name = "Earfluff"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_state = "vulp_facial_earfluff"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+	color_blend_mode = ICON_MULTIPLY
+
+/datum/sprite_accessory/facial_hair/vulp_mask
+	name = "Mask"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_state = "vulp_facial_mask"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+	color_blend_mode = ICON_MULTIPLY
+
+/datum/sprite_accessory/facial_hair/vulp_patch
+	name = "Patch"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_state = "vulp_facial_patch"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+	color_blend_mode = ICON_MULTIPLY
+
+/datum/sprite_accessory/facial_hair/vulp_ruff
+	name = "Ruff"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_state = "vulp_facial_ruff"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+	color_blend_mode = ICON_MULTIPLY
+
+/datum/sprite_accessory/facial_hair/vulp_kita
+	name = "Kita"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_state = "vulp_facial_kita"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+	color_blend_mode = ICON_MULTIPLY
+
+/datum/sprite_accessory/facial_hair/vulp_swift
+	name = "Swift"
+	icon = 'icons/mob/human_face_alt.dmi'
+	icon_state = "vulp_facial_swift"
+	species_allowed = list(SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
+	gender = NEUTER
+	color_blend_mode = ICON_MULTIPLY
+
 /*
 ///////////////////////////////////
 /  =---------------------------=  /
@@ -938,6 +1528,8 @@
 
 /datum/sprite_accessory/facial_hair
 	icon = 'icons/mob/Human_face.dmi'
+	color_blend_mode = ICON_ADD
+	em_block = TRUE
 
 /datum/sprite_accessory/facial_hair/shaved
 	name = "Shaved"
@@ -1015,27 +1607,27 @@
 	icon_state = "facial_dwarf"
 
 /datum/sprite_accessory/facial_hair/threeOclock
-	name = "3 O'clock Shadow"
+	name = "3 O-clock Shadow"
 	icon_state = "facial_3oclock"
 
 /datum/sprite_accessory/facial_hair/threeOclockstache
-	name = "3 O'clock Shadow and Moustache"
+	name = "3 O-clock Shadow and Moustache"
 	icon_state = "facial_3oclockmoustache"
 
 /datum/sprite_accessory/facial_hair/fiveOclock
-	name = "5 O'clock Shadow"
+	name = "5 O-clock Shadow"
 	icon_state = "facial_5oclock"
 
 /datum/sprite_accessory/facial_hair/fiveOclockstache
-	name = "5 O'clock Shadow and Moustache"
+	name = "5 O-clock Shadow and Moustache"
 	icon_state = "facial_5oclockmoustache"
 
 /datum/sprite_accessory/facial_hair/sevenOclock
-	name = "7 O'clock Shadow"
+	name = "7 O-clock Shadow"
 	icon_state = "facial_7oclock"
 
 /datum/sprite_accessory/facial_hair/sevenOclockstache
-	name = "7 O'clock Shadow and Moustache"
+	name = "7 O-clock Shadow and Moustache"
 	icon_state = "facial_7oclockmoustache"
 
 /datum/sprite_accessory/facial_hair/mutton
@@ -1077,163 +1669,229 @@
 ///////////////////////////////////
 */
 
-/datum/sprite_accessory/hair/una_spines_long
+//Unathi Head-Bits
+
+/datum/sprite_accessory/hair/una
 	name = "Long Unathi Spines"
 	icon_state = "soghun_longspines"
 	species_allowed = list(SPECIES_UNATHI)
 
-/datum/sprite_accessory/hair/una_spines_short
+/datum/sprite_accessory/hair/una/spines_short
 	name = "Short Unathi Spines"
-	icon_state = "soghun_shortspines"
-	species_allowed = list(SPECIES_UNATHI)
 
-/datum/sprite_accessory/hair/una_frills_long
+/datum/sprite_accessory/hair/una/frills_long
 	name = "Long Unathi Frills"
 	icon_state = "soghun_longfrills"
-	species_allowed = list(SPECIES_UNATHI)
 
-/datum/sprite_accessory/hair/una_frills_short
+/datum/sprite_accessory/hair/una/frills_short
 	name = "Short Unathi Frills"
 	icon_state = "soghun_shortfrills"
-	species_allowed = list(SPECIES_UNATHI)
 
-/datum/sprite_accessory/hair/una_horns
+/datum/sprite_accessory/hair/una/horns
 	name = "Unathi Horns"
 	icon_state = "soghun_horns"
-	species_allowed = list(SPECIES_UNATHI)
 
-/datum/sprite_accessory/hair/una_bighorns
+/datum/sprite_accessory/hair/una/bighorns
 	name = "Unathi Big Horns"
 	icon_state = "unathi_bighorn"
-	species_allowed = list(SPECIES_UNATHI)
 
-/datum/sprite_accessory/hair/una_smallhorns
+/datum/sprite_accessory/hair/una/smallhorns
 	name = "Unathi Small Horns"
 	icon_state = "unathi_smallhorn"
-	species_allowed = list(SPECIES_UNATHI)
 
-/datum/sprite_accessory/hair/una_ramhorns
+/datum/sprite_accessory/hair/una/ramhorns
 	name = "Unathi Ram Horns"
 	icon_state = "unathi_ramhorn"
-	species_allowed = list(SPECIES_UNATHI)
 
-/datum/sprite_accessory/hair/una_sidefrills
+/datum/sprite_accessory/hair/una/sidefrills
 	name = "Unathi Side Frills"
 	icon_state = "unathi_sidefrills"
-	species_allowed = list(SPECIES_UNATHI)
 
 //Skrell 'hairstyles'
-/datum/sprite_accessory/hair/skr_tentacle_veryshort
-	name = "Skrell Short Tentacles"
-	icon_state = "skrell_hair_short"
-	species_allowed = list(SPECIES_SKRELL)
-	gender = MALE
 
-/datum/sprite_accessory/hair/skr_tentacle_short
+/datum/sprite_accessory/hair/skr
 	name = "Skrell Average Tentacles"
 	icon_state = "skrell_hair_average"
-	species_allowed = list(SPECIES_SKRELL)
+	species_allowed = list(SPECIES_SKRELL, SPECIES_EVENT1, SPECIES_EVENT2, SPECIES_EVENT3)
 
-/datum/sprite_accessory/hair/skr_tentacle_average
+/datum/sprite_accessory/hair/skr/tentacle_veryshort
+	name = "Skrell Short Tentacles"
+	icon_state = "skrell_hair_short"
+	gender = MALE
+
+/datum/sprite_accessory/hair/skr/tentacle_average
 	name = "Skrell Long Tentacles"
 	icon_state = "skrell_hair_long"
-	species_allowed = list(SPECIES_SKRELL)
 
-/datum/sprite_accessory/hair/skr_tentacle_verylong
+/datum/sprite_accessory/hair/skr/tentacle_verylong
 	name = "Skrell Very Long Tentacles"
 	icon_state = "skrell_hair_verylong"
-	species_allowed = list(SPECIES_SKRELL)
 
 //Tajaran hairstyles
-/datum/sprite_accessory/hair/taj_ears
+/datum/sprite_accessory/hair/taj
 	name = "Tajaran Ears"
 	icon_state = "ears_plain"
 	species_allowed = list(SPECIES_TAJ)
 
-/datum/sprite_accessory/hair/taj_ears_clean
-	name = "Tajaran Clean"
-	icon_state = "hair_clean"
-	species_allowed = list(SPECIES_TAJ)
-
-/datum/sprite_accessory/hair/taj_ears_bangs
+/datum/sprite_accessory/hair/taj/bangs
 	name = "Tajaran Bangs"
 	icon_state = "hair_bangs"
-	species_allowed = list(SPECIES_TAJ)
 
+/datum/sprite_accessory/hair/taj/bangs_alt
+	name = "Tajaran Bangs (Alt)"
+	icon_state = "hair_bangs_alt"
 
-/datum/sprite_accessory/hair/taj_ears_braid
+/datum/sprite_accessory/hair/taj/short_fringe
+	name = "Tajaran Short Fringe"
+	icon_state = "hair_shortfringe"
+
+/datum/sprite_accessory/hair/taj/braid
 	name = "Tajaran Braid"
 	icon_state = "hair_tbraid"
-	species_allowed = list(SPECIES_TAJ)
 
-/datum/sprite_accessory/hair/taj_ears_shaggy
+/datum/sprite_accessory/hair/taj/clean
+	name = "Tajaran Clean"
+	icon_state = "hair_clean"
+
+/datum/sprite_accessory/hair/taj/gman
+	name = "Tajaran G-Man"
+	icon_state = "hair_gman"
+
+/datum/sprite_accessory/hair/taj/greaser
+	name = "Tajaran Greaser"
+	icon_state = "hair_greaser"
+
+/datum/sprite_accessory/hair/taj/bun
+	name = "Tajaran Bun"
+	icon_state = "hair_tajbun"
+
+/datum/sprite_accessory/hair/taj/bunsmall
+	name = "Tajaran Bun (Small)"
+	icon_state = "hair_tajsmallbun"
+
+/datum/sprite_accessory/hair/taj/bunlow
+	name = "Tajaran Bun (Low)"
+	icon_state = "hair_tajbunlow"
+
+/datum/sprite_accessory/hair/taj/bunlowsmall
+	name = "Tajaran Bun (Low, Small)"
+	icon_state = "hair_tajbunlowsmall"
+
+/datum/sprite_accessory/hair/taj/_wedge
+	name = "Tajaran Wedge"
+	icon_state = "hair_wedge"
+
+/datum/sprite_accessory/hair/taj/shaggy
 	name = "Tajaran Shaggy"
 	icon_state = "hair_shaggy"
-	species_allowed = list(SPECIES_TAJ)
 
-/datum/sprite_accessory/hair/taj_ears_mohawk
+/datum/sprite_accessory/hair/taj/mohawk
 	name = "Tajaran Mohawk"
 	icon_state = "hair_mohawk"
-	species_allowed = list(SPECIES_TAJ)
 
-/datum/sprite_accessory/hair/taj_ears_plait
+/datum/sprite_accessory/hair/taj/plait
 	name = "Tajaran Plait"
 	icon_state = "hair_plait"
-	species_allowed = list(SPECIES_TAJ)
 
-/datum/sprite_accessory/hair/taj_ears_straight
+/datum/sprite_accessory/hair/taj/_sidepony
+	name = "Tajaran Side Ponytail"
+	icon_state = "hair_sidepony"
+
+/datum/sprite_accessory/hair/taj/straight
 	name = "Tajaran Straight"
 	icon_state = "hair_straight"
-	species_allowed = list(SPECIES_TAJ)
 
-/datum/sprite_accessory/hair/taj_ears_long
+/datum/sprite_accessory/hair/taj/long
 	name = "Tajaran Long"
 	icon_state = "hair_long"
-	species_allowed = list(SPECIES_TAJ)
 
-/datum/sprite_accessory/hair/taj_ears_rattail
+/datum/sprite_accessory/hair/taj/tresses
+	name = "Tajaran Tresses"
+	icon_state = "hair_tresses"
+
+/datum/sprite_accessory/hair/taj/shoulderparted
+	name = "Tajaran Shoulder Parted"
+	icon_state = "hair_shoulderparted"
+
+/datum/sprite_accessory/hair/taj/shoulderpartedsmall
+	name = "Tajaran Shoulder Parted (Small)"
+	icon_state = "hair_shoulderpartedsmall"
+
+/datum/sprite_accessory/hair/taj/shoulderpartedlong
+	name = "Tajaran Shoulder Parted (Long)"
+	icon_state = "hair_shoulderpartedlong"
+
+/datum/sprite_accessory/hair/taj/sidepartedleft
+	name = "Tajaran Side Parted (Left)"
+	icon_state = "hair_sidepartedleft"
+
+/datum/sprite_accessory/hair/taj/sidepartedright
+	name = "Tajaran Side Parted (Right)"
+	icon_state = "hair_sidepartedright"
+
+/datum/sprite_accessory/hair/taj/shoulderlength
+	name = "Tajaran Shoulder Length"
+	icon_state = "hair_shoulderlength"
+
+/datum/sprite_accessory/hair/taj/shoulderlengthalt
+	name = "Tajaran Shoulder Length (Alt)"
+	icon_state = "hair_shoulderlengthalt"
+
+/datum/sprite_accessory/hair/taj/cascading
+	name = "Tajaran Cascading"
+	icon_state = "hair_cascading"
+
+/datum/sprite_accessory/hair/taj/cascadingalt
+	name = "Tajaran Cascading (Alt)"
+	icon_state = "hair_cascadingalt"
+
+/datum/sprite_accessory/hair/taj/rattail
 	name = "Tajaran Rat Tail"
 	icon_state = "hair_rattail"
-	species_allowed = list(SPECIES_TAJ)
 
-/datum/sprite_accessory/hair/taj_ears_spiky
+/datum/sprite_accessory/hair/taj/spiky
 	name = "Tajaran Spiky"
 	icon_state = "hair_tajspiky"
-	species_allowed = list(SPECIES_TAJ)
 
-/datum/sprite_accessory/hair/taj_ears_messy
+/datum/sprite_accessory/hair/taj/fringeup
+	name = "Tajaran Fringe Spike"
+	icon_state = "hair_fringeup"
+
+/datum/sprite_accessory/hair/taj/messy
 	name = "Tajaran Messy"
 	icon_state = "hair_messy"
-	species_allowed = list(SPECIES_TAJ)
 
-/datum/sprite_accessory/hair/taj_ears_curls
+/datum/sprite_accessory/hair/taj/curls
 	name = "Tajaran Curly"
 	icon_state = "hair_curly"
-	species_allowed = list(SPECIES_TAJ)
 
-/datum/sprite_accessory/hair/taj_ears_wife
+/datum/sprite_accessory/hair/taj/curlsalt
+	name = "Tajaran Curly, alt"
+	icon_state = "hair_curlyalt"
+
+/datum/sprite_accessory/hair/taj/mane
+	name = "Tajaran Mane"
+	icon_state = "hair_mane"
+
+/datum/sprite_accessory/hair/taj/wife
 	name = "Tajaran Housewife"
 	icon_state = "hair_wife"
-	species_allowed = list(SPECIES_TAJ)
 
-/datum/sprite_accessory/hair/taj_ears_victory
+/datum/sprite_accessory/hair/taj/victory
 	name = "Tajaran Victory Curls"
 	icon_state = "hair_victory"
-	species_allowed = list(SPECIES_TAJ)
 
-/datum/sprite_accessory/hair/taj_ears_bob
+/datum/sprite_accessory/hair/taj/bob
 	name = "Tajaran Bob"
 	icon_state = "hair_tbob"
-	species_allowed = list(SPECIES_TAJ)
-
-/datum/sprite_accessory/hair/taj_ears_fingercurl
+/datum/sprite_accessory/hair/taj/fingercurl
 	name = "Tajaran Finger Curls"
 	icon_state = "hair_fingerwave"
-	species_allowed = list(SPECIES_TAJ)
 
 //Teshari things
 /datum/sprite_accessory/hair/teshari
 	name = "Teshari Default"
+	icon_add = 'icons/mob/human_face_vr_add.dmi'
 	icon_state = "teshari_default"
 	species_allowed = list(SPECIES_TESHARI)
 
@@ -1270,8 +1928,8 @@
 	icon_state = "teshari_mohawk"
 
 /datum/sprite_accessory/hair/teshari/pointy
-		name = "Teshari Pointy"
-		icon_state = "teshari_pointy"
+	name = "Teshari Pointy"
+	icon_state = "teshari_pointy"
 
 /datum/sprite_accessory/hair/teshari/upright
 	name = "Teshari Upright"
@@ -1288,8 +1946,6 @@
 /datum/sprite_accessory/hair/teshari/mushroom
 	name = "Teshari Mushroom"
 	icon_state = "teshari_mushroom"
-
-//Tesh things ported from Ark Station
 
 /datum/sprite_accessory/hair/teshari/twies
 	name = "Teshari Twies"
@@ -1312,102 +1968,89 @@
 	icon_state = "teshari_fluffymohawk"
 
 // Vox things
-/datum/sprite_accessory/hair/vox_braid_long
+/datum/sprite_accessory/hair/vox
 	name = "Long Vox braid"
 	icon_state = "vox_longbraid"
 	species_allowed = list(SPECIES_VOX)
 
-/datum/sprite_accessory/hair/vox_braid_short
+/datum/sprite_accessory/hair/vox/braid_short
 	name = "Short Vox Braid"
 	icon_state = "vox_shortbraid"
-	species_allowed = list(SPECIES_VOX)
 
-/datum/sprite_accessory/hair/vox_quills_short
+/datum/sprite_accessory/hair/vox/quills_short
 	name = "Short Vox Quills"
 	icon_state = "vox_shortquills"
-	species_allowed = list(SPECIES_VOX)
 
-/datum/sprite_accessory/hair/vox_quills_kingly
+/datum/sprite_accessory/hair/vox/quills_kingly
 	name = "Kingly Vox Quills"
 	icon_state = "vox_kingly"
-	species_allowed = list(SPECIES_VOX)
 
-/datum/sprite_accessory/hair/vox_quills_mohawk
+/datum/sprite_accessory/hair/vox/quills_mohawk
 	name = "Quill Mohawk"
 	icon_state = "vox_mohawk"
-	species_allowed = list(SPECIES_VOX)
 
-/datum/sprite_accessory/facial_hair/taj_sideburns
+//Tajaran Facial Hair
+
+/datum/sprite_accessory/facial_hair/taj
 	name = "Tajaran Sideburns"
 	icon_state = "facial_sideburns"
 	species_allowed = list(SPECIES_TAJ)
 
-/datum/sprite_accessory/facial_hair/taj_mutton
+/datum/sprite_accessory/facial_hair/taj/mutton
 	name = "Tajaran Mutton"
 	icon_state = "facial_mutton"
-	species_allowed = list(SPECIES_TAJ)
 
-/datum/sprite_accessory/facial_hair/taj_pencilstache
+/datum/sprite_accessory/facial_hair/taj/pencilstache
 	name = "Tajaran Pencilstache"
 	icon_state = "facial_pencilstache"
-	species_allowed = list(SPECIES_TAJ)
 
-/datum/sprite_accessory/facial_hair/taj_moustache
+/datum/sprite_accessory/facial_hair/taj/moustache
 	name = "Tajaran Moustache"
 	icon_state = "facial_moustache"
-	species_allowed = list(SPECIES_TAJ)
 
-/datum/sprite_accessory/facial_hair/taj_goatee
+/datum/sprite_accessory/facial_hair/taj/goatee
 	name = "Tajaran Goatee"
 	icon_state = "facial_goatee"
-	species_allowed = list(SPECIES_TAJ)
 
-/datum/sprite_accessory/facial_hair/taj_smallstache
+/datum/sprite_accessory/facial_hair/taj/smallstache
 	name = "Tajaran Smallsatche"
 	icon_state = "facial_smallstache"
-	species_allowed = list(SPECIES_TAJ)
 
 //unathi horn beards and the like
 
-/datum/sprite_accessory/facial_hair/una_chinhorn
+/datum/sprite_accessory/facial_hair/una
 	name = "Unathi Chin Horn"
 	icon_state = "facial_chinhorns"
 	species_allowed = list(SPECIES_UNATHI)
 
-/datum/sprite_accessory/facial_hair/una_hornadorns
+/datum/sprite_accessory/facial_hair/una/hornadorns
 	name = "Unathi Horn Adorns"
 	icon_state = "facial_hornadorns"
-	species_allowed = list(SPECIES_UNATHI)
 
-/datum/sprite_accessory/facial_hair/una_spinespikes
+/datum/sprite_accessory/facial_hair/una/spinespikes
 	name = "Unathi Spine Spikes"
 	icon_state = "facial_spikes"
-	species_allowed = list(SPECIES_UNATHI)
 
-/datum/sprite_accessory/facial_hair/una_dorsalfrill
+/datum/sprite_accessory/facial_hair/una/dorsalfrill
 	name = "Unathi Dorsal Frill"
 	icon_state = "facial_dorsalfrill"
-	species_allowed = list(SPECIES_UNATHI)
 
 
-//Teshari things
-/datum/sprite_accessory/facial_hair/teshari_beard
+//Teshari face things
+/datum/sprite_accessory/facial_hair/teshari
 	name = "Teshari Beard"
 	icon_state = "teshari_chin"
 	species_allowed = list(SPECIES_TESHARI)
 	gender = NEUTER
 
-/datum/sprite_accessory/facial_hair/teshari_scraggly
+/datum/sprite_accessory/facial_hair/teshari/scraggly
 	name = "Teshari Scraggly"
 	icon_state = "teshari_scraggly"
-	species_allowed = list(SPECIES_TESHARI)
-	gender = NEUTER
 
-/datum/sprite_accessory/facial_hair/teshari_chops
+
+/datum/sprite_accessory/facial_hair/teshari/chops
 	name = "Teshari Chops"
 	icon_state = "teshari_gap"
-	species_allowed = list(SPECIES_TESHARI)
-	gender = NEUTER
 
 /*
 ////////////////////////////
@@ -1423,9 +2066,16 @@
 	//Empty list is unrestricted. Should only restrict the ones that make NO SENSE on other species,
 	//like Tajaran inner-ear coloring overlay stuff.
 	species_allowed = list()
+	//This lets all races use
 
+	color_blend_mode = ICON_ADD
+
+	var/genetic = TRUE
+	var/organ_override = FALSE
 	var/body_parts = list() //A list of bodyparts this covers, in organ_tag defines
 	//Reminder: BP_L_FOOT,BP_R_FOOT,BP_L_LEG,BP_R_LEG,BP_L_ARM,BP_R_ARM,BP_L_HAND,BP_R_HAND,BP_TORSO,BP_GROIN,BP_HEAD
+
+//Tattoos
 
 /datum/sprite_accessory/marking/tat_rheart
 	name = "Tattoo (Heart, R. Arm)"
@@ -1479,59 +2129,108 @@
 	icon_state = "tat_tiger"
 	body_parts = list(BP_L_FOOT,BP_R_FOOT,BP_L_LEG,BP_R_LEG,BP_L_ARM,BP_R_ARM,BP_L_HAND,BP_R_HAND,BP_TORSO,BP_GROIN)
 
-/datum/sprite_accessory/marking/taj_paw_socks
-	name = "Socks Coloration (Taj)"
-	icon_state = "taj_pawsocks"
-	body_parts = list(BP_L_FOOT,BP_R_FOOT,BP_L_LEG,BP_R_LEG,BP_L_ARM,BP_R_ARM,BP_L_HAND,BP_R_HAND)
-	species_allowed = list(SPECIES_TAJ)
+//New tats
 
-/datum/sprite_accessory/marking/una_paw_socks
-	name = "Socks Coloration (Una)"
-	icon_state = "una_pawsocks"
-	body_parts = list(BP_L_FOOT,BP_R_FOOT,BP_L_LEG,BP_R_LEG,BP_L_ARM,BP_R_ARM,BP_L_HAND,BP_R_HAND)
-	species_allowed = list(SPECIES_UNATHI)
+/datum/sprite_accessory/marking/tat_belly
+	name = "Tattoo (Belly)"
+	icon_state = "tat_belly"
+	body_parts = list(BP_TORSO)
 
-/datum/sprite_accessory/marking/paw_socks
-	name = "Socks Coloration (Generic)"
-	icon_state = "pawsocks"
-	body_parts = list(BP_L_FOOT,BP_R_FOOT,BP_L_LEG,BP_R_LEG,BP_L_ARM,BP_R_ARM,BP_L_HAND,BP_R_HAND)
-	species_allowed = list(SPECIES_TAJ, SPECIES_UNATHI)
-
-/datum/sprite_accessory/marking/paw_socks_belly
-	name = "Socks,Belly Coloration (Generic)"
-	icon_state = "pawsocksbelly"
-	body_parts = list(BP_L_FOOT,BP_R_FOOT,BP_L_LEG,BP_R_LEG,BP_L_ARM,BP_R_ARM,BP_L_HAND,BP_R_HAND,BP_GROIN,BP_TORSO)
-	species_allowed = list(SPECIES_TAJ, SPECIES_UNATHI)
-
-/datum/sprite_accessory/marking/belly_hands_feet
-	name = "Hands,Feet,Belly Color (Minor)"
-	icon_state = "bellyhandsfeetsmall"
-	body_parts = list(BP_L_FOOT,BP_R_FOOT,BP_L_LEG,BP_R_LEG,BP_L_ARM,BP_R_ARM,BP_L_HAND,BP_R_HAND,BP_GROIN,BP_TORSO)
-	species_allowed = list(SPECIES_TAJ, SPECIES_UNATHI)
-
-/datum/sprite_accessory/marking/hands_feet_belly_full
-	name = "Hands,Feet,Belly Color (Major)"
-	icon_state = "bellyhandsfeet"
-	body_parts = list(BP_L_FOOT,BP_R_FOOT,BP_L_LEG,BP_R_LEG,BP_L_ARM,BP_R_ARM,BP_L_HAND,BP_R_HAND,BP_GROIN,BP_TORSO)
-	species_allowed = list(SPECIES_TAJ, SPECIES_UNATHI)
-
-/datum/sprite_accessory/marking/hands_feet_belly_full_female
-	name = "Hands,Feet,Belly Color (Major, Female)"
-	icon_state = "bellyhandsfeet_female"
-	body_parts = list(BP_L_FOOT,BP_R_FOOT,BP_L_LEG,BP_R_LEG,BP_L_ARM,BP_R_ARM,BP_L_HAND,BP_R_HAND,BP_GROIN,BP_TORSO)
-	species_allowed = list(SPECIES_TAJ)
-
-/datum/sprite_accessory/marking/patches
-	name = "Color Patches"
-	icon_state = "patches"
-	body_parts = list(BP_L_FOOT,BP_R_FOOT,BP_L_LEG,BP_R_LEG,BP_L_ARM,BP_R_ARM,BP_L_HAND,BP_R_HAND,BP_TORSO,BP_GROIN)
-	species_allowed = list(SPECIES_TAJ)
-
-/datum/sprite_accessory/marking/patchesface
-	name = "Color Patches (Face)"
-	icon_state = "patchesface"
+/datum/sprite_accessory/marking/tat_forrest_left
+	name = "Tattoo (Forrest, Left Eye)"
+	icon_state = "tat_forrest_l"
 	body_parts = list(BP_HEAD)
-	species_allowed = list(SPECIES_TAJ)
+
+/datum/sprite_accessory/marking/tat_forrest_right
+	name = "Tattoo (Forrest, Right Eye)"
+	icon_state = "tat_forrest_r"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/tat_hunter_left
+	name = "Tattoo (Hunter, Left Eye)"
+	icon_state = "tat_hunter_l"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/tat_hunter_right
+	name = "Tattoo (Hunter, Right Eye)"
+	icon_state = "tat_hunter_r"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/tat_jaeger_left
+	name = "Tattoo (Jaeger, Left Eye)"
+	icon_state = "tat_jaeger_l"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/tat_jaeger_right
+	name = "Tattoo (Jaeger, Right Eye)"
+	icon_state = "tat_jaeger_r"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/tat_kater_left
+	name = "Tattoo (Kater, Left Eye)"
+	icon_state = "tat_kater_l"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/tat_kater_right
+	name = "Tattoo (Kater, Right Eye)"
+	icon_state = "tat_kater_r"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/tat_lujan_left
+	name = "Tattoo (Lujan, Left Eye)"
+	icon_state = "tat_lujan_l"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/tat_lujan_right
+	name = "Tattoo (Lujan, Right Eye)"
+	icon_state = "tat_lujan_r"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/tat_montana_left
+	name = "Tattoo (Montana, Left Face)"
+	icon_state = "tat_montana_l"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/tat_montana_right
+	name = "Tattoo (Montana, Right Face)"
+	icon_state = "tat_montana_r"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/tat_natasha_left
+	name = "Tattoo (Natasha, Left Eye)"
+	icon_state = "tat_natasha_l"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/tat_natasha_right
+	name = "Tattoo (Natasha, Right Eye)"
+	icon_state = "tat_natasha_r"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/tat_tamoko
+	name = "Tattoo (Ta Moko, Face)"
+	icon_state = "tat_tamoko"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/tat_toshi_left
+	name = "Tattoo (Toshi, Left Eye)"
+	icon_state = "tat_toshi_l"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/tat_toshi_right
+	name = "Tattoo (Volgin, Right Eye)"
+	icon_state = "tat_toshi_r"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/tat_wings_back
+	name = "Tattoo (Wings, Lower Back)"
+	icon_state = "tat_wingsback"
+	body_parts = list(BP_TORSO)
+
+/datum/sprite_accessory/marking/tilaka
+	name = "Tilaka"
+	icon_state = "tilaka"
+	body_parts = list(BP_HEAD)
+
 
 /datum/sprite_accessory/marking/bands
 	name = "Color Bands"
@@ -1542,12 +2241,19 @@
 	name = "Color Bands (Face)"
 	icon_state = "bandsface"
 	body_parts = list(BP_HEAD)
+	//species_allowed = list(SPECIES_TAJ,SPECIES_UNATHI)			//Removing Polaris whitelits
+
+/datum/sprite_accessory/marking/bandsface_human
+	name = "Color Bands (Face)"
+	icon_state = "bandshumanface"
+	body_parts = list(BP_HEAD)
+	//species_allowed = list(SPECIES_HUMAN,SPECIES_HUMAN_VATBORN,SPECIES_SKRELL)			//Removing Polaris whitelits
 
 /datum/sprite_accessory/marking/tiger_stripes
 	name = "Tiger Stripes"
 	icon_state = "tiger"
 	body_parts = list(BP_L_FOOT,BP_R_FOOT,BP_L_LEG,BP_R_LEG,BP_L_ARM,BP_R_ARM,BP_TORSO,BP_GROIN)
-	species_allowed = list(SPECIES_TAJ) //There's a tattoo for non-cats
+	//species_allowed = list(SPECIES_TAJ) 			//Removing Polaris whitelits	//There's a tattoo for non-cats
 
 /datum/sprite_accessory/marking/tigerhead
 	name = "Tiger Stripes (Head, Minor)"
@@ -1558,91 +2264,648 @@
 	name = "Tiger Stripes (Head, Major)"
 	icon_state = "tigerface"
 	body_parts = list(BP_HEAD)
-	species_allowed = list(SPECIES_TAJ) //There's a tattoo for non-cats
+	//species_allowed = list(SPECIES_TAJ)			//Removing Polaris whitelits //There's a tattoo for non-cats
 
 /datum/sprite_accessory/marking/backstripe
 	name = "Back Stripe"
 	icon_state = "backstripe"
 	body_parts = list(BP_TORSO)
 
+/datum/sprite_accessory/marking/bindi
+	name = "Bindi"
+	icon_state = "bindi"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/blush
+	name = "Blush"
+	icon_state= "blush"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/bridge
+	name = "Bridge"
+	icon_state = "bridge"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/brow_left
+	name = "Brow Left"
+	icon_state = "brow_l"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/brow_left/teshari
+	name = "Brow Left (Teshari)"
+	icon_state = "brow_l_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/brow_right
+	name = "Brow Right"
+	icon_state = "brow_r"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/brow_right/teshari
+	name = "Brow Right (Teshari)"
+	icon_state = "brow_r_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/cheekspot_left
+	name = "Cheek Spot (Left Cheek)"
+	icon_state = "cheekspot_l"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/cheekspot_right
+	name = "Cheek Spot (Right Cheek)"
+	icon_state = "cheekspot_r"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/cheshire_left
+	name = "Cheshire (Left Cheek)"
+	icon_state = "cheshire_l"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/cheshire_right
+	name = "Cheshire (Right Cheek)"
+	icon_state = "cheshire_r"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/eyestripe
+	name = "Eye Stripe"
+	icon_state = "eyestripe"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/eyestripe/teshari
+	name = "Eye Stripe (Teshari)"
+	icon_state = "eyestripe_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/eyecorner_left
+	name = "Eye Corner Left"
+	icon_state = "eyecorner_l"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/eyecorner_left/teshari
+	name = "Eye Corner Left (Teshari)"
+	icon_state = "eyecorner_l_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/eyecorner_right
+	name = "Eye Corner Right"
+	icon_state = "eyecorner_r"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/eyecorner_right/teshari
+	name = "Eye Corner Right (Teshari)"
+	icon_state = "eyecorner_r_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/fullfacepaint
+	name = "Full Face Paint"
+	icon_state = "fullface"
+	body_parts = list(BP_HEAD)
+	//species_allowed = list(SPECIES_HUMAN,SPECIES_HUMAN_VATBORN,SPECIES_SKRELL)			//Removing Polaris whitelits
+
+/datum/sprite_accessory/marking/lips
+	name = "Lips"
+	icon_state = "lips"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/lowercheek_left
+	name = "Lower Cheek Left"
+	icon_state = "lowercheek_l"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/lowercheek_left
+	name = "Lower Cheek Right"
+	icon_state = "lowercheek_r"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/neck
+	name = "Neck Cover"
+	icon_state = "neck"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/neckthick
+	name = "Neck Cover (Thick)"
+	icon_state = "neckthick"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/nosestripe
+	name = "Nose Stripe"
+	icon_state = "nosestripe"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/nosestripe/teshari
+	name = "Nose Stripe (Teshari)"
+	icon_state = "nosestripe_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/nosetape
+	name = "Nose Tape"
+	icon_state = "nosetape"
+	body_parts = list(BP_HEAD)
+	genetic = FALSE
+
+/datum/sprite_accessory/marking/nosetape/tesh
+	name = "Nose Tape (Teshari)"
+	icon_state = "nosetape_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_abdomen_left
+	name = "Scar, Abdomen Left"
+	icon_state = "scar_abdomen_l"
+	body_parts = list(BP_GROIN)
+
+/datum/sprite_accessory/marking/scar_abdomen_left/teshari
+	name = "Scar, Abdomen Left (Teshari)"
+	icon_state = "scar_abdomen_l_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_abdomen_right
+	name = "Scar, Abdomen Right"
+	icon_state = "scar_abdomen_r"
+	body_parts = list(BP_GROIN)
+
+/datum/sprite_accessory/marking/scar_abdomen_right/teshari
+	name = "Scar, Abdomen Right (Teshari)"
+	icon_state = "scar_abdomen_r_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_abdomen_small_left
+	name = "Scar, Abdomen Small Left"
+	icon_state = "scar_abdomensmall_l"
+	body_parts = list(BP_GROIN)
+
+/datum/sprite_accessory/marking/scar_abdomen_small_left/teshari
+	name = "Scar, Abdomen Small Left (Teshari)"
+	icon_state = "scar_abdomensmall_l_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_abdomen_small_right
+	name = "Scar, Abdomen Small Right"
+	icon_state = "scar_abdomensmall_r"
+	body_parts = list(BP_GROIN)
+
+/datum/sprite_accessory/marking/scar_abdomen_small_right/teshari
+	name = "Scar, Abdomen Small Right (Teshari)"
+	icon_state = "scar_abdomensmall_r_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_back_large
+	name = "Scar, Back Large"
+	icon_state = "scar_back_large"
+	body_parts = list(BP_GROIN)
+
+/datum/sprite_accessory/marking/scar_back_large/teshari
+	name = "Scar, Back Large (Teshari)"
+	icon_state = "scar_back_large_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_back_small
+	name = "Scar, Back Small (Center)"
+	icon_state = "scar_back_small"
+	body_parts = list(BP_TORSO)
+
+/datum/sprite_accessory/marking/scar_back_small/teshari
+	name = "Scar, Back Small (Center)(Teshari)"
+	icon_state = "scar_back_small_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+	body_parts = list(BP_GROIN)
+
+/datum/sprite_accessory/marking/scar_back_small_upper_right
+	name = "Scar, Back Small (Upper Right)"
+	icon_state = "scar_back_small_ur"
+	body_parts = list(BP_TORSO)
+
+/datum/sprite_accessory/marking/scar_back_small_upper_left
+	name = "Scar, Back Small (Upper Left)"
+	icon_state = "scar_back_small_ul"
+	body_parts = list(BP_TORSO)
+
+/datum/sprite_accessory/marking/scar_back_small_lower_right
+	name = "Scar, Back Small (Lower Right)"
+	icon_state = "scar_back_small_lr"
+	body_parts = list(BP_TORSO)
+
+/datum/sprite_accessory/marking/scar_back_small_lower_left
+	name = "Scar, Back Small (Lower Left)"
+	icon_state = "scar_back_small_ll"
+	body_parts = list(BP_TORSO)
+
+/datum/sprite_accessory/marking/scar_chest_large_left
+	name = "Scar, Chest Large (Left)"
+	icon_state = "scar_chest_large_l"
+	body_parts = list(BP_TORSO)
+
+/datum/sprite_accessory/marking/scar_chest_large_left/teshari
+	name = "Scar, Chest Large (Left)(Teshari)"
+	icon_state = "scar_chest_large_l_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+	body_parts = list(BP_GROIN)
+
+/datum/sprite_accessory/marking/scar_chest_large_right
+	name = "Scar, Chest Large (Right)"
+	icon_state = "scar_chest_large_r"
+	body_parts = list(BP_TORSO)
+
+/datum/sprite_accessory/marking/scar_chest_large_right/teshari
+	name = "Scar, Chest Large (Right)(Teshari)"
+	icon_state = "scar_chest_large_r_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+	body_parts = list(BP_GROIN)
+
+/datum/sprite_accessory/marking/scar_chest_small_left
+	name = "Scar, Chest Small (Left)"
+	icon_state = "scar_chest_small_l"
+	body_parts = list(BP_TORSO)
+
+/datum/sprite_accessory/marking/scar_chest_small_left/teshari
+	name = "Scar, Chest Small (Left)(Teshari)"
+	icon_state = "scar_chest_small_l_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_chest_small_right
+	name = "Scar, Chest Small (Right)"
+	icon_state = "scar_chest_small_r"
+	body_parts = list(BP_TORSO)
+
+/datum/sprite_accessory/marking/scar_chest_small_right/teshari
+	name = "Scar, Chest Small (Right)(Teshari)"
+	icon_state = "scar_chest_small_r_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_belly
+	name = "Scar, Belly"
+	icon_state = "scar_belly"
+	body_parts = list(BP_TORSO)
+
+/datum/sprite_accessory/marking/scar_belly/teshari
+	name = "Scar, Belly (Teshari)"
+	icon_state = "scar_belly_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+	body_parts = list(BP_GROIN)
+
+/datum/sprite_accessory/marking/scar_cheek_left
+	name = "Scar, Cheek (Left)"
+	icon_state = "scar_cheek_l"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/scar_cheek_right
+	name = "Scar, Cheek (Right)"
+	icon_state = "scar_cheek_r"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/scar_forehead_left
+	name = "Scar, Forehead (Left)"
+	icon_state = "scar_forehead_l"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/scar_forehead_left/teshari
+	name = "Scar, Forehead (Left)(Teshari)"
+	icon_state = "scar_forehead_l_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_forehead_right
+	name = "Scar, Forehead (Right)"
+	icon_state = "scar_forehead_r"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/scar_forehead_right/teshari
+	name = "Scar, Forehead (Right)(Teshari)"
+	icon_state = "scar_forehead_r_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_chin
+	name = "Scar, Chin"
+	icon_state = "scar_chin"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/scar_muzzle_teshari
+	name = "Scar, Muzzle"
+	icon_state = "scar_muzzle_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/scar_eye_left
+	name = "Scar, Over Eye (Left)"
+	icon_state = "scar_eye_l"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/scar_eye_left/teshari
+	name = "Scar, Over Eye (Left)(Teshari)"
+	icon_state = "scar_eye_l_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_eye_right
+	name = "Scar, Over Eye (Right)"
+	icon_state = "scar_eye_r"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/scar_eye_right/teshari
+	name = "Scar, Over Eye (Right)(Teshari)"
+	icon_state = "scar_eye_r_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_left_arm_upper
+	name = "Scar, Left Arm (Upper)"
+	icon_state = "scar_arm_left_u"
+	body_parts = list(BP_L_ARM)
+
+/datum/sprite_accessory/marking/scar_left_arm_upper/teshari
+	name = "Scar, Left Arm (Upper)(Teshari)"
+	icon_state = "scar_arm_left_u_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_left_arm_lower
+	name = "Scar, Left Arm (Lower)"
+	icon_state = "scar_arm_left_l"
+	body_parts = list(BP_L_ARM)
+
+/datum/sprite_accessory/marking/scar_left_arm_lower/teshari
+	name = "Scar, Left Arm (Lower)(Teshari)"
+	icon_state = "scar_arm_left_l_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_left_arm_rear
+	name = "Scar, Left Arm (Rear)"
+	icon_state = "scar_arm_left_rear"
+	body_parts = list(BP_L_ARM)
+
+/datum/sprite_accessory/marking/scar_left_arm_rear/teshari
+	name = "Scar, Left Arm (Rear)(Teshari)"
+	icon_state = "scar_arm_left_rear_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_left_hand
+	name = "Scar, Left Hand"
+	icon_state = "scar_hand_left"
+	body_parts = list(BP_L_HAND)
+
+/datum/sprite_accessory/marking/scar_left_hand/teshari
+	name = "Scar, Left Hand (Teshari)"
+	icon_state = "scar_hand_left_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_right_arm_upper
+	name = "Scar, Right Arm (Upper)"
+	icon_state = "scar_arm_right_u"
+	body_parts = list(BP_R_ARM)
+
+/datum/sprite_accessory/marking/scar_right_arm_upper/teshari
+	name = "Scar, Right Arm (Upper)(Teshari)"
+	icon_state = "scar_arm_right_u_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_right_arm_lower
+	name = "Scar, Right Arm (Lower)"
+	icon_state = "scar_arm_right_l"
+	body_parts = list(BP_R_ARM)
+
+/datum/sprite_accessory/marking/scar_right_arm_lower/teshari
+	name = "Scar, Right Arm (Lower)(Teshari)"
+	icon_state = "scar_arm_right_l_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_right_arm_rear
+	name = "Scar, Right Arm (Rear)"
+	icon_state = "scar_arm_right_rear"
+	body_parts = list(BP_R_ARM)
+
+/datum/sprite_accessory/marking/scar_right_arm_rear/teshari
+	name = "Scar, Right Arm (Rear)(Teshari)"
+	icon_state = "scar_arm_right_rear_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_right_hand
+	name = "Scar, Right Hand"
+	icon_state = "scar_hand_right"
+	body_parts = list(BP_R_HAND)
+
+/datum/sprite_accessory/marking/scar_right_hand/teshari
+	name = "Scar, Right Hand (Teshari)"
+	icon_state = "scar_hand_right_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_left_leg_upper
+	name = "Scar, Left Leg (Upper)"
+	icon_state = "scar_leg_left_u"
+	body_parts = list(BP_L_LEG)
+
+/datum/sprite_accessory/marking/scar_left_leg_upper/teshari
+	name = "Scar, Left Leg (Upper)(Teshari)"
+	icon_state = "scar_leg_left_u_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_left_leg_lower
+	name = "Scar, Left Leg (Lower)"
+	icon_state = "scar_leg_left_l"
+	body_parts = list(BP_L_LEG)
+
+/datum/sprite_accessory/marking/scar_left_leg_lower/teshari
+	name = "Scar, Left Leg (Lower)(Teshari)"
+	icon_state = "scar_leg_left_l_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_left_leg_rear
+	name = "Scar, Left Leg (Rear)"
+	icon_state = "scar_leg_left_rear"
+	body_parts = list(BP_L_LEG)
+
+/datum/sprite_accessory/marking/scar_left_leg_rear/teshari
+	name = "Scar, Left Leg (Rear)(Teshari)"
+	icon_state = "scar_leg_left_rear_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_left_foot
+	name = "Scar, Left Foot"
+	icon_state = "scar_left_foot"
+	body_parts = list(BP_L_FOOT)
+
+/datum/sprite_accessory/marking/scar_left_foot/teshari
+	name = "Scar, Left Foot (Teshari)"
+	icon_state = "scar_left_foot_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_right_leg_upper
+	name = "Scar, Right Leg (Upper)"
+	icon_state = "scar_right_leg_u"
+	body_parts = list(BP_R_LEG)
+
+/datum/sprite_accessory/marking/scar_right_leg_upper/teshari
+	name = "Scar, Right Leg (Upper)(Teshari)"
+	icon_state = "scar_right_leg_u_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_right_leg_lower
+	name = "Scar, Right Leg (Lower)"
+	icon_state = "scar_right_leg_l"
+	body_parts = list(BP_R_LEG)
+
+/datum/sprite_accessory/marking/scar_right_leg_lower/teshari
+	name = "Scar, Right Leg (Lower)(Teshari)"
+	icon_state = "scar_right_leg_l_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_right_leg_rear
+	name = "Scar, Right Leg (Rear)"
+	icon_state = "scar_right_leg_rear"
+	body_parts = list(BP_R_LEG)
+
+/datum/sprite_accessory/marking/scar_right_leg_rear/teshari
+	name = "Scar, Right Leg (Rear)(Teshari)"
+	icon_state = "scar_right_leg_rear_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/scar_right_foot
+	name = "Scar, Right Foot"
+	icon_state = "scar_right_foot"
+	body_parts = list(BP_R_FOOT)
+
+/datum/sprite_accessory/marking/scar_right_foot/teshari
+	name = "Scar, Right Foot (Teshari)"
+	icon_state = "scar_right_foot_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/skull_paint
+	name = "Skull Paint"
+	icon_state = "skull"
+	body_parts = list(BP_HEAD)
+	genetic = FALSE
+
+//Heterochromia
+
 /datum/sprite_accessory/marking/heterochromia
 	name = "Heterochromia (right eye)"
 	icon_state = "heterochromia"
 	body_parts = list(BP_HEAD)
+
+//Taj/Unathi shared markings
+
+/datum/sprite_accessory/marking/taj_paw_socks
+	name = "Socks Coloration (Taj)"
+	icon_state = "taj_pawsocks"
+	body_parts = list(BP_L_FOOT,BP_R_FOOT,BP_L_LEG,BP_R_LEG,BP_L_ARM,BP_R_ARM,BP_L_HAND,BP_R_HAND)
+	//species_allowed = list(SPECIES_TAJ)			//Removing Polaris whitelits
+
+/datum/sprite_accessory/marking/una_paw_socks
+	name = "Socks Coloration (Una)"
+	icon_state = "una_pawsocks"
+	body_parts = list(BP_L_FOOT,BP_R_FOOT,BP_L_LEG,BP_R_LEG,BP_L_ARM,BP_R_ARM,BP_L_HAND,BP_R_HAND)
+	//species_allowed = list(SPECIES_UNATHI)			//Removing Polaris whitelits
+
+/datum/sprite_accessory/marking/paw_socks
+	name = "Socks Coloration (Generic)"
+	icon_state = "pawsocks"
+	body_parts = list(BP_L_FOOT,BP_R_FOOT,BP_L_LEG,BP_R_LEG,BP_L_ARM,BP_R_ARM,BP_L_HAND,BP_R_HAND)
+	//species_allowed = list(SPECIES_TAJ, SPECIES_UNATHI)			//Removing Polaris whitelits
+
+/datum/sprite_accessory/marking/paw_socks_belly
+	name = "Socks,Belly Coloration (Generic)"
+	icon_state = "pawsocksbelly"
+	body_parts = list(BP_L_FOOT,BP_R_FOOT,BP_L_LEG,BP_R_LEG,BP_L_ARM,BP_R_ARM,BP_L_HAND,BP_R_HAND,BP_GROIN,BP_TORSO)
+	//species_allowed = list(SPECIES_TAJ, SPECIES_UNATHI)			//Removing Polaris whitelits
+
+/datum/sprite_accessory/marking/belly_hands_feet
+	name = "Hands,Feet,Belly Color (Minor)"
+	icon_state = "bellyhandsfeetsmall"
+	body_parts = list(BP_L_FOOT,BP_R_FOOT,BP_L_LEG,BP_R_LEG,BP_L_ARM,BP_R_ARM,BP_L_HAND,BP_R_HAND,BP_GROIN,BP_TORSO)
+	//species_allowed = list(SPECIES_TAJ, SPECIES_UNATHI)			//Removing Polaris whitelits
+
+/datum/sprite_accessory/marking/hands_feet_belly_full
+	name = "Hands,Feet,Belly Color (Major)"
+	icon_state = "bellyhandsfeet"
+	body_parts = list(BP_L_FOOT,BP_R_FOOT,BP_L_LEG,BP_R_LEG,BP_L_ARM,BP_R_ARM,BP_L_HAND,BP_R_HAND,BP_GROIN,BP_TORSO)
+	//SPECIES_TAJ, SPECIES_UNATHI)				//Removing Polaris whitelits
+
+/datum/sprite_accessory/marking/hands_feet_belly_full_female
+	name = "Hands,Feet,Belly Color (Major, Female)"
+	icon_state = "bellyhandsfeet_female"
+	body_parts = list(BP_L_FOOT,BP_R_FOOT,BP_L_LEG,BP_R_LEG,BP_L_ARM,BP_R_ARM,BP_L_HAND,BP_R_HAND,BP_GROIN,BP_TORSO)
+	//species_allowed = list(SPECIES_TAJ)			//Removing Polaris whitelits
+
+/datum/sprite_accessory/marking/patches
+	name = "Color Patches"
+	icon_state = "patches"
+	body_parts = list(BP_L_FOOT,BP_R_FOOT,BP_L_LEG,BP_R_LEG,BP_L_ARM,BP_R_ARM,BP_L_HAND,BP_R_HAND,BP_TORSO,BP_GROIN)
+	//species_allowed = list(SPECIES_TAJ)			//Removing Polaris whitelits
+
+/datum/sprite_accessory/marking/patchesface
+	name = "Color Patches (Face)"
+	icon_state = "patchesface"
+	body_parts = list(BP_HEAD)
+	//species_allowed = list(SPECIES_TAJ)				//Removing Polaris whitelits
+
 
 	//Taj specific stuff
 /datum/sprite_accessory/marking/taj_belly
 	name = "Belly Fur (Taj)"
 	icon_state = "taj_belly"
 	body_parts = list(BP_TORSO)
-	species_allowed = list(SPECIES_TAJ)
+	//species_allowed = list(SPECIES_TAJ)			//Removing Polaris whitelits
 
 /datum/sprite_accessory/marking/taj_bellyfull
 	name = "Belly Fur Wide (Taj)"
 	icon_state = "taj_bellyfull"
 	body_parts = list(BP_TORSO)
-	species_allowed = list(SPECIES_TAJ)
+	//species_allowed = list(SPECIES_TAJ)			//Removing Polaris whitelits
 
 /datum/sprite_accessory/marking/taj_earsout
 	name = "Outer Ear (Taj)"
 	icon_state = "taj_earsout"
 	body_parts = list(BP_HEAD)
-	species_allowed = list(SPECIES_TAJ)
+	//species_allowed = list(SPECIES_TAJ)			//Removing Polaris whitelits
 
 /datum/sprite_accessory/marking/taj_earsin
 	name = "Inner Ear (Taj)"
 	icon_state = "taj_earsin"
 	body_parts = list(BP_HEAD)
-	species_allowed = list(SPECIES_TAJ)
+	//species_allowed = list(SPECIES_TAJ)			//Removing Polaris whitelits
 
 /datum/sprite_accessory/marking/taj_nose
 	name = "Nose Color (Taj)"
 	icon_state = "taj_nose"
 	body_parts = list(BP_HEAD)
-	species_allowed = list(SPECIES_TAJ)
+	//species_allowed = list(SPECIES_TAJ)			//Removing Polaris whitelits
 
 /datum/sprite_accessory/marking/taj_crest
 	name = "Chest Fur Crest (Taj)"
 	icon_state = "taj_crest"
 	body_parts = list(BP_TORSO)
-	species_allowed = list(SPECIES_TAJ)
+	//species_allowed = list(SPECIES_TAJ)			//Removing Polaris whitelits
 
 /datum/sprite_accessory/marking/taj_muzzle
 	name = "Muzzle Color (Taj)"
 	icon_state = "taj_muzzle"
 	body_parts = list(BP_HEAD)
-	species_allowed = list(SPECIES_TAJ)
+	//species_allowed = list(SPECIES_TAJ)			//Removing Polaris whitelits
 
 /datum/sprite_accessory/marking/taj_face
 	name = "Cheeks Color (Taj)"
 	icon_state = "taj_face"
 	body_parts = list(BP_HEAD)
-	species_allowed = list(SPECIES_TAJ)
+	//species_allowed = list(SPECIES_TAJ)			//Removing Polaris whitelits
 
 /datum/sprite_accessory/marking/taj_all
 	name = "All Taj Head (Taj)"
 	icon_state = "taj_all"
 	body_parts = list(BP_HEAD)
-	species_allowed = list(SPECIES_TAJ)
+	//species_allowed = list(SPECIES_TAJ)			//Removing Polaris whitelits
 
 	//Una specific stuff
 /datum/sprite_accessory/marking/una_face
 	name = "Face Color (Una)"
 	icon_state = "una_face"
 	body_parts = list(BP_HEAD)
-	species_allowed = list(SPECIES_UNATHI)
+	//species_allowed = list(SPECIES_UNATHI)			//Removing Polaris whitelits
 
 /datum/sprite_accessory/marking/una_facelow
 	name = "Face Color Low (Una)"
 	icon_state = "una_facelow"
 	body_parts = list(BP_HEAD)
-	species_allowed = list(SPECIES_UNATHI)
+	//species_allowed = list(SPECIES_UNATHI)			//Removing Polaris whitelits
 
 /datum/sprite_accessory/marking/una_scutes
 	name = "Scutes (Una)"
 	icon_state = "una_scutes"
 	body_parts = list(BP_TORSO)
-	species_allowed = list(SPECIES_UNATHI)
+	//species_allowed = list(SPECIES_UNATHI)			//Removing Polaris whitelits
 
 	//Tesh stuff.
 
@@ -1664,75 +2927,601 @@
 	name = "Leaves (Diona)"
 	icon_state = "diona_leaves"
 	body_parts = list(BP_L_FOOT, BP_R_FOOT, BP_L_LEG, BP_R_LEG, BP_L_ARM, BP_R_ARM, BP_L_HAND, BP_R_HAND, BP_TORSO, BP_GROIN, BP_HEAD)
-	species_allowed = list(SPECIES_DIONA)
+	//species_allowed = list(SPECIES_DIONA)			//Removing Polaris whitelits
 
 /datum/sprite_accessory/marking/diona_thorns
 	name = "Thorns (Diona)"
 	icon_state = "diona_thorns"
 	body_parts =list(BP_TORSO, BP_HEAD)
-	species_allowed = list(SPECIES_DIONA)
+	//species_allowed = list(SPECIES_DIONA)			//Removing Polaris whitelits
 	do_colouration = 0
 
 /datum/sprite_accessory/marking/diona_flowers
 	name = "Flowers (Diona)"
 	icon_state = "diona_flowers"
 	body_parts =list(BP_TORSO, BP_HEAD)
-	species_allowed = list(SPECIES_DIONA)
+	//species_allowed = list(SPECIES_DIONA)			//Removing Polaris whitelits
 	do_colouration = 0
 
 /datum/sprite_accessory/marking/diona_moss
 	name = "Moss (Diona)"
 	icon_state = "diona_moss"
 	body_parts =list(BP_TORSO)
-	species_allowed = list(SPECIES_DIONA)
+	//species_allowed = list(SPECIES_DIONA)			//Removing Polaris whitelits
 	do_colouration = 0
 
 /datum/sprite_accessory/marking/diona_mushroom
 	name = "Mushroom (Diona)"
 	icon_state = "diona_mushroom"
 	body_parts =list(BP_HEAD)
-	species_allowed = list(SPECIES_DIONA)
+	//species_allowed = list(SPECIES_DIONA)			//Removing Polaris whitelits
 	do_colouration = 0
 
 /datum/sprite_accessory/marking/diona_antennae
 	name = "Antennae (Diona)"
 	icon_state = "diona_antennae"
 	body_parts =list(BP_HEAD)
-	species_allowed = list(SPECIES_DIONA)
+	//species_allowed = list(SPECIES_DIONA)			//Removing Polaris whitelits
 	do_colouration = 0
 
+//Skrell stuff.
 
+/datum/sprite_accessory/marking/skrell
+	name = "Countershading (Skrell)"
+	icon_state = "skr_shade"
+	body_parts = list(BP_TORSO, BP_GROIN, BP_HEAD)
+	//species_allowed = list(SPECIES_SKRELL)			//Removing Polaris whitelits
+
+/datum/sprite_accessory/marking/skrell/stripes
+	name = "Poison Dart Stripes (Skrell)"
+	icon_state = "skr_stripes"
+	body_parts = list(BP_L_LEG, BP_R_LEG, BP_L_ARM, BP_R_ARM, BP_TORSO)
+
+//Cybernetic Augments, some species-limited due to sprite misalignment. /aug/ types are excluded from dna.
+
+/datum/sprite_accessory/marking/aug
+	name = "Augment (Backports, Back)"
+	icon_state = "aug_backports"
+	genetic = FALSE
+	body_parts = list(BP_TORSO)
+	species_allowed = list()			//Removing Polaris whitelits
+
+/datum/sprite_accessory/marking/aug/diode
+	name = "Augment (Backports Diode, Back)"
+	icon_state = "aug_backportsdiode"
+
+/datum/sprite_accessory/marking/aug/backportswide
+	name = "Augment (Backports Wide, Back)"
+	icon_state = "aug_backportswide"
+	body_parts = list(BP_TORSO)
+
+/datum/sprite_accessory/marking/aug/backportswide/diode
+	name = "Augment (Backports Wide Diode, Back)"
+	icon_state = "aug_backportswidediode"
+
+/datum/sprite_accessory/marking/aug/headcase
+	name = "Augment (Headcase, Head)"
+	icon_state = "aug_headcase"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/aug/headcase_light
+	name = "Augment (Headcase Light, Head)"
+	icon_state = "aug_headcaselight"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/aug/headport
+	name = "Augment (Headport, Head)"
+	icon_state = "aug_headport"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/aug/headport/diode
+	name = "Augment (Headport Diode, Head)"
+	icon_state = "aug_headplugdiode"
+
+/datum/sprite_accessory/marking/aug/lowerjaw
+	name = "Augment (Lower Jaw, Head)"
+	icon_state = "aug_lowerjaw"
+	body_parts = list(BP_HEAD)
+	species_allowed = list()			//Removing Polaris whitelits
+
+/datum/sprite_accessory/marking/aug/scalpports
+	name = "Augment (Scalp Ports)"
+	icon_state = "aug_scalpports"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/aug/scalpports/vertex_left
+	name = "Augment (Scalp Port, Vertex Left)"
+	icon_state = "aug_vertexport_l"
+
+/datum/sprite_accessory/marking/aug/scalpports/vertex_right
+	name = "Augment (Scalp Port, Vertex Right)"
+	icon_state = "aug_vertexport_r"
+
+/datum/sprite_accessory/marking/aug/scalpports/occipital_left
+	name = "Augment (Scalp Port, Occipital Left)"
+	icon_state = "aug_occipitalport_l"
+
+/datum/sprite_accessory/marking/aug/scalpports/occipital_right
+	name = "Augment (Scalp Port, Occipital Right)"
+	icon_state = "aug_occipitalport_r"
+
+/datum/sprite_accessory/marking/aug/scalpportsdiode
+	name = "Augment (Scalp Ports Diode)"
+	icon_state = "aug_scalpportsdiode"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/aug/scalpportsdiode/vertex_left
+	name = "Augment (Scalp Port Diode, Vertex Left)"
+	icon_state = "aug_vertexportdiode_l"
+
+/datum/sprite_accessory/marking/aug/scalpportsdiode/vertex_right
+	name = "Augment (Scalp Port Diode, Vertex Right)"
+	icon_state = "aug_vertexportdiode_r"
+
+/datum/sprite_accessory/marking/aug/scalpportsdiode/occipital_left
+	name = "Augment (Scalp Port Diode, Occipital Left)"
+	icon_state = "aug_occipitalportdiode_l"
+
+/datum/sprite_accessory/marking/aug/scalpportsdiode/occipital_right
+	name = "Augment (Scalp Port Diode, Occipital Right)"
+	icon_state = "aug_occipitalportdiode_r"
+
+/datum/sprite_accessory/marking/aug/backside_left
+	name = "Augment (Backside Left, Head)"
+	icon_state = "aug_backside_l"
+
+/datum/sprite_accessory/marking/aug/backside_left/side_diode
+	name = "Augment (Backside Left Diode, Head)"
+	icon_state = "aug_sidediode_l"
+
+/datum/sprite_accessory/marking/aug/backside_right
+	name = "Augment (Backside Right, Head)"
+	icon_state = "aug_backside_r"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/aug/backside_right/side_diode
+	name = "Augment (Backside Right Diode, Head)"
+	icon_state = "aug_sidediode_r"
+
+/datum/sprite_accessory/marking/aug/side_deunan_left
+	name = "Augment (Deunan, Side Left)"
+	icon_state = "aug_sidedeunan_l"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/aug/side_deunan_right
+	name = "Augment (Deunan, Side Right)"
+	icon_state = "aug_sidedeunan_r"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/aug/side_kuze_left
+	name = "Augment (Kuze, Side Left)"
+	icon_state = "aug_sidekuze_l"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/aug/side_kuze_left/side_diode
+	name = "Augment (Kuze Diode, Side Left)"
+	icon_state = "aug_sidekuzediode_l"
+
+/datum/sprite_accessory/marking/aug/side_kuze_right
+	name = "Augment (Kuze, Side Right)"
+	icon_state = "aug_sidekuze_r"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/aug/side_kuze_right/side_diode
+	name = "Augment (Kuze Diode, Side Right)"
+	icon_state = "aug_sidekuzediode_r"
+
+/datum/sprite_accessory/marking/aug/side_kinzie_left
+	name = "Augment (Kinzie, Side Left)"
+	icon_state = "aug_sidekinzie_l"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/aug/side_kinzie_right
+	name = "Augment (Kinzie, Side Right)"
+	icon_state = "aug_sidekinzie_r"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/aug/side_shelly_left
+	name = "Augment (Shelly, Side Left)"
+	icon_state = "aug_sideshelly_l"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/aug/side_shelly_right
+	name = "Augment (Shelly, Side Right)"
+	icon_state = "aug_sideshelly_r"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/aug/chestports
+	name = "Augment (Chest Ports)"
+	icon_state = "aug_chestports"
+	body_parts = list(BP_TORSO)
+
+/datum/sprite_accessory/marking/aug/chestports/teshari
+	name = "Augment (Chest Ports)(Teshari)"
+	icon_state = "aug_chestports_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/aug/abdomenports
+	name = "Augment (Abdomen Ports)"
+	icon_state = "aug_abdomenports"
+	body_parts = list(BP_TORSO)
+
+/datum/sprite_accessory/marking/aug/abdomenports/teshari
+	name = "Augment (Abdomen Ports)(Teshari)"
+	icon_state = "aug_abdomenports_tesh"
+	body_parts = list(BP_GROIN)
+	species_allowed = list(SPECIES_TESHARI)
+
+//bandages
+
+/datum/sprite_accessory/marking/bandage
+	name = "Bandage, Head 1"
+	icon_state = "bandage1"
+	body_parts = list(BP_HEAD)
+	genetic = FALSE
+	do_colouration = FALSE
+
+/datum/sprite_accessory/marking/bandage/teshari
+	name = "Bandage, Head 1 (Teshari)"
+	icon_state = "bandage1_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/head2
+	name = "Bandage, Head 2"
+	icon_state = "bandage2"
+
+/datum/sprite_accessory/marking/bandage/head2/teshari
+	name = "Bandage, Head 2 (Teshari)"
+	icon_state = "bandage2_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/head3
+	name = "Bandage, Head 3"
+	icon_state = "bandage3"
+
+/datum/sprite_accessory/marking/bandage/head3/teshari
+	name = "Bandage, Head 3 (Teshari)"
+	icon_state = "bandage3_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/torso
+	name = "Bandage, Torso 1"
+	icon_state = "bandage1"
+	body_parts = list(BP_TORSO)
+
+/datum/sprite_accessory/marking/bandage/torso/teshari
+	name = "Bandage, Torso 1 (Teshari)"
+	icon_state = "bandage1_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/torso/torso2
+	name = "Bandage, Torso 2"
+	icon_state = "bandage2"
+
+/datum/sprite_accessory/marking/bandage/torso/torso2/teshari
+	name = "Bandage, Torso 2 (Teshari)"
+	icon_state = "bandage2_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/torso/torso3
+	name = "Bandage, Torso 3"
+	icon_state = "bandage3"
+
+/datum/sprite_accessory/marking/bandage/torso/torso3/teshari
+	name = "Bandage, Torso 3 (Teshari)"
+	icon_state = "bandage3_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/groin
+	name = "Bandage, Groin 1"
+	icon_state = "bandage1"
+	body_parts = list(BP_GROIN)
+
+/datum/sprite_accessory/marking/bandage/groin/teshari
+	name = "Bandage, Groin 1 (Teshari)"
+	icon_state = "bandage1_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/groin/groin2
+	name = "Bandage, Groin 2"
+	icon_state = "bandage2"
+
+/datum/sprite_accessory/marking/bandage/groin/groin2/teshari
+	name = "Bandage, Groin 2 (Teshari)"
+	icon_state = "bandage2_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/groin/groin3
+	name = "Bandage, Groin 3"
+	icon_state = "bandage3"
+
+/datum/sprite_accessory/marking/bandage/groin/groin3/teshari
+	name = "Bandage, Groin 3 (Teshari)"
+	icon_state = "bandage3_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/l_arm
+	name = "Bandage, Left Arm 1"
+	icon_state = "bandage1"
+	body_parts = list(BP_L_ARM)
+
+/datum/sprite_accessory/marking/bandage/l_arm/teshari
+	name = "Bandage, Left Arm 1 (Teshari)"
+	icon_state = "bandage1_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/l_arm/l_arm2
+	name = "Bandage, Left Arm 2"
+	icon_state = "bandage2"
+
+/datum/sprite_accessory/marking/bandage/l_arm/l_arm2/teshari
+	name = "Bandage, Left Arm 2 (Teshari)"
+	icon_state = "bandage2_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/l_arm/l_arm3
+	name = "Bandage, Left Arm 3"
+	icon_state = "bandage3"
+
+/datum/sprite_accessory/marking/bandage/l_arm/l_arm3/teshari
+	name = "Bandage, Left Arm 3 (Teshari)"
+	icon_state = "bandage3_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/l_hand
+	name = "Bandage, Left Hand 1"
+	icon_state = "bandage1"
+	body_parts = list(BP_L_HAND)
+
+/datum/sprite_accessory/marking/bandage/l_hand/teshari
+	name = "Bandage, Left Hand 1 (Teshari)"
+	icon_state = "bandage1_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/l_hand/l_hand2
+	name = "Bandage, Left Hand 2"
+	icon_state = "bandage2"
+
+/datum/sprite_accessory/marking/bandage/l_hand/l_hand_2/teshari
+	name = "Bandage, Left Hand 2 (Teshari)"
+	icon_state = "bandage2_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/l_hand/l_hand3
+	name = "Bandage, Left Hand 3"
+	icon_state = "bandage3"
+
+/datum/sprite_accessory/marking/bandage/r_arm
+	name = "Bandage, Right Arm 1"
+	icon_state = "bandage1"
+	body_parts = list(BP_R_ARM)
+
+/datum/sprite_accessory/marking/bandage/r_arm/teshari
+	name = "Bandage, Right Arm 1 (Teshari)"
+	icon_state = "bandage1_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/r_arm/r_arm2
+	name = "Bandage, Right Arm 2"
+	icon_state = "bandage2"
+
+/datum/sprite_accessory/marking/bandage/r_arm/r_arm2/teshari
+	name = "Bandage, Right Arm 2 (Teshari)"
+	icon_state = "bandage2_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/r_arm/r_arm3
+	name = "Bandage, Right Arm 3"
+	icon_state = "bandage3"
+
+/datum/sprite_accessory/marking/bandage/r_arm/r_arm3/teshari
+	name = "Bandage, Right Arm 3 (Teshari)"
+	icon_state = "bandage3_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/r_hand
+	name = "Bandage, Right Hand 1"
+	icon_state = "bandage1"
+	body_parts = list(BP_R_HAND)
+
+/datum/sprite_accessory/marking/bandage/r_hand/teshari
+	name = "Bandage, Right Hand 1 (Teshari)"
+	icon_state = "bandage1_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/r_hand/r_hand2
+	name = "Bandage, Right Hand 2"
+	icon_state = "bandage2"
+
+/datum/sprite_accessory/marking/bandage/r_hand/r_hand2/teshari
+	name = "Bandage, Right Hand 2 (Teshari)"
+	icon_state = "bandage2_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/r_hand/r_hand3
+	name = "Bandage, Right Hand 3"
+	icon_state = "bandage3"
+
+/datum/sprite_accessory/marking/bandage/l_leg
+	name = "Bandage, Left Leg 1"
+	icon_state = "bandage1"
+	body_parts = list(BP_L_LEG)
+
+/datum/sprite_accessory/marking/bandage/l_leg/teshari
+	name = "Bandage, Left Leg 1 (Teshari)"
+	icon_state = "bandage1_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/l_leg/l_leg2
+	name = "Bandage, Left Leg 2"
+	icon_state = "bandage2"
+
+/datum/sprite_accessory/marking/bandage/l_leg/l_leg2/teshari
+	name = "Bandage, Left Leg 2 (Teshari)"
+	icon_state = "bandage2_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/l_leg/l_leg3
+	name = "Bandage, Left Leg 3"
+	icon_state = "bandage3"
+
+/datum/sprite_accessory/marking/bandage/l_leg/l_leg3/teshari
+	name = "Bandage, Left Leg 3 (Teshari)"
+	icon_state = "bandage3_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/l_foot
+	name = "Bandage, Left Foot 1"
+	icon_state = "bandage1"
+	body_parts = list(BP_L_FOOT)
+
+/datum/sprite_accessory/marking/bandage/l_foot/teshari
+	name = "Bandage, Left Foot 1 (Teshari)"
+	icon_state = "bandage1_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/l_foot/l_foot2
+	name = "Bandage, Left Foot 2"
+	icon_state = "bandage2"
+
+/datum/sprite_accessory/marking/bandage/l_foot/l_foot_2/teshari
+	name = "Bandage, Left Foot 2 (Teshari)"
+	icon_state = "bandage2_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/l_foot/l_foot3
+	name = "Bandage, Left Foot 3"
+	icon_state = "bandage3"
+
+/datum/sprite_accessory/marking/bandage/l_foot/l_foot_3/teshari
+	name = "Bandage, Left Foot 3 (Teshari)"
+	icon_state = "bandage3_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/r_leg
+	name = "Bandage, Right Leg 1"
+	icon_state = "bandage1"
+	body_parts = list(BP_R_LEG)
+
+/datum/sprite_accessory/marking/bandage/r_leg/teshari
+	name = "Bandage, Right Leg 1 (Teshari)"
+	icon_state = "bandage1_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/r_leg/r_leg2
+	name = "Bandage, Right Leg 2"
+	icon_state = "bandage2"
+
+/datum/sprite_accessory/marking/bandage/r_leg/r_leg2/teshari
+	name = "Bandage, Right Leg 2 (Teshari)"
+	icon_state = "bandage2_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/r_leg/r_leg3
+	name = "Bandage, Right Leg 3"
+	icon_state = "bandage3"
+
+/datum/sprite_accessory/marking/bandage/r_leg/r_leg3/teshari
+	name = "Bandage, Right Leg 3 (Teshari)"
+	icon_state = "bandage3_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/r_foot
+	name = "Bandage, Right Foot 1"
+	icon_state = "bandage1"
+	body_parts = list(BP_R_FOOT)
+
+/datum/sprite_accessory/marking/bandage/r_foot/teshari
+	name = "Bandage, Right Foot 1 (Teshari)"
+	icon_state = "bandage1_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/r_foot/r_foot2
+	name = "Bandage, Right Foot 2"
+	icon_state = "bandage2"
+
+/datum/sprite_accessory/marking/bandage/r_foot/r_foot2/teshari
+	name = "Bandage, Right Foot 2 (Teshari)"
+	icon_state = "bandage2_tesh"
+	species_allowed = list(SPECIES_TESHARI)
+
+/datum/sprite_accessory/marking/bandage/r_foot/r_foot3
+	name = "Bandage, Rufgt Foot 3"
+	icon_state = "bandage3"
+
+/datum/sprite_accessory/marking/bandage/r_foot/r_foot3/teshari
+	name = "Bandage, Right Foot 3 (Teshari)"
+	icon_state = "bandage3_tesh"
+	species_allowed = list(SPECIES_TESHARI)
 
 //skin styles - WIP
 //going to have to re-integrate this with surgery
 //let the icon_state hold an icon preview for now
+
 /datum/sprite_accessory/skin
 	icon = 'icons/mob/human_races/r_human.dmi'
 
 /datum/sprite_accessory/skin/human
 	name = "Default human skin"
 	icon_state = "default"
-	species_allowed = list(SPECIES_HUMAN,SPECIES_HUMAN_VATBORN)
+	//species_allowed = list(SPECIES_HUMAN,SPECIES_HUMAN_VATBORN)			//Removing Polaris whitelits
 
 /datum/sprite_accessory/skin/human_tatt01
 	name = "Tatt01 human skin"
 	icon_state = "tatt1"
-	species_allowed = list(SPECIES_HUMAN,SPECIES_HUMAN_VATBORN)
+	//species_allowed = list(SPECIES_HUMAN,SPECIES_HUMAN_VATBORN)			//Removing Polaris whitelits
 
 /datum/sprite_accessory/skin/tajaran
 	name = "Default tajaran skin"
 	icon_state = "default"
 	icon = 'icons/mob/human_races/r_tajaran.dmi'
-	species_allowed = list(SPECIES_TAJ)
+	//species_allowed = list(SPECIES_TAJ)			//Removing Polaris whitelits
 
 /datum/sprite_accessory/skin/unathi
 	name = "Default Unathi skin"
 	icon_state = "default"
 	icon = 'icons/mob/human_races/r_lizard.dmi'
-	species_allowed = list(SPECIES_UNATHI)
+	//species_allowed = list(SPECIES_UNATHI)			//Removing Polaris whitelits
 
 /datum/sprite_accessory/skin/skrell
 	name = "Default skrell skin"
 	icon_state = "default"
 	icon = 'icons/mob/human_races/r_skrell.dmi'
-	species_allowed = list(SPECIES_SKRELL)
+	//species_allowed = list(SPECIES_SKRELL)			//Removing Polaris whitelits
+
+//Vox Exclusives
+/datum/sprite_accessory/marking/vox
+	name = "Vox Beak"
+	icon = 'icons/mob/human_races/markings_vox.dmi'
+	icon_state = "vox_beak"
+	species_allowed = list(SPECIES_VOX)
+	color_blend_mode = ICON_MULTIPLY
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/vox/voxtalons
+	name = "Vox scales"
+	icon_state = "vox_talons"
+	color_blend_mode = ICON_MULTIPLY
+	body_parts = list(BP_R_ARM,BP_L_ARM,BP_R_HAND,BP_L_HAND,BP_R_LEG,BP_L_LEG,BP_R_FOOT,BP_L_FOOT)
+
+/datum/sprite_accessory/marking/vox/voxclaws
+	name = "Vox Claws"
+	icon_state = "Voxclaws"
+	color_blend_mode = ICON_MULTIPLY
+	body_parts = list(BP_L_FOOT,BP_R_FOOT,BP_L_HAND,BP_R_HAND)
+
+/datum/sprite_accessory/marking/vox/vox_alt
+	name = "Vox Alternate"
+	icon_state = "bay_vox"
+	body_parts = list(BP_L_FOOT,BP_R_FOOT,BP_L_LEG,BP_R_LEG,BP_L_ARM,BP_R_ARM,BP_L_HAND,BP_R_HAND,BP_TORSO,BP_GROIN,BP_HEAD)
+
+/datum/sprite_accessory/marking/vox/vox_alt_eyes
+	name = "Alternate Vox Eyes"
+	icon_state = "bay_vox_eyes"
+	body_parts = list(BP_HEAD)
+
+/datum/sprite_accessory/marking/vox/voxscales
+	name = "Alternate Vox scales"
+	icon_state = "Voxscales"
+	color_blend_mode = ICON_MULTIPLY
+	body_parts = list(BP_R_ARM,BP_L_ARM,BP_R_HAND,BP_L_HAND,BP_R_LEG,BP_L_LEG,BP_R_FOOT,BP_L_FOOT)

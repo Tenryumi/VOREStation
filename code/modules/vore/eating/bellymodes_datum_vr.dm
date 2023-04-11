@@ -14,11 +14,15 @@ GLOBAL_LIST_INIT(digest_modes, list())
 /datum/digest_mode/proc/process_mob(obj/belly/B, mob/living/L)
 	return null
 
+/datum/digest_mode/proc/handle_atoms(obj/belly/B, list/touchable_atoms)
+    return FALSE
+
 /datum/digest_mode/digest
 	id = DM_DIGEST
 	noise_chance = 50
 
 /datum/digest_mode/digest/process_mob(obj/belly/B, mob/living/L)
+	var/oldstat = L.stat
 	//Pref protection!
 	if(!L.digestable || L.absorbed)
 		return null
@@ -38,11 +42,20 @@ GLOBAL_LIST_INIT(digest_modes, list())
 	// Deal digestion damage (and feed the pred)
 	var/old_brute = L.getBruteLoss()
 	var/old_burn = L.getFireLoss()
+	var/old_oxy = L.getOxyLoss()
+	var/old_tox = L.getToxLoss()
+	var/old_clone = L.getCloneLoss()
 	L.adjustBruteLoss(B.digest_brute)
 	L.adjustFireLoss(B.digest_burn)
+	L.adjustOxyLoss(B.digest_oxy)
+	L.adjustToxLoss(B.digest_tox)
+	L.adjustCloneLoss(B.digest_clone)
 	var/actual_brute = L.getBruteLoss() - old_brute
 	var/actual_burn = L.getFireLoss() - old_burn
-	var/damage_gain = actual_brute + actual_burn
+	var/actual_oxy = L.getOxyLoss() - old_oxy
+	var/actual_tox = L.getToxLoss() - old_tox
+	var/actual_clone = L.getCloneLoss() - old_clone
+	var/damage_gain = (actual_brute + actual_burn + actual_oxy/2 + actual_tox + actual_clone*2)*(B.nutrition_percent / 100)
 
 	var/offset = (1 + ((L.weight - 137) / 137)) // 130 pounds = .95 140 pounds = 1.02
 	var/difference = B.owner.size_multiplier / L.size_multiplier
@@ -50,9 +63,11 @@ GLOBAL_LIST_INIT(digest_modes, list())
 		var/mob/living/silicon/robot/R = B.owner
 		R.cell.charge += 25 * damage_gain
 	if(offset) // If any different than default weight, multiply the % of offset.
-		B.owner.adjust_nutrition(offset*((B.nutrition_percent / 100) * 4.5 * (damage_gain) / difference)) //4.5 nutrition points per health point. Normal same size 100+100 health prey with average weight would give 900 points if the digestion was instant. With all the size/weight offset taxes plus over time oxyloss+hunger taxes deducted with non-instant digestion, this should be enough to not leave the pred starved.
+		B.owner.adjust_nutrition(offset*(4.5 * (damage_gain) / difference)*L.get_digestion_nutrition_modifier()*B.owner.get_digestion_efficiency_modifier()) //4.5 nutrition points per health point. Normal same size 100+100 health prey with average weight would give 900 points if the digestion was instant. With all the size/weight offset taxes plus over time oxyloss+hunger taxes deducted with non-instant digestion, this should be enough to not leave the pred starved.
 	else
-		B.owner.adjust_nutrition((B.nutrition_percent / 100) * 4.5 * (damage_gain) / difference)
+		B.owner.adjust_nutrition((4.5 * (damage_gain) / difference)*L.get_digestion_nutrition_modifier()*B.owner.get_digestion_efficiency_modifier())
+	if(L.stat != oldstat)
+		return list("to_update" = TRUE)
 
 /datum/digest_mode/absorb
 	id = DM_ABSORB
@@ -71,10 +86,8 @@ GLOBAL_LIST_INIT(digest_modes, list())
 
 /datum/digest_mode/unabsorb/process_mob(obj/belly/B, mob/living/L)
 	if(L.absorbed && B.owner.nutrition >= 100)
-		L.absorbed = FALSE
-		to_chat(L, "<span class='notice'>You suddenly feel solid again.</span>")
-		to_chat(B.owner,"<span class='notice'>You feel like a part of you is missing.</span>")
 		B.owner.adjust_nutrition(-100)
+		B.unabsorb_living(L)
 		return list("to_update" = TRUE)
 
 /datum/digest_mode/drain
@@ -114,9 +127,22 @@ GLOBAL_LIST_INIT(digest_modes, list())
 	noise_chance = 50 //Wet heals! The secret is you can leave this on for gurgle noises for fun.
 
 /datum/digest_mode/heal/process_mob(obj/belly/B, mob/living/L)
+	var/oldstat = L.stat
 	if(L.stat == DEAD)
 		return null // Can't heal the dead with healbelly
-	if(B.owner.nutrition > 90 && (L.health < L.maxHealth))
+	var/mob/living/carbon/human/H = L
+	if(B.owner.nutrition > 90 && H.isSynthetic())
+		for(var/obj/item/organ/external/E in H.organs) //Needed for healing prosthetics
+			var/obj/item/organ/external/O = E
+			if(O.brute_dam > 0 || O.burn_dam > 0) //Making sure healing continues until fixed.
+				O.heal_damage(0.5, 0.5, 0, 1) // Less effective healing as able to fix broken limbs
+				B.owner.adjust_nutrition(-5)  // More costly for the pred, since metals and stuff
+			if(L.health < L.maxHealth)
+				L.adjustToxLoss(-2)
+				L.adjustOxyLoss(-2)
+				L.adjustCloneLoss(-1)
+				B.owner.adjust_nutrition(-1)  // Normal cost per old functionality
+	if(B.owner.nutrition > 90 && (L.health < L.maxHealth) && !H.isSynthetic())
 		L.adjustBruteLoss(-2.5)
 		L.adjustFireLoss(-2.5)
 		L.adjustToxLoss(-5)
@@ -128,131 +154,145 @@ GLOBAL_LIST_INIT(digest_modes, list())
 	else if(B.owner.nutrition > 90 && (L.nutrition <= 400))
 		B.owner.adjust_nutrition(-1)
 		L.adjust_nutrition(1)
-
-// TRANSFORM MODES
-/datum/digest_mode/transform
-	var/stabilize_nutrition = FALSE
-	var/changes_eyes = FALSE
-	var/changes_hair_solo = FALSE
-	var/changes_hairandskin = FALSE
-	var/changes_gender = FALSE
-	var/changes_gender_to = null
-	var/changes_species = FALSE
-	var/changes_ears_tail_wing_nocolor = FALSE
-	var/changes_ears_tail_wing_color = FALSE
-	var/eggs = FALSE
-
-/datum/digest_mode/transform/process_mob(obj/belly/B, mob/living/carbon/human/H)
-	if(!istype(H) || H.stat == DEAD)
-		return null
-	if(stabilize_nutrition)
-		if(B.owner.nutrition > 400 && H.nutrition < 400)
-			B.owner.adjust_nutrition(-2)
-			H.adjust_nutrition(1.5)
-	if(changes_eyes && B.check_eyes(H))
-		B.change_eyes(H, 1)
-		return null
-	if(changes_hair_solo && B.check_hair(H))
-		B.change_hair(H)
-		return null
-	if(changes_hairandskin && (B.check_hair(H) || B.check_skin(H)))
-		B.change_hair(H)
-		B.change_skin(H, 1)
-		return null
-	if(changes_species)
-		if(changes_ears_tail_wing_nocolor && (B.check_ears(H) || B.check_tail_nocolor(H) || B.check_wing_nocolor(H) || B.check_species(H)))
-			B.change_ears(H)
-			B.change_tail_nocolor(H)
-			B.change_wing_nocolor(H)
-			B.change_species(H, 1, 1) // ,1) preserves coloring
-			H.species.create_organs(H)
-			H.sync_organ_dna()
-			return null
-		if(changes_ears_tail_wing_color && (B.check_ears(H) || B.check_tail(H) || B.check_wing(H) || B.check_species(H)))
-			B.change_ears(H)
-			B.change_tail(H)
-			B.change_wing(H)
-			B.change_species(H, 1, 2) // ,2) does not preserve coloring.
-			H.species.create_organs(H)
-			H.sync_organ_dna()
-			return null
-	if(changes_gender && B.check_gender(H, changes_gender_to))
-		B.change_gender(H, changes_gender_to, 1)
-		return null
-	if(eggs && (!H.absorbed))
-		B.put_in_egg(H, 1)
-		return null
-
-// Regular TF Modes
-/datum/digest_mode/transform/hairandeyes
-	id = DM_TRANSFORM_HAIR_AND_EYES
-	stabilize_nutrition = TRUE
-	changes_eyes = TRUE
-	changes_hair_solo = TRUE
-
-/datum/digest_mode/transform/gender
-	id = DM_TRANSFORM_FEMALE
-	changes_eyes = TRUE
-	changes_hairandskin = TRUE
-	changes_gender = TRUE
-	changes_gender_to = FEMALE
-	stabilize_nutrition = TRUE
-
-/datum/digest_mode/transform/gender/male
-	id = DM_TRANSFORM_FEMALE
-	changes_gender_to = MALE
-
-/datum/digest_mode/transform/keepgender
-	id = DM_TRANSFORM_KEEP_GENDER
-	changes_eyes = TRUE
-	changes_hairandskin = TRUE
-	stabilize_nutrition = TRUE
-
-/datum/digest_mode/transform/speciesandtaur
-	id = DM_TRANSFORM_CHANGE_SPECIES_AND_TAUR
-	changes_species = TRUE
-	changes_ears_tail_wing_nocolor = TRUE
-	stabilize_nutrition = TRUE
-
-/datum/digest_mode/transform/replica
-	id = DM_TRANSFORM_REPLICA
-	changes_eyes = TRUE
-	changes_hairandskin = TRUE
-	changes_species = TRUE
-	changes_ears_tail_wing_color = TRUE
+	if(L.stat != oldstat)
+		return list("to_update" = TRUE)
 
 // E G G
-/datum/digest_mode/transform/egg
+/datum/digest_mode/egg
 	id = DM_EGG
-	eggs = TRUE
+/*
+/datum/digest_mode/egg/process_mob(obj/belly/B, mob/living/carbon/human/H)
+	if(!istype(H) || H.stat == DEAD || H.absorbed)
+		return null
+	B.put_in_egg(H, 1)*/
 
-/datum/digest_mode/transform/egg/gender
-	id = DM_TRANSFORM_FEMALE_EGG
-	changes_eyes = TRUE
-	changes_hairandskin = TRUE
-	changes_gender = TRUE
-	changes_gender_to = FEMALE
-	stabilize_nutrition = TRUE
+/datum/digest_mode/egg/handle_atoms(obj/belly/B, list/touchable_atoms)
+	var/list/egg_contents = list()
+	for(var/E in touchable_atoms)
+		if(istype(E, /obj/item/weapon/storage/vore_egg)) // Don't egg other eggs.
+			continue
+		if(isliving(E))
+			var/mob/living/L = E
+			if(L.absorbed)
+				continue
+			egg_contents += L
+		if(isitem(E))
+			egg_contents += E
+	if(egg_contents.len)
+		if(!B.ownegg)
+			if(B.egg_type in tf_vore_egg_types)
+				B.egg_path = tf_vore_egg_types[B.egg_type]
+			B.ownegg = new B.egg_path(B)
+		for(var/atom/movable/C in egg_contents)
+			if(isitem(C) && egg_contents.len == 1) //Only egging one item
+				var/obj/item/I = C
+				B.ownegg.w_class = I.w_class
+				B.ownegg.max_storage_space = B.ownegg.w_class
+				I.forceMove(B.ownegg)
+				B.ownegg.icon_scale_x = 0.2 * B.ownegg.w_class
+				B.ownegg.icon_scale_y = 0.2 * B.ownegg.w_class
+				B.ownegg.update_transform()
+				egg_contents -= I
+				B.ownegg = null
+				return list("to_update" = TRUE)
+			if(isliving(C))
+				var/mob/living/M = C
+				var/mob_holder_type = M.holder_type || /obj/item/weapon/holder
+				B.ownegg.w_class = M.size_multiplier * 4 //Egg size and weight scaled to match occupant.
+				var/obj/item/weapon/holder/H = new mob_holder_type(B.ownegg, M)
+				B.ownegg.max_storage_space = H.w_class
+				B.ownegg.icon_scale_x = 0.25 * B.ownegg.w_class
+				B.ownegg.icon_scale_y = 0.25 * B.ownegg.w_class
+				B.ownegg.update_transform()
+				egg_contents -= M
+				if(B.ownegg.w_class > 4)
+					B.ownegg.slowdown = B.ownegg.w_class - 4
+				B.ownegg = null
+				return list("to_update" = TRUE)
+			C.forceMove(B.ownegg)
+			if(isitem(C))
+				var/obj/item/I = C
+				B.ownegg.w_class += I.w_class //Let's assume a regular outfit can reach total w_class of 16.
+		B.ownegg.calibrate_size()
+		B.ownegg.orient2hud()
+		B.ownegg.w_class = clamp(B.ownegg.w_class * 0.25, 1, 8) //A total w_class of 16 will result in a backpack sized egg.
+		B.ownegg.icon_scale_x = clamp(0.25 * B.ownegg.w_class, 0.25, 1)
+		B.ownegg.icon_scale_y = clamp(0.25 * B.ownegg.w_class, 0.25, 1)
+		B.ownegg.update_transform()
+		if(B.ownegg.w_class > 4)
+			B.ownegg.slowdown = B.ownegg.w_class - 4
+		B.ownegg = null
+		return list("to_update" = TRUE)
+	return
 
-/datum/digest_mode/transform/egg/gender/male
-	id = DM_TRANSFORM_MALE_EGG
-	changes_gender_to = MALE
+/datum/digest_mode/selective //unselectable, "smart" digestion mode for mobs only
+	id = DM_SELECT
+	noise_chance = 50
 
-/datum/digest_mode/transform/egg/nogender
-	id = DM_TRANSFORM_KEEP_GENDER_EGG
-	changes_eyes = TRUE
-	changes_hairandskin = TRUE
-	stabilize_nutrition = TRUE
+/datum/digest_mode/selective/process_mob(obj/belly/B, mob/living/L)
+	var/datum/digest_mode/tempmode = GLOB.digest_modes[DM_HOLD]			// Default to Hold in case of big oof fallback
+	//if not absorbed, see if they're food
+	switch(L.selective_preference)										// First, we respect prey prefs
+		if(DM_DIGEST)
+			if(L.digestable)
+				tempmode = GLOB.digest_modes[DM_DIGEST]					// They want to be digested and can be, Digest
+			else
+				tempmode = GLOB.digest_modes[DM_DRAIN]					// They want to be digested but can't be! Drain.
+		if(DM_ABSORB)
+			if(L.absorbable)
+				tempmode = GLOB.digest_modes[DM_ABSORB]					// They want to be absorbed and can be. Absorb.
+			else
+				tempmode = GLOB.digest_modes[DM_DRAIN]					// They want to be absorbed but can't be! Drain.
+		if(DM_DRAIN)
+			tempmode = GLOB.digest_modes[DM_DRAIN]						// They want to be drained. Drain.
+		if(DM_DEFAULT)
+			switch(B.selective_preference)								// They don't actually care? Time for our own preference.
+				if(DM_DIGEST)
+					if(L.digestable)
+						tempmode = GLOB.digest_modes[DM_DIGEST]			// We prefer digestion and they're digestible? Digest
+					else if(L.absorbable)
+						tempmode = GLOB.digest_modes[DM_ABSORB]			// If not digestible, are they absorbable? Then absorb.
+					else
+						tempmode = GLOB.digest_modes[DM_DRAIN]			// Otherwise drain.
+				if(DM_ABSORB)
+					if(L.absorbable)
+						tempmode = GLOB.digest_modes[DM_ABSORB]			// We prefer absorption and they're absorbable? Absorb.
+					else if(L.digestable)
+						tempmode = GLOB.digest_modes[DM_DIGEST]			// If not absorbable, are they digestible? Then digest.
+					else
+						tempmode = GLOB.digest_modes[DM_DRAIN]			// Otherwise drain.
+	return tempmode.process_mob(B, L)
 
-/datum/digest_mode/transform/egg/speciesandtaur
-	id = DM_TRANSFORM_CHANGE_SPECIES_AND_TAUR_EGG
-	changes_species = TRUE
-	changes_ears_tail_wing_nocolor = TRUE
-	stabilize_nutrition = TRUE
-
-/datum/digest_mode/transform/egg/replica
-	id = DM_TRANSFORM_REPLICA_EGG
-	changes_eyes = TRUE
-	changes_hairandskin = TRUE
-	changes_species = TRUE
-	changes_ears_tail_wing_color = TRUE
+/datum/digest_mode/selective/proc/get_selective_mode(obj/belly/B, mob/living/L)
+	var/tempmode = DM_HOLD			// Default to Hold in case of big oof fallback
+	//if not absorbed, see if they're food
+	switch(L.selective_preference)										// First, we respect prey prefs
+		if(DM_DIGEST)
+			if(L.digestable)
+				tempmode = DM_DIGEST					// They want to be digested and can be, Digest
+			else
+				tempmode = DM_DRAIN					// They want to be digested but can't be! Drain.
+		if(DM_ABSORB)
+			if(L.absorbable)
+				tempmode = DM_ABSORB					// They want to be absorbed and can be. Absorb.
+			else
+				tempmode = DM_DRAIN					// They want to be absorbed but can't be! Drain.
+		if(DM_DRAIN)
+			tempmode = DM_DRAIN						// They want to be drained. Drain.
+		if(DM_DEFAULT)
+			switch(B.selective_preference)								// They don't actually care? Time for our own preference.
+				if(DM_DIGEST)
+					if(L.digestable)
+						tempmode = DM_DIGEST			// We prefer digestion and they're digestible? Digest
+					else if(L.absorbable)
+						tempmode = DM_ABSORB			// If not digestible, are they absorbable? Then absorb.
+					else
+						tempmode = DM_DRAIN			// Otherwise drain.
+				if(DM_ABSORB)
+					if(L.absorbable)
+						tempmode = DM_ABSORB			// We prefer absorption and they're absorbable? Absorb.
+					else if(L.digestable)
+						tempmode = DM_DIGEST			// If not absorbable, are they digestible? Then digest.
+					else
+						tempmode = DM_DRAIN			// Otherwise drain.
+	return tempmode

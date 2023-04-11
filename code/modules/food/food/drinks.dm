@@ -10,8 +10,16 @@
 	icon_state = null
 	flags = OPENCONTAINER
 	amount_per_transfer_from_this = 5
+	possible_transfer_amounts = list(5,10,15,25,30)
 	volume = 50
 	var/trash = null
+	var/cant_open = 0
+	var/cant_chance = 0
+
+/obj/item/weapon/reagent_containers/food/drinks/Initialize()
+	. = ..()
+	if (prob(cant_chance))
+		cant_open = 1
 
 /obj/item/weapon/reagent_containers/food/drinks/on_reagent_change()
 	if (reagents.reagent_list.len > 0)
@@ -22,29 +30,37 @@
 			price_tag = null
 	return
 
-/obj/item/weapon/reagent_containers/food/drinks/proc/On_Consume(var/mob/M)
-	if(!usr)
-		usr = M
-	if(!reagents.total_volume)
+/obj/item/weapon/reagent_containers/food/drinks/proc/On_Consume(var/mob/M, var/mob/user, var/changed = FALSE)
+	if(!user)
+		user = M
+	if(!reagents.total_volume && changed)
 		M.visible_message("<span class='notice'>[M] finishes drinking \the [src].</span>","<span class='notice'>You finish drinking \the [src].</span>")
 		if(trash)
-			usr.drop_from_inventory(src)	//so icons update :[
+			user.drop_from_inventory(src)	//so icons update :[
 			if(ispath(trash,/obj/item))
-				var/obj/item/TrashItem = new trash(usr)
-				usr.put_in_hands(TrashItem)
+				var/obj/item/TrashItem = new trash(user)
+				user.put_in_hands(TrashItem)
 			else if(istype(trash,/obj/item))
-				usr.put_in_hands(trash)
+				user.put_in_hands(trash)
 			qdel(src)
 	return
+
+/obj/item/weapon/reagent_containers/food/drinks/on_rag_wipe(var/obj/item/weapon/reagent_containers/glass/rag/R)
+	clean_blood()
 
 /obj/item/weapon/reagent_containers/food/drinks/attack_self(mob/user as mob)
 	if(!is_open_container())
 		open(user)
 
 /obj/item/weapon/reagent_containers/food/drinks/proc/open(mob/user)
-	playsound(src,"canopen", rand(10,50), 1)
-	to_chat(user, "<span class='notice'>You open [src] with an audible pop!</span>")
-	flags |= OPENCONTAINER
+	if(!cant_open)
+		playsound(src,"canopen", rand(10,50), 1)
+		GLOB.cans_opened_roundstat++
+		to_chat(user, "<span class='notice'>You open [src] with an audible pop!</span>")
+		flags |= OPENCONTAINER
+	else
+		to_chat(user, "<span class='warning'>...wait a second, this one doesn't have a ring pull. It's not a <b>can</b>, it's a <b>can't!</b></span>")
+		name = "\improper can't of [initial(name)]"	//don't update the name until they try to open it
 
 /obj/item/weapon/reagent_containers/food/drinks/attack(mob/M as mob, mob/user as mob, def_zone)
 	if(force && !(flags & NOBLUDGEON) && user.a_intent == I_HURT)
@@ -68,8 +84,11 @@
 	if(!is_open_container())
 		to_chat(user, "<span class='notice'>You need to open [src]!</span>")
 		return 1
-	On_Consume(target,user)
-	return ..()
+	var/original_volume = reagents.total_volume
+	.=..()
+	var/changed = !(reagents.total_volume == original_volume)
+	On_Consume(target,user,changed)
+	return
 
 /obj/item/weapon/reagent_containers/food/drinks/standard_dispenser_refill(var/mob/user, var/obj/structure/reagent_dispensers/target)
 	if(!is_open_container())
@@ -92,6 +111,8 @@
 /obj/item/weapon/reagent_containers/food/drinks/examine(mob/user)
 	. = ..()
 	if(Adjacent(user))
+		if(cant_open)
+			. += "<span class='warning'>It doesn't have a ring pull!</span>"
 		if(!reagents?.total_volume)
 			. += "<span class='notice'>It is empty!</span>"
 		else if (reagents.total_volume <= volume * 0.25)
@@ -216,10 +237,25 @@
 	. = ..()
 	reagents.add_reagent("tea", 30)
 
+/obj/item/weapon/reagent_containers/food/drinks/decaf_tea
+	name = "cup of Count Mauve decaffeinated tea"
+	desc = "Why should bedtime stop you from enjoying a nice cuppa?"
+	description_fluff = "Count Mauve is a milder strain of NanoPasture's proprietary black tea, noted for its strong but otherwise completely non-distinctive flavour and total lack of caffeination."
+	icon_state = "chai_vended"
+	item_state = "coffee"
+	trash = /obj/item/trash/coffee
+	center_of_mass = list("x"=16, "y"=14)
+	drop_sound = 'sound/items/drop/papercup.ogg'
+	pickup_sound = 'sound/items/pickup/papercup.ogg'
+
+/obj/item/weapon/reagent_containers/food/drinks/decaf_tea/Initialize()
+	. = ..()
+	reagents.add_reagent("teadecaf", 30)
+
 /obj/item/weapon/reagent_containers/food/drinks/ice
 	name = "cup of ice"
 	desc = "Careful, cold ice, do not chew."
-	icon_state = "coffee"
+	icon_state = "ice"
 	center_of_mass = list("x"=15, "y"=10)
 /obj/item/weapon/reagent_containers/food/drinks/ice/Initialize()
 	. = ..()
@@ -230,14 +266,14 @@
 	desc = "Who needs character traits when you can enjoy a hot mug of cocoa?"
 	description_fluff = "Counselor's Choice brand hot cocoa is made with a blend of hot water and non-dairy milk powder substitute, in a compromise destined to annoy all parties."
 	icon_state = "coffee"
-	item_state = "coffee"
+	item_state = "hot_choc"
 	trash = /obj/item/trash/coffee
 	center_of_mass = list("x"=15, "y"=13)
 	drop_sound = 'sound/items/drop/papercup.ogg'
 	pickup_sound = 'sound/items/pickup/papercup.ogg'
 
 /obj/item/weapon/reagent_containers/food/drinks/h_chocolate/Initialize()
-	..()
+	. = ..()
 	reagents.add_reagent("hot_coco", 30)
 
 /obj/item/weapon/reagent_containers/food/drinks/greentea
@@ -296,7 +332,7 @@
 	pickup_sound = 'sound/items/pickup/papercup.ogg'
 
 /obj/item/weapon/reagent_containers/food/drinks/dry_ramen/Initialize()
-	..()
+	. = ..()
 	reagents.add_reagent("dry_ramen", 30)
 
 /obj/item/weapon/reagent_containers/food/drinks/sillycup
@@ -399,14 +435,4 @@
 	icon_state = "vacuumflask"
 	volume = 60
 	center_of_mass = list("x"=15, "y"=4)
-
-/obj/item/weapon/reagent_containers/food/drinks/britcup
-	name = "cup"
-	desc = "A cup with the British flag emblazoned on it."
-	icon_state = "britcup"
-	volume = 30
-	center_of_mass = list("x"=15, "y"=13)
-
-/obj/item/weapon/reagent_containers/food/drinks/britcup/on_reagent_change()
-	..()
 

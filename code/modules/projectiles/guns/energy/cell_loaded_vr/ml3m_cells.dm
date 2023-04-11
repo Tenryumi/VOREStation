@@ -13,8 +13,11 @@
 	damage = 0
 	check_armour = "laser"
 	light_color = "#80F5FF"
+	hud_state = "laser_disabler"
 
 	combustion = FALSE
+
+	can_miss = FALSE
 
 	muzzle_type = /obj/effect/projectile/muzzle/medigun
 	tracer_type = /obj/effect/projectile/tracer/medigun
@@ -31,7 +34,8 @@
 
 /obj/item/projectile/beam/medical_cell/brute/on_hit(var/mob/living/carbon/human/target)
 	if(istype(target, /mob/living/carbon/human))
-		target.adjustBruteLoss(-5)
+		if(target.stat != DEAD)
+			target.adjustBruteLoss(-10)
 	else
 		return 1
 
@@ -43,7 +47,8 @@
 
 /obj/item/projectile/beam/medical_cell/burn/on_hit(var/mob/living/carbon/human/target)
 	if(istype(target, /mob/living/carbon/human))
-		target.adjustFireLoss(-5)
+		if(target.stat != DEAD)
+			target.adjustFireLoss(-10)
 	else
 		return 1
 
@@ -83,7 +88,8 @@
 
 /obj/item/projectile/beam/medical_cell/toxin/on_hit(var/mob/living/carbon/human/target)
 	if(istype(target, /mob/living/carbon/human))
-		target.adjustToxLoss(-5)
+		if(target.stat != DEAD)
+			target.adjustToxLoss(-10)
 	else
 		return 1
 
@@ -95,10 +101,11 @@
 
 /obj/item/projectile/beam/medical_cell/omni/on_hit(var/mob/living/carbon/human/target)
 	if(istype(target, /mob/living/carbon/human))
-		target.adjustBruteLoss(-2.5)
-		target.adjustFireLoss(-2.5)
-		target.adjustToxLoss(-2.5)
-		target.adjustOxyLoss(-10)
+		if(target.stat != DEAD)
+			target.adjustBruteLoss(-5)
+			target.adjustFireLoss(-5)
+			target.adjustToxLoss(-5)
+			target.adjustOxyLoss(-20)
 	else
 		return 1
 
@@ -110,8 +117,9 @@
 
 /obj/item/projectile/beam/medical_cell/antirad/on_hit(var/mob/living/carbon/human/target)
 	if(istype(target, /mob/living/carbon/human))
-		target.adjustToxLoss(-2.5)
-		target.radiation = max(target.radiation - 150, 0) //same as 5 units of arithrazine, sans the brute damage
+		if(target.stat != DEAD)
+			target.adjustToxLoss(-5)
+			target.radiation = max(target.radiation - 350, 0) //same as 5 units of arithrazine, sans the brute damage
 	else
 		return 1
 
@@ -123,7 +131,8 @@
 
 /obj/item/projectile/beam/medical_cell/brute2/on_hit(var/mob/living/carbon/human/target)
 	if(istype(target, /mob/living/carbon/human))
-		target.adjustBruteLoss(-10)
+		if(target.stat != DEAD)
+			target.adjustBruteLoss(-20)
 	else
 		return 1
 
@@ -135,7 +144,8 @@
 
 /obj/item/projectile/beam/medical_cell/burn2/on_hit(var/mob/living/carbon/human/target)
 	if(istype(target, /mob/living/carbon/human))
-		target.adjustFireLoss(-10)
+		if(target.stat != DEAD)
+			target.adjustFireLoss(-20)
 	else
 		return 1
 
@@ -170,10 +180,11 @@
 
 /obj/item/projectile/beam/medical_cell/omni2/on_hit(var/mob/living/carbon/human/target)
 	if(istype(target, /mob/living/carbon/human))
-		target.adjustBruteLoss(-5)
-		target.adjustFireLoss(-5)
-		target.adjustToxLoss(-5)
-		target.adjustOxyLoss(-30)
+		if(target.stat != DEAD)
+			target.adjustBruteLoss(-10)
+			target.adjustFireLoss(-10)
+			target.adjustToxLoss(-10)
+			target.adjustOxyLoss(-60)
 	else
 		return 1
 
@@ -185,7 +196,8 @@
 
 /obj/item/projectile/beam/medical_cell/toxin2/on_hit(var/mob/living/carbon/human/target)
 	if(istype(target, /mob/living/carbon/human))
-		target.adjustToxLoss(-20)
+		if(target.stat != DEAD)
+			target.adjustToxLoss(-20)
 	else
 		return 1
 
@@ -253,7 +265,8 @@
 
 /obj/item/projectile/beam/medical_cell/brute3/on_hit(var/mob/living/carbon/human/target)
 	if(istype(target, /mob/living/carbon/human))
-		target.adjustBruteLoss(-20)
+		if(target.stat != DEAD)
+			target.adjustBruteLoss(-40)
 	else
 		return 1
 
@@ -265,7 +278,8 @@
 
 /obj/item/projectile/beam/medical_cell/burn3/on_hit(var/mob/living/carbon/human/target)
 	if(istype(target, /mob/living/carbon/human))
-		target.adjustFireLoss(-20)
+		if(target.stat != DEAD)
+			target.adjustFireLoss(-40)
 	else
 		return 1
 
@@ -277,7 +291,8 @@
 
 /obj/item/projectile/beam/medical_cell/toxin3/on_hit(var/mob/living/carbon/human/target)
 	if(istype(target, /mob/living/carbon/human))
-		target.adjustToxLoss(-20)
+		if(target.stat != DEAD)
+			target.adjustToxLoss(-40)
 	else
 		return 1
 
@@ -289,10 +304,11 @@
 
 /obj/item/projectile/beam/medical_cell/omni3/on_hit(var/mob/living/carbon/human/target)
 	if(istype(target, /mob/living/carbon/human))
-		target.adjustBruteLoss(-10)
-		target.adjustFireLoss(-10)
-		target.adjustToxLoss(-10)
-		target.adjustOxyLoss(-60)
+		if(target.stat != DEAD)
+			target.adjustBruteLoss(-20)
+			target.adjustFireLoss(-20)
+			target.adjustToxLoss(-20)
+			target.adjustOxyLoss(-120)
 	else
 		return 1
 

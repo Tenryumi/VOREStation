@@ -2,7 +2,7 @@
 
 /obj/item/weapon/robot_module/robot/syndicate
 	name = "illegal robot module"
-	hide_on_manifest = 1
+	hide_on_manifest = TRUE
 	languages = list(
 					LANGUAGE_SOL_COMMON = 1,
 					LANGUAGE_TRADEBAND = 1,
@@ -10,7 +10,6 @@
 					LANGUAGE_SIIK	= 0,
 					LANGUAGE_AKHANI = 0,
 					LANGUAGE_SKRELLIAN = 0,
-					LANGUAGE_SKRELLIANFAR = 0,
 					LANGUAGE_ROOTLOCAL = 0,
 					LANGUAGE_GUTTER = 1,
 					LANGUAGE_SCHECHI = 0,
@@ -36,6 +35,12 @@
 	loc = R
 	src.modules += new /obj/item/weapon/pinpointer/shuttle/merc(src)
 	src.modules += new /obj/item/weapon/melee/energy/sword(src)
+
+	var/datum/matter_synth/cloth = new /datum/matter_synth/cloth(40000)
+	synths += cloth
+
+	var/obj/item/stack/sandbags/cyborg/SB = new /obj/item/stack/sandbags/cyborg(src)
+	SB.synths += list(cloth)
 
 	var/jetpack = new/obj/item/weapon/tank/jetpack/carbondioxide(src)
 	src.modules += jetpack
@@ -145,7 +150,7 @@
 /obj/item/weapon/robot_module/robot/syndicate/combat_medic/New(var/mob/living/silicon/robot/R)
 	..()
 	src.modules += new /obj/item/borg/sight/hud/med(src)
-	src.modules += new /obj/item/device/healthanalyzer/advanced(src)
+	src.modules += new /obj/item/device/healthanalyzer/phasic(src)
 	src.modules += new /obj/item/weapon/reagent_containers/borghypo/merc(src)
 
 	// Surgery things.

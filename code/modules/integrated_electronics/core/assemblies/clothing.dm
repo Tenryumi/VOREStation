@@ -53,6 +53,8 @@
 	if(!T.AdjacentQuick(user)) // So people aren't messing with these from across the room
 		return FALSE
 	var/obj/item/I = user.get_active_hand() // ctrl-shift-click doesn't give us the item, we have to fetch it
+	if(!I)
+		return FALSE
 	return IC.attackby(I, user)
 
 /obj/item/clothing/attack_self(mob/user)
@@ -156,7 +158,7 @@
 	name = "electronic earwear"
 	desc = "It's a wearable case for electronics. This one appears to be a technical-looking headset."
 	description_info = "Control-shift-click on this with an item in hand to use it on the integrated circuit."
-	icon = 'icons/obj/clothing/ears.dmi'
+	icon = 'icons/inventory/ears/item.dmi'
 	icon_state = "circuitry"
 	item_state = "circuitry"
 

@@ -21,7 +21,7 @@
 	allow_quick_gather = 1
 	allow_quick_empty = 1
 	display_contents_with_number = 0 // UNStABLE AS FuCK, turn on when it stops crashing clients
-	use_to_pickup = 1
+	use_to_pickup = TRUE
 	slot_flags = SLOT_BELT
 	drop_sound = 'sound/items/drop/backpack.ogg'
 	pickup_sound = 'sound/items/pickup/backpack.ogg'
@@ -53,6 +53,16 @@
 		icon_state = "trashbag2"
 	else icon_state = "trashbag3"
 
+/obj/item/weapon/storage/bag/trash/holding
+	name = "trash bag of holding"
+	desc = "The latest and greatest in custodial convenience, a trashbag that is capable of holding vast quantities of garbage."
+	icon_state = "bluetrashbag"
+	origin_tech = list(TECH_BLUESPACE = 3)
+	max_w_class = ITEMSIZE_NORMAL
+	max_storage_space = ITEMSIZE_COST_NORMAL * 10 // Slightly less than BoH
+
+/obj/item/weapon/storage/bag/trash/holding/update_icon()
+	return
 
 // -----------------------------
 //        Plastic Bag
@@ -88,8 +98,48 @@
 	max_storage_space = ITEMSIZE_COST_NORMAL * 25
 	max_w_class = ITEMSIZE_NORMAL
 	can_hold = list(/obj/item/weapon/ore)
-	var/stored_ore = list()
+	var/current_capacity = 0
+	var/max_pickup = 100 //How much ore can be picked up in one go. There to prevent someone from walking on a turf with 10000 ore and making the server cry.
+	var/list/stored_ore = list(
+		"sand" = 0,
+		"hematite" = 0,
+		"carbon" = 0,
+		"raw copper" = 0,
+		"raw tin" = 0,
+		"void opal" = 0,
+		"painite" = 0,
+		"quartz" = 0,
+		"raw bauxite" = 0,
+		"phoron" = 0,
+		"silver" = 0,
+		"gold" = 0,
+		"marble" = 0,
+		"uranium" = 0,
+		"diamond" = 0,
+		"platinum" = 0,
+		"lead" = 0,
+		"mhydrogen" = 0,
+		"verdantium" = 0,
+		"rutile" = 0)
 	var/last_update = 0
+
+/obj/item/weapon/storage/bag/ore/holding
+	name = "mining satchel of holding"
+	desc = "Like a mining satchel, but when you put your hand in, you're pretty sure you can feel time itself."
+	icon_state = "satchel_bspace"
+	max_storage_space = ITEMSIZE_COST_NORMAL * 15000 // This should never, ever, ever be reached.
+
+/obj/item/weapon/storage/bag/ore/attackby(obj/item/weapon/W as obj, mob/user as mob)
+	if(current_capacity >= max_storage_space)
+		to_chat(user, "<span class='notice'>\the [src] is too full to possibly fit anything else inside of it.</span>")
+		return
+
+	if (istype(W, /obj/item/weapon/ore))
+		var/obj/item/weapon/ore/ore = W
+		stored_ore[ore.material]++
+		current_capacity++
+		user.remove_from_mob(W)
+		qdel(ore)
 
 /obj/item/weapon/storage/bag/ore/remove_from_storage(obj/item/W as obj, atom/new_location)
 	if(!istype(W)) return 0
@@ -112,21 +162,39 @@
 /obj/item/weapon/storage/bag/ore/gather_all(turf/T as turf, mob/user as mob, var/silent = 0)
 	var/success = 0
 	var/failure = 0
-	for(var/obj/item/weapon/ore/I in T) //Only ever grabs ores. Doesn't do any extraneous checks, as all ore is the same size. Tons of checks means it causes hanging for up to three seconds.
-		if(contents.len >= max_storage_space)
+	var/current_pickup = 0
+	var/max_pickup_reached = 0
+	for(var/obj/item/weapon/ore/O in T) //Only ever grabs ores. Doesn't do any extraneous checks, as all ore is the same size. Tons of checks means it causes hanging for up to three seconds.
+		if(current_capacity >= max_storage_space)
 			failure = 1
 			break
-		I.forceMove(src)
+		if(current_pickup >= max_pickup)
+			max_pickup_reached = 1
+			break
+		var/obj/item/weapon/ore/ore = O
+		stored_ore[ore.material]++
+		current_capacity++
+		current_pickup++
+		qdel(ore)
 		success = 1
-	if(success && !failure && !silent)
-		to_chat(user, "<span class='notice'>You put everything in [src].</span>")
-	else if(success && (!silent || (silent && contents.len >= max_storage_space)))
-		to_chat(user, "<span class='notice'>You fill the [src].</span>")
-	else if(!silent)
-		to_chat(user, "<span class='notice'>You fail to pick anything up with \the [src].</span>")
-	if(istype(user.pulling, /obj/structure/ore_box)) //Bit of a crappy way to do this, as it doubles spam for the user, but it works.
-		var/obj/structure/ore_box/O = user.pulling
-		O.attackby(src, user)
+	if(!silent) //Let's do a single check and then do more instead of a bunch at once.
+		if(success && !failure && !max_pickup_reached) //Picked stuff up, did not reach capacity, did not reach max_pickup.
+			to_chat(user, "<span class='notice'>You put everything in [src].</span>")
+		else if(success && failure) //Picked stuff up to capacity.
+			to_chat(user, "<span class='notice'>You fill the [src].</span>")
+		else if(success && max_pickup_reached) //Picked stuff up to the max_pickup
+			to_chat(user, "<span class='notice'>You fill the [src] with as much as you can grab in one go.</span>")
+		else //Failed. The bag is full.
+			to_chat(user, "<span class='notice'>You fail to pick anything up with \the [src].</span>")
+	if(istype(user.pulling, /obj/structure/ore_box)) //Bit of a crappy way to do this, as it doubles spam for the user, but it works. //Then let me fix it. ~CL.
+		var/obj/structure/ore_box/OB = user.pulling
+		for(var/ore in stored_ore)
+			if(stored_ore[ore] > 0)
+				var/ore_amount = stored_ore[ore]	// How many ores does the satchel have?
+				OB.stored_ore[ore] += ore_amount	// Add the ore to the box
+				stored_ore[ore] = 0 				// Set the value of the ore in the satchel to 0.
+				current_capacity = 0				// Set the amount of ore in the satchel to 0.
+	current_pickup = 0
 
 /obj/item/weapon/storage/bag/ore/equipped(mob/user)
 	..()
@@ -159,24 +227,20 @@
 	if(istype(user, /mob/living))
 		add_fingerprint(user)
 
-	if(!contents.len)
-		. += "It is empty."
-
-	else if(world.time > last_update + 10)
-		update_ore_count()
-		last_update = world.time
-
-		. += "<span class='notice'>It holds:</span>"
-		for(var/ore in stored_ore)
+	. += "<span class='notice'>It holds:</span>"
+	var/has_ore = 0
+	for(var/ore in stored_ore)
+		if(stored_ore[ore] > 0)
 			. += "<span class='notice'>- [stored_ore[ore]] [ore]</span>"
+			has_ore = 1
+	if(!has_ore)
+		. += "Nothing."
 
 /obj/item/weapon/storage/bag/ore/open(mob/user as mob) //No opening it for the weird UI of having shit-tons of ore inside it.
-	if(world.time > last_update + 10)
-		update_ore_count()
-		last_update = world.time
-		user.examinate(src)
+	user.examinate(src)
 
-/obj/item/weapon/storage/bag/ore/proc/update_ore_count() //Stolen from ore boxes.
+/*
+/obj/item/weapon/storage/bag/ore/proc/update_ore_count() //Stolen from ore boxes. OLD way of storing ore.
 
 	stored_ore = list()
 
@@ -185,7 +249,7 @@
 			stored_ore[O.name]++
 		else
 			stored_ore[O.name] = 1
-
+*/
 // -----------------------------
 //          Plant bag
 // -----------------------------
@@ -229,7 +293,7 @@
 		return 0
 	var/current = 0
 	for(var/obj/item/stack/material/S in contents)
-		current += S.amount
+		current += S.get_amount()
 	if(capacity == current)//If it's full, you're done
 		if(!stop_messages)
 			to_chat(usr, "<span class='warning'>The snatcher is full.</span>")
@@ -246,29 +310,26 @@
 	var/inserted = 0
 	var/current = 0
 	for(var/obj/item/stack/material/S2 in contents)
-		current += S2.amount
-	if(capacity < current + S.amount)//If the stack will fill it up
+		current += S2.get_amount()
+	if(capacity < current + S.get_amount())//If the stack will fill it up
 		amount = capacity - current
 	else
-		amount = S.amount
+		amount = S.get_amount()
 
 	for(var/obj/item/stack/material/sheet in contents)
-		if(S.type == sheet.type) // we are violating the amount limitation because these are not sane objects
-			sheet.amount += amount	// they should only be removed through procs in this file, which split them up.
-			S.amount -= amount
+		if(S.type == sheet.type)
+			// we are violating the amount limitation because these are not sane objects
+			sheet.set_amount(sheet.get_amount() + amount, TRUE)
+			S.use(amount) // will qdel() if we use it all
 			inserted = 1
 			break
 
-	if(!inserted || !S.amount)
+	if(!inserted)
 		usr.remove_from_mob(S)
-		usr.update_icons()	//update our overlays
 		if (usr.client && usr.s_active != src)
 			usr.client.screen -= S
 		S.dropped(usr)
-		if(!S.amount)
-			qdel(S)
-		else
-			S.loc = src
+		S.loc = src
 
 	orient2hud(usr)
 	if(usr.s_active)
@@ -289,7 +350,7 @@
 		for(var/obj/item/stack/material/I in contents)
 			adjusted_contents++
 			var/datum/numbered_display/D = new/datum/numbered_display(I)
-			D.number = I.amount
+			D.number = I.get_amount()
 			numbered_contents.Add( D )
 
 	var/row_num = 0
@@ -303,14 +364,14 @@
 /obj/item/weapon/storage/bag/sheetsnatcher/quick_empty()
 	var/location = get_turf(src)
 	for(var/obj/item/stack/material/S in contents)
-		while(S.amount)
-			var/obj/item/stack/material/N = new S.type(location)
-			var/stacksize = min(S.amount,N.max_amount)
-			N.amount = stacksize
-			S.amount -= stacksize
-			N.update_icon()
-		if(!S.amount)
-			qdel(S) // todo: there's probably something missing here
+		var/cur_amount = S.get_amount()
+		var/full_stacks = round(cur_amount / S.max_amount) // Floor of current/max is amount of full stacks we make
+		var/remainder = cur_amount % S.max_amount // Current mod max is remainder after full sheets removed
+		for(var/i = 1 to full_stacks)
+			new S.type(location, S.max_amount)
+		if(remainder)
+			new S.type(location, remainder)
+		S.set_amount(0)
 	orient2hud(usr)
 	if(usr.s_active)
 		usr.s_active.show_to(usr)
@@ -326,10 +387,10 @@
 	//Therefore, make a new stack internally that has the remainder.
 	// -Sayu
 
-	if(S.amount > S.max_amount)
-		var/obj/item/stack/material/temp = new S.type(src)
-		temp.amount = S.amount - S.max_amount
-		S.amount = S.max_amount
+	if(S.get_amount() > S.max_amount)
+		var/newstack_amt = S.get_amount() - S.max_amount
+		new S.type(src, newstack_amt) // The one we'll keep to replace the one we give
+		S.set_amount(S.max_amount) // The one we hand to the clicker
 
 	return ..(S,new_location)
 
@@ -369,7 +430,7 @@
 	max_storage_space = ITEMSIZE_COST_NORMAL * 25
 	max_w_class = ITEMSIZE_NORMAL
 	w_class = ITEMSIZE_SMALL
-	can_hold = list(/obj/item/weapon/coin,/obj/item/weapon/spacecash)
+	can_hold = list(/obj/item/weapon/coin,/obj/item/weapon/spacecash,/obj/item/weapon/spacecasinocash)
 
 	// -----------------------------
 	//           Chemistry Bag
@@ -381,7 +442,7 @@
 	desc = "A bag for storing pills, patches, and bottles."
 	max_storage_space = 200
 	w_class = ITEMSIZE_LARGE
-	slowdown = 1
+	slowdown = 3
 	can_hold = list(/obj/item/weapon/reagent_containers/pill,/obj/item/weapon/reagent_containers/glass/beaker,/obj/item/weapon/reagent_containers/glass/bottle)
 
 	// -----------------------------

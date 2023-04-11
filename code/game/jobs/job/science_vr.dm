@@ -10,7 +10,7 @@
 	minimal_access = list(access_rd, access_heads, access_tox, access_genetics, access_morgue,
 			            access_tox_storage, access_teleporter,
 			            access_research, access_robotics, access_xenobiology, access_ai_upload, access_tech_storage,
-			            access_RC_announce, access_keycard_auth, access_tcomsat, access_xenoarch, access_eva, access_network, access_xenobotany)
+			            access_RC_announce, access_keycard_auth, access_tcomsat, access_gateway, access_xenoarch, access_eva, access_network, access_xenobotany)
 	alt_titles = list("Research Supervisor" = /datum/alt_title/research_supervisor, "Research Manager" = /datum/alt_title/research_manager,
 						"Head of Development" = /datum/alt_title/head_of_development,"Head Scientist" = /datum/alt_title/head_scientist)
 
@@ -23,17 +23,23 @@
 /datum/alt_title/head_scientist
 	title = "Head Scientist"
 
+/datum/job/rd/get_request_reasons()
+	return list("Repairs needed", "Training crew")
+
 
 /datum/job/scientist
 	spawn_positions = 5
 	pto_type = PTO_SCIENCE
-	alt_titles = list("Lab Assistant" = /datum/alt_title/lab_assistant, "Xenoarchaeologist" = /datum/alt_title/xenoarch, "Xenopaleontologist" = /datum/alt_title/xenopaleontologist, \
-						"Anomalist" = /datum/alt_title/anomalist, "Phoron Researcher" = /datum/alt_title/phoron_research, "Gas Physicist" = /datum/alt_title/gas_physicist, \
-						"Circuit Designer" = /datum/alt_title/circuit_designer, "Circuit Programmer" = /datum/alt_title/circuit_programmer)
+	alt_titles = list("Researcher" = /datum/alt_title/researcher, "Lab Assistant" = /datum/alt_title/lab_assistant, "Xenoarchaeologist" = /datum/alt_title/xenoarch,
+						"Xenopaleontologist" = /datum/alt_title/xenopaleontologist, "Anomalist" = /datum/alt_title/anomalist, "Phoron Researcher" = /datum/alt_title/phoron_research,
+						"Gas Physicist" = /datum/alt_title/gas_physicist, "Circuit Designer" = /datum/alt_title/circuit_designer, "Circuit Programmer" = /datum/alt_title/circuit_programmer)
 
 
 	access = list(access_robotics, access_tox, access_tox_storage, access_research, access_xenobiology, access_xenoarch, access_xenobotany)
 	minimal_access = list(access_tox, access_tox_storage, access_research, access_xenoarch)					// Unchanged (for now?), mostly here for reference
+
+/datum/alt_title/researcher
+	title = "Researcher"
 
 /datum/alt_title/lab_assistant
 	title = "Lab Assistant"
@@ -83,6 +89,9 @@
 /datum/alt_title/assembly_tech
 	title = "Assembly Technician"
 
+/datum/job/roboticist/get_request_reasons()
+	return list("Repairs needed")
+
 //////////////////////////////////
 //			Xenobotanist
 //////////////////////////////////
@@ -106,7 +115,10 @@
 	outfit_type = /decl/hierarchy/outfit/job/science/xenobiologist
 	job_description = "A Xenobotanist grows and cares for a variety of abnormal, custom made, and frequently dangerous plant life. When the products of these plants \
 					are both safe and beneficial to the station, they may choose to introduce it to the rest of the crew."
-	alt_titles = list("Xenoflorist" = /datum/alt_title/xenoflorist)
+	alt_titles = list("Xenohydroponicist" = /datum/alt_title/xenohydroponicist, "Xenoflorist" = /datum/alt_title/xenoflorist)
 
 /datum/alt_title/xenoflorist
 	title = "Xenoflorist"
+
+/datum/alt_title/xenohydroponicist
+	title = "Xenohydroponicist"

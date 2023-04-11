@@ -103,7 +103,7 @@
 	name = "Anti-Materiel Rifle (14.5mm)"
 	item_cost = DEFAULT_TELECRYSTAL_AMOUNT
 	path = /obj/item/weapon/gun/projectile/heavysniper
-	antag_roles = list("mercenary")
+	antag_roles = list("mercenary", "ert") //VOREStation Edit
 
 /datum/uplink_item/item/visible_weapons/heavysnipertraitor
 	name = "Anti-Materiel Rifle (14.5mm)"
@@ -138,6 +138,11 @@
 	name = "Combat Shotgun"
 	item_cost = 75
 	path = /obj/item/weapon/gun/projectile/shotgun/pump/combat
+	
+/datum/uplink_item/item/visible_weapons/semishotgun
+	name = "Semi-Automatic Shotgun"
+	item_cost = 100
+	path = /obj/item/weapon/gun/projectile/shotgun/semi
 
 /datum/uplink_item/item/visible_weapons/leveraction
 	name = "Lever Action Rifle"

@@ -9,7 +9,7 @@ SUBSYSTEM_DEF(ticker)
 	flags = SS_NO_TICK_CHECK | SS_KEEP_TIMING
 	runlevels = RUNLEVEL_LOBBY | RUNLEVEL_SETUP | RUNLEVEL_GAME | RUNLEVEL_POSTGAME // Every runlevel!
 
-	var/const/restart_timeout = 3 MINUTES	// Default time to wait before rebooting in desiseconds.
+	var/const/restart_timeout = 4 MINUTES	// Default time to wait before rebooting in desiseconds.
 	var/current_state = GAME_STATE_INIT	// We aren't even at pregame yet // TODO replace with CURRENT_GAME_STATE
 
 	/* Relies upon the following globals (TODO move those in here) */
@@ -49,10 +49,14 @@ var/global/datum/controller/subsystem/ticker/ticker
 /datum/controller/subsystem/ticker/Initialize()
 	pregame_timeleft = config.pregame_time
 	send2mainirc("Server lobby is loaded and open at byond://[config.serverurl ? config.serverurl : (config.server ? config.server : "[world.address]:[world.port]")]")
-
-	// Set up the global announcer
-	GLOB.autospeaker = new (null, null, null, 1)
-
+	SSwebhooks.send(
+		WEBHOOK_ROUNDPREP,
+		list(
+			"map" = station_name(),
+			"url" = get_world_url()
+		)
+	)
+	GLOB.autospeaker = new (null, null, null, 1) //Set up Global Announcer
 	return ..()
 
 /datum/controller/subsystem/ticker/fire(resumed = FALSE)
@@ -186,11 +190,6 @@ var/global/datum/controller/subsystem/ticker/ticker
 	if(adm["total"] == 0)
 		send2adminirc("A round has started with no admins online.")
 
-/*	supply_controller.process() 		//Start the supply shuttle regenerating points -- TLE // handled in scheduler
-	master_controller.process()		//Start master_controller.process()
-	lighting_controller.process()	//Start processing DynamicAreaLighting updates
-	*/
-
 	current_state = GAME_STATE_PLAYING
 	Master.SetRunLevel(RUNLEVEL_GAME)
 
@@ -322,7 +321,7 @@ var/global/datum/controller/subsystem/ticker/ticker
 			switch(M.z)
 				if(0)	//inside a crate or something
 					var/turf/T = get_turf(M)
-					if(T && T.z in using_map.station_levels)				//we don't use M.death(0) because it calls a for(/mob) loop and
+					if(T && (T.z in using_map.station_levels))				//we don't use M.death(0) because it calls a for(/mob) loop and
 						M.health = 0
 						M.set_stat(DEAD)
 				if(1)	//on a z-level 1 turf.
@@ -398,14 +397,19 @@ var/global/datum/controller/subsystem/ticker/ticker
 		if(player && player.ready && player.mind?.assigned_role)
 			var/datum/job/J = SSjob.get_job(player.mind.assigned_role)
 
+			// Ask their new_player mob to spawn them
+			if(!player.spawn_checks_vr(player.mind.assigned_role))
+				var/datum/job/job_datum = job_master.GetJob(J.title)
+				job_datum.current_positions--
+				player.mind.assigned_role = null
+				continue //VOREStation Add
+
 			// Snowflakey AI treatment
 			if(J?.mob_type & JOB_SILICON_AI)
 				player.close_spawn_windows()
 				player.AIize(move = TRUE)
 				continue
 
-			// Ask their new_player mob to spawn them
-			if(!player.spawn_checks_vr(player.mind.assigned_role)) continue //VOREStation Add
 			var/mob/living/carbon/human/new_char = player.create_character()
 
 			// Created their playable character, delete their /mob/new_player
@@ -436,6 +440,14 @@ var/global/datum/controller/subsystem/ticker/ticker
 				UpdateFactionList(player)
 				//equip_custom_items(player)	//VOREStation Removal
 				//player.apply_traits() //VOREStation Removal
+		//VOREStation Addition Start
+		if(player.client)
+			if(player.client.prefs.auto_backup_implant)
+				var/obj/item/weapon/implant/backup/imp = new(src)
+
+				if(imp.handle_implant(player,player.zone_sel.selecting))
+					imp.post_implant(player)
+		//VOREStation Addition End
 	if(captainless)
 		for(var/mob/M in player_list)
 			if(!istype(M,/mob/new_player))
@@ -470,20 +482,25 @@ var/global/datum/controller/subsystem/ticker/ticker
 
 	for (var/mob/living/silicon/ai/aiPlayer in mob_list)
 		if (aiPlayer.stat != 2)
-			to_world("<span class='filter_system'><b>[aiPlayer.name] (Played by: [aiPlayer.key])'s laws at the end of the round were:</b></span>")
+			to_world("<span class='filter_system'><b>[aiPlayer.name]'s laws at the end of the round were:</b></span>") // VOREStation edit
 		else
-			to_world("<span class='filter_system'><b>[aiPlayer.name] (Played by: [aiPlayer.key])'s laws when it was deactivated were:</b></span>")
+			to_world("<span class='filter_system'><b>[aiPlayer.name]'s laws when it was deactivated were:</b></span>") // VOREStation edit
 		aiPlayer.show_laws(1)
 
 		if (aiPlayer.connected_robots.len)
 			var/robolist = "<b>The AI's loyal minions were:</b> "
 			for(var/mob/living/silicon/robot/robo in aiPlayer.connected_robots)
-				robolist += "[robo.name][robo.stat?" (Deactivated) (Played by: [robo.key]), ":" (Played by: [robo.key]), "]"
+				robolist += "[robo.name][robo.stat?" (Deactivated), ":", "]"  // VOREStation edit
 			to_world("<span class='filter_system'>[robolist]</span>")
 
 	var/dronecount = 0
 
 	for (var/mob/living/silicon/robot/robo in mob_list)
+
+		if(istype(robo, /mob/living/silicon/robot/platform))
+			var/mob/living/silicon/robot/platform/tank = robo
+			if(!tank.has_had_player)
+				continue
 
 		if(istype(robo,/mob/living/silicon/robot/drone) && !istype(robo,/mob/living/silicon/robot/drone/swarm))
 			dronecount++
@@ -491,9 +508,9 @@ var/global/datum/controller/subsystem/ticker/ticker
 
 		if (!robo.connected_ai)
 			if (robo.stat != 2)
-				to_world("<span class='filter_system'><b>[robo.name] (Played by: [robo.key]) survived as an AI-less stationbound synthetic! Its laws were:</b></span>")
+				to_world("<span class='filter_system'><b>[robo.name] survived as an AI-less stationbound synthetic! Its laws were:</b></span>") // VOREStation edit
 			else
-				to_world("<span class='filter_system'><b>[robo.name] (Played by: [robo.key]) was unable to survive the rigors of being a stationbound synthetic without an AI. Its laws were:</b></span>")
+				to_world("<span class='filter_system'><b>[robo.name] was unable to survive the rigors of being a stationbound synthetic without an AI. Its laws were:</b></span>") // VOREStation edit
 
 			if(robo) //How the hell do we lose robo between here and the world messages directly above this?
 				robo.laws.show_laws(world)

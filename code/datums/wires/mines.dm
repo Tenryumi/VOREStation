@@ -1,5 +1,5 @@
 /datum/wires/mines
-	wire_count = 6
+	wire_count = 7
 	randomize = TRUE
 	holder_type = /obj/effect/mine
 	proper_name = "Explosive Wires"
@@ -7,6 +7,7 @@
 /datum/wires/mines/New(atom/_holder)
 	wires = list(WIRE_EXPLODE, WIRE_EXPLODE_DELAY, WIRE_DISARM, WIRE_BADDISARM)
 	return ..()
+#define WIRE_TRAP		64
 
 /datum/wires/mines/get_status()
 	. = ..()
@@ -20,23 +21,38 @@
 
 	switch(wire)
 		if(WIRE_EXPLODE)
-			C.visible_message("[bicon(C)] *BEEE-*", "[bicon(C)] *BEEE-*")
+			C.visible_message("\icon[C][bicon(C)] *BEEE-*", "\icon[C][bicon(C)] *BEEE-*")
 			C.explode()
 
 		if(WIRE_EXPLODE_DELAY)
-			C.visible_message("[bicon(C)] *BEEE-*", "[bicon(C)] *BEEE-*")
+			C.visible_message("\icon[C][bicon(C)] *BEEE-*", "\icon[C][bicon(C)] *BEEE-*")
 			C.explode()
 
 		if(WIRE_DISARM)
-			C.visible_message("[bicon(C)] *click!*", "[bicon(C)] *click!*")
-			new C.mineitemtype(get_turf(C))
+			C.visible_message("\icon[C][bicon(C)] *click!*", "\icon[C][bicon(C)] *click!*")
+			var/obj/effect/mine/MI = new C.mineitemtype(get_turf(C))
+
+			if(C.trap)
+				MI.trap = C.trap
+				C.trap = null
+				MI.trap.forceMove(MI)
+
 			spawn(0)
 				qdel(C)
 
 		if(WIRE_BADDISARM)
-			C.visible_message("[bicon(C)] *BEEPBEEPBEEP*", "[bicon(C)] *BEEPBEEPBEEP*")
+			C.visible_message("\icon[C][bicon(C)] *BEEPBEEPBEEP*", "\icon[C][bicon(C)] *BEEPBEEPBEEP*")
 			spawn(20)
 				C.explode()
+
+		if(WIRE_TRAP)
+			C.visible_message("\icon[C][bicon(C)] *click!*", "\icon[C][bicon(C)] *click!*")
+
+			if(mend)
+				C.visible_message("\icon[C][bicon(C)] - The mine recalibrates[C.camo_net ? ", revealing \the [C.trap] inside." : "."]")
+
+				C.alpha = 255
+
 	..()
 
 /datum/wires/mines/on_pulse(wire)
@@ -45,18 +61,22 @@
 		return
 	switch(wire)
 		if(WIRE_EXPLODE)
-			C.visible_message("[bicon(C)] *beep*", "[bicon(C)] *beep*")
+			C.visible_message("\icon[C][bicon(C)] *beep*", "\icon[C][bicon(C)] *beep*")
 
 		if(WIRE_EXPLODE_DELAY)
-			C.visible_message("[bicon(C)] *BEEPBEEPBEEP*", "[bicon(C)] *BEEPBEEPBEEP*")
+			C.visible_message("\icon[C][bicon(C)] *BEEPBEEPBEEP*", "\icon[C][bicon(C)] *BEEPBEEPBEEP*")
 			spawn(20)
 				C.explode()
 
 		if(WIRE_DISARM)
-			C.visible_message("[bicon(C)] *ping*", "[bicon(C)] *ping*")
+			C.visible_message("\icon[C][bicon(C)] *ping*", "\icon[C][bicon(C)] *ping*")
 
 		if(WIRE_BADDISARM)
-			C.visible_message("[bicon(C)] *ping*", "[bicon(C)] *ping*")
+			C.visible_message("\icon[C][bicon(C)] *ping*", "\icon[C][bicon(C)] *ping*")
+
+		if(WIRE_TRAP)
+			C.visible_message("\icon[C][bicon(C)] *ping*", "\icon[C][bicon(C)] *ping*")
+
 	..()
 
 /datum/wires/mines/interactable(mob/user)

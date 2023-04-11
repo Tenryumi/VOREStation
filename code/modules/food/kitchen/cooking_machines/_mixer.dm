@@ -25,12 +25,12 @@ fundamental differences
 	cooking_objs += new /datum/cooking_item(new /obj/item/weapon/reagent_containers/cooking_container(src))
 	cooking = FALSE
 	selected_option = pick(output_options)
-	
+
 	mixer_loop = new(list(src), FALSE)
-	
+
 /obj/machinery/appliance/mixer/Destroy()
 	. = ..()
-	
+
 	QDEL_NULL(mixer_loop)
 
 //Mixers cannot-not do combining mode. So the default option is removed from this. A combine target must be chosen
@@ -47,7 +47,7 @@ fundamental differences
 		return
 
 	if(output_options.len)
-		var/choice = input("What specific food do you wish to make with \the [src]?") as null|anything in output_options
+		var/choice = tgui_input_list(usr, "What specific food do you wish to make with \the [src]?", "Food Output Choice", output_options)
 		if(!choice)
 			return
 		else
@@ -80,17 +80,16 @@ fundamental differences
 /obj/machinery/appliance/mixer/removal_menu(var/mob/user)
 	if (can_remove_items(user))
 		var/list/menuoptions = list()
-		for (var/a in cooking_objs)
-			var/datum/cooking_item/CI = a
+		for(var/datum/cooking_item/CI as anything in cooking_objs)
 			if (CI.container)
 				if (!CI.container.check_contents())
-					to_chat(user, "There's nothing in [src] you can remove!")
+					to_chat(user, "<span class='filter_notice'>There's nothing in [src] you can remove!</span>")
 					return
 
 				for (var/obj/item/I in CI.container)
 					menuoptions[I.name] = I
 
-		var/selection = input(user, "Which item would you like to remove? If you want to remove chemicals, use an empty beaker.", "Remove ingredients") as null|anything in menuoptions
+		var/selection = tgui_input_list(user, "Which item would you like to remove? If you want to remove chemicals, use an empty beaker.", "Remove ingredients", menuoptions)
 		if (selection)
 			var/obj/item/I = menuoptions[selection]
 			if (!user || !user.put_in_hands(I))
@@ -107,20 +106,20 @@ fundamental differences
 
 	var/datum/cooking_item/CI = cooking_objs[1]
 	if(!CI.container.check_contents())
-		to_chat("There's nothing in it! Add ingredients before turning [src] on!")
+		to_chat("<span class='filter_notice'>There's nothing in it! Add ingredients before turning [src] on!</span>")
 		return
 
 	if(stat & POWEROFF)//Its turned off
 		stat &= ~POWEROFF
 		if(usr)
-			usr.visible_message("[usr] turns the [src] on", "You turn on \the [src].")
+			usr.visible_message("<span class='filter_notice'>[usr] turns the [src] on.</span>", "<span class='filter_notice'>You turn on \the [src].</span>")
 			get_cooking_work(CI)
 			use_power = 2
 	else //Its on, turn it off
 		stat |= POWEROFF
 		use_power = 0
 		if(usr)
-			usr.visible_message("[usr] turns the [src] off", "You turn off \the [src].")
+			usr.visible_message("<span class='filter_notice'>[usr] turns the [src] off.</span>", "<span class='filter_notice'>You turn off \the [src].</span>")
 	playsound(src, 'sound/machines/click.ogg', 40, 1)
 	update_icon()
 

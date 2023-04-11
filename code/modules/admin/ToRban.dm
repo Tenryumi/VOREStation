@@ -39,9 +39,9 @@
 			log_misc("ToR data updated!")
 			if(usr)
 				to_chat(usr, "<span class='filter_adminlog'>ToRban updated.</span>")
-			return 1
+			return
 		log_misc("ToR data update aborted: no data.")
-		return 0
+		return
 
 /client/proc/ToRban(task in list("update","toggle","show","remove","remove all","find"))
 	set name = "ToRban"
@@ -70,14 +70,14 @@
 			src << browse(dat,"window=ToRban_show")
 		if("remove")
 			var/savefile/F = new(TORFILE)
-			var/choice = input(src,"Please select an IP address to remove from the ToR banlist:","Remove ToR ban",null) as null|anything in F.dir
+			var/choice = tgui_input_list(src,"Please select an IP address to remove from the ToR banlist:","Remove ToR ban", F.dir)
 			if(choice)
 				F.dir.Remove(choice)
 				to_chat(src, "<span class='filter_adminlog'><b>Address removed</b></span>")
 		if("remove all")
 			to_chat(src, "<span class='filter_adminlog'><b>[TORFILE] was [fdel(TORFILE)?"":"not "]removed.</b></span>")
 		if("find")
-			var/input = input(src,"Please input an IP address to search for:","Find ToR ban",null) as null|text
+			var/input = tgui_input_text(src,"Please input an IP address to search for:","Find ToR ban",null)
 			if(input)
 				if(ToRban_isbanned(input))
 					to_chat(src, "<span class='filter_adminlog'><font color='green'><b>Address is a known ToR address</b></font></span>")

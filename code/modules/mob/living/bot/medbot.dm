@@ -187,9 +187,9 @@
 	update_icons()
 
 /mob/living/bot/medbot/update_icons()
-	overlays.Cut()
+	cut_overlays()
 	if(skin)
-		overlays += image('icons/obj/aibots.dmi', "medskin_[skin]")
+		add_overlay("medskin_[skin]")
 	if(busy)
 		icon_state = "medibots"
 	else
@@ -268,10 +268,10 @@
 /mob/living/bot/medbot/tgui_act(action, list/params, datum/tgui/ui, datum/tgui_state/state)
 	if(..())
 		return TRUE
-	
+
 	usr.set_machine(src)
 	add_fingerprint(usr)
-	
+
 	. = TRUE
 	switch(action)
 		if("power")
@@ -312,7 +312,6 @@
 			declare_treatment = !declare_treatment
 			. = TRUE
 
-
 /mob/living/bot/medbot/emag_act(var/remaining_uses, var/mob/user)
 	. = ..()
 	if(!emagged)
@@ -349,8 +348,8 @@
 	var/datum/effect/effect/system/spark_spread/s = new /datum/effect/effect/system/spark_spread
 	s.set_up(3, 1, src)
 	s.start()
-	qdel(src)
-	return
+	//qdel(src)
+	return ..()
 
 /mob/living/bot/medbot/handleRegular()
 	. = ..()
@@ -452,7 +451,7 @@
 		return treatment_emag
 
 	// If they're injured, we're using a beaker, and they don't have on of the chems in the beaker
-	if(reagent_glass && use_beaker && ((H.getBruteLoss() >= heal_threshold) || (H.getToxLoss() >= heal_threshold) || (H.getToxLoss() >= heal_threshold) || (H.getOxyLoss() >= (heal_threshold + 15))))
+	if(reagent_glass && use_beaker && ((H.getBruteLoss() >= heal_threshold) || (H.getToxLoss() >= heal_threshold) || (H.getFireLoss() >= heal_threshold) || (H.getOxyLoss() >= (heal_threshold + 15))))
 		for(var/datum/reagent/R in reagent_glass.reagents.reagent_list)
 			if(!H.reagents.has_reagent(R))
 				return 1
@@ -531,12 +530,12 @@
 /obj/item/weapon/firstaid_arm_assembly/Initialize()
 	. = ..()
 	if(skin)
-		overlays += image('icons/obj/aibots.dmi', "kit_skin_[src.skin]")
+		add_overlay("kit_skin_[src.skin]")
 
 /obj/item/weapon/firstaid_arm_assembly/attackby(obj/item/weapon/W as obj, mob/user as mob)
 	..()
 	if(istype(W, /obj/item/weapon/pen))
-		var/t = sanitizeSafe(input(user, "Enter new robot name", name, created_name), MAX_NAME_LEN)
+		var/t = sanitizeSafe(tgui_input_text(user, "Enter new robot name", name, created_name, MAX_NAME_LEN), MAX_NAME_LEN)
 		if(!t)
 			return
 		if(!in_range(src, usr) && loc != usr)
@@ -551,7 +550,7 @@
 					build_step++
 					to_chat(user, "<span class='notice'>You add the health sensor to [src].</span>")
 					name = "First aid/robot arm/health analyzer assembly"
-					overlays += image('icons/obj/aibots.dmi', "na_scanner")
+					add_overlay("na_scanner")
 
 			if(1)
 				if(isprox(W))

@@ -41,7 +41,7 @@
 
 /obj/machinery/telecomms/tgui_data(mob/user)
 	var/list/data = list()
-	
+
 	data["temp"] = temp
 	data["on"] = on
 
@@ -71,23 +71,24 @@
 			data["multitool_buffer"] = list("name" = "[P.buffer]", "id" = "[P.buffer.id]")
 
 		var/i = 0
-		data["linked"] = list()
+		var/list/linked = list()
 		for(var/obj/machinery/telecomms/T in links)
 			i++
-			data["linked"].Add(list(list(
+			linked.Add(list(list(
 				"ref" = "\ref[T]",
 				"name" = "[T]",
 				"id" = T.id,
 				"index" = i,
 			)))
-		
-		data["filter"] = list()
-		if(LAZYLEN(freq_listening))
-			for(var/x in freq_listening)
-				data["filter"].Add(list(list(
-					"name" = "[format_frequency(x)]",
-					"freq" = x,
-				)))
+		data["linked"] = linked
+
+		var/list/filter = list()
+		for(var/x in freq_listening)
+			filter.Add(list(list(
+				"name" = "[format_frequency(x)]",
+				"freq" = x,
+			)))
+		data["filter"] = filter
 
 	return data
 
@@ -212,7 +213,7 @@
 /obj/machinery/telecomms/bus/Options_Act(action, params)
 	if(..())
 		return TRUE
-	
+
 	switch(action)
 		if("change_freq")
 			. = TRUE
@@ -266,7 +267,7 @@
 /obj/machinery/telecomms/receiver/Options_Act(action, params)
 	if(..())
 		return TRUE
-	
+
 	switch(action)
 		if("range")
 			var/new_range = params["range"]
@@ -287,14 +288,15 @@
 			. = TRUE
 
 		if("id")
-			var/newid = copytext(reject_bad_text(input(usr, "Specify the new ID for this machine", src, id) as null|text),1,MAX_MESSAGE_LEN)
+			var/newid = copytext(reject_bad_text(tgui_input_text(usr, "Specify the new ID for this machine", src, id)),1,MAX_MESSAGE_LEN)
 			if(newid && canAccess(usr))
 				id = newid
 				set_temp("-% New ID assigned: \"[id]\" %-", "average")
 				. = TRUE
 
 		if("network")
-			var/newnet = input(usr, "Specify the new network for this machine. This will break all current links.", src, network) as null|text
+			var/newnet = tgui_input_text(usr, "Specify the new network for this machine. This will break all current links.", src, network)
+			newnet = sanitize(newnet,15)
 			if(newnet && canAccess(usr))
 
 				if(length(newnet) > 15)

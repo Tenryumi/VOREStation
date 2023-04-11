@@ -12,8 +12,9 @@
 	//directwired = 0
 	var/icon_state_on = "bbox_on"
 	var/icon_state_off = "bbox_off"
-	density = 1
-	anchored = 1
+	density = TRUE
+	anchored = TRUE
+	unacidable = TRUE
 	circuit = /obj/item/weapon/circuitboard/breakerbox
 	var/on = 0
 	var/busy = 0
@@ -38,6 +39,9 @@
 // Enabled on server startup. Used in substations to keep them in bypass mode.
 /obj/machinery/power/breakerbox/activated/Initialize()
 	. = ..()
+	return INITIALIZE_HINT_LATELOAD
+
+/obj/machinery/power/breakerbox/activated/LateInitialize()
 	set_state(1)
 
 /obj/machinery/power/breakerbox/examine(mob/user)
@@ -92,7 +96,8 @@
 
 /obj/machinery/power/breakerbox/attackby(var/obj/item/weapon/W as obj, var/mob/user as mob)
 	if(istype(W, /obj/item/device/multitool))
-		var/newtag = input(user, "Enter new RCON tag. Use \"NO_TAG\" to disable RCON or leave empty to cancel.", "SMES RCON system") as text
+		var/newtag = tgui_input_text(user, "Enter new RCON tag. Use \"NO_TAG\" to disable RCON or leave empty to cancel.", "SMES RCON system", "", MAX_NAME_LEN)
+		newtag = sanitize(newtag,MAX_NAME_LEN)
 		if(newtag)
 			RCon_tag = newtag
 			to_chat(user, "<span class='notice'>You changed the RCON tag to: [newtag]</span>")

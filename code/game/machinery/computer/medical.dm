@@ -29,10 +29,11 @@
 
 
 /obj/machinery/computer/med_data/Initialize()
-	..()
+	. = ..()
 	field_edit_questions = list(
 		// General
 		"sex" = "Please select new sex:",
+		"species" = "Please input new species:",
 		"age" = "Please input new age:",
 		"fingerprint" = "Please input new fingerprint hash:",
 		"p_stat" = "Please select new physical status:",
@@ -137,6 +138,7 @@
 					fields[++fields.len] = FIELD("Name", active1.fields["name"], null)
 					fields[++fields.len] = FIELD("ID", active1.fields["id"], null)
 					fields[++fields.len] = FIELD("Sex", active1.fields["sex"], "sex")
+					fields[++fields.len] = FIELD("Species", active1.fields["species"], "species")
 					fields[++fields.len] = FIELD("Age", "[active1.fields["age"]]", "age")
 					fields[++fields.len] = FIELD("Fingerprint", active1.fields["fingerprint"], "fingerprint")
 					fields[++fields.len] = FIELD("Physical Status", active1.fields["p_stat"], "p_stat")
@@ -418,6 +420,7 @@
 	if(istype(active1, /datum/data/record) && data_core.general.Find(active1))
 		P.info += {"Name: [active1.fields["name"]] ID: [active1.fields["id"]]
 		<br>\nSex: [active1.fields["sex"]]
+		<br>\nSpecies: [active1.fields["species"]]
 		<br>\nAge: [active1.fields["age"]]
 		<br>\nFingerprint: [active1.fields["fingerprint"]]
 		<br>\nPhysical Status: [active1.fields["p_stat"]]
@@ -493,14 +496,15 @@
 	..(severity)
 
 
-/obj/machinery/computer/med_data/laptop
-	name = "Medical Laptop"
-	desc = "A cheap laptop. It seems to have only the medical records program."
-	icon_state = "laptop"
-	icon_keyboard = "laptop_key"
-	icon_screen = "medlaptop"
-	circuit = /obj/item/weapon/circuitboard/med_data/laptop
-	density = 0
+/obj/machinery/computer/med_data/laptop //[TO DO] Change name to PCU and update mapdata to include replacement computers
+	name = "\improper Medical Laptop"
+	desc = "A personal computer unit. It seems to have only the medical records program installed."
+	icon_screen = "pcu_generic"
+	icon_state = "pcu_med"
+	icon_keyboard = "pcu_key"
+	light_color = "#5284e7"
+	circuit = /obj/item/weapon/circuitboard/med_data/pcu
+	density = FALSE
 
 #undef FIELD
 #undef MED_FIELD

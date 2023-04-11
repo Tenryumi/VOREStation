@@ -135,15 +135,15 @@
 		return
 
 	if(aug_cooldown)
-		if(last_activate <= world.time + aug_cooldown)
-			last_activate = world.time
+		if(cooldown <= world.time)
+			cooldown = world.time + aug_cooldown
 		else
 			return
 
 	if(istype(owner, /mob/living/carbon/human))
 		var/mob/living/carbon/human/H = owner
 		H.add_modifier(/datum/modifier/melee_surge, 0.75 MINUTES)
-		
+
 /obj/item/organ/internal/augment/armmounted/shoulder/blade
 	name = "armblade implant"
 	desc = "A large implant that fits into a subject's arm. It deploys a large metal blade by some painful means."
@@ -189,7 +189,7 @@
 		)
 
 /obj/item/organ/internal/augment/armmounted/shoulder/multiple/Initialize()
-	..()
+	. = ..()
 
 	if(integrated_object)
 		integrated_tools[integrated_object_type] = integrated_object

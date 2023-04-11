@@ -13,7 +13,7 @@
 	icon_gib = "syndicate_gib"
 
 	faction = "syndicate"
-	movement_cooldown = 4
+	movement_cooldown = 1
 
 	status_flags = 0
 
@@ -25,7 +25,7 @@
 	melee_damage_lower = 15		//Tac Knife damage
 	melee_damage_upper = 15
 	attack_armor_pen = 20
-	attack_sharp = 1
+	attack_sharp = TRUE
 	attack_edge = 1
 	attacktext = list("slashed", "stabbed")
 	armor = list(melee = 40, bullet = 30, laser = 30, energy = 10, bomb = 10, bio = 100, rad = 100)	// Same armor values as the vest they drop, plus simple mob immunities
@@ -112,7 +112,7 @@
 	melee_damage_lower = 30
 	melee_damage_upper = 30
 	attack_armor_pen = 50
-	attack_sharp = 1
+	attack_sharp = TRUE
 	attack_edge = 1
 	attacktext = list("slashed")
 
@@ -301,6 +301,10 @@
 
 /mob/living/simple_mob/humanoid/merc/ranged/sniper/shoot_target(atom/A)
 	set waitfor = FALSE
+
+	if(!istype(A) || QDELETED(A))
+		return
+
 	setClickCooldown(get_attack_speed())
 
 	face_atom(A)
@@ -337,7 +341,7 @@
 	icon_state = "syndicatemeleespace"
 	icon_living = "syndicatemeleespace"
 
-	movement_cooldown = 0
+	movement_cooldown = -1
 
 	armor = list(melee = 60, bullet = 50, laser = 30, energy = 15, bomb = 35, bio = 100, rad = 100)	// Same armor as their voidsuit
 
@@ -362,7 +366,7 @@
 	icon_state = "syndicaterangedpsace"
 	icon_living = "syndicaterangedpsace"
 
-	movement_cooldown = 0
+	movement_cooldown = -1
 
 	min_oxy = 0
 	max_oxy = 0

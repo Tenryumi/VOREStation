@@ -19,6 +19,7 @@
 /obj/item/weapon/smes_coil/weak
 	name = "basic superconductive magnetic coil"
 	desc = "A cheaper model of superconductive magnetic coil. Its capacity and I/O rating are considerably lower."
+	icon_state = "smes_coil_weak"
 	ChargeCapacity = 1200000			// 20 kWh
 	IOCapacity = 150000					// 150 kW
 
@@ -26,6 +27,7 @@
 /obj/item/weapon/smes_coil/super_capacity
 	name = "superconductive capacitance coil"
 	desc = "A specialised type of superconductive magnetic coil with a significantly stronger containment field, allowing for larger power storage. Its IO rating is much lower, however."
+	icon_state = "smes_coil_capacitance"
 	ChargeCapacity = 60000000			// 1000 kWh
 	IOCapacity = 50000					// 50 kW
 
@@ -33,6 +35,7 @@
 /obj/item/weapon/smes_coil/super_io
 	name = "superconductive transmission coil"
 	desc = "A specialised type of superconductive magnetic coil with reduced storage capabilites but vastly improved power transmission capabilities, making it useful in systems which require large throughput."
+	icon_state = "smes_coil_transmission"
 	ChargeCapacity = 600000				// 10 kWh
 	IOCapacity = 1000000				// 1000 kW
 
@@ -139,6 +142,9 @@
 	if(panel_open)
 		wires.Interact(usr)
 
+/obj/machinery/power/smes/buildable/RefreshParts()
+	recalc_coils()
+
 // Proc: recalc_coils()
 // Parameters: None
 // Description: Updates properties (IO, capacity, etc.) of this SMES by checking internal components.
@@ -186,7 +192,7 @@
 		if(G.siemens_coefficient == 0)
 			user_protected = 1
 	log_game("SMES FAILURE: <b>[src.x]X [src.y]Y [src.z]Z</b> User: [usr.ckey], Intensity: [intensity]/100")
-	message_admins("SMES FAILURE: <b>[src.x]X [src.y]Y [src.z]Z</b> User: [usr.ckey], Intensity: [intensity]/100 - <A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[src.x];Y=[src.y];Z=[src.z]'>JMP</a>")
+	message_admins("SMES FAILURE: <b>[src.x]X [src.y]Y [src.z]Z</b> User: [usr.ckey], Intensity: [intensity]/100 - <A HREF='?_src_=holder;[HrefToken()];adminplayerobservecoodjump=1;X=[src.x];Y=[src.y];Z=[src.z]'>JMP</a>")
 
 	var/used_hand = h_user.hand?"l_hand":"r_hand"
 
@@ -286,8 +292,8 @@
 // Description: Allows us to use special icon overlay for critical SMESs
 /obj/machinery/power/smes/buildable/update_icon()
 	if (failing)
-		overlays.Cut()
-		overlays += image('icons/obj/power.dmi', "smes-crit")
+		cut_overlays()
+		add_overlay("smes-crit")
 	else
 		..()
 
@@ -306,7 +312,8 @@
 
 		// Multitool - change RCON tag
 		if(istype(W, /obj/item/device/multitool))
-			var/newtag = input(user, "Enter new RCON tag. Use \"NO_TAG\" to disable RCON or leave empty to cancel.", "SMES RCON system") as text
+			var/newtag = tgui_input_text(user, "Enter new RCON tag. Use \"NO_TAG\" to disable RCON or leave empty to cancel.", "SMES RCON system", "", MAX_NAME_LEN)
+			newtag = sanitize(newtag,MAX_NAME_LEN)
 			if(newtag)
 				RCon_tag = newtag
 				to_chat(user, "<span class='notice'>You changed the RCON tag to: [newtag]</span>")
@@ -361,31 +368,3 @@
 				recalc_coils()
 			else
 				to_chat(user, "<font color='red'>You can't insert more coils into this SMES unit!</font>")
-
-// Proc: toggle_input()
-// Parameters: None
-// Description: Switches the input on/off depending on previous setting
-/obj/machinery/power/smes/buildable/proc/toggle_input()
-	inputting(!input_attempt)
-	update_icon()
-
-// Proc: toggle_output()
-// Parameters: None
-// Description: Switches the output on/off depending on previous setting
-/obj/machinery/power/smes/buildable/proc/toggle_output()
-	outputting(!output_attempt)
-	update_icon()
-
-// Proc: set_input()
-// Parameters: 1 (new_input - New input value in Watts)
-// Description: Sets input setting on this SMES. Trims it if limits are exceeded.
-/obj/machinery/power/smes/buildable/proc/set_input(var/new_input = 0)
-	input_level = between(0, new_input, input_level_max)
-	update_icon()
-
-// Proc: set_output()
-// Parameters: 1 (new_output - New output value in Watts)
-// Description: Sets output setting on this SMES. Trims it if limits are exceeded.
-/obj/machinery/power/smes/buildable/proc/set_output(var/new_output = 0)
-	output_level = between(0, new_output, output_level_max)
-	update_icon()

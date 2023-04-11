@@ -87,7 +87,9 @@
 		death()
 
 	if (src.stat != 2) //Alive.
-		if (src.paralysis || src.stunned || src.weakened || !src.has_power) //Stunned etc.
+		if (src.weakened > 0)	// Do not fullstun on weaken
+			AdjustWeakened(-1)
+		if (src.paralysis || src.stunned || !src.has_power) //Stunned etc.
 			src.set_stat(UNCONSCIOUS)
 			if (src.stunned > 0)
 				AdjustStunned(-1)
@@ -158,7 +160,6 @@
 	if(A?.no_spoilers)
 		disable_spoiler_vision()
 
-
 	if (src.stat == DEAD || (XRAY in mutations) || (src.sight_mode & BORGXRAY))
 		src.sight |= SEE_TURFS
 		src.sight |= SEE_MOBS
@@ -201,8 +202,10 @@
 		src.see_invisible = SEE_INVISIBLE_LIVING // This is normal vision (25), setting it lower for normal vision means you don't "see" things like darkness since darkness
 							 // has a "invisible" value of 15
 
-	plane_holder.set_vis(VIS_FULLBRIGHT,fullbright)
-	plane_holder.set_vis(VIS_MESONS,seemeson)
+	if(plane_holder)
+		plane_holder.set_vis(VIS_FULLBRIGHT,fullbright)
+		plane_holder.set_vis(VIS_MESONS,seemeson)
+
 	..()
 
 	if (src.healths)
@@ -262,15 +265,15 @@
 	if(environment)
 		switch(environment.temperature) //310.055 optimal body temp
 			if(400 to INFINITY)
-				throw_alert("temp", /obj/screen/alert/hot/robot, 2)
+				throw_alert("temp", /obj/screen/alert/hot/robot, HOT_ALERT_SEVERITY_MODERATE)
 			if(360 to 400)
-				throw_alert("temp", /obj/screen/alert/hot/robot, 1)
+				throw_alert("temp", /obj/screen/alert/hot/robot, HOT_ALERT_SEVERITY_LOW)
 			if(260 to 360)
 				clear_alert("temp")
 			if(200 to 260)
-				throw_alert("temp", /obj/screen/alert/cold/robot, 1)
+				throw_alert("temp", /obj/screen/alert/cold/robot, COLD_ALERT_SEVERITY_LOW)
 			else
-				throw_alert("temp", /obj/screen/alert/cold/robot, 2)
+				throw_alert("temp", /obj/screen/alert/cold/robot, COLD_ALERT_SEVERITY_MODERATE)
 
 //Oxygen and fire does nothing yet!!
 //	if (src.oxygen) src.oxygen.icon_state = "oxy[src.oxygen_alert ? 1 : 0]"
@@ -358,9 +361,9 @@
 	return canmove
 
 /mob/living/silicon/robot/update_fire()
-	overlays -= image("icon"='icons/mob/OnFire.dmi', "icon_state" = get_fire_icon_state())
+	cut_overlay(image(icon = 'icons/mob/OnFire.dmi', icon_state = get_fire_icon_state()))
 	if(on_fire)
-		overlays += image("icon"='icons/mob/OnFire.dmi', "icon_state" = get_fire_icon_state())
+		add_overlay(image(icon = 'icons/mob/OnFire.dmi', icon_state = get_fire_icon_state()))
 
 /mob/living/silicon/robot/fire_act()
 	if(!on_fire) //Silicons don't gain stacks from hotspots, but hotspots can ignite them

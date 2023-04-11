@@ -3,6 +3,7 @@
 /obj/item/weapon/cell/device/weapon/recharge/alien
 	name = "void cell (device)"
 	var/swaps_to = /obj/item/weapon/cell/void
+	standard_overlays = FALSE
 
 /obj/item/weapon/cell/device/weapon/recharge/alien/attack_self(var/mob/user)
 	user.remove_from_mob(src)
@@ -11,11 +12,8 @@
 	user.put_in_active_hand(newcell)
 	var/percentage = charge/maxcharge
 	newcell.charge = newcell.maxcharge * percentage
+	newcell.persist_storable = persist_storable
 	qdel(src)
-
-/obj/item/weapon/cell/device/weapon/recharge/alien/update_icon()
-	return
-
 
 //The machine cell
 /obj/item/weapon/cell/void
@@ -29,6 +27,7 @@
 	self_recharge = TRUE
 	charge_delay = 50
 	matter = null
+	standard_overlays = FALSE
 	var/swaps_to = /obj/item/weapon/cell/device/weapon/recharge/alien
 
 /obj/item/weapon/cell/void/attack_self(var/mob/user)
@@ -38,10 +37,8 @@
 	user.put_in_active_hand(newcell)
 	var/percentage = charge/maxcharge
 	newcell.charge = newcell.maxcharge * percentage
+	newcell.persist_storable = persist_storable
 	qdel(src)
-	
-/obj/item/weapon/cell/void/update_icon()
-	return
 
 // Bloo friendlier hybrid tech
 /obj/item/weapon/cell/device/weapon/recharge/alien/hybrid

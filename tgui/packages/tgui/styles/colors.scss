@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2020 Aleksej Komarov
+ * SPDX-License-Identifier: MIT
+ */
+
 @use 'sass:color';
 @use 'sass:map';
 @use 'sass:meta';
@@ -26,7 +31,7 @@ $label: #7e90a7 !default;
 
 // Background and foreground color lightness ratios
 $bg-lightness: -15% !default;
-$fg-lightness: 5% !default;
+$fg-lightness: 10% !default;
 
 @function bg($color) {
   @return color.scale($color, $lightness: $bg-lightness);
@@ -66,14 +71,20 @@ $bg-map-keys: map.keys($_gen_map) !default;
 
 $fg-map: ();
 @each $color-name in $fg-map-keys {
-  $fg-map: map-merge($fg-map, (
-    $color-name: fg(map.get($_gen_map, $color-name)),
-  ));
+  $fg-map: map-merge(
+    $fg-map,
+    (
+      $color-name: fg(map.get($_gen_map, $color-name)),
+    )
+  );
 }
 
 $bg-map: ();
 @each $color-name in $bg-map-keys {
-  $bg-map: map-merge($bg-map, (
-    $color-name: bg(map.get($_gen_map, $color-name)),
-  ));
+  $bg-map: map-merge(
+    $bg-map,
+    (
+      $color-name: bg(map.get($_gen_map, $color-name)),
+    )
+  );
 }

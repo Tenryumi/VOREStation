@@ -54,7 +54,7 @@ var/datum/antagonist/rogue_ai/malf
 		if(!istype(A))
 			error("Non-AI mob designated malf AI! Report this.")
 			to_world("##ERROR: Non-AI mob designated malf AI! Report this.")
-			return 0
+			return
 
 		A.setup_for_malf()
 		A.laws = new /datum/ai_laws/nanotrasen/malfunction
@@ -97,7 +97,7 @@ var/datum/antagonist/rogue_ai/malf
 		testing("rogue_ai set_antag_name called on non-silicon mob [player]!")
 		return
 	// Choose a name, if any.
-	var/newname = sanitize(input(player, "You are a [role_text]. Would you like to change your name to something else?", "Name change") as null|text, MAX_NAME_LEN)
+	var/newname = sanitize(tgui_input_text(player, "You are a [role_text]. Would you like to change your name to something else?", "Name change", null, MAX_NAME_LEN), MAX_NAME_LEN)
 	if (newname)
 		player.SetName(newname)
 	if(player.mind) player.mind.name = player.name

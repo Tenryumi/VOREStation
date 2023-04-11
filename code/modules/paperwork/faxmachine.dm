@@ -110,7 +110,7 @@ var/list/adminfaxes = list()	//cache for faxes that have been sent to admins
 
 	if(!authenticated)
 		return
-	
+
 	switch(action)
 		if("send")
 			if(copyitem)
@@ -125,15 +125,19 @@ var/list/adminfaxes = list()	//cache for faxes that have been sent to admins
 
 		if("dept")
 			var/lastdestination = destination
-			destination = input(usr, "Which department?", "Choose a department", "") as null|anything in (alldepartments + admin_departments)
+			destination = tgui_input_list(usr, "Which department?", "Choose a department", (alldepartments + admin_departments))
 			if(!destination)
 				destination = lastdestination
 
 	return TRUE
 
 /obj/machinery/photocopier/faxmachine/attackby(obj/item/O as obj, mob/user as mob)
-	if(O.is_multitool() && panel_open)
-		var/input = sanitize(input(usr, "What Department ID would you like to give this fax machine?", "Multitool-Fax Machine Interface", department))
+	if(istype(O, /obj/item/weapon/card/id) && !scan)
+		user.drop_from_inventory(O)
+		O.forceMove(src)
+		scan = O
+	else if(O.is_multitool() && panel_open)
+		var/input = sanitize(tgui_input_text(usr, "What Department ID would you like to give this fax machine?", "Multitool-Fax Machine Interface", department))
 		if(!input)
 			to_chat(usr, "No input found. Please hang up and try your call again.")
 			return
@@ -208,25 +212,41 @@ var/list/adminfaxes = list()	//cache for faxes that have been sent to admins
 	adminfaxes += rcvdcopy
 
 	//message badmins that a fax has arrived
-	if (destination == using_map.boss_name)
+
+	// Sadly, we can't use a switch statement here due to not using a constant value for the current map's centcom name.
+	if(destination == using_map.boss_name)
 		message_admins(sender, "[uppertext(using_map.boss_short)] FAX", rcvdcopy, "CentComFaxReply", "#006100")
-	else if (destination == "Virgo-Prime Governmental Authority") // Vorestation Edit
-		message_admins(sender, "VIRGO GOVERNMENT FAX", rcvdcopy, "CentComFaxReply", "#1F66A0")
-	else if (destination == "Supply")
+	else if(destination == "Virgo-Prime Governmental Authority") // Vorestation Edit
+		message_admins(sender, "VIRGO GOVERNMENT FAX", rcvdcopy, "CentComFaxReply", "#1F66A0") // Vorestation Edit
+	else if(destination == "Supply")
 		message_admins(sender, "[uppertext(using_map.boss_short)] SUPPLY FAX", rcvdcopy, "CentComFaxReply", "#5F4519")
 	else
 		message_admins(sender, "[uppertext(destination)] FAX", rcvdcopy, "UNKNOWN")
-
 
 	sendcooldown = 1800
 	sleep(50)
 	visible_message("[src] beeps, \"Message transmitted successfully.\"")
 
+// Turns objects into just text.
+/obj/machinery/photocopier/faxmachine/proc/make_summary(obj/item/sent)
+	if(istype(sent, /obj/item/weapon/paper))
+		var/obj/item/weapon/paper/P = sent
+		return P.info
+	if(istype(sent, /obj/item/weapon/paper_bundle))
+		. = ""
+		var/obj/item/weapon/paper_bundle/B = sent
+		for(var/i in 1 to B.pages.len)
+			var/obj/item/weapon/paper/P = B.pages[i]
+			if(istype(P)) // Photos can show up here too.
+				if(.) // Space out different pages.
+					. += "<br>"
+				. += "PAGE [i] - [P.name]<br>"
+				. += P.info
 
 /obj/machinery/photocopier/faxmachine/proc/message_admins(var/mob/sender, var/faxname, var/obj/item/sent, var/reply_type, font_colour="#006100")
 	var/msg = "<span class='notice'><b><font color='[font_colour]'>[faxname]: </font>[get_options_bar(sender, 2,1,1)]"
-	msg += "(<a href='?_src_=holder;FaxReply=\ref[sender];originfax=\ref[src];replyorigin=[reply_type]'>REPLY</a>)</b>: "
-	msg += "Receiving '[sent.name]' via secure connection ... <a href='?_src_=holder;AdminFaxView=\ref[sent]'>view message</a></span>"
+	msg += "(<a href='?_src_=holder;[HrefToken()];FaxReply=\ref[sender];originfax=\ref[src];replyorigin=[reply_type]'>REPLY</a>)</b>: "
+	msg += "Receiving '[sent.name]' via secure connection ... <a href='?_src_=holder;[HrefToken()];AdminFaxView=\ref[sent]'>view message</a></span>"
 
 	for(var/client/C in GLOB.admins)
 		if(check_rights((R_ADMIN|R_MOD|R_EVENT),0,C))
@@ -237,3 +257,23 @@ var/list/adminfaxes = list()	//cache for faxes that have been sent to admins
 	var/faxid = export_fax(sent)
 	message_chat_admins(sender, faxname, sent, faxid, font_colour)
 	// VoreStation Edit End
+
+	// Webhooks don't parse the HTML on the paper, so we gotta strip them out so it's still readable.
+	var/summary = make_summary(sent)
+	summary = paper_html_to_plaintext(summary)
+
+	log_game("Fax to [lowertext(faxname)] was sent by [key_name(sender)].")
+	log_game(summary)
+
+	var/webhook_length_limit = 1900 // The actual limit is a little higher.
+	if(length(summary) > webhook_length_limit)
+		summary = copytext(summary, 1, webhook_length_limit + 1)
+		summary += "\n\[Truncated\]"
+
+	SSwebhooks.send(
+		WEBHOOK_FAX_SENT,
+		list(
+			"name" = "[faxname] '[sent.name]' sent from [key_name(sender)]",
+			"body" = summary
+		)
+	)

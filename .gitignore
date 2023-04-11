@@ -15,7 +15,14 @@ data
 data/
 cfg/
 
-code/game/gamemodes/technomancer/spells/projectile/overload.dm
-code/game/gamemodes/technomancer/spells/projectile/overload.dm
-code/modules/client/preference_setup/loadout/loadout_xeno.dm
+#Visual studio stuff
+*.vscode/*
+!/.vscode/launch.json
+!/.vscode/extensions.json
+!/.vscode/settings.json
+!/.vscode/tasks.json
+
 temp.dmi
+
+node_modules/
+package-lock.json

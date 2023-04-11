@@ -10,7 +10,7 @@
 	shock_resist = 1
 	poison_resist = 1
 
-	movement_cooldown = 0
+	movement_cooldown = -2
 	mob_bump_flag = 0 // If the illusion can't be swapped it will be obvious.
 
 	response_help   = "pushes a hand through"
@@ -33,7 +33,7 @@
 	appearance = thing_to_copy.appearance
 	copying = thing_to_copy
 	density = thing_to_copy.density // So you can't bump into objects that aren't supposed to be dense.
-	catalogue_data = thing_to_copy.catalogue_data.Copy()
+	catalogue_data = thing_to_copy.get_catalogue_data()
 	catalogue_delay = thing_to_copy.catalogue_delay
 	return TRUE
 

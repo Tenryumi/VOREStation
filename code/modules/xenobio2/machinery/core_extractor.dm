@@ -8,8 +8,8 @@
 	desc = "A machine for cutting up slimes to get to their cores."
 	icon = 'icons/obj/xenoarchaeology.dmi'
 	icon_state = "scanner_0old"
-	density = 1
-	anchored = 1
+	density = TRUE
+	anchored = TRUE
 	circuit = /obj/item/weapon/circuitboard/slimeextractor
 	var/inuse
 	var/mob/living/simple_mob/xeno/slime/occupant = null
@@ -93,7 +93,7 @@
 
 /obj/machinery/slime/extractor/proc/extract_cores()
 	if(!src.occupant)
-		src.visible_message("[bicon(src)] [src] pings unhappily.")
+		src.visible_message("\icon[src][bicon(src)] [src] pings unhappily.")
 	else if(inuse)
 		return
 

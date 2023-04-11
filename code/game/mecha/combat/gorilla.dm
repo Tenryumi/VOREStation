@@ -11,7 +11,6 @@
 	maxhealth = 5000
 	opacity = 0 // Because there's big tall legs to look through. Also it looks fucky if this is set to 1.
 	deflect_chance = 50
-	damage_absorption = list("brute"=0.1,"fire"=0.8,"bullet"=0.1,"laser"=0.6,"energy"=0.7,"bomb"=0.7) //values show how much damage will pass through, not how much will be absorbed.
 	max_temperature = 35000 //Just a bit better than the Durand.
 	infra_luminosity = 3
 	wreckage = /obj/effect/decal/mecha_wreckage/gorilla
@@ -31,7 +30,7 @@
 	thrusters_possible = 1
 
 /obj/mecha/combat/gorilla/Initialize()
-	..()
+	. = ..()
 	var/obj/item/mecha_parts/mecha_equipment/ME = new /obj/item/mecha_parts/mecha_equipment/tesla_energy_relay(src) // This thing basically cannot function without an external power supply.
 	ME.attach(src)
 	ME = new /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/cannon(src)
@@ -85,7 +84,8 @@
 	if(move_result)
 		if(istype(src.loc, /turf/space))
 			if(!src.check_for_support())
-				src.pr_inertial_movement.start(list(src,direction))
+				float_direction = direction
+				start_process(MECHA_PROC_MOVEMENT)
 		can_move = 0
 		spawn(tmp_step_in) can_move = 1
 		use_power(tmp_step_energy_drain)
@@ -166,4 +166,4 @@
 	icon_state = "pzrwreck"
 	plane = MOB_PLANE
 	pixel_x = -16
-	anchored = 1 // It's fucking huge. You aren't moving it.
+	anchored = TRUE // It's fucking huge. You aren't moving it.

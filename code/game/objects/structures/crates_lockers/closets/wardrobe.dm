@@ -41,6 +41,9 @@
 	name = "detective wardrobe"
 	closet_appearance = /decl/closet_appearance/cabinet
 
+	open_sound = 'sound/effects/wooden_closet_open.ogg'
+	close_sound = 'sound/effects/wooden_closet_close.ogg'
+
 	starts_with = list(
 		/obj/item/clothing/head/det = 2,
 		/obj/item/clothing/head/det/grey = 2,
@@ -206,6 +209,7 @@
 		/obj/item/clothing/under/rank/scientist/skirt = 2,
 		/obj/item/clothing/under/rank/scientist/turtleneck = 3,
 		/obj/item/clothing/suit/storage/toggle/labcoat = 3,
+		/obj/item/clothing/suit/storage/toggle/labcoat/modern = 3,
 		/obj/item/clothing/shoes/white = 3,
 		/obj/item/clothing/shoes/slippers = 3,
 		/obj/item/clothing/suit/storage/hooded/wintercoat/science,
@@ -233,6 +237,7 @@
 	starts_with = list(
 		/obj/item/clothing/under/rank/roboticist = 2,
 		/obj/item/clothing/suit/storage/toggle/labcoat = 2,
+		/obj/item/clothing/suit/storage/hooded/wintercoat/science/robotics,
 		/obj/item/clothing/shoes/black = 2,
 		/obj/item/clothing/gloves/black = 2,
 		/obj/item/weapon/storage/backpack/toxins,
@@ -256,6 +261,7 @@
 		/obj/item/clothing/under/rank/chemist/skirt = 2,
 		/obj/item/clothing/shoes/white = 2,
 		/obj/item/clothing/suit/storage/toggle/labcoat/chemist = 2,
+		/obj/item/clothing/suit/storage/hooded/wintercoat/medical/chemist,
 		/obj/item/weapon/storage/backpack/chemistry = 2,
 		/obj/item/weapon/storage/backpack/satchel/chem = 2,
 		/obj/item/weapon/storage/bag/chemistry = 2,)
@@ -283,6 +289,7 @@
 		/obj/item/clothing/under/rank/virologist/skirt = 2,
 		/obj/item/clothing/shoes/white = 2,
 		/obj/item/clothing/suit/storage/toggle/labcoat/virologist = 2,
+		/obj/item/clothing/suit/storage/hooded/wintercoat/medical/viro,
 		/obj/item/clothing/mask/surgical = 2,
 		/obj/item/weapon/storage/backpack/virology = 2,
 		/obj/item/weapon/storage/backpack/satchel/vir = 2)
@@ -363,8 +370,11 @@
 		/obj/item/clothing/under/pants/khaki,
 		/obj/item/clothing/mask/bandana/blue,
 		/obj/item/clothing/mask/bandana/blue,
-		/obj/item/clothing/accessory/hawaii,
-		/obj/item/clothing/accessory/hawaii/random)
+		/obj/item/clothing/accessory/hawaiian,
+		/obj/item/clothing/accessory/hawaiian/blue,
+		/obj/item/clothing/accessory/hawaiian/pink,
+		/obj/item/clothing/accessory/hawaiian/red,
+		/obj/item/clothing/accessory/hawaiian/yellow)
 
 
 /obj/structure/closet/wardrobe/tactical
@@ -442,12 +452,17 @@
 	name = "site manager's wardrobe"
 	closet_appearance = /decl/closet_appearance/cabinet
 
+	open_sound = 'sound/effects/wooden_closet_open.ogg'
+	close_sound = 'sound/effects/wooden_closet_close.ogg'
+
 	starts_with = list(
 		/obj/item/weapon/storage/backpack/captain,
 		/obj/item/clothing/suit/captunic,
 		/obj/item/clothing/suit/captunic/capjacket,
 		/obj/item/clothing/head/caphat/cap,
+		/obj/item/clothing/head/caphat/beret,
 		/obj/item/clothing/under/rank/captain,
+		/obj/item/clothing/under/dress/dress_cap/femformal,
 		/obj/item/clothing/shoes/brown,
 		/obj/item/clothing/gloves/captain,
 		/obj/item/clothing/under/dress/dress_cap,
@@ -457,7 +472,7 @@
 		/obj/item/clothing/suit/storage/hooded/wintercoat/captain,
 		/obj/item/clothing/shoes/boots/winter/command,
 		/obj/item/clothing/head/beret/centcom/captain,
-		/obj/item/clothing/under/gimmick/rank/captain/suit,
-		/obj/item/clothing/under/gimmick/rank/captain/suit/skirt,
+		/obj/item/clothing/under/suit_jacket/green,
+		/obj/item/clothing/under/suit_jacket/green/skirt,
 		/obj/item/clothing/glasses/sunglasses,
 		/obj/item/clothing/head/caphat)

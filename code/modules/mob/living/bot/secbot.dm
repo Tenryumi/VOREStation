@@ -13,7 +13,7 @@
 	patrol_speed = 2
 	target_speed = 3
 
-	density = 1
+	density = TRUE
 
 	var/default_icon_state = "secbot"
 	var/idcheck = FALSE // If true, arrests for having weapons without authorization.
@@ -108,6 +108,7 @@
 	data["check_arrest"] = null
 	data["arrest_type"] = null
 	data["declare_arrests"] = null
+	data["bot_patrolling"] = null
 	data["will_patrol"] = null
 
 	if(!locked || issilicon(user))
@@ -116,8 +117,8 @@
 		data["check_arrest"] = check_arrest
 		data["arrest_type"] = arrest_type
 		data["declare_arrests"] = declare_arrests
-		if(using_map.bot_patrolling)
-			data["will_patrol"] = will_patrol
+		data["bot_patrolling"] = using_map.bot_patrolling
+		data["patrol"] = will_patrol
 
 	return data
 
@@ -366,7 +367,7 @@
 
 	var/obj/item/weapon/secbot_assembly/Sa = new /obj/item/weapon/secbot_assembly(Tsec)
 	Sa.build_step = 1
-	Sa.overlays += image('icons/obj/aibots.dmi', "hs_hole")
+	Sa.add_overlay("hs_hole")
 	Sa.created_name = name
 	new /obj/item/device/assembly/prox_sensor(Tsec)
 	new used_weapon(Tsec)
@@ -378,7 +379,8 @@
 	s.start()
 
 	new /obj/effect/decal/cleanable/blood/oil(Tsec)
-	qdel(src)
+	//qdel(src)
+	return ..()
 
 /mob/living/bot/secbot/proc/target_name(mob/living/T)
 	if(ishuman(T))
@@ -438,14 +440,14 @@
 		var/obj/item/weapon/weldingtool/WT = W
 		if(WT.remove_fuel(0, user))
 			build_step = 1
-			overlays += image('icons/obj/aibots.dmi', "hs_hole")
+			add_overlay("hs_hole")
 			to_chat(user, "You weld a hole in \the [src].")
 
 	else if(isprox(W) && (build_step == 1))
 		user.drop_item()
 		build_step = 2
 		to_chat(user, "You add \the [W] to [src].")
-		overlays += image('icons/obj/aibots.dmi', "hs_eye")
+		add_overlay("hs_eye")
 		name = "helmet/signaler/prox sensor assembly"
 		qdel(W)
 
@@ -454,7 +456,7 @@
 		build_step = 3
 		to_chat(user, "You add \the [W] to [src].")
 		name = "helmet/signaler/prox sensor/robot arm assembly"
-		overlays += image('icons/obj/aibots.dmi', "hs_arm")
+		add_overlay("hs_arm")
 		qdel(W)
 
 	else if(istype(W, /obj/item/weapon/melee/baton) && build_step == 3)
@@ -470,7 +472,7 @@
 		qdel(src)
 
 	else if(istype(W, /obj/item/weapon/pen))
-		var/t = sanitizeSafe(input(user, "Enter new robot name", name, created_name), MAX_NAME_LEN)
+		var/t = sanitizeSafe(tgui_input_text(user, "Enter new robot name", name, created_name, MAX_NAME_LEN), MAX_NAME_LEN)
 		if(!t)
 			return
 		if(!in_range(src, user) && loc != user)

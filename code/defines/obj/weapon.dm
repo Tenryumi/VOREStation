@@ -19,8 +19,8 @@
 	icon = 'icons/obj/items.dmi'
 	icon_state = "rcd"
 	opacity = 0
-	density = 0
-	anchored = 0.0
+	density = FALSE
+	anchored = FALSE
 	var/stored_matter = 0
 	var/mode = 1
 	w_class = ITEMSIZE_NORMAL
@@ -29,9 +29,9 @@
 
 /obj/item/weapon/soap
 	name = "soap"
-	desc = "A cheap bar of soap. Doesn't smell."
+	desc = "A cheap bar of soap. Smells of lye."
 	gender = PLURAL
-	icon = 'icons/obj/items.dmi'
+	icon = 'icons/obj/soap.dmi'
 	icon_state = "soap"
 	flags = NOCONDUCT
 	w_class = ITEMSIZE_SMALL
@@ -39,9 +39,15 @@
 	throwforce = 0
 	throw_speed = 4
 	throw_range = 20
+	var/randomize = TRUE
+	var/square_chance = 10
+	
+/obj/item/weapon/soap/Initialize()
+	if(randomize && prob(square_chance))
+		icon_state = "[icon_state]-alt"
 
 /obj/item/weapon/soap/nanotrasen
-	desc = "A NanoTrasen-brand bar of soap. Smells of phoron."
+	desc = "A NanoTrasen-brand bar of soap. Smells of phoron, a years-old marketing gimmick."
 	icon_state = "soapnt"
 
 /obj/item/weapon/soap/deluxe
@@ -54,6 +60,82 @@
 /obj/item/weapon/soap/syndie
 	desc = "An untrustworthy bar of soap. Smells of fear."
 	icon_state = "soapsyndie"
+
+/obj/item/weapon/soap/space_soap
+	desc = "Smells like hot metal and walnuts."
+	icon_state = "space_soap"
+
+/obj/item/weapon/soap/water_soap
+	desc = "Smells like chlorine."
+	icon_state = "water_soap"
+
+/obj/item/weapon/soap/fire_soap
+	desc = "Smells like a campfire."
+	icon_state = "fire_soap"
+
+/obj/item/weapon/soap/rainbow_soap
+	desc = "Smells sickly sweet."
+	icon_state = "rainbow_soap"
+
+/obj/item/weapon/soap/diamond_soap
+	desc = "Smells like saffron and vanilla."
+	icon_state = "diamond_soap"
+
+/obj/item/weapon/soap/uranium_soap
+	desc = "Smells not great... Not terrible."
+	icon_state = "uranium_soap"
+
+/obj/item/weapon/soap/silver_soap
+	desc = "Smells like birch and amaranth."
+	icon_state = "silver_soap"
+
+/obj/item/weapon/soap/brown_soap
+	desc = "Smells like cinnamon and cognac."
+	icon_state = "brown_soap"
+
+/obj/item/weapon/soap/white_soap
+	desc = "Smells like nutmeg and oats."
+	icon_state = "white_soap"
+
+/obj/item/weapon/soap/grey_soap
+	desc = "Smells like bergamot and lilies."
+	icon_state = "grey_soap"
+
+/obj/item/weapon/soap/pink_soap
+	desc = "Smells like bubblegum."
+	icon_state = "pink_soap"
+
+/obj/item/weapon/soap/purple_soap
+	desc = "Smells like lavender."
+	icon_state = "purple_soap"
+
+/obj/item/weapon/soap/blue_soap
+	desc = "Smells like cardamom."
+	icon_state = "blue_soap"
+
+/obj/item/weapon/soap/cyan_soap
+	desc = "Smells like bluebells and peaches."
+	icon_state = "cyan_soap"
+
+/obj/item/weapon/soap/green_soap
+	desc = "Smells like a freshly mowed lawn."
+	icon_state = "green_soap"
+
+/obj/item/weapon/soap/yellow_soap
+	desc = "Smells like citron and ginger."
+	icon_state = "yellow_soap"
+
+/obj/item/weapon/soap/orange_soap
+	desc = "Smells like oranges and dark chocolate."
+	icon_state = "orange_soap"
+
+/obj/item/weapon/soap/red_soap
+	desc = "Smells like cherries."
+	icon_state = "red_soap"
+
+/obj/item/weapon/soap/golden_soap
+	desc = "Smells like honey."
+	icon_state = "golden_soap"
 
 /obj/item/weapon/bikehorn
 	name = "bike horn"
@@ -131,7 +213,7 @@
 	item_state = "radio"
 	throw_speed = 4
 	throw_range = 20
-	matter = list("metal" = 100
+	matter = list(MAT_STEEL = 100)
 	origin_tech = list(TECH_MAGNET = 2, TECH_ILLEGAL = 3)*/
 
 /obj/item/weapon/SWF_uplink
@@ -150,7 +232,7 @@
 	w_class = ITEMSIZE_SMALL
 	throw_speed = 4
 	throw_range = 20
-	matter = list(DEFAULT_WALL_MATERIAL = 100)
+	matter = list(MAT_STEEL = 100)
 	origin_tech = list(TECH_MAGNET = 1)
 	drop_sound = 'sound/items/drop/device.ogg'
 	pickup_sound = 'sound/items/pickup/device.ogg'
@@ -215,7 +297,7 @@
 	icon_state = "power_mod"
 	item_state = "std_mod"
 	desc = "Heavy-duty switching circuits for power control."
-	matter = list(DEFAULT_WALL_MATERIAL = 50, "glass" = 50)
+	matter = list(MAT_STEEL = 50, MAT_GLASS = 50)
 
 /obj/item/weapon/module/id_auth
 	name = "\improper ID authentication module"
@@ -257,7 +339,7 @@
 	for (var/obj/machinery/camera/C in cameras)
 		friendly_cameras.Add(C.c_tag)
 
-	var/target = input("Select the camera to observe", null) as null|anything in friendly_cameras
+	var/target = tgui_input_list(usr, "Select the camera to observe", "Select Camera", friendly_cameras)
 	if (!target)
 		return
 	for (var/obj/machinery/camera/C in cameras)
@@ -297,12 +379,14 @@
 
 /obj/item/weapon/storage/part_replacer
 	name = "rapid part exchange device"
-	desc = "Special mechanical module made to store, sort, and apply standard machine parts."
+	desc = "A special mechanical module made to store, sort, and apply standard machine parts."
+	icon = 'icons/obj/storage_vr.dmi'
 	icon_state = "RPED"
+	item_state = "RPED"
 	w_class = ITEMSIZE_HUGE
 	can_hold = list(/obj/item/weapon/stock_parts)
 	storage_slots = 50
-	use_to_pickup = 1
+	use_to_pickup = TRUE
 	allow_quick_gather = 1
 	allow_quick_empty = 1
 	collection_mode = 1
@@ -311,21 +395,89 @@
 	max_storage_space = 100
 	drop_sound = 'sound/items/drop/device.ogg'
 	pickup_sound = 'sound/items/pickup/device.ogg'
+	var/panel_req = TRUE
+	var/pshoom_or_beepboopblorpzingshadashwoosh = 'sound/items/rped.ogg'
+	var/reskin_ran = FALSE
+	var/unique_reskin = list("Soulless" = "RPED",
+							"Soulful" = "RPED_old")
+
+/obj/item/weapon/storage/part_replacer/proc/play_rped_sound()
+	//Plays the sound for RPED exhanging or installing parts.
+/*	if(alt_sound && prob(1))
+		playsound(src, alt_sound, 40, 1)
+	else
+*/
+	playsound(src, pshoom_or_beepboopblorpzingshadashwoosh, 40, 1)
 
 /obj/item/weapon/storage/part_replacer/adv
 	name = "advanced rapid part exchange device"
-	desc = "Special mechanical module made to store, sort, and apply standard machine parts.  This one has a greatly upgraded storage capacity"
-	icon_state = "RPED"
-	w_class = ITEMSIZE_HUGE
-	can_hold = list(/obj/item/weapon/stock_parts)
+	desc = "A special mechanical module made to store, sort, and apply standard machine parts. This one has a greatly upgraded storage capacity, \
+	and the ability to hold beakers."
+	can_hold = list(/obj/item/weapon/stock_parts, /obj/item/weapon/reagent_containers/glass/beaker)
 	storage_slots = 200
-	use_to_pickup = 1
-	allow_quick_gather = 1
-	allow_quick_empty = 1
-	collection_mode = 1
-	display_contents_with_number = 1
-	max_w_class = ITEMSIZE_NORMAL
 	max_storage_space = 400
+
+/obj/item/weapon/storage/part_replacer/adv/discount_bluespace
+	name = "prototype bluespace rapid part exchange device"
+	icon_state = "DBRPED"
+	item_state = "DBRPED"
+	desc = "A special mechanical module made to store, sort, and apply standard machine parts. This one has a further increased storage capacity, \
+	and the ability to work on machines with closed maintenance panels."
+	storage_slots = 400
+	max_storage_space = 800
+	panel_req = FALSE
+	pshoom_or_beepboopblorpzingshadashwoosh = 'sound/items/pshoom.ogg'
+	unique_reskin = list("Soulless" = "DBRPED",
+						"Soulful" = "DBRPED_old")
+
+/obj/item/weapon/storage/part_replacer/examine(mob/user)
+	. = ..()
+	if(!reskin_ran)
+		. += "<span class='notice'>[src]'s external casing can be modified via alt-click.</span>"
+
+/obj/item/weapon/storage/part_replacer/AltClick(mob/user)
+	. = ..()
+	if(!reskin_ran)
+		reskin_radial(user)
+
+/obj/item/weapon/storage/part_replacer/proc/reskin_radial(mob/M)
+	if(!LAZYLEN(unique_reskin))
+		return
+
+	var/list/items = list()
+	for(var/reskin_option in unique_reskin)
+		var/image/item_image = image(icon = src.icon, icon_state = unique_reskin[reskin_option])
+		items += list("[reskin_option]" = item_image)
+	sortList(items)
+
+	var/pick = show_radial_menu(M, src, items, radius = 38, require_near = TRUE)
+	if(!pick)
+		return
+	if(!unique_reskin[pick])
+		return
+	icon_state = unique_reskin[pick]
+	item_state = unique_reskin[pick]
+	reskin_ran = TRUE
+	to_chat(M, "[src] is now '[pick]'.")
+
+/obj/item/weapon/storage/part_replacer/drop_contents() // hacky-feeling tier-based drop system
+	hide_from(usr)
+	var/turf/T = get_turf(src)
+	var/lowest_rating = INFINITY // We want the lowest-part tier rating in the RPED so we only drop the lowest-tier parts.
+	/*
+	* Why not just use the stock part's rating variable?
+	* Future-proofing for a potential future where stock parts aren't the only thing that can fit in an RPED.
+	* see: /tg/ and /vg/'s RPEDs fitting power cells, beakers, etc.
+	* 10/8/21 edit - It's Time.
+	*/
+	for(var/obj/item/B in contents)
+		if(B.rped_rating() < lowest_rating)
+			lowest_rating = B.rped_rating()
+	for(var/obj/item/B in contents)
+		if(B.rped_rating() > lowest_rating)
+			continue
+		remove_from_storage(B, T)
+
 
 /obj/item/weapon/stock_parts
 	name = "stock part"
@@ -342,6 +494,9 @@
 	src.pixel_y = rand(-5.0, 5)
 	..()
 
+/obj/item/weapon/stock_parts/get_rating()
+	return rating
+
 //Rank 1
 
 /obj/item/weapon/stock_parts/console_screen
@@ -349,14 +504,15 @@
 	desc = "Used in the construction of computers and other devices with a interactive console."
 	icon_state = "screen"
 	origin_tech = list(TECH_MATERIAL = 1)
-	matter = list("glass" = 200)
+	rating = 5 // these are actually Really Important for some things??
+	matter = list(MAT_GLASS = 200)
 
 /obj/item/weapon/stock_parts/capacitor
 	name = "capacitor"
 	desc = "A basic capacitor used in the construction of a variety of devices."
 	icon_state = "capacitor"
 	origin_tech = list(TECH_POWER = 1)
-	matter = list(DEFAULT_WALL_MATERIAL = 50,"glass" = 50)
+	matter = list(MAT_STEEL = 50,MAT_GLASS = 50)
 
 	var/charge = 0
 	var/max_charge = 1000
@@ -381,28 +537,28 @@
 	desc = "A compact, high resolution scanning module used in the construction of certain devices."
 	icon_state = "scan_module"
 	origin_tech = list(TECH_MAGNET = 1)
-	matter = list(DEFAULT_WALL_MATERIAL = 50,"glass" = 20)
+	matter = list(MAT_STEEL = 50,MAT_GLASS = 20)
 
 /obj/item/weapon/stock_parts/manipulator
 	name = "micro-manipulator"
 	desc = "A tiny little manipulator used in the construction of certain devices."
 	icon_state = "micro_mani"
 	origin_tech = list(TECH_MATERIAL = 1, TECH_DATA = 1)
-	matter = list(DEFAULT_WALL_MATERIAL = 30)
+	matter = list(MAT_STEEL = 30)
 
 /obj/item/weapon/stock_parts/micro_laser
 	name = "micro-laser"
 	desc = "A tiny laser used in certain devices."
 	icon_state = "micro_laser"
 	origin_tech = list(TECH_MAGNET = 1)
-	matter = list(DEFAULT_WALL_MATERIAL = 10,"glass" = 20)
+	matter = list(MAT_STEEL = 10,MAT_GLASS = 20)
 
 /obj/item/weapon/stock_parts/matter_bin
 	name = "matter bin"
 	desc = "A container for hold compressed matter awaiting re-construction."
 	icon_state = "matter_bin"
 	origin_tech = list(TECH_MATERIAL = 1)
-	matter = list(DEFAULT_WALL_MATERIAL = 80)
+	matter = list(MAT_STEEL = 80)
 
 //Rank 2
 
@@ -412,7 +568,7 @@
 	icon_state = "capacitor_adv"
 	origin_tech = list(TECH_POWER = 3)
 	rating = 2
-	matter = list(DEFAULT_WALL_MATERIAL = 50,"glass" = 50)
+	matter = list(MAT_STEEL = 50,MAT_GLASS = 50)
 
 /obj/item/weapon/stock_parts/scanning_module/adv
 	name = "advanced scanning module"
@@ -420,7 +576,7 @@
 	icon_state = "scan_module_adv"
 	origin_tech = list(TECH_MAGNET = 3)
 	rating = 2
-	matter = list(DEFAULT_WALL_MATERIAL = 50,"glass" = 20)
+	matter = list(MAT_STEEL = 50,MAT_GLASS = 20)
 
 /obj/item/weapon/stock_parts/manipulator/nano
 	name = "nano-manipulator"
@@ -428,7 +584,7 @@
 	icon_state = "nano_mani"
 	origin_tech = list(TECH_MATERIAL = 3, TECH_DATA = 2)
 	rating = 2
-	matter = list(DEFAULT_WALL_MATERIAL = 30)
+	matter = list(MAT_STEEL = 30)
 
 /obj/item/weapon/stock_parts/micro_laser/high
 	name = "high-power micro-laser"
@@ -436,7 +592,7 @@
 	icon_state = "high_micro_laser"
 	origin_tech = list(TECH_MAGNET = 3)
 	rating = 2
-	matter = list(DEFAULT_WALL_MATERIAL = 10,"glass" = 20)
+	matter = list(MAT_STEEL = 10,MAT_GLASS = 20)
 
 /obj/item/weapon/stock_parts/matter_bin/adv
 	name = "advanced matter bin"
@@ -444,7 +600,7 @@
 	icon_state = "advanced_matter_bin"
 	origin_tech = list(TECH_MATERIAL = 3)
 	rating = 2
-	matter = list(DEFAULT_WALL_MATERIAL = 80)
+	matter = list(MAT_STEEL = 80)
 
 //Rating 3
 
@@ -454,7 +610,7 @@
 	icon_state = "capacitor_super"
 	origin_tech = list(TECH_POWER = 5, TECH_MATERIAL = 4)
 	rating = 3
-	matter = list(DEFAULT_WALL_MATERIAL = 50,"glass" = 50)
+	matter = list(MAT_STEEL = 50,MAT_GLASS = 50)
 
 /obj/item/weapon/stock_parts/scanning_module/phasic
 	name = "phasic scanning module"
@@ -462,7 +618,7 @@
 	icon_state = "scan_module_phasic"
 	origin_tech = list(TECH_MAGNET = 5)
 	rating = 3
-	matter = list(DEFAULT_WALL_MATERIAL = 50,"glass" = 20)
+	matter = list(MAT_STEEL = 50,MAT_GLASS = 20)
 
 /obj/item/weapon/stock_parts/manipulator/pico
 	name = "pico-manipulator"
@@ -470,7 +626,7 @@
 	icon_state = "pico_mani"
 	origin_tech = list(TECH_MATERIAL = 5, TECH_DATA = 2)
 	rating = 3
-	matter = list(DEFAULT_WALL_MATERIAL = 30)
+	matter = list(MAT_STEEL = 30)
 
 /obj/item/weapon/stock_parts/micro_laser/ultra
 	name = "ultra-high-power micro-laser"
@@ -478,7 +634,7 @@
 	desc = "A tiny laser used in certain devices."
 	origin_tech = list(TECH_MAGNET = 5)
 	rating = 3
-	matter = list(DEFAULT_WALL_MATERIAL = 10,"glass" = 20)
+	matter = list(MAT_STEEL = 10,MAT_GLASS = 20)
 
 /obj/item/weapon/stock_parts/matter_bin/super
 	name = "super matter bin"
@@ -486,7 +642,7 @@
 	icon_state = "super_matter_bin"
 	origin_tech = list(TECH_MATERIAL = 5)
 	rating = 3
-	matter = list(DEFAULT_WALL_MATERIAL = 80)
+	matter = list(MAT_STEEL = 80)
 
 // Rating 4 - Anomaly
 
@@ -496,7 +652,7 @@
 	icon_state = "capacitor_hyper"
 	origin_tech = list(TECH_POWER = 6, TECH_MATERIAL = 5, TECH_BLUESPACE = 1, TECH_ARCANE = 1)
 	rating = 4
-	matter = list(DEFAULT_WALL_MATERIAL = 80, MAT_GLASS = 40)
+	matter = list(MAT_STEEL = 80, MAT_GLASS = 40)
 
 /obj/item/weapon/stock_parts/scanning_module/hyper
 	name = "quantum scanning module"
@@ -504,7 +660,7 @@
 	icon_state = "scan_module_hyper"
 	origin_tech = list(TECH_MAGNET = 6, TECH_BLUESPACE = 1, TECH_ARCANE = 1)
 	rating = 4
-	matter = list(DEFAULT_WALL_MATERIAL = 100,"glass" = 40)
+	matter = list(MAT_STEEL = 100,MAT_GLASS = 40)
 
 /obj/item/weapon/stock_parts/manipulator/hyper
 	name = "planck-manipulator"
@@ -512,7 +668,7 @@
 	icon_state = "hyper_mani"
 	origin_tech = list(TECH_MATERIAL = 6, TECH_DATA = 3, TECH_ARCANE = 1)
 	rating = 4
-	matter = list(DEFAULT_WALL_MATERIAL = 30)
+	matter = list(MAT_STEEL = 30)
 
 /obj/item/weapon/stock_parts/micro_laser/hyper
 	name = "hyper-power micro-laser"
@@ -520,7 +676,7 @@
 	desc = "A tiny laser used in certain devices."
 	origin_tech = list(TECH_MAGNET = 6, TECH_ARCANE = 1)
 	rating = 4
-	matter = list(DEFAULT_WALL_MATERIAL = 30, MAT_GLASS = 40)
+	matter = list(MAT_STEEL = 30, MAT_GLASS = 40)
 
 /obj/item/weapon/stock_parts/matter_bin/hyper
 	name = "hyper matter bin"
@@ -528,7 +684,7 @@
 	icon_state = "hyper_matter_bin"
 	origin_tech = list(TECH_MATERIAL = 6, TECH_ARCANE = 1)
 	rating = 4
-	matter = list(DEFAULT_WALL_MATERIAL = 100)
+	matter = list(MAT_STEEL = 100)
 
 // Rating 5 - Precursor
 
@@ -538,7 +694,7 @@
 	icon_state = "capacitor_omni"
 	origin_tech = list(TECH_POWER = 7, TECH_MATERIAL = 6, TECH_BLUESPACE = 3, TECH_PRECURSOR  = 1)
 	rating = 5
-	matter = list(DEFAULT_WALL_MATERIAL = 80, MAT_GLASS = 40)
+	matter = list(MAT_STEEL = 80, MAT_GLASS = 40)
 
 /obj/item/weapon/stock_parts/scanning_module/omni
 	name = "omni-scanning module"
@@ -546,7 +702,7 @@
 	icon_state = "scan_module_omni"
 	origin_tech = list(TECH_MAGNET = 7, TECH_BLUESPACE = 3, TECH_PRECURSOR = 1)
 	rating = 5
-	matter = list(DEFAULT_WALL_MATERIAL = 100,"glass" = 40)
+	matter = list(MAT_STEEL = 100,MAT_GLASS = 40)
 
 /obj/item/weapon/stock_parts/manipulator/omni
 	name = "omni-manipulator"
@@ -554,7 +710,7 @@
 	icon_state = "omni_mani"
 	origin_tech = list(TECH_MATERIAL = 7, TECH_DATA = 4, TECH_PRECURSOR  = 1)
 	rating = 5
-	matter = list(DEFAULT_WALL_MATERIAL = 30)
+	matter = list(MAT_STEEL = 30)
 
 /obj/item/weapon/stock_parts/micro_laser/omni
 	name = "omni-power micro-laser"
@@ -562,7 +718,7 @@
 	desc = "A strange laser used in certain devices."
 	origin_tech = list(TECH_MAGNET = 7, TECH_PRECURSOR  = 1)
 	rating = 5
-	matter = list(DEFAULT_WALL_MATERIAL = 30, MAT_GLASS = 40)
+	matter = list(MAT_STEEL = 30, MAT_GLASS = 40)
 
 /obj/item/weapon/stock_parts/matter_bin/omni
 	name = "omni-matter bin"
@@ -570,7 +726,7 @@
 	icon_state = "omni_matter_bin"
 	origin_tech = list(TECH_MATERIAL = 7, TECH_PRECURSOR  = 1)
 	rating = 5
-	matter = list(DEFAULT_WALL_MATERIAL = 100)
+	matter = list(MAT_STEEL = 100)
 
 
 // Subspace stock parts
@@ -580,56 +736,56 @@
 	icon_state = "subspace_ansible"
 	desc = "A compact module capable of sensing extradimensional activity."
 	origin_tech = list(TECH_DATA = 3, TECH_MAGNET = 5 ,TECH_MATERIAL = 4, TECH_BLUESPACE = 2)
-	matter = list(DEFAULT_WALL_MATERIAL = 30,"glass" = 10)
+	matter = list(MAT_STEEL = 30,MAT_GLASS = 10)
 
 /obj/item/weapon/stock_parts/subspace/sub_filter
 	name = "hyperwave filter"
 	icon_state = "hyperwave_filter"
 	desc = "A tiny device capable of filtering and converting super-intense radiowaves."
 	origin_tech = list(TECH_DATA = 4, TECH_MAGNET = 2)
-	matter = list(DEFAULT_WALL_MATERIAL = 30,"glass" = 10)
+	matter = list(MAT_STEEL = 30,MAT_GLASS = 10)
 
 /obj/item/weapon/stock_parts/subspace/amplifier
 	name = "subspace amplifier"
 	icon_state = "subspace_amplifier"
 	desc = "A compact micro-machine capable of amplifying weak subspace transmissions."
 	origin_tech = list(TECH_DATA = 3, TECH_MAGNET = 4, TECH_MATERIAL = 4, TECH_BLUESPACE = 2)
-	matter = list(DEFAULT_WALL_MATERIAL = 30,"glass" = 10)
+	matter = list(MAT_STEEL = 30,MAT_GLASS = 10)
 
 /obj/item/weapon/stock_parts/subspace/treatment
 	name = "subspace treatment disk"
 	icon_state = "treatment_disk"
 	desc = "A compact micro-machine capable of stretching out hyper-compressed radio waves."
 	origin_tech = list(TECH_DATA = 3, TECH_MAGNET = 2, TECH_MATERIAL = 5, TECH_BLUESPACE = 2)
-	matter = list(DEFAULT_WALL_MATERIAL = 30,"glass" = 10)
+	matter = list(MAT_STEEL = 30,MAT_GLASS = 10)
 
 /obj/item/weapon/stock_parts/subspace/analyzer
 	name = "subspace wavelength analyzer"
 	icon_state = "wavelength_analyzer"
 	desc = "A sophisticated analyzer capable of analyzing cryptic subspace wavelengths."
 	origin_tech = list(TECH_DATA = 3, TECH_MAGNET = 4, TECH_MATERIAL = 4, TECH_BLUESPACE = 2)
-	matter = list(DEFAULT_WALL_MATERIAL = 30,"glass" = 10)
+	matter = list(MAT_STEEL = 30,MAT_GLASS = 10)
 
 /obj/item/weapon/stock_parts/subspace/crystal
 	name = "ansible crystal"
 	icon_state = "ansible_crystal"
 	desc = "A crystal made from pure glass used to transmit laser databursts to subspace."
 	origin_tech = list(TECH_MAGNET = 4, TECH_MATERIAL = 4, TECH_BLUESPACE = 2)
-	matter = list("glass" = 50)
+	matter = list(MAT_GLASS = 50)
 
 /obj/item/weapon/stock_parts/subspace/transmitter
 	name = "subspace transmitter"
 	icon_state = "subspace_transmitter"
 	desc = "A large piece of equipment used to open a window into the subspace dimension."
 	origin_tech = list(TECH_MAGNET = 5, TECH_MATERIAL = 5, TECH_BLUESPACE = 3)
-	matter = list(DEFAULT_WALL_MATERIAL = 50)
+	matter = list(MAT_STEEL = 50)
 
 /obj/item/weapon/ectoplasm
 	name = "ectoplasm"
 	desc = "Spooky!"
 	gender = PLURAL
 	icon = 'icons/obj/wizard.dmi'
-	icon_state = "ectoplasm"
+	icon_state = "ectoplasm2"
 
 /obj/item/weapon/research
 	name = "research debugging device"
@@ -646,7 +802,7 @@
 	icon = 'icons/obj/stock_parts.dmi'
 	icon_state = "gear"
 	origin_tech = list(TECH_ENGINEERING = 1)
-	matter = list(DEFAULT_WALL_MATERIAL = 50)
+	matter = list(MAT_STEEL = 50)
 
 /obj/item/weapon/stock_parts/motor
 	name = "motor"
@@ -654,7 +810,7 @@
 	icon = 'icons/obj/stock_parts.dmi'
 	icon_state = "motor"
 	origin_tech = list(TECH_ENGINEERING = 1)
-	matter = list(DEFAULT_WALL_MATERIAL = 60, "glass" = 10)
+	matter = list(MAT_STEEL = 60, MAT_GLASS = 10)
 
 /obj/item/weapon/stock_parts/spring
 	name = "spring"
@@ -662,4 +818,73 @@
 	icon = 'icons/obj/stock_parts.dmi'
 	icon_state = "spring"
 	origin_tech = list(TECH_ENGINEERING = 1)
-	matter = list(DEFAULT_WALL_MATERIAL = 40)
+	matter = list(MAT_STEEL = 40)
+
+/obj/effect/spawner/parts
+	name = "nondescript parts bundle that shouldn't exist"
+	desc = "this qdels itself lol! if you're reading this you're codediving or Someone fucked up"
+	var/list/items
+
+/obj/effect/spawner/parts/Initialize(mapload)
+	..()
+	if(items && items.len)
+		var/turf/T = get_turf(src)
+		for(var/path in items)
+			for(var/i in 1 to 5)
+				new path(T)
+	return INITIALIZE_HINT_QDEL
+
+/obj/effect/spawner/parts/t1
+	name = "basic parts bundle"
+	desc = "5 of each T1 part, no more and no less."
+	items = list(
+		/obj/item/weapon/stock_parts/matter_bin,
+		/obj/item/weapon/stock_parts/manipulator,
+		/obj/item/weapon/stock_parts/capacitor,
+		/obj/item/weapon/stock_parts/scanning_module,
+		/obj/item/weapon/stock_parts/micro_laser
+	)
+
+/obj/effect/spawner/parts/t2
+	name = "advanced parts bundle"
+	desc = "5 of each T2 part, no more and no less."
+	items = list(
+		/obj/item/weapon/stock_parts/matter_bin/adv,
+		/obj/item/weapon/stock_parts/manipulator/nano,
+		/obj/item/weapon/stock_parts/capacitor/adv,
+		/obj/item/weapon/stock_parts/scanning_module/adv,
+		/obj/item/weapon/stock_parts/micro_laser/high
+	)
+
+/obj/effect/spawner/parts/t3
+	name = "super parts bundle"
+	desc = "5 of each T3 part, no more and no less."
+	items = list(
+		/obj/item/weapon/stock_parts/matter_bin/super,
+		/obj/item/weapon/stock_parts/manipulator/pico,
+		/obj/item/weapon/stock_parts/capacitor/super,
+		/obj/item/weapon/stock_parts/scanning_module/phasic,
+		/obj/item/weapon/stock_parts/micro_laser/ultra
+	)
+
+/obj/effect/spawner/parts/t4
+	name = "hyper parts bundle"
+	desc = "5 of each T4 part, no more and no less."
+	items = list(
+		/obj/item/weapon/stock_parts/matter_bin/hyper,
+		/obj/item/weapon/stock_parts/manipulator/hyper,
+		/obj/item/weapon/stock_parts/capacitor/hyper,
+		/obj/item/weapon/stock_parts/scanning_module/hyper,
+		/obj/item/weapon/stock_parts/micro_laser/hyper
+	)
+
+/obj/effect/spawner/parts/t5
+	name = "omni parts bundle"
+	desc = "5 of each T5 part, no more and no less."
+	items = list(
+		/obj/item/weapon/stock_parts/matter_bin/omni,
+		/obj/item/weapon/stock_parts/manipulator/omni,
+		/obj/item/weapon/stock_parts/capacitor/omni,
+		/obj/item/weapon/stock_parts/scanning_module/omni,
+		/obj/item/weapon/stock_parts/micro_laser/omni
+	)

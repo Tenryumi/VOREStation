@@ -66,7 +66,7 @@
 
 /obj/effect/directional_shield/bullet_act(var/obj/item/projectile/P)
 	adjust_health(-P.get_structure_damage())
-	P.on_hit()
+	P.on_hit(src)
 	playsound(src, 'sound/effects/EMPulse.ogg', 75, 1)
 
 // All the shields tied to their projector are one 'unit', and don't have individualized health values like most other shields.
@@ -86,6 +86,7 @@
 	icon_state = "signmaker_sec"
 	light_range = 4
 	light_power = 4
+	light_on = TRUE
 	var/active = FALSE					// If it's on.
 	var/shield_health = 400				// How much damage the shield blocks before breaking.  This is a shared health pool for all shields attached to this projector.
 	var/max_shield_health = 400			// Ditto.  This is fairly high, but shields are really big, you can't miss them, and laser carbines pump out so much hurt.
@@ -102,7 +103,7 @@
 	if(always_on)
 		create_shields()
 	GLOB.moved_event.register(src, src, .proc/moved_event)
-	..()
+	return ..()
 
 /obj/item/shield_projector/Destroy()
 	destroy_shields()
@@ -362,15 +363,15 @@
 	if((my_tool && loc != my_tool) && (my_mecha && loc != my_mecha))
 		forceMove(my_tool)
 	if(active)
-		my_tool.set_ready_state(0)
+		my_tool.set_ready_state(FALSE)
 		if(my_mecha.has_charge(my_tool.energy_drain * 50)) //Stops at around 1000 charge.
 			my_mecha.use_power(my_tool.energy_drain)
 		else
 			destroy_shields()
-			my_tool.set_ready_state(1)
+			my_tool.set_ready_state(TRUE)
 			my_tool.log_message("Power lost.")
 	else
-		my_tool.set_ready_state(1)
+		my_tool.set_ready_state(TRUE)
 
 /obj/item/shield_projector/line/exosuit/attack_self(var/mob/living/user)
 	if(active)

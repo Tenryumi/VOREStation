@@ -2,11 +2,12 @@
 	var/active = 0
 	var/active_force
 	var/active_throwforce
+	var/active_armourpen
 	var/active_w_class
 	var/active_embed_chance = 0		//In the off chance one of these is supposed to embed, you can just tweak this var
-	sharp = 0
-	edge = 0
-	armor_penetration = 50
+	sharp = FALSE
+	edge = FALSE
+	armor_penetration = 0
 	flags = NOCONDUCT | NOBLOODY
 	var/lrange = 2
 	var/lpower = 2
@@ -54,8 +55,9 @@
 	embed_chance = active_embed_chance
 	force = active_force
 	throwforce = active_throwforce
-	sharp = 1
-	edge = 1
+	armor_penetration = active_armourpen
+	sharp = TRUE
+	edge = TRUE
 	w_class = active_w_class
 	playsound(src, 'sound/weapons/saberon.ogg', 50, 1)
 	update_icon()
@@ -70,6 +72,7 @@
 	embed_chance = initial(embed_chance)
 	force = initial(force)
 	throwforce = initial(throwforce)
+	armor_penetration = initial(armor_penetration)
 	sharp = initial(sharp)
 	edge = initial(edge)
 	w_class = initial(w_class)
@@ -116,13 +119,6 @@
 
 	add_fingerprint(user)
 	return
-
-/obj/item/weapon/melee/energy/suicide_act(mob/user)
-	var/datum/gender/TU = gender_datums[user.get_visible_gender()]
-	if(active)
-		user.visible_message(pick("<span class='danger'>\The [user] is slitting [TU.his] stomach open with \the [src]! It looks like [TU.he] [TU.is] trying to commit seppuku.</span>",\
-			"<span class='danger'>\The [user] is falling on \the [src]! It looks like [TU.he] [TU.is] trying to commit suicide.</span>"))
-		return (BRUTELOSS|FIRELOSS)
 
 /obj/item/weapon/melee/energy/attack(mob/M, mob/user)
 	if(active && use_cell)
@@ -191,7 +187,7 @@
 		to_chat(user, "<span class='warning'>You can't do that right now!</span>")
 		return
 
-	if(alert("Are you sure you want to recolor your blade?", "Confirm Recolor", "Yes", "No") == "Yes")
+	if(tgui_alert(usr, "Are you sure you want to recolor your blade?", "Confirm Recolor", list("Yes", "No")) == "Yes")
 		var/energy_color_input = input(usr,"","Choose Energy Color",lcolor) as color|null
 		if(energy_color_input)
 			lcolor = sanitize_hexcolor(energy_color_input)
@@ -199,7 +195,8 @@
 
 /obj/item/weapon/melee/energy/examine(mob/user)
 	. = ..()
-	. += "<span class='notice'>Alt-click to recolor it.</span>"
+	if(colorable)
+		. += "<span class='notice'>Alt-click to recolor it.</span>"
 
 /*
  * Energy Axe
@@ -213,19 +210,21 @@
 	lcolor = null
 	//active_force = 150 //holy...
 	active_force = 60
+	active_armourpen = 65
 	active_throwforce = 35
 	active_w_class = ITEMSIZE_HUGE
 	//force = 40
 	//throwforce = 25
 	force = 20
+	armor_penetration = 20
 	throwforce = 10
 	throw_speed = 1
 	throw_range = 5
 	w_class = ITEMSIZE_NORMAL
 	origin_tech = list(TECH_MAGNET = 3, TECH_COMBAT = 4)
 	attack_verb = list("attacked", "chopped", "cleaved", "torn", "cut")
-	sharp = 1
-	edge = 1
+	sharp = TRUE
+	edge = TRUE
 	can_cleave = TRUE
 
 /obj/item/weapon/melee/energy/axe/activate(mob/living/user)
@@ -238,16 +237,12 @@
 	damtype = BRUTE
 	to_chat(user, "<span class='notice'>\The [src] is de-energised. It's just a regular axe now.</span>")
 
-/obj/item/weapon/melee/energy/axe/suicide_act(mob/user)
-	var/datum/gender/TU = gender_datums[user.get_visible_gender()]
-	visible_message("<span class='warning'>\The [user] swings \the [src] towards [TU.his] head! It looks like [TU.he] [TU.is] trying to commit suicide.</span>")
-	return (BRUTELOSS|FIRELOSS)
-
 /obj/item/weapon/melee/energy/axe/charge
 	name = "charge axe"
 	desc = "An energised axe."
 	active_force = 35
 	active_throwforce = 20
+	active_armourpen = 30
 	force = 15
 
 	use_cell = TRUE
@@ -267,6 +262,7 @@
 	icon_state = "esword"
 	item_state = "esword"
 	active_force = 30
+	active_armourpen = 50
 	active_throwforce = 20
 	active_w_class = ITEMSIZE_LARGE
 	force = 3
@@ -276,8 +272,6 @@
 	w_class = ITEMSIZE_SMALL
 	flags = NOBLOODY
 	origin_tech = list(TECH_MAGNET = 3, TECH_ILLEGAL = 4)
-	sharp = 1
-	edge = 1
 	colorable = TRUE
 	drop_sound = 'sound/items/drop/sword.ogg'
 	pickup_sound = 'sound/items/pickup/sword.ogg'
@@ -356,10 +350,11 @@
 	icon_state = "ionrapier"
 	item_state = "ionrapier"
 	active_force = 5
+	active_armourpen = 80
 	active_throwforce = 3
 	active_embed_chance = 0
-	sharp = 1
-	edge = 1
+	sharp = TRUE
+	edge = TRUE
 	armor_penetration = 0
 	flags = NOBLOODY
 	lrange = 2
@@ -395,7 +390,7 @@
 	name = "zero-point lance"
 	desc = "Designed specifically for disrupting electronics at relatively close range, however it is still capable of dealing some damage to living beings."
 	active_force = 20
-	armor_penetration = 15
+	active_armourpen = 15
 	reach = 2
 
 /*
@@ -407,7 +402,7 @@
 	desc = "A small, handheld device which emits a high-energy 'blade'."
 	origin_tech = list(TECH_COMBAT = 5, TECH_MAGNET = 3, TECH_ILLEGAL = 4)
 	active_force = 25
-	armor_penetration = 25
+	active_armourpen = 25
 	projectile_parry_chance = 40
 	colorable = TRUE
 
@@ -427,9 +422,9 @@
 	item_state = "blade"
 	force = 40 //Normal attacks deal very high damage - about the same as wielded fire axe
 	armor_penetration = 100
-	sharp = 1
-	edge = 1
-	anchored = 1    // Never spawned outside of inventory, should be fine.
+	sharp = TRUE
+	edge = TRUE
+	anchored = TRUE    // Never spawned outside of inventory, should be fine.
 	throwforce = 1  //Throwing or dropping the item deletes it.
 	throw_speed = 1
 	throw_range = 1
@@ -513,9 +508,9 @@
 	name = "energy spear"
 	desc = "Concentrated energy forming a sharp tip at the end of a long rod."
 	icon_state = "espear"
-	armor_penetration = 75
-	sharp = 1
-	edge = 1
+	armor_penetration = 0
+	sharp = TRUE
+	edge = TRUE
 	force = 5
 	throwforce = 10
 	throw_speed = 7
@@ -523,6 +518,7 @@
 	reach = 2
 	w_class = ITEMSIZE_LARGE
 	active_force = 25
+	active_armourpen = 75
 	active_throwforce = 30
 	active_w_class = ITEMSIZE_HUGE
 	colorable = TRUE

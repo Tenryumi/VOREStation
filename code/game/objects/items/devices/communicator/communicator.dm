@@ -26,9 +26,9 @@ var/global/list/obj/item/device/communicator/all_communicators = list()
 	show_messages = 1
 
 	origin_tech = list(TECH_ENGINEERING = 2, TECH_MAGNET = 2, TECH_BLUESPACE = 2, TECH_DATA = 2)
-	matter = list(DEFAULT_WALL_MATERIAL = 30,"glass" = 10)
+	matter = list(MAT_STEEL = 30,MAT_GLASS = 10)
 
-	var/video_range = 4
+	var/video_range = 3
 	var/obj/machinery/camera/communicator/video_source	// Their camera
 	var/obj/machinery/camera/communicator/camera		// Our camera
 
@@ -72,6 +72,23 @@ var/global/list/obj/item/device/communicator/all_communicators = list()
 	var/update_ticks = 0
 	var/newsfeed_channel = 0
 
+	// If you turn this on, it changes the way communicator video works. User configurable option.
+	var/selfie_mode = FALSE
+
+	// Ringtones! (Based on the PDA ones)
+	var/ttone = "beep" //The ringtone!
+	var/list/ttone_sound = list("beep" = 'sound/machines/twobeep.ogg',
+								"boom" = 'sound/effects/explosionfar.ogg',
+								"slip" = 'sound/misc/slip.ogg',
+								"honk" = 'sound/items/bikehorn.ogg',
+								"SKREE" = 'sound/voice/shriek1.ogg',
+								// "holy" = 'sound/items/PDA/ambicha4-short.ogg',
+								"xeno" = 'sound/voice/hiss1.ogg',
+								"dust" = 'sound/effects/supermatter.ogg',
+								"spark" = 'sound/effects/sparks4.ogg',
+								"rad" = 'sound/items/geiger/high1.ogg',
+								"servo" = 'sound/machines/rig/rigservo.ogg')
+
 // Proc: New()
 // Parameters: None
 // Description: Adds the new communicator to the global list of all communicators, sorts the list, obtains a reference to the Exonet node, then tries to
@@ -85,6 +102,8 @@ var/global/list/obj/item/device/communicator/all_communicators = list()
 	camera = new(src)
 	camera.name = "[src] #[rand(100,999)]"
 	camera.c_tag = camera.name
+
+	setup_tgui_camera()
 
 	//This is a pretty terrible way of doing this.
 	addtimer(CALLBACK(src, .proc/register_to_holder), 5 SECONDS)
@@ -124,12 +143,9 @@ var/global/list/obj/item/device/communicator/all_communicators = list()
 /obj/item/device/communicator/examine(mob/user)
 	. = ..()
 
-	if(Adjacent(user) && video_source)
-		. += "<span class='notice'>It looks like it's on a video call: <a href='?src=\ref[src];watchvideo=1'>\[view\]</a></span>"
-	
 	for(var/mob/living/voice/voice in contents)
 		. += "<span class='notice'>On the screen, you can see a image feed of [voice].</span>"
-		
+
 		if(voice && voice.key)
 			switch(voice.stat)
 				if(CONSCIOUS)
@@ -141,17 +157,6 @@ var/global/list/obj/item/device/communicator/all_communicators = list()
 					. += "<span class='deadsay'>[voice] appears to have died...</span>" //Hopefully this never has to be used.
 		else
 			. += "<span class='notice'>The device doesn't appear to be transmitting any data.</span>"
-
-// Proc: Topic()
-// Parameters: href, href_list - Data from a link
-// Description: Used by the above examine.
-/obj/item/device/communicator/Topic(href, href_list)
-	if(..())
-		return 1
-
-	if(href_list["watchvideo"])
-		if(video_source)
-			watch_video(usr)
 
 // Proc: emp_act()
 // Parameters: None
@@ -234,8 +239,6 @@ var/global/list/obj/item/device/communicator/all_communicators = list()
 	alert_called = 0
 	update_icon()
 	tgui_interact(user)
-	if(video_source)
-		watch_video(user)
 
 // Proc: MouseDrop()
 //Same thing PDAs do
@@ -277,7 +280,7 @@ var/global/list/obj/item/device/communicator/all_communicators = list()
 	. = ..()
 	if(exonet)
 		exonet.remove_address()
-		exonet = null
+		qdel_null(exonet)
 	return ..()
 
 // Proc: register_device()
@@ -299,7 +302,7 @@ var/global/list/obj/item/device/communicator/all_communicators = list()
 /obj/item/device/communicator/Destroy()
 	for(var/mob/living/voice/voice in contents)
 		voice_mobs.Remove(voice)
-		to_chat(voice, "<span class='danger'>[bicon(src)] Connection timed out with remote host.</span>")
+		to_chat(voice, "<span class='danger'>\icon[src][bicon(src)] Connection timed out with remote host.</span>")
 		qdel(voice)
 	close_connection(reason = "Connection timed out")
 
@@ -315,6 +318,11 @@ var/global/list/obj/item/device/communicator/all_communicators = list()
 	listening_objects.Remove(src)
 	QDEL_NULL(camera)
 	QDEL_NULL(exonet)
+
+	last_camera_turf = null
+	qdel(cam_screen)
+	QDEL_LIST(cam_plane_masters)
+	qdel(cam_background)
 
 	return ..()
 

@@ -22,8 +22,8 @@
 	icon_state = "nt_headset_alt"
 
 /obj/item/device/radio/headset
-	sprite_sheets = list(SPECIES_TESHARI = 'icons/mob/species/seromi/ears.dmi',
-						SPECIES_WEREBEAST = 'icons/mob/species/werebeast/ears.dmi')
+	sprite_sheets = list(SPECIES_TESHARI = 'icons/inventory/ears/mob_teshari.dmi',
+						SPECIES_WEREBEAST = 'icons/inventory/ears/mob_vr_werebeast.dmi')
 
 /obj/item/device/radio/headset/mob_headset	//Adminbus headset for simplemob shenanigans.
 	name = "nonhuman radio receiver"
@@ -81,26 +81,25 @@
 
 /obj/item/device/radio/headset/pilot
 	name = "pilot's headset"
-	desc = "A headset used by pilots, has access to the explorer channel."
+	desc = "A headset used by pilots."
 	icon_state = "pilot_headset"
 	adhoc_fallback = TRUE
-	ks2type = /obj/item/device/encryptionkey/pilot
 
 /obj/item/device/radio/headset/pilot/alt
 	name = "pilot's bowman headset"
-	desc = "A bowman headset used by pilots, has access to the explorer channel."
+	desc = "A bowman headset used by pilots."
 	icon_state = "pilot_headset_alt"
 
 /obj/item/device/radio/headset/explorer
-	name = "explorer's headset"
-	desc = "Headset used by explorers for exploring. Access to the explorer channel."
+	name = "away team member's headset"
+	desc = "Headset used by the away team for exploring. Access to the away team channel."
 	icon_state = "exp_headset"
 	adhoc_fallback = TRUE
 	ks2type = /obj/item/device/encryptionkey/explorer
 
 /obj/item/device/radio/headset/explorer/alt
-	name = "explorer's bowman headset"
-	desc = "Bowman headset used by explorers for exploring. Access to the explorer channel."
+	name = "away team's bowman headset"
+	desc = "Bowman headset used by the away team for exploring. Access to the away team channel."
 	icon_state = "exp_headset_alt"
 
 /obj/item/device/radio/headset/sar
@@ -115,12 +114,14 @@
 	desc = "A bowman headset for field medics."
 	icon_state = "sar_headset_alt"
 
+/* //They're all volunteers now.
 /obj/item/device/radio/headset/volunteer
 	name = "volunteer's headset"
-	desc = "A headset used by volunteers to expedition teams, has access to the exploration channel."
+	desc = "A headset used by volunteers to expedition teams, has access to the Away Team channel."
 	icon_state = "pilot_headset"
 	adhoc_fallback = TRUE
-	ks2type = /obj/item/device/encryptionkey/pilot
+	ks2type = /obj/item/device/encryptionkey/explorer
+*/
 
 /obj/item/device/radio/headset/talon
 	name = "talon headset"

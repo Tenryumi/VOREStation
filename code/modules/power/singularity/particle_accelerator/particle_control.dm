@@ -6,8 +6,8 @@
 	icon = 'icons/obj/machines/particle_accelerator_vr.dmi' //VOREStation Edit
 	icon_state = "control_box"
 	reference = "control_box"
-	anchored = 0
-	density = 1
+	anchored = FALSE
+	density = TRUE
 	use_power = USE_POWER_OFF
 	idle_power_usage = 500
 	active_power_usage = 70000 //70 kW per unit of strength
@@ -88,7 +88,7 @@
 		if(strength > strength_upper_limit)
 			strength = strength_upper_limit
 		else
-			message_admins("PA Control Computer increased to [strength] by [key_name(usr, usr.client)](<A HREF='?_src_=holder;adminmoreinfo=\ref[usr]'>?</A>) in ([x],[y],[z] - <A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[x];Y=[y];Z=[z]'>JMP</a>)",0,1)
+			message_admins("PA Control Computer increased to [strength] by [key_name(usr, usr.client)][ADMIN_QUE(usr)] in [ADMIN_COORDJMP(src)]",0,1)
 			log_game("PACCEL([x],[y],[z]) [key_name(usr)] increased to [strength]")
 			investigate_log("increased to <font color='red'>[strength]</font> by [usr.key]","singulo")
 		strength_change()
@@ -99,7 +99,7 @@
 		if(strength < 0)
 			strength = 0
 		else
-			message_admins("PA Control Computer decreased to [strength] by [key_name(usr, usr.client)](<A HREF='?_src_=holder;adminmoreinfo=\ref[usr]'>?</A>) in ([x],[y],[z] - <A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[x];Y=[y];Z=[z]'>JMP</a>)",0,1)
+			message_admins("PA Control Computer decreased to [strength] by [key_name(usr, usr.client)][ADMIN_QUE(usr)] in [ADMIN_COORDJMP(src)]",0,1)
 			log_game("PACCEL([x],[y],[z]) [key_name(usr)] decreased to [strength]")
 			investigate_log("decreased to <font color='green'>[strength]</font> by [usr.key]","singulo")
 		strength_change()
@@ -184,8 +184,8 @@
 /obj/machinery/particle_accelerator/control_box/proc/toggle_power()
 	active = !active
 	investigate_log("turned [active?"<font color='red'>ON</font>":"<font color='green'>OFF</font>"] by [usr ? usr.key : "outside forces"]","singulo")
-	message_admins("PA Control Computer turned [active ?"ON":"OFF"] by [key_name(usr, usr.client)](<A HREF='?_src_=holder;adminmoreinfo=\ref[usr]'>?</A>) in ([x],[y],[z] - <A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[x];Y=[y];Z=[z]'>JMP</a>)",0,1)
-	log_game("PACCEL([x],[y],[z]) [key_name(usr)] turned [active?"ON":"OFF"].")
+	message_admins("PA Control Computer turned [active ?"ON":"OFF"] by [usr ? key_name(usr, usr.client) : "outside forces"][ADMIN_QUE(usr)] in [ADMIN_COORDJMP(src)]",0,1)
+	log_game("PACCEL([x],[y],[z]) [usr ? key_name(usr, usr.client) : "outside forces"] turned [active?"ON":"OFF"].")
 	if(active)
 		update_use_power(USE_POWER_ACTIVE)
 		for(var/obj/structure/particle_accelerator/part in connected_parts)

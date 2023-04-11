@@ -1,62 +1,71 @@
 var/list/department_radio_keys = list(
-	  ":r" = "right ear",	".r" = "right ear",
-	  ":l" = "left ear",	".l" = "left ear",
-	  ":i" = "intercom",	".i" = "intercom",
-	  ":h" = "department",	".h" = "department",
-	  ":+" = "special",		".+" = "special", //activate radio-specific special functions
-	  ":c" = "Command",		".c" = "Command",
-	  ":n" = "Science",		".n" = "Science",
-	  ":m" = "Medical",		".m" = "Medical",
-	  ":e" = "Engineering", ".e" = "Engineering",
-	  ":k" = "Response Team",	".k" = "Response Team",	//TFF 11/3/20 - Add Response Team to channels usable rather than resorting to :H or such.,
-	  ":s" = "Security",	".s" = "Security",
-	  ":w" = "whisper",		".w" = "whisper",
-	  ":t" = "Mercenary",	".t" = "Mercenary",
-	  ":x" = "Raider",		".x" = "Raider",
-	  ":u" = "Supply",		".u" = "Supply",
-	  ":v" = "Service",		".v" = "Service",
-	  ":p" = "AI Private",	".p" = "AI Private",
-	  ":y" = "Explorer",	".y" = "Explorer",
-	  ":a" = "Talon",		".a" = "Talon", //VOREStation Add,
+	":r" = "right ear",	".r" = "right ear",
+	":l" = "left ear",	".l" = "left ear",
+	":i" = "intercom",	".i" = "intercom",
+	":h" = "department",	".h" = "department",
+	":+" = "special",		".+" = "special", //activate radio-specific special functions
+	":c" = "Command",		".c" = "Command",
+	":n" = "Science",		".n" = "Science",
+	":m" = "Medical",		".m" = "Medical",
+	":e" = "Engineering", ".e" = "Engineering",
+	":k" = "Response Team",	".k" = "Response Team",
+	":s" = "Security",	".s" = "Security",
+	":w" = "whisper",		".w" = "whisper",
+	":t" = "Mercenary",	".t" = "Mercenary",
+	":x" = "Raider",		".x" = "Raider",
+	":u" = "Supply",		".u" = "Supply",
+	":v" = "Service",		".v" = "Service",
+	":p" = "AI Private",	".p" = "AI Private",
+	":a" = "Away Team",	".a" = "Away Team",	//VOREStation Edit
+	":y" = "Talon",		".y" = "Talon", //VOREStation Add,
+	":g" = "Casino",	".g" = "Casino",
 
-	  ":R" = "right ear",	".R" = "right ear",
-	  ":L" = "left ear",	".L" = "left ear",
-	  ":I" = "intercom",	".I" = "intercom",
-	  ":H" = "department",	".H" = "department",
-	  ":C" = "Command",		".C" = "Command",
-	  ":N" = "Science",		".N" = "Science",
-	  ":M" = "Medical",		".M" = "Medical",
-	  ":E" = "Engineering",	".E" = "Engineering",
-	  ":k" = "Response Team",	".k" = "Response Team",	//TFF 11/3/20 - Add Response Team to channels usable rather than resorting to :H or such.,
-	  ":S" = "Security",	".S" = "Security",
-	  ":W" = "whisper",		".W" = "whisper",
-	  ":T" = "Mercenary",	".T" = "Mercenary",
-	  ":X" = "Raider",		".X" = "Raider",
-	  ":U" = "Supply",		".U" = "Supply",
-	  ":V" = "Service",		".V" = "Service",
-	  ":P" = "AI Private",	".P" = "AI Private",
-	  ":Y" = "Explorer",	".Y" = "Explorer",
-	  ":A" = "Talon",		".A" = "Talon", //VOREStation Add,
+	":R" = "right ear",	".R" = "right ear",
+	":L" = "left ear",	".L" = "left ear",
+	":I" = "intercom",	".I" = "intercom",
+	":H" = "department",	".H" = "department",
+	":C" = "Command",		".C" = "Command",
+	":N" = "Science",		".N" = "Science",
+	":M" = "Medical",		".M" = "Medical",
+	":E" = "Engineering",	".E" = "Engineering",
+	":k" = "Response Team",	".k" = "Response Team",
+	":S" = "Security",	".S" = "Security",
+	":W" = "whisper",		".W" = "whisper",
+	":T" = "Mercenary",	".T" = "Mercenary",
+	":X" = "Raider",		".X" = "Raider",
+	":U" = "Supply",		".U" = "Supply",
+	":V" = "Service",		".V" = "Service",
+	":P" = "AI Private",	".P" = "AI Private",
+	":A" = "Away Team",	".A" = "Away Team",
+	":Y" = "Talon",		".Y" = "Talon", //VOREStation Add,
+	":G" = "Casino",	".G" = "Casino",
 
-	  //kinda localization -- rastaf0
-	  //same keys as above, but on russian keyboard layout. This file uses cp1251 as encoding.
-	  ":Í" = "right ear",	".Í" = "right ear",
-	  ":‰" = "left ear",	".‰" = "left ear",
-	  ":¯" = "intercom",	".¯" = "intercom",
-	  ":" = "department",	"." = "department",
-	  ":Ò" = "Command",		".Ò" = "Command",
-	  ":Ú" = "Science",		".Ú" = "Science",
-	  ":¸" = "Medical",		".¸" = "Medical",
-	  ":Û" = "Engineering",	".Û" = "Engineering",
-	  ":˚" = "Security",	".˚" = "Security",
-	  ":ˆ" = "whisper",		".ˆ" = "whisper",
-	  ":Â" = "Mercenary",	".Â" = "Mercenary",
-	  ":È" = "Supply",		".È" = "Supply",
+	// Cyrillic characters on the same keys on the Russian QWERTY (phonetic) layout
+	":–∫" = "right ear",    ".–∫" = "right ear",
+	":–¥" = "left ear",    ".–¥" = "left ear",
+	":—à" = "intercom",    ".—à" = "intercom",
+	":—Ä" = "department",    ".—Ä" = "department",
+	":+" = "special",        ".+" = "special", //activate radio-specific special functions
+	":—Å" = "Command",        ".—Å" = "Command",
+	":—Ç" = "Science",        ".—Ç" = "Science",
+	":—å" = "Medical",        ".—å" = "Medical",
+	":—É" = "Engineering", ".—É" = "Engineering",
+	":–ª" = "Response Team",    ".–ª" = "Response Team",
+	":—ã" = "Security",    ".—ã" = "Security",
+	":—Ü" = "whisper",        ".—Ü" = "whisper",
+	":–µ" = "Mercenary",    ".–µ" = "Mercenary",
+	":—á" = "Raider",        ".—á" = "Raider",
+	":–≥" = "Supply",        ".–≥" = "Supply",
+	":–º" = "Service",        ".–º" = "Service",
+	":–∑" = "AI Private",    ".–∑" = "AI Private",
+	":—Ñ" = "Away Team",    ".—Ñ" = "Away Team",
+	":–Ω" = "Talon",        ".–Ω" = "Talon", //VOREStation Add
+	":–ø" = "Casino",	".–ø" = "Casino",
 )
 
 
 var/list/channel_to_radio_key = new
-proc/get_radio_key_from_channel(var/channel)
+/proc/get_radio_key_from_channel(var/channel)
 	var/key = channel_to_radio_key[channel]
 	if(!key)
 		for(var/radio_key in department_radio_keys)
@@ -135,7 +144,7 @@ proc/get_radio_key_from_channel(var/channel)
 		return "asks"
 	return verb
 
-/mob/living/say(var/message, var/whispering = 0)
+/mob/living/say(var/message, var/datum/language/speaking = null, var/whispering = 0)
 	//If you're muted for IC chat
 	if(client)
 		if(message)
@@ -149,7 +158,11 @@ proc/get_radio_key_from_channel(var/channel)
 		if(stat == DEAD && !forbid_seeing_deadchat)
 			return say_dead(message)
 		return
-
+	//VOREStation Addition Start
+	if(forced_psay)
+		psay(message)
+		return
+	//VOREStation Addition End
 	//Parse the mode
 	var/message_mode = parse_message_mode(message, "headset")
 
@@ -244,6 +257,9 @@ proc/get_radio_key_from_channel(var/channel)
 	//Default range and italics, may be overridden past here
 	var/message_range = world.view
 	var/italics = 0
+	var/do_sound = TRUE
+	if(!voice_sounds_list || !voice_sounds_list.len)
+		do_sound = FALSE
 
 	//Speaking into radios
 	if(used_radios.len)
@@ -285,8 +301,9 @@ proc/get_radio_key_from_channel(var/channel)
 
 	//Handle nonverbal languages here
 	for(var/datum/multilingual_say_piece/S in message_pieces)
-		if(S.speaking.flags & NONVERBAL)
+		if((S.speaking.flags & NONVERBAL) || (S.speaking.flags & INAUDIBLE))
 			custom_emote(1, "[pick(S.speaking.signlang_verb)].")
+			do_sound = FALSE
 
 	//These will contain the main receivers of the message
 	var/list/listening = list()
@@ -319,8 +336,10 @@ proc/get_radio_key_from_channel(var/channel)
 	//The 'post-say' static speech bubble
 	var/speech_bubble_test = say_test(message)
 	//var/image/speech_bubble = image('icons/mob/talk_vr.dmi',src,"h[speech_bubble_test]") //VOREStation Edit. Commented this out in case we need to reenable.
-	var/speech_type = speech_bubble_appearance()
-	var/image/speech_bubble = image('icons/mob/talk_vr.dmi',src,"[speech_type][speech_bubble_test]") //VOREStation Edit - talk_vr.dmi instead of talk.dmi for right-side icons
+	var/speech_type = custom_speech_bubble
+	if(!speech_type || speech_type == "default")
+		speech_type = speech_bubble_appearance()
+	var/image/speech_bubble = generate_speech_bubble(src, "[speech_type][speech_bubble_test]")
 	var/sb_alpha = 255
 	var/atom/loc_before_turf = src
 	//VOREStation Add
@@ -336,20 +355,6 @@ proc/get_radio_key_from_channel(var/channel)
 	speech_bubble.alpha = CLAMP(sb_alpha, 0, 255)
 	images_to_clients[speech_bubble] = list()
 
-	// Attempt Multi-Z Talking
-	var/mob/above = src.shadow
-	while(!QDELETED(above))
-		var/turf/ST = get_turf(above)
-		if(ST)
-			var/list/results = get_mobs_and_objs_in_view_fast(ST, world.view)
-			var/image/z_speech_bubble = image('icons/mob/talk_vr.dmi', above, "h[speech_bubble_test]") //VOREStation Edit - talk_vr.dmi instead of talk.dmi for right-side icons
-			images_to_clients[z_speech_bubble] = list()
-			for(var/item in results["mobs"])
-				if(item != above && !(item in listening))
-					listening[item] = z_speech_bubble
-			listening_obj |= results["objs"]
-		above = above.shadow
-
 	//Main 'say' and 'whisper' message delivery
 	for(var/mob/M in listening)
 		spawn(0) //Using spawns to queue all the messages for AFTER this proc is done, and stop runtimes
@@ -362,20 +367,21 @@ proc/get_radio_key_from_channel(var/channel)
 				//VOREStation Add End
 
 				var/dst = get_dist(get_turf(M),get_turf(src))
+				var/runechat_enabled = M.client?.is_preference_enabled(/datum/client_preference/runechat_mob)
 
 				if(dst <= message_range || (M.stat == DEAD && !forbid_seeing_deadchat)) //Inside normal message range, or dead with ears (handled in the view proc)
-					if(M.client)
-						var/image/I1 = listening[M] || speech_bubble
-						images_to_clients[I1] |= M.client
-						M << I1
-					M.hear_say(message_pieces, verb, italics, src, speech_sound, sound_vol)
+					if(M.hear_say(message_pieces, verb, italics, src, speech_sound, sound_vol))
+						if(M.client && !runechat_enabled)
+							var/image/I1 = listening[M] || speech_bubble
+							images_to_clients[I1] |= M.client
+							M << I1
 				if(whispering && !isobserver(M)) //Don't even bother with these unless whispering
 					if(dst > message_range && dst <= w_scramble_range) //Inside whisper scramble range
-						if(M.client)
-							var/image/I2 = listening[M] || speech_bubble
-							images_to_clients[I2] |= M.client
-							M << I2
-						M.hear_say(stars_all(message_pieces), verb, italics, src, speech_sound, sound_vol*0.2)
+						if(M.hear_say(stars_all(message_pieces), verb, italics, src, speech_sound, sound_vol*0.2))
+							if(M.client && !runechat_enabled)
+								var/image/I2 = listening[M] || speech_bubble
+								images_to_clients[I2] |= M.client
+								M << I2
 					if(dst > w_scramble_range && dst <= world.view) //Inside whisper 'visible' range
 						M.show_message("<span class='game say'><span class='name'>[name]</span> [w_not_heard].</span>", 2)
 
@@ -389,41 +395,57 @@ proc/get_radio_key_from_channel(var/channel)
 
 	//Remove all those images. At least it's just ONE spawn this time.
 	spawn(30)
-		for(var/img in images_to_clients)
-			var/image/I = img
+		for(var/image/I as anything in images_to_clients)
 			var/list/clients_from_image = images_to_clients[I]
-			for(var/client in clients_from_image)
-				var/client/C = client
+			for(var/client/C as anything in clients_from_image)
 				if(C) //Could have disconnected after message sent, before removing bubble.
 					C.images -= I
 			qdel(I)
 
+	var/ourfreq = null
+	if(voice_freq > 0 )
+		ourfreq = voice_freq
 	//Log the message to file
 	if(message_mode)
 		message = "([message_mode == "headset" ? "Common" : capitalize(message_mode)]) [message]" //Adds radio keys used if available
 	if(whispering)
+		if(do_sound && message)
+			playsound(T, pick(voice_sounds_list), 25, TRUE, extrarange = -6, falloff = 1 , is_global = TRUE, frequency = ourfreq, ignore_walls = FALSE, preference = /datum/client_preference/whisper_sounds)
+
 		log_whisper(message, src)
 	else
+		if(do_sound && message)
+			playsound(T, pick(voice_sounds_list), 75, TRUE, falloff = 1 , is_global = TRUE, frequency = ourfreq, ignore_walls = FALSE, preference = /datum/client_preference/say_sounds)
 		log_say(message, src)
 	return 1
 
-/mob/living/proc/say_signlang(var/message, var/verb="gestures", var/datum/language/language)
+/mob/living/proc/say_signlang(var/message, var/verb="gestures", var/verb_understood="gestures", var/datum/language/language, var/type = 1)
 	var/turf/T = get_turf(src)
 	//We're in something, gesture to people inside the same thing
 	if(loc != T)
 		for(var/mob/M in loc)
-			M.hear_signlang(message, verb, language, src)
+			M.hear_signlang(message, verb, verb_understood, language, src, type)
 
 	//We're on a turf, gesture to visible as if we were a normal language
 	else
+		var/low_range = FALSE
+		if(T && type == 2)			// type 2 is audible signlang. yes. sue me.
+			//Air is too thin to carry sound at all, contact speech only
+			var/datum/gas_mixture/environment = T.return_air()
+			var/pressure = environment ? environment.return_pressure() : 0
+			if(pressure < SOUND_MINIMUM_PRESSURE)
+				low_range = TRUE
+
 		var/list/potentials = get_mobs_and_objs_in_view_fast(T, world.view)
 		var/list/mobs = potentials["mobs"]
-		for(var/hearer in mobs)
-			var/mob/M = hearer
-			M.hear_signlang(message, verb, language, src)
+		for(var/mob/M as anything in mobs)
+			if(low_range && !(M in range(1, src)))
+				continue
+			M.hear_signlang(message, verb, verb_understood, language, src, type)
 		var/list/objs = potentials["objs"]
-		for(var/hearer in objs)
-			var/obj/O = hearer
+		for(var/obj/O as anything in objs)
+			if(low_range && !(O in range(1, src)))
+				continue
 			O.hear_signlang(message, verb, language, src)
 	return 1
 
@@ -432,39 +454,6 @@ proc/get_radio_key_from_channel(var/channel)
 
 /mob/proc/GetVoice()
 	return name
-
-/mob/living/emote(var/act, var/type, var/message) //emote code is terrible, this is so that anything that isn't
-	if(stat)			                          //already snowflaked to shit can call the parent and handle emoting sanely
-		return FALSE
-
-	if(..(act, type, message))
-		return TRUE
-
-	if(act && type && message)
-		log_emote(message, src)
-
-		for(var/mob/M in dead_mob_list)
-			if(!M.client)
-				continue
-
-			if(isnewplayer(M))
-				continue
-
-			if(isobserver(M) && M.is_preference_enabled(/datum/client_preference/ghost_sight))
-				M.show_message(message)
-
-		switch(type)
-			if(1) // Visible
-				visible_message(message)
-				return TRUE
-			if(2) // Audible
-				audible_message(message)
-				return TRUE
-	else
-		if(act == "help")
-			return // Mobs handle this individually
-		to_chat(src, "<span class='warning'>Unusable emote '[act]'. Say *help for a list.</span>")
-
 
 /mob/proc/speech_bubble_appearance()
 	return "normal"

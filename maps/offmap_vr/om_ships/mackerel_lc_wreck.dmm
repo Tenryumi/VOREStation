@@ -74,8 +74,6 @@
 /area/shuttle/mackerel_lc_wreck)
 "cD" = (
 /obj/effect/floor_decal/industrial/warning,
-/obj/item/weapon/bone/skull,
-/obj/item/clothing/head/helmet/space/void/refurb/pilot,
 /obj/item/weapon/material/shard/shrapnel,
 /obj/item/weapon/material/shard/shrapnel,
 /turf/simulated/floor/tiled/techmaint/airless,
@@ -107,6 +105,12 @@
 /area/shuttle/mackerel_lc_wreck)
 "ka" = (
 /turf/simulated/wall/shull,
+/area/shuttle/mackerel_lc_wreck)
+"kf" = (
+/obj/structure/hull_corner{
+	dir = 1
+	},
+/turf/template_noop,
 /area/shuttle/mackerel_lc_wreck)
 "kU" = (
 /obj/machinery/atmospherics/pipe/simple/visible/yellow,
@@ -616,6 +620,10 @@
 /obj/machinery/door/airlock/hatch,
 /turf/simulated/floor/tiled/techmaint,
 /area/shuttle/mackerel_lc_wreck)
+"Iu" = (
+/obj/structure/prop/blackbox/mackerel_wreck,
+/turf/simulated/floor/airless,
+/area/shuttle/mackerel_lc_wreck)
 "Jq" = (
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers{
 	dir = 6
@@ -729,6 +737,12 @@
 	opacity = 0
 	},
 /turf/simulated/floor/tiled/techmaint,
+/area/shuttle/mackerel_lc_wreck)
+"Qq" = (
+/obj/structure/hull_corner{
+	dir = 4
+	},
+/turf/template_noop,
 /area/shuttle/mackerel_lc_wreck)
 "Qu" = (
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers,
@@ -890,9 +904,8 @@
 /turf/simulated/floor/airless,
 /area/shuttle/mackerel_lc_wreck)
 "Zp" = (
-/obj/item/weapon/bone/ribs,
-/obj/item/clothing/suit/space/void/refurb/pilot,
 /obj/effect/decal/cleanable/blood,
+/obj/effect/landmark/corpse/vintage/pilot,
 /turf/simulated/floor/tiled/techmaint/airless,
 /area/shuttle/mackerel_lc_wreck)
 "ZJ" = (
@@ -956,13 +969,13 @@ WP
 WP
 WP
 WP
-BB
+TC
 oG
 oe
 ka
 ka
 ka
-WP
+Qq
 WP
 "}
 (3,1,1) = {"
@@ -981,7 +994,7 @@ WP
 WP
 BB
 WP
-WP
+oG
 oe
 Zb
 bI
@@ -1006,13 +1019,13 @@ ka
 WP
 WP
 BB
-WP
+oG
 NI
 oq
 tV
 ka
 ka
-WP
+kf
 WP
 "}
 (5,1,1) = {"
@@ -1061,7 +1074,7 @@ ka
 ka
 tV
 ka
-WP
+ka
 WP
 WP
 "}
@@ -1085,8 +1098,8 @@ fL
 JG
 kU
 dG
+Iu
 ka
-WP
 WP
 WP
 "}
@@ -1113,7 +1126,7 @@ tV
 ka
 ka
 ka
-WP
+Qq
 "}
 (9,1,1) = {"
 WP
@@ -1213,7 +1226,7 @@ tV
 ka
 ka
 ka
-WP
+kf
 "}
 (13,1,1) = {"
 WP
@@ -1235,8 +1248,8 @@ zo
 KZ
 rQ
 dG
+oq
 ka
-WP
 WP
 WP
 "}
@@ -1261,7 +1274,7 @@ ka
 ka
 tV
 ka
-WP
+ka
 BB
 WP
 "}
@@ -1306,13 +1319,13 @@ ka
 WP
 BB
 WP
-WP
+oG
 NI
 Zb
 ca
 NI
 oq
-WP
+oG
 BB
 "}
 (17,1,1) = {"
@@ -1331,7 +1344,7 @@ WP
 WP
 WP
 WP
-BB
+TC
 oe
 oq
 oq
@@ -1356,13 +1369,13 @@ WP
 WP
 WP
 WP
-WP
+oG
 oG
 oe
 oe
 oe
 oe
-BB
+TC
 WP
 "}
 (19,1,1) = {"

@@ -133,13 +133,14 @@
 	volume = 60
 	possible_transfer_amounts = list(5, 10, 20, 30)
 	reagent_ids = list("ale",
-		"cider",
 		"beer",
 		"berryjuice",
 		"bitters",
+		"cider",
 		"coffee",
 		"cognac",
 		"cola",
+		"cream",
 		"dr_gibb",
 		"egg",
 		"gin",
@@ -155,6 +156,7 @@
 		"milk",
 		"mint",
 		"orangejuice",
+		"redwine",
 		"rum",
 		"sake",
 		"sodawater",
@@ -172,8 +174,7 @@
 		"vodka",
 		"water",
 		"watermelonjuice",
-		"whiskey",
-		"wine")
+		"whiskey")
 
 /obj/item/weapon/reagent_containers/borghypo/service/attack(var/mob/M, var/mob/user)
 	return

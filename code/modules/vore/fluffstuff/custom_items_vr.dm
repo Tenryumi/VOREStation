@@ -170,8 +170,8 @@
 	item_state = "joanariamob"
 	origin_tech = "materials=7"
 	force = 15
-	sharp = 1
-	edge = 1
+	sharp = TRUE
+	edge = TRUE
 	hitsound = 'sound/weapons/bladeslice.ogg'
 
 
@@ -337,22 +337,29 @@
 	name = "Mouse Plushie"
 	desc = "A plushie of a delightful mouse! What was once considered a vile rodent is now your very best friend."
 	slot_flags = SLOT_HEAD
-	icon_state = "mouse_brown"	//TFF 12/11/19 - Change sprite to not look dead. Heck you for that choice! >:C
+	icon_state = "mouse_brown"
 	item_state = "mouse_brown_head"
 	icon = 'icons/vore/custom_items_vr.dmi'
 	icon_override = 'icons/vore/custom_items_vr.dmi'
 
-//zodiacshadow: ?
+//zodiacshadow: Nehi Maximus
 /obj/item/device/radio/headset/fluff/zodiacshadow
 	name = "Nehi's 'phones"
 	desc = "A pair of old-fashioned purple headphones for listening to music that also double as an NT-approved headset; they connect nicely to any standard PDA. One side is engraved with the letters NEHI, the other having an elaborate inscription of the words \"My voice is my weapon of choice\" in a fancy font. A modern polymer allows switching between modes to either allow one to hear one's surroundings or to completely block them out."
 
 	icon = 'icons/vore/custom_items_vr.dmi'
-	icon_state = "headphones"
+	icon_state = "nehiphones"
 
-	icon_override = 'icons/vore/custom_items_vr.dmi'
-	item_state = "headphones_mob"
+	icon_override = 'icons/vore/custom_onmob_vr.dmi'
+	item_state = "nehiphones"
 
+//zodiacshadow: Nehi Maximus
+/obj/item/clothing/accessory/medal/silver/fluff/zodiacshadow
+	name = "Health Service Achievement medal"
+	desc = "A small silver medal with the inscription \"For going above and beyond in the field.\" on it, along with the name Nehi Maximus."
+
+	icon = 'icons/inventory/accessory/item.dmi'
+	icon_state = "silver"
 
 // OrbisA: Richard D'angelo
 /obj/item/weapon/melee/fluff/holochain
@@ -551,7 +558,7 @@
 	//He's dead, jim
 	if((state == 1) && owner && (owner.stat == DEAD))
 		update_state(2)
-		audible_message("<span class='warning'>The [name] begins flashing red.</span>")
+		visible_message("<span class='warning'>The [name] begins flashing red.</span>")
 		sleep(30)
 		visible_message("<span class='warning'>The [name] shatters into dust!</span>")
 		if(owner_c)
@@ -630,41 +637,13 @@
 	force = 5.0
 	throwforce = 7.0
 	w_class = ITEMSIZE_SMALL
-	matter = list(DEFAULT_WALL_MATERIAL = 50)
+	matter = list(MAT_STEEL = 50)
 	attack_verb = list("bludgeoned", "whacked", "disciplined", "thrashed")
 
 /obj/item/weapon/cane/fluff/tasald
 	name = "Ornate Walking Cane"
 	desc = "An elaborately made custom walking stick with a dark wooding core, a crimson red gemstone on its head and a steel cover around the bottom. you'd probably hear someone using this down the hall."
 	icon = 'icons/vore/custom_items_vr.dmi'
-
-//Stobarico - Alexis Bloise
-/obj/item/weapon/cane/wand
-    name = "Ancient wand"
-    desc = "A really old looking wand with floating parts and cyan crystals, wich seem to radiate a cyan glow. The wand has a golden plaque on the side that would say Corncobble, but it is covered by a sticker saying Bloise."
-    icon = 'icons/vore/custom_items_vr.dmi'
-    icon_state = "alexiswand"
-    item_icons = list (slot_r_hand_str = 'icons/vore/custom_items_vr.dmi', slot_l_hand_str = 'icons/vore/custom_items_vr.dmi')
-    item_state_slots = list(slot_r_hand_str = "alexiswandmob_r", slot_l_hand_str = "alexiswandmob_l")
-    force = 1.0
-    throwforce = 2.0
-    w_class = ITEMSIZE_SMALL
-    matter = list(DEFAULT_WALL_MATERIAL = 50)
-    attack_verb = list("sparkled", "whacked", "twinkled", "radiated", "dazzled", "zapped")
-    hitsound = 'sound/weapons/sparkle.ogg'
-    var/last_use = 0
-    var/cooldown = 30
-
-/obj/item/weapon/cane/wand/attack_self(mob/user)
-    if(last_use + cooldown >= world.time)
-        return
-    playsound(src, 'sound/weapons/sparkle.ogg', 50, 1)
-    user.visible_message("<span class='warning'> [user] swings their wand.</span>")
-    var/datum/effect/effect/system/spark_spread/s = new
-    s.set_up(3, 1, src)
-    s.start()
-    last_use = world.time
-    qdel ()
 
 /obj/item/device/fluff/id_kit_ivy
 	name = "Holo-ID reprinter"
@@ -773,11 +752,12 @@
 	icon_state = "dragor_dot"
 	w_class = ITEMSIZE_SMALL
 
-	attack_self(mob/user as mob)
-		if(user.ckey == "pontifexminimus")
-			user.verbs |= /mob/living/carbon/human/proc/shapeshifter_select_gender
-		else
-			return
+/obj/item/weapon/fluff/dragor_dot/attack_self(mob/user as mob)
+	if(user.ckey == "pontifexminimus")
+		user.verbs |= /mob/living/carbon/human/proc/shapeshifter_select_gender
+	else
+		return
+
 //LuminescentRing: Briana Moore
 /obj/item/weapon/storage/backpack/messenger/black/fluff/briana
 	name = "2561 graduation bag"
@@ -790,43 +770,14 @@
 	Under it is written 'Kouri, Amina, Marine Unit 14, Fifth Echelon. Service number NTN-5528928522372'"
 
 //arokha:Amaya Rahl - Custom ID (Medical dept)
-/obj/item/weapon/card/id/fluff/amaya
+/obj/item/weapon/card/id/event/fluff/amaya
 	registered_name = "CONFIGURE ME"
 	assignment = "CONFIGURE ME"
-	var/configured = 0
-	var/accessset = 0
 	icon = 'icons/vore/custom_items_vr.dmi'
+	base_icon = 'icons/vore/custom_items_vr.dmi'
 	icon_state = "amayarahlwahID"
 	desc = "A primarily blue ID with a holographic 'WAH' etched onto its back. The letters do not obscure anything important on the card. It is shiny and it feels very bumpy."
-	var/title_strings = list("Amaya Rahl's Wah-identification card", "Amaya Rahl's Wah-ID card")
-
-/obj/item/weapon/card/id/fluff/amaya/attack_self(mob/user as mob)
-	if(configured == 1)
-		return ..()
-
-	var/title
-	if(user.client.prefs.player_alt_titles[user.job])
-		title = user.client.prefs.player_alt_titles[user.job]
-	else
-		title = user.job
-	assignment = title
-	user.set_id_info(src)
-	if(user.mind && user.mind.initial_account)
-		associated_account_number = user.mind.initial_account.account_number
-	var/tempname = pick(title_strings)
-	name = tempname + " ([title])"
-	configured = 1
-	to_chat(user, "<span class='notice'>Card settings set.</span>")
-
-/obj/item/weapon/card/id/fluff/amaya/attackby(obj/item/I as obj, mob/user as mob)
-	if(istype(I, /obj/item/weapon/card/id) && !accessset)
-		var/obj/item/weapon/card/id/O = I
-		access |= O.access
-		to_chat(user, "<span class='notice'>You copy the access from \the [I] to \the [src].</span>")
-		user.drop_from_inventory(I)
-		qdel(I)
-		accessset = 1
-	..()
+	title_strings = list("Amaya Rahl's Wah-identification card", "Amaya Rahl's Wah-ID card")
 
 //General use, Verk felt like sharing.
 /obj/item/clothing/glasses/fluff/science_proper
@@ -956,23 +907,6 @@
 /obj/item/weapon/material/twohanded/fluff/New(var/newloc)
 	..(newloc," ") //See materials_vr_dmi for more information as to why this is a blank space.
 
-//General use.
-/obj/item/weapon/material/twohanded/fluff/riding_crop
-	name = "riding crop"
-	desc = "A steel rod, a little over a foot long with a widened grip and a thick, leather patch at the end. Made to smack naughty submissives."
-	//force_wielded = 0.05 //Stings, but does jack shit for damage, provided you don't hit someone 100 times. 1 damage with hardness of 60.
-	force_divisor = 0.05 //Required in order for the X attacks Y message to pop up.
-	unwielded_force_divisor = 1 // One here, too.
-	applies_material_colour = 0
-	unbreakable = 1
-	base_icon = "riding_crop"
-	icon_state = "riding_crop0"
-	attack_verb = list("cropped","spanked","swatted","smacked","peppered")
-//1R1S: Malady Blanche
-/obj/item/weapon/material/twohanded/fluff/riding_crop/malady
-	name = "Malady's riding crop"
-	desc = "An infernum made riding crop with Malady Blanche engraved in the shaft. It's a little worn from how many butts it has spanked."
-
 //jacknoir413:Areax Third
 /obj/item/weapon/melee/baton/fluff/stunstaff
 	name = "Electrostaff"
@@ -982,8 +916,8 @@
 	icon_state = "stunstaff00"
 	var/base_icon = "stunstaff"
 	force = 5
-	sharp = 0
-	edge = 0
+	sharp = FALSE
+	edge = FALSE
 	throwforce = 7
 	w_class = ITEMSIZE_HUGE
 	origin_tech = list(TECH_COMBAT = 2)
@@ -1078,8 +1012,8 @@
 	var/active_throwforce
 	var/active_w_class
 	var/active_embed_chance = 0
-	sharp = 0
-	edge = 0
+	sharp = FALSE
+	edge = FALSE
 
 /obj/item/weapon/melee/fluffstuff/proc/activate(mob/living/user)
 	if(active)
@@ -1088,8 +1022,8 @@
 	embed_chance = active_embed_chance
 	force = active_force
 	throwforce = active_throwforce
-	sharp = 1
-	edge = 1
+	sharp = TRUE
+	edge = TRUE
 	w_class = active_w_class
 	playsound(src, 'sound/weapons/sparkle.ogg', 50, 1)
 
@@ -1123,13 +1057,6 @@
 	add_fingerprint(user)
 	return
 
-/obj/item/weapon/melee/fluffstuff/suicide_act(mob/user)
-	var/tempgender = "[user.gender == MALE ? "he's" : user.gender == FEMALE ? "she's" : "they are"]"
-	if(active)
-		user.visible_message(pick("<span class='danger'>\The [user] is slitting \his stomach open with \the [src]! It looks like [tempgender] trying to commit seppuku.</span>",\
-			"<span class='danger'>\The [user] is falling on \the [src]! It looks like [tempgender] trying to commit suicide.</span>"))
-		return (BRUTELOSS|FIRELOSS)
-
 /obj/item/weapon/melee/fluffstuff/wolfgirlsword
 	name = "Wolfgirl Sword Replica"
 	desc = "A replica of a large, scimitar-like sword with a dull edge. Ceremonial... until it isn't."
@@ -1161,8 +1088,8 @@
 
 	..()
 	attack_verb = list("attacked", "slashed", "stabbed", "sliced", "torn", "ripped", "diced", "cut")
-	sharp = 1
-	edge = 1
+	sharp = TRUE
+	edge = TRUE
 	icon_state = "[active_state]_sharp"
 	damtype = BRUTE
 
@@ -1232,7 +1159,7 @@
 	desc = "A standard vacuum-flask filled with good and expensive drink."
 
 /obj/item/weapon/reagent_containers/food/drinks/flask/vacuumflask/fluff/viktor/Initialize()
-	..()
+	. = ..()
 	reagents.add_reagent("pwine", 60)
 
 //RadiantAurora: Tiemli Kroto
@@ -1267,7 +1194,7 @@
 	siemens_coefficient = 0.9
 	slowdown = 0
 	offline_slowdown = 0
-	offline_vision_restriction = 0 
+	offline_vision_restriction = 0
 	siemens_coefficient = 0.9
 	chest_type = /obj/item/clothing/suit/fluff/nikki
 
@@ -1375,7 +1302,7 @@
 			to_chat(user, "<span class='warning'>The brush's teeth are far too rough to even comb your hair. Apparently, \
 			this device was not made for people like you.</span>")
 			return
-		
+
 		if (!user.hair_accessory_style)
 			var/datum/sprite_accessory/hair_accessory/verie_hair_glow/V = new(user)
 			user.hair_accessory_style = V
@@ -1385,7 +1312,7 @@
 			"<span class='notice'>You brush your hair. \The [src]'s teeth begin to vibrate and glow as they react to your nanites. \
 			The teeth stimulate the nanites in your hair strands until your hair give off a brilliant, faintly pulsing \
 			cyan glow!</span>")
-		
+
 		else
 			user.visible_message("[user] combs her hair. \The [src] brushes away her glowing cyan highlights. Neat!", \
 			"<span class='notice'>You brush your hair. \The [src]'s teeth wipe away the glowing streaks in your hair \
@@ -1395,12 +1322,260 @@
 				to_chat(user, "<span class='warning'>found a V to delete!</span>")
 				qdel(V)
 			user.update_hair()
-			
-	
+
+
 	else
 		to_chat(user, "<span class='warning'>\The [src] isn't compatible with your body as it is now.</span>")
-	
-		
+
+// Astra - // Astra
+/obj/item/weapon/material/knife/ritual/fluff/astra
+	name = "Polished Ritual Knife"
+	desc = "A well kept strange ritual knife, There is a small tag with the name 'Astra Ether' on it. They are probably looking for this."
+	icon = 'icons/obj/wizard.dmi'
+	icon_state = "render"
+
+//AlFalah - Charlotte Graves
+/obj/item/weapon/storage/fancy/fluff/charlotte
+	name = "inconspicuous cigarette case"
+	desc = "A SkyTron 3000 cigarette case with no additional functions. The buttons and CRT monitor are completely for show and have no functions. Seriously. "
+	icon_state = "charlotte"
+	icon = 'icons/vore/custom_items_vr.dmi'
+	storage_slots = 7
+	can_hold = list(/obj/item/clothing/mask/smokable/cigarette, /obj/item/weapon/flame/lighter, /obj/item/trash/cigbutt)
+	icon_type = "charlotte"
+	//brand = "\improper Professional 120"
+	w_class = ITEMSIZE_TINY
+	starts_with = list(/obj/item/clothing/mask/smokable/cigarette = 7)
+
+/obj/item/weapon/storage/fancy/fluff/charlotte/New()
+	if(!open_state)
+		open_state = "[initial(icon_state)]0"
+	if(!closed_state)
+		closed_state = "[initial(icon_state)]"
+	..()
+
+/obj/item/weapon/storage/fancy/fluff/charlotte/update_icon()
+	cut_overlays()
+	if(open)
+		icon_state = open_state
+		if(contents.len >= 1)
+			add_overlay("charlottebox[contents.len]")
+	else
+		icon_state = closed_state
+
+/obj/item/weapon/storage/fancy/fluff/charlotte/open(mob/user as mob)
+	if(open)
+		return
+	open = TRUE
+	update_icon()
+	..()
+
+/obj/item/weapon/storage/fancy/fluff/charlotte/close(mob/user as mob)
+	open = FALSE
+	update_icon()
+	..()
+
+//Ashling - Antoinette deKaultieste
+/obj/item/weapon/material/knife/machete/hatchet/unathiknife/fluff/antoinette
+	name = "sawtooth ritual knife"
+	desc = "A mostly decorative knife made from thin ceramic and toothed with large black fangs. Printed on the flat is an eight-armed cross, like an asterisk with an extra stroke, ringed by a calligraphy-style crescent."
+	attack_verb = list("mauled", "bit", "sawed", "butchered")
+	dulled = 1
+	default_material = "glass"
 
 
-	
+//Ashling - Antoinette deKaultieste
+/obj/item/clothing/accessory/storage/ritualharness/fluff/antoinette
+	name = "silk knife loops"
+	desc = "A clip-on pair of pouched loops made from surprisingly sturdy silk. Made for holding knives and small vials in a pinch."
+	icon_state = "unathiharness1"
+	slots = 2
+
+/obj/item/weapon/reagent_containers/glass/bottle/poppy
+	name = "poppy flour bottle"
+	desc = "A small bottle of finely ground poppyseed and mixed dried berries."
+	icon = 'icons/obj/chemical.dmi'
+	icon_state = "bottle3"
+	prefill = list("bicaridine" = 30, "nutriment" = 30)
+
+/obj/item/clothing/accessory/storage/ritualharness/fluff/antoinette/Initialize()
+	. = ..()
+	hold.max_storage_space = ITEMSIZE_COST_SMALL * 2
+	hold.can_hold = list(/obj/item/weapon/material/knife, /obj/item/weapon/reagent_containers/glass/bottle)
+
+	new /obj/item/weapon/material/knife/machete/hatchet/unathiknife/fluff/antoinette(hold)
+	new /obj/item/weapon/reagent_containers/glass/bottle/poppy(hold)
+
+
+//Hunterbirk - Amaryll
+//This is a 'technical item' which basically is meant to represent rippiing things up with bare claws.
+/obj/item/weapon/surgical/scalpel/amaryll_claws
+	name = "Amaryll's Claws"
+	desc = "This doesn't quite look like what it really is."
+	icon = 'icons/vore/custom_items_vr.dmi'
+	icon_state = "claws"
+	drop_sound = null
+	pickup_sound = null
+	origin_tech = null
+	matter = null
+
+//Coolcrow420 - Jade Davis
+/obj/item/weapon/stamp/fluff/jade_horror
+	name = "Council of Mid Horror rubber stamp"
+	icon = 'icons/vore/custom_items_vr.dmi'
+	icon_state = "stamp-midhorror"
+	stamptext = "This paper has been certified by The Council of Mid Horror"
+
+//Coolcrow420 - M41l
+/obj/item/weapon/implant/language/fluff/m41l
+	name = "dusty hard drive"
+	desc = "A hard drive containing knowledge of various languages."
+
+/obj/item/weapon/implant/language/fluff/m41l/post_implant(mob/M)
+	to_chat(M,"<span class='notice'>LANGUAGES - LOADING</span>")
+	M.add_language(LANGUAGE_SKRELLIAN)
+	M.add_language(LANGUAGE_UNATHI)
+	M.add_language(LANGUAGE_SIIK)
+	M.add_language(LANGUAGE_EAL)
+	M.add_language(LANGUAGE_SCHECHI)
+	M.add_language(LANGUAGE_ZADDAT)
+	M.add_language(LANGUAGE_BIRDSONG)
+	M.add_language(LANGUAGE_SAGARU)
+	M.add_language(LANGUAGE_DAEMON)
+	M.add_language(LANGUAGE_ENOCHIAN)
+	M.add_language(LANGUAGE_VESPINAE)
+//	M.add_language(LANGUAGE_SLAVIC)
+	M.add_language(LANGUAGE_DRUDAKAR)
+	M.add_language(LANGUAGE_SPACER)
+	M.add_language(LANGUAGE_TAVAN)
+	M.add_language(LANGUAGE_ECHOSONG)
+	to_chat(M,"<span class='notice'>LANGUAGES - INITIALISED</span>")
+
+//thedavestdave - Lucky
+/obj/item/clothing/suit/armor/combat/crusader_costume/lucky
+	icon = 'icons/vore/custom_clothes_vr.dmi'
+	icon_state = "luck"
+	icon_override = 'icons/vore/custom_clothes_vr.dmi'
+	item_state = "luck"
+	name = "Lucky's armor"
+	desc = "A chain mail suit with a badly drawn one eared cat on the front."
+
+
+//RevolverEloise - Revolver Eloise
+/obj/item/weapon/sword/fluff/revolver
+	name = "Catnip"
+	desc = "A steel claymore with what appears to be a teppi engraved into the hilt and a finely forged metal cuboid for a pommel. The blade is honed and balanced to an unusually high degree and has clearly been meticulously cared for."
+	icon = 'icons/vore/custom_items_vr.dmi'
+	icon_state = "revclaymore"
+	icon_override = 'icons/vore/custom_items_vr.dmi'
+	item_state = "revclaymoremob"
+	force = 1
+	sharp = TRUE
+	edge = TRUE
+
+//PastelPrinceDan - Kiyoshi/Masumi Maki
+/obj/item/toy/plushie/fluff/slimeowshi
+	name = "Slime-Cat Research Director plushie"
+	desc = "An adorable stuffed toy that resembles a slime. It's pink, and has little cat ears, as well as a tail! Atop its head is a small beret with a Research Director's insignia."
+	icon = 'icons/vore/custom_items_vr.dmi'
+	icon_state = "kimeowshi"
+	attack_verb = list("blorbled", "slimed", "absorbed", "glomped")
+	gender = PLURAL // this seems like a good idea but probably prone to changing. todo: ask dan
+	// the only reason this thought is relevant because the base slimeplush has its gender set to female
+
+//YeCrowbarMan - Lemon Yellow
+/obj/item/toy/plushie/fluff/lemonplush
+	name = "yellow slime plushie"
+	desc = "A well-worn slime custom-made yellow plushie, extensively hugged and loved. It reeks of lemon."
+	icon = 'icons/vore/custom_items_vr.dmi'
+	icon_state = "lemonplush"
+	attack_verb = list("blorbled", "slimed", "absorbed", "glomped")
+
+//Bricker98:Nettie Stough
+/obj/item/modular_computer/tablet/preset/custom_loadout/nettie
+  name = "Remodeled Tablet"
+  desc = "A tablet computer, looks quite high-tech and has some emblems on the back."
+  icon = 'icons/obj/modular_tablet.dmi'
+  icon_state = "elite"
+  icon_state_unpowered = "elite"
+
+/obj/item/modular_computer/tablet/preset/custom_loadout/nettie/install_default_hardware()
+  ..()
+  processor_unit = new/obj/item/weapon/computer_hardware/processor_unit/small(src)
+  tesla_link = new/obj/item/weapon/computer_hardware/tesla_link(src)
+  hard_drive = new/obj/item/weapon/computer_hardware/hard_drive/(src)
+  network_card = new/obj/item/weapon/computer_hardware/network_card/advanced(src)
+  nano_printer = new/obj/item/weapon/computer_hardware/nano_printer(src)
+  battery_module = new/obj/item/weapon/computer_hardware/battery_module(src)
+  battery_module.charge_to_full()
+
+
+//Stobarico - Kyu Comet
+/obj/item/instrument/piano_synth/fluff/kyutar
+	name = "Kyu's Custom Instrument"
+	desc = "A pastel pink guitar-like instrument with a body resembling a smug cat face. It seems to have a few different parts from a regular stringed instrument, including the lack of any strings, and the hand looking like a small screen, which connects to a small array of projectors."
+	icon = 'icons/vore/custom_items_vr.dmi'
+	item_icons = list(slot_l_hand_str = 'icons/vore/custom_items_left_hand_vr.dmi', slot_r_hand_str = 'icons/vore/custom_items_right_hand_vr.dmi')
+	icon_state = "kyuholotar"
+
+//Pandora029 - Seona Young
+/obj/item/toy/plushie/fluff/seona_mofuorb
+	name = "comically oversized fox-orb plushie"
+	desc = "A humongous & adorable Largo© brand stuffed-toy that resembles a mix of slime and absurdly fluffy fox. It's colored white largely, with the tips of it's fox-like ears and tail transitioning to a nice pink-ish color. Comes complete with reactive expressions, according to the label."
+	icon = 'icons/vore/custom_items_vr.dmi'
+	icon_state = "pandorba"
+	pokephrase = "Gecker!"
+	attack_verb = list("fluffed", "fwomped", "fuwa'd", "squirmshed")
+
+/obj/item/toy/plushie/fluff/seona_mofuorb/attack_self(mob/user as mob)
+	if(stored_item && opened && !searching)
+		searching = TRUE
+		if(do_after(user, 10))
+			to_chat(user, "You find \icon[stored_item] [stored_item] in [src]!")
+			stored_item.forceMove(get_turf(src))
+			stored_item = null
+			searching = FALSE
+			return
+		else
+			searching = FALSE
+
+	if(world.time - last_message <= 5 SECONDS)
+		return
+	if(user.a_intent == I_HELP)
+		user.visible_message("<span class='notice'><b>\The [user]</b> hugs [src]!</span>","<span class='notice'>You hug [src]!</span>")
+		icon_state = "pandorba"
+	else if (user.a_intent == I_HURT)
+		user.visible_message("<span class='warning'><b>\The [user]</b> punches [src]!</span>","<span class='warning'>You punch [src]!</span>")
+		icon_state = "pandorba_h"
+	else if (user.a_intent == I_GRAB)
+		user.visible_message("<span class='warning'><b>\The [user]</b> attempts to strangle [src]!</span>","<span class='warning'>You attempt to strangle [src]!</span>")
+		icon_state = "pandorba_g"
+	else
+		user.visible_message("<span class='notice'><b>\The [user]</b> pokes [src].</span>","<span class='notice'>You poke [src].</span>")
+		icon_state = "pandorba_d"
+		playsound(src, 'sound/items/drop/plushie.ogg', 25, 0)
+		visible_message("[src] says, \"[pokephrase]\"")
+	last_message = world.time
+
+//Yeehawguvnah - Cephyra
+
+/obj/item/weapon/dice/loaded/ceph
+	name = "engraved d6"
+	desc = "A die with six sides. It's fairly well-made, made of an unclear black material with silver pips. If you were to touch it, your hands tingle slightly as though from static. On closer inspection, it's finely engraved with curving, fractal patterns."
+	icon_state = "ceph_d66"
+
+/obj/item/weapon/dice/loaded/ceph/rollDice(mob/user, silent)
+	..()
+	icon_state = "ceph_d6[result]"
+
+/obj/item/weapon/dice/loaded/ceph/New()
+	icon_state = "ceph_d6[rand(1,sides)]"
+
+
+//abc123: Mira Nesyne
+/obj/item/clothing/accessory/medal/silver/fluff/abc314
+	name = "Health Service Achievement medal"
+	desc = "A small silver medal with the inscription \"For going above and beyond in the field.\" on it, along with the name Mira Nesyne."
+
+	icon = 'icons/inventory/accessory/item.dmi'
+	icon_state = "silver"

@@ -26,38 +26,41 @@
 	data["network"] = network
 	data["temp"] = temp
 
-	data["servers"] = list()
+	var/list/serverData = list()
 	for(var/obj/machinery/telecomms/T in servers)
-		data["servers"].Add(list(list(
+		serverData.Add(list(list(
 			"id" = T.id,
 			"name" = T.name,
 		)))
+	data["servers"] = serverData
 
 	data["selectedServer"] = null
 	if(SelectedServer)
 		data["selectedServer"] = list(
 			"id" = SelectedServer.id,
 			"totalTraffic" = SelectedServer.totaltraffic,
-			"logs" = list()
 		)
 
+		var/list/logs = list()
 		var/i = 0
 		for(var/c in SelectedServer.log_entries)
 			i++
 			var/datum/comm_log_entry/C = c
-			
+
 			// This is necessary to prevent leaking information to the clientside
 			var/static/list/acceptable_params = list("uspeech", "intelligible", "message", "name", "race", "job", "timecode")
 			var/list/parameters = list()
 			for(var/log_param in acceptable_params)
 				parameters["[log_param]"] = C.parameters["[log_param]"]
 
-			data["selectedServer"]["logs"].Add(list(list(
+			logs.Add(list(list(
 				"name" = C.name,
 				"input_type" = C.input_type,
 				"id" = i,
 				"parameters" = parameters,
 			)))
+
+		data["selectedServer"]["logs"] = logs
 
 	return data
 
@@ -71,7 +74,7 @@
 	if(!ui)
 		ui = new(user, src, "TelecommsLogBrowser", name)
 		ui.open()
-	
+
 /obj/machinery/computer/telecomms/server/tgui_act(action, params)
 	if(..())
 		return TRUE
@@ -125,7 +128,8 @@
 			. = TRUE
 
 		if("network")
-			var/newnet = input(usr, "Which network do you want to view?", "Comm Monitor", network) as null|text
+			var/newnet = tgui_input_text(usr, "Which network do you want to view?", "Comm Monitor", network, 15)
+			newnet = sanitize(newnet,15)
 
 			if(newnet && ((usr in range(1, src) || issilicon(usr))))
 				if(length(newnet) > 15)
@@ -136,7 +140,7 @@
 				set_temp("NEW NETWORK TAG SET IN ADDRESS \[[network]\]", "good")
 
 			. = TRUE
-		
+
 		if("cleartemp")
 			temp = null
 			. = TRUE

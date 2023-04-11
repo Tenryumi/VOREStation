@@ -12,7 +12,7 @@
 	maxHealth = 60
 	health = 60
 
-	movement_cooldown = 1.5 //horses are fast mkay.
+	movement_cooldown = -2 //horses are fast mkay.
 	see_in_dark = 6
 
 	response_help  = "pets"
@@ -23,7 +23,7 @@
 	melee_damage_upper = 5
 	attacktext = list("kicked")
 
-	meat_amount = 4
+	meat_amount = 6
 	meat_type = /obj/item/weapon/reagent_containers/food/snacks/meat
 
 	max_buckled_mobs = 1 //Yeehaw
@@ -49,7 +49,7 @@
 	melee_damage_upper = 15
 	attacktext = list("kicked")
 
-	meat_amount = 6
+	meat_amount = 10
 
 	old_x = -16
 	old_y = 0
@@ -72,7 +72,7 @@
 		riding_datum = new /datum/riding/simple_mob(src)
 	verbs |= /mob/living/simple_mob/proc/animal_mount
 	verbs |= /mob/living/proc/toggle_rider_reins
-	movement_cooldown = 1.5
+	movement_cooldown = -2
 
 /mob/living/simple_mob/vore/horse/MouseDrop_T(mob/living/M, mob/living/user)
 	return

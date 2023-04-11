@@ -47,7 +47,7 @@
 		..()
 
 /obj/item/weapon/material/fishing_rod/Initialize()
-	..()
+	. = ..()
 	update_icon()
 
 /obj/item/weapon/material/fishing_rod/attackby(obj/item/I as obj, mob/user as mob)
@@ -58,7 +58,7 @@
 		return
 	else if(istype(I, /obj/item/stack/cable_coil) && !strung)
 		var/obj/item/stack/cable_coil/C = I
-		if(C.amount < 5)
+		if(C.get_amount() < 5)
 			to_chat(user, "<span class='warning'>You do not have enough length in \the [C] to string this!</span>")
 			return
 		if(do_after(user, rand(10 SECONDS, 20 SECONDS)))
@@ -78,10 +78,10 @@
 	return ..()
 
 /obj/item/weapon/material/fishing_rod/update_icon()
-	overlays.Cut()
+	cut_overlays()
 	..()
 	if(strung)
-		overlays += image(icon, "[icon_state]_string")
+		add_overlay("[icon_state]_string")
 
 /obj/item/weapon/material/fishing_rod/proc/update_bait()
 	if(istype(Bait, bait_type))
@@ -90,7 +90,7 @@
 			if(re.id == "nutriment" || re.id == "protein" || re.id == "glucose" || re.id == "fishbait")
 				foodvolume += re.volume
 
-		toolspeed = initial(toolspeed) * min(0.75, (0.5 / max(0.5, (foodvolume / Bait.reagents.maximum_volume))))
+		toolspeed = initial(toolspeed) * 10*(0.01/(0.2*(foodvolume/Bait.reagents.maximum_volume + 0.5))) //VOREStation edit: gives fishing a universal formula because Polaris' doesn't work here. Min value of 1, max value of 1/3, 0.5 at 1/2 filled with bait reagents.
 
 	else
 		toolspeed = initial(toolspeed)

@@ -27,7 +27,7 @@
 			user.drop_item()
 			item.forceMove(src)
 			to_chat(user, "<span class='notice'>You attach the tank to the transfer valve.</span>")
-			message_admins("[key_name_admin(user)] attached both tanks to a transfer valve. (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[location.x];Y=[location.y];Z=[location.z]'>JMP</a>)")
+			message_admins("[key_name_admin(user)] attached both tanks to a transfer valve. [ADMIN_JMP(location)]")
 			log_game("[key_name_admin(user)] attached both tanks to a transfer valve.")
 
 		update_icon()
@@ -49,7 +49,7 @@
 		A.toggle_secure()	//this calls update_icon(), which calls update_icon() on the holder (i.e. the bomb).
 
 		bombers += "[key_name(user)] attached a [item] to a transfer valve."
-		message_admins("[key_name_admin(user)] attached a [item] to a transfer valve. (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[location.x];Y=[location.y];Z=[location.z]'>JMP</a>)")
+		message_admins("[key_name_admin(user)] attached a [item] to a transfer valve. [ADMIN_JMP(location)]")
 		log_game("[key_name_admin(user)] attached a [item] to a transfer valve.")
 		attacher = user
 		SStgui.update_uis(src) // update all UIs attached to src
@@ -62,9 +62,9 @@
 /obj/item/device/transfer_valve/Moved(old_loc, direction, forced)
 	. = ..()
 	if(isturf(old_loc))
-		unsense_proximity(callback = .HasProximity, center = old_loc)
+		unsense_proximity(callback = /atom/proc/HasProximity, center = old_loc)
 	if(isturf(loc))
-		sense_proximity(callback = .HasProximity)
+		sense_proximity(callback = /atom/proc/HasProximity)
 
 /obj/item/device/transfer_valve/attack_self(mob/user)
 	tgui_interact(user)
@@ -119,7 +119,7 @@
 		VARSET_IN(src, toggle, TRUE, 5 SECONDS)
 
 /obj/item/device/transfer_valve/update_icon()
-	overlays.Cut()
+	cut_overlays()
 	underlays = null
 
 	if(!tank_one && !tank_two && !attached_device)
@@ -128,13 +128,13 @@
 	icon_state = "valve"
 
 	if(tank_one)
-		overlays += "[tank_one.icon_state]"
+		add_overlay("[tank_one.icon_state]")
 	if(tank_two)
 		var/icon/J = new(icon, icon_state = "[tank_two.icon_state]")
 		J.Shift(WEST, 13)
 		underlays += J
 	if(attached_device)
-		overlays += "device"
+		add_overlay("device")
 
 /obj/item/device/transfer_valve/proc/remove_tank(obj/item/weapon/tank/T)
 	if(tank_one == T)
@@ -190,16 +190,16 @@
 		else
 			attacher_name = "[attacher.name]([attacher.ckey])"
 
-		var/log_str = "Bomb valve opened in <A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[bombturf.x];Y=[bombturf.y];Z=[bombturf.z]'>[A.name]</a> "
+		var/log_str = "Bomb valve opened in <A HREF='?_src_=holder;[HrefToken(TRUE)];adminplayerobservecoodjump=1;X=[bombturf.x];Y=[bombturf.y];Z=[bombturf.z]'>[A.name]</a> "
 		log_str += "with [attached_device ? attached_device : "no device"] attacher: [attacher_name]"
 
 		if(attacher)
-			log_str += "(<A HREF='?_src_=holder;adminmoreinfo=\ref[attacher]'>?</A>)"
+			log_str += ADMIN_QUE(attacher)
 
 		var/mob/mob = get_mob_by_key(src.fingerprintslast)
 		var/last_touch_info = ""
 		if(mob)
-			last_touch_info = "(<A HREF='?_src_=holder;adminmoreinfo=\ref[mob]'>?</A>)"
+			last_touch_info = ADMIN_QUE(mob)
 
 		log_str += " Last touched by: [src.fingerprintslast][last_touch_info]"
 		bombers += log_str

@@ -32,8 +32,12 @@
 	var/closing = FALSE
 	/// The status/visibility of the UI.
 	var/status = STATUS_INTERACTIVE
+	/// Timed refreshing state
+	var/refreshing = FALSE
 	/// Topic state used to determine status/interactability.
 	var/datum/tgui_state/state = null
+	/// Rate limit client refreshes to prevent DoS.
+	COOLDOWN_DECLARE(refresh_cooldown)
 	/// The map z-level to display.
 	var/map_z_level = 1
 	/// The Parent UI
@@ -90,12 +94,16 @@
 	opened_at = world.time
 	window.acquire_lock(src)
 	if(!window.is_ready())
-		window.initialize(inline_assets = list(
-			get_asset_datum(/datum/asset/simple/tgui)
-		))
+		window.initialize(
+			strict_mode = TRUE,
+			fancy = user.client.prefs.tgui_fancy,
+			assets = list(
+				get_asset_datum(/datum/asset/simple/tgui),
+			))
 	else
 		window.send_message("ping")
 	window.send_asset(get_asset_datum(/datum/asset/simple/fontawesome))
+	window.send_asset(get_asset_datum(/datum/asset/simple/tgfont))
 	for(var/datum/asset/asset in src_object.ui_assets(user))
 		window.send_asset(asset)
 	window.send_message("update", get_payload(
@@ -159,8 +167,8 @@
  */
 /datum/tgui/proc/send_asset(datum/asset/asset)
 	if(!window)
-		CRASH("send_asset() can only be called after open().")
-	window.send_asset(asset)
+		CRASH("send_asset() was called either without calling open() first or when open() did not return TRUE.")
+	return window.send_asset(asset)
 
 /**
  * public
@@ -173,11 +181,17 @@
 /datum/tgui/proc/send_full_update(custom_data, force)
 	if(!user.client || !initialized || closing)
 		return
+	//if(!COOLDOWN_FINISHED(src, refresh_cooldown))
+		//refreshing = TRUE
+		//addtimer(CALLBACK(src, .proc/send_full_update), TGUI_REFRESH_FULL_UPDATE_COOLDOWN, TIMER_UNIQUE)
+		//return
+	//refreshing = FALSE
 	var/should_update_data = force || status >= STATUS_UPDATE
 	window.send_message("update", get_payload(
 		custom_data,
 		with_data = should_update_data,
 		with_static_data = TRUE))
+	//COOLDOWN_START(src, refresh_cooldown, TGUI_REFRESH_FULL_UPDATE_COOLDOWN)
 
 /**
  * public
@@ -208,6 +222,8 @@
 		"title" = title,
 		"status" = status,
 		"interface" = interface,
+		//"refreshing" = refreshing,
+		"refreshing" = FALSE,
 		"map" = (using_map && using_map.path) ? using_map.path : "Unknown",
 		"mapZLevel" = map_z_level,
 		"window" = list(
@@ -215,6 +231,11 @@
 			"size" = window_size,
 			"fancy" = user.client.prefs.tgui_fancy,
 			"locked" = user.client.prefs.tgui_lock,
+		),
+		"client" = list(
+			"ckey" = user.client.ckey,
+			"address" = user.client.address,
+			"computer_id" = user.client.computer_id,
 		),
 		"user" = list(
 			"name" = "[user]",
@@ -248,12 +269,14 @@
 		return
 	// Validate ping
 	if(!initialized && world.time - opened_at > TGUI_PING_TIMEOUT)
+		// #ifdef TGUI_DEBUGGING // Always log zombie windows
 		log_tgui(user, \
 			"Error: Zombie window detected, killing it with fire.\n" \
 			+ "window_id: [window.id]\n" \
 			+ "opened_at: [opened_at]\n" \
 			+ "world.time: [world.time]")
 		close(can_be_suspended = FALSE)
+		// #endif
 		return
 	// Update through a normal call to ui_interact
 	if(status != STATUS_DISABLED && (autoupdate || force))
@@ -279,9 +302,6 @@
 		status = min(status, parent_ui.status)
 	return prev_status != status
 
-/datum/tgui/proc/log_message(message)
-	log_tgui("[user] ([user.ckey]) using \"[title]\":\n[message]")
-
 /datum/tgui/proc/set_map_z_level(nz)
 	map_z_level = nz
 
@@ -295,12 +315,19 @@
 /datum/tgui/proc/on_message(type, list/payload, list/href_list)
 	// Pass act type messages to tgui_act
 	if(type && copytext(type, 1, 5) == "act/")
+		var/act_type = copytext(type, 5)
+		#ifdef TGUI_DEBUGGING
+		log_tgui(user, "Action: [act_type] [href_list["payload"]], Window: [window.id], Source: [src_object]")
+		#endif
 		process_status()
-		if(src_object.tgui_act(copytext(type, 5), payload, src, state))
+		if(src_object.tgui_act(act_type, payload, src, state))
 			SStgui.update_uis(src_object)
 		return FALSE
 	switch(type)
 		if("ready")
+			// Send a full update when the user manually refreshes the UI
+			if(initialized)
+				send_full_update()
 			initialized = TRUE
 		if("pingReply")
 			initialized = TRUE
@@ -317,3 +344,8 @@
 			LAZYINITLIST(src_object.tgui_shared_states)
 			src_object.tgui_shared_states[href_list["key"]] = href_list["value"]
 			SStgui.update_uis(src_object)
+		if("fallback")
+			#ifdef TGUI_DEBUGGING
+			log_tgui(user, "Fallback Triggered: [href_list["payload"]], Window: [window.id], Source: [src_object]")
+			#endif
+			src_object.tgui_fallback(payload)

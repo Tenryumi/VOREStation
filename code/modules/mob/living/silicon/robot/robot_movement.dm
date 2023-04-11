@@ -32,6 +32,9 @@
 	if(module_active && istype(module_active,/obj/item/borg/combat/mobility))
 		. -= 2 // VOREStation Edit
 
+	if(get_restraining_bolt())	// Borgs with Restraining Bolts move slower.
+		. += 1
+
 	. += config.robot_delay
 
 	. += ..()
@@ -64,7 +67,7 @@
 		if(isturf(tile))
 			B.gather_all(tile, src, 1) //Shhh, unless the bag fills, don't spam the borg's chat with stuff that's going on every time they move!
 
-	if(istype(module, /obj/item/weapon/robot_module/robot/janitor) && isturf(loc))
+	if(scrubbing && isturf(loc))
 		var/turf/tile = loc
 		tile.clean_blood()
 		if (istype(tile, /turf/simulated))

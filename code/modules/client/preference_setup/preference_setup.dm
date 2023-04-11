@@ -101,7 +101,7 @@
 
 	if(href_list["category"])
 		var/category = locate(href_list["category"])
-		if(category && category in categories)
+		if(category && (category in categories))
 			selected_category = category
 		. = 1
 
@@ -128,6 +128,7 @@
 	// Need due to, for example, the 01_basic module relying on species having been loaded to sanitize correctly but that isn't loaded until module 03_body.
 	for(var/datum/category_item/player_setup_item/PI in items)
 		PI.load_character(S)
+
 
 /datum/category_group/player_setup_category/proc/save_character(var/savefile/S)
 	// Sanitize all data, then save it
@@ -231,6 +232,10 @@
 		return 1
 
 	. = OnTopic(href, href_list, usr)
+
+	if(!pref_mob || !pref_mob.client)		// Just in case we disappeared during OnTopic
+		return 1
+
 	if(. & TOPIC_UPDATE_PREVIEW)
 		pref_mob.client.prefs.update_preview_icon()
 	if(. & TOPIC_REFRESH)
@@ -299,7 +304,3 @@
 		if(PREF_FBP_SOFTWARE)
 			return 150
 	return S.max_age // welp
-
-/datum/category_item/player_setup_item/proc/color_square(red, green, blue, hex)
-	var/color = hex ? hex : "#[num2hex(red, 2)][num2hex(green, 2)][num2hex(blue, 2)]"
-	return "<span style='font-face: fixedsys; font-size: 14px; background-color: [color]; color: [color]'>___</span>"

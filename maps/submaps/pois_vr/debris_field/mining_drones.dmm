@@ -6,9 +6,7 @@
 /turf/simulated/mineral/vacuum,
 /area/space)
 "c" = (
-/mob/living/simple_mob/mechanical/mining_drone{
-	faction = "poi_mining_drones"
-	},
+/mob/living/simple_mob/mechanical/mining_drone/scavenger,
 /turf/simulated/floor/airless,
 /area/submap/debrisfield/mining_outpost)
 "d" = (
@@ -86,21 +84,15 @@
 /area/submap/debrisfield/mining_outpost)
 "p" = (
 /obj/item/weapon/material/shard,
+/mob/living/simple_mob/mechanical/mining_drone/scavenger,
 /turf/space,
 /area/space)
 "q" = (
 /obj/structure/sign/poster{
 	pixel_y = 32;
-	poster_type = "/datum/poster/bay_50"
+	poster_decl = "/decl/poster/bay_50"
 	},
 /turf/simulated/floor/airless,
-/area/submap/debrisfield/mining_outpost)
-"r" = (
-/obj/random/multiple/underdark/ores,
-/obj/structure/closet/syndicate/resources{
-	name = "storage locker"
-	},
-/turf/simulated/floor/tiled/airless,
 /area/submap/debrisfield/mining_outpost)
 "s" = (
 /obj/structure/bed/chair{
@@ -166,7 +158,7 @@
 /turf/simulated/floor/tiled/airless,
 /area/submap/debrisfield/mining_outpost)
 "E" = (
-/obj/machinery/door/airlock/external/glass{
+/obj/machinery/door/airlock/external{
 	density = 0;
 	health = 0;
 	icon_state = "door_open";
@@ -175,7 +167,7 @@
 /turf/simulated/floor/airless,
 /area/submap/debrisfield/mining_outpost)
 "F" = (
-/obj/machinery/door/airlock/external/glass/bolted,
+/obj/machinery/door/airlock/external/bolted,
 /turf/simulated/floor/airless,
 /area/submap/debrisfield/mining_outpost)
 "G" = (
@@ -269,9 +261,9 @@ v
 a
 B
 f
-c
 f
 c
+f
 f
 f
 "}
@@ -303,7 +295,7 @@ d
 h
 m
 z
-r
+H
 g
 S
 g

@@ -27,10 +27,10 @@
 	var/initial_flooring
 	var/decl/flooring/flooring
 	var/mineral = DEFAULT_WALL_MATERIAL
+	var/can_be_plated = TRUE // This is here for inheritance's sake. Override to FALSE for turfs you don't want someone to simply slap a plating over such as hazards.
 
 	thermal_conductivity = 0.040
 	heat_capacity = 10000
-	var/lava = 0
 
 /turf/simulated/floor/is_plating()
 	return (!flooring || flooring.is_plating)
@@ -176,3 +176,10 @@
 			to_chat(user, span("notice", "You deconstruct \the [src]."))
 			ChangeTurf(get_base_turf_by_area(src), preserve_outdoors = TRUE)
 			return TRUE
+
+/turf/simulated/floor/AltClick(mob/user)
+	if(isliving(user))
+		var/mob/living/livingUser = user
+		if(try_graffiti(livingUser, livingUser.get_active_hand()))
+			return
+	. = ..()

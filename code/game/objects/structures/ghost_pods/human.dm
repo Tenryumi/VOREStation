@@ -25,7 +25,7 @@
 	var/list/clothing_possibilities
 
 /obj/structure/ghost_pod/ghost_activated/human/Initialize()
-	..()
+	. = ..()
 
 	handle_clothing_setup()
 
@@ -102,7 +102,7 @@
 		E.description_antag = "This is a 'disguised' emag, to make your escape from wherever you happen to be trapped."
 		H.equip_to_appropriate_slot(E)
 
-	var/newname = sanitize(input(H, "Your mind feels foggy, and you recall your name might be [H.real_name]. Would you like to change your name?", "Name change") as null|text, MAX_NAME_LEN)
+	var/newname = sanitize(tgui_input_text(H, "Your mind feels foggy, and you recall your name might be [H.real_name]. Would you like to change your name?", "Name change", null, MAX_NAME_LEN), MAX_NAME_LEN)
 	if (newname)
 		H.real_name = newname
 
@@ -153,7 +153,7 @@
 	var/list/clothing_possibilities
 
 /obj/structure/ghost_pod/manual/human/Initialize()
-	..()
+	. = ..()
 
 	handle_clothing_setup()
 
@@ -224,7 +224,7 @@
 		var/obj/item/C = new newpath(H)
 		H.equip_to_appropriate_slot(C)
 
-	var/newname = sanitize(input(H, "Your mind feels foggy, and you recall your name might be [H.real_name]. Would you like to change your name?", "Name change") as null|text, MAX_NAME_LEN)
+	var/newname = sanitize(tgui_input_text(H, "Your mind feels foggy, and you recall your name might be [H.real_name]. Would you like to change your name?", "Name change", null, MAX_NAME_LEN), MAX_NAME_LEN)
 	if (newname)
 		H.real_name = newname
 

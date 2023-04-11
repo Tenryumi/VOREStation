@@ -124,7 +124,8 @@
 	if(default_deconstruction_crowbar(user, W))
 		return
 	if(istype(W, /obj/item/device/multitool))
-		var/new_ident = input("Enter a new ident tag.", name, comp_id) as null|text
+		var/new_ident = tgui_input_text(usr, "Enter a new ident tag.", name, comp_id, MAX_NAME_LEN)
+		new_ident = sanitize(new_ident,MAX_NAME_LEN)
 		if(new_ident && user.Adjacent(src))
 			comp_id = new_ident
 		return
@@ -150,7 +151,7 @@
 		return
 	if(!starter)
 		return
-	overlays.Cut()
+	cut_overlays()
 
 	rpm = 0.9* rpm + 0.1 * rpmtarget
 	var/datum/gas_mixture/environment = inturf.return_air()
@@ -172,13 +173,13 @@
 			rpmtarget = 0
 
 	if(rpm>50000)
-		overlays += image('icons/obj/pipes.dmi', "comp-o4", FLY_LAYER)
+		add_overlay(image('icons/obj/pipes.dmi', "comp-o4", FLY_LAYER))
 	else if(rpm>10000)
-		overlays += image('icons/obj/pipes.dmi', "comp-o3", FLY_LAYER)
+		add_overlay(image('icons/obj/pipes.dmi', "comp-o3", FLY_LAYER))
 	else if(rpm>2000)
-		overlays += image('icons/obj/pipes.dmi', "comp-o2", FLY_LAYER)
+		add_overlay(image('icons/obj/pipes.dmi', "comp-o2", FLY_LAYER))
 	else if(rpm>500)
-		overlays += image('icons/obj/pipes.dmi', "comp-o1", FLY_LAYER)
+		add_overlay(image('icons/obj/pipes.dmi', "comp-o1", FLY_LAYER))
 	 //TODO: DEFERRED
 
 
@@ -248,7 +249,7 @@
 		return
 	if(!compressor.starter)
 		return
-	overlays.Cut()
+	cut_overlays()
 
 	// This is the power generation function. If anything is needed it's good to plot it in EXCEL before modifying
 	// the TURBGENQ and TURBGENG values
@@ -271,7 +272,7 @@
 
 	// If it works, put an overlay that it works!
 	if(lastgen > 100)
-		overlays += image('icons/obj/pipes.dmi', "turb-o", FLY_LAYER)
+		add_overlay(image('icons/obj/pipes.dmi', "turb-o", FLY_LAYER))
 
 	updateDialog()
 
@@ -318,7 +319,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /obj/machinery/computer/turbine_computer/Initialize()
-	. = ..()
+	..()
 	return INITIALIZE_HINT_LATELOAD
 
 /obj/machinery/computer/turbine_computer/LateInitialize()
@@ -337,7 +338,8 @@
 
 /obj/machinery/computer/turbine_computer/attackby(obj/item/W, mob/user)
 	if(istype(W, /obj/item/device/multitool))
-		var/new_ident = input("Enter a new ident tag.", name, id) as null|text
+		var/new_ident = tgui_input_text(usr, "Enter a new ident tag.", name, id, MAX_NAME_LEN)
+		new_ident = sanitize(new_ident,MAX_NAME_LEN)
 		if(new_ident && user.Adjacent(src))
 			id = new_ident
 		return

@@ -6,15 +6,15 @@
 	name = "plain choker"
 	slot_flags = SLOT_TIE | SLOT_OCLOTHING
 	desc = "A simple, plain choker. Or maybe it's a collar? Use in-hand to customize it."
-	icon = 'icons/obj/clothing/ties_vr.dmi'
-	icon_override = 'icons/mob/ties_vr.dmi'
+	icon = 'icons/inventory/accessory/item_vr.dmi'
+	icon_override = 'icons/inventory/accessory/mob_vr.dmi'
 	icon_state = "choker_cst"
 	item_state = "choker_cst"
 	overlay_state = "choker_cst"
 	var/customized = 0
 	var/icon_previous_override
 	sprite_sheets = list(
-		SPECIES_TESHARI = 'icons/mob/species/seromi/ties_vr.dmi'
+		SPECIES_TESHARI = 'icons/inventory/accessory/mob_vr_teshari.dmi'
 		)
 
 //Forces different sprite sheet on equip
@@ -46,9 +46,9 @@
 
 /obj/item/clothing/accessory/choker/attack_self(mob/user as mob)
 	if(!customized)
-		var/design = input(user,"Descriptor?","Pick descriptor","") in list("plain","simple","ornate","elegant","opulent")
-		var/material = input(user,"Material?","Pick material","") in list("leather","velvet","lace","fabric","latex","plastic","metal","chain","silver","gold","platinum","steel","bead","ruby","sapphire","emerald","diamond")
-		var/type = input(user,"Type?","Pick type","") in list("choker","collar","necklace")
+		var/design = tgui_input_list(user,"Descriptor?","Pick descriptor","Descriptor", list("plain","simple","ornate","elegant","opulent"))
+		var/material = tgui_input_list(user,"Material?","Pick material","Material", list("leather","velvet","lace","fabric","latex","plastic","metal","chain","silver","gold","platinum","steel","bead","ruby","sapphire","emerald","diamond"))
+		var/type = tgui_input_list(user,"Type?","Pick type","Type", list("choker","collar","necklace"))
 		name = "[design] [material] [type]"
 		desc = "A [type], made of [material]. It's rather [design]."
 		customized = 1
@@ -58,14 +58,14 @@
 
 /obj/item/clothing/accessory/collar
 	slot_flags = SLOT_TIE | SLOT_OCLOTHING
-	icon = 'icons/obj/clothing/ties_vr.dmi'
-	icon_override = 'icons/mob/ties_vr.dmi'
+	icon = 'icons/inventory/accessory/item_vr.dmi'
+	icon_override = 'icons/inventory/accessory/mob_vr.dmi'
 	icon_state = "collar_blk"
 	var/writtenon = 0
 	var/icon_previous_override
 	sprite_sheets = list(
-		SPECIES_TESHARI = 'icons/mob/species/seromi/ties_vr.dmi'
-		)
+		SPECIES_TESHARI = 'icons/inventory/accessory/mob_vr_teshari.dmi'
+	)
 
 //Forces different sprite sheet on equip
 /obj/item/clothing/accessory/collar/New()
@@ -124,7 +124,7 @@
 	if(usr.stat) return
 
 	if(!jingled)
-		usr.audible_message("[usr] jingles the [src]'s bell.")
+		usr.audible_message("[usr] jingles the [src]'s bell.", runemessage = "jingle")
 		playsound(src, 'sound/items/pickup/ring.ogg', 50, 1)
 		jingled = 1
 		addtimer(CALLBACK(src, .proc/jingledreset), 50)
@@ -145,7 +145,7 @@
 	var/datum/radio_frequency/radio_connection
 
 /obj/item/clothing/accessory/collar/shock/Initialize()
-	..()
+	. = ..()
 	radio_connection = radio_controller.add_object(src, frequency, RADIO_CHAT) // Makes it so you don't need to change the frequency off of default for it to work.
 
 /obj/item/clothing/accessory/collar/shock/Destroy() //Clean up your toys when you're done.
@@ -167,7 +167,7 @@
 			var/new_frequency = sanitize_frequency(frequency + text2num(href_list["freq"]))
 			set_frequency(new_frequency)
 		if(href_list["tag"])
-			var/str = copytext(reject_bad_text(input(usr,"Tag text?","Set tag","")),1,MAX_NAME_LEN)
+			var/str = copytext(reject_bad_text(tgui_input_text(usr,"Tag text?","Set tag","",MAX_NAME_LEN)),1,MAX_NAME_LEN)
 			if(!str || !length(str))
 				to_chat(usr,"<span class='notice'>[name]'s tag set to be blank.</span>")
 				name = initial(name)
@@ -262,13 +262,28 @@
 	item_state = "collar_pnk"
 	overlay_state = "collar_pnk"
 
+/obj/item/clothing/accessory/collar/cowbell
+	name = "cowbell collar"
+	desc = "A collar for your little pets... or the big ones."
+	icon_state = "collar_cowbell"
+	item_state = "collar_cowbell_overlay"
+	overlay_state = "collar_cowbell_overlay"
+
+/obj/item/clothing/accessory/collar/collarplanet_earth
+	name = "planet collar"
+	desc = "A collar featuring a surprisingly detailed replica of a earth-like planet surrounded by a weak battery powered force shield. There is a button to turn it off."
+	icon_state = "collarplanet_earth"
+	item_state = "collarplanet_earth"
+	overlay_state = "collarplanet_earth"
+
+
 /obj/item/clothing/accessory/collar/holo
 	name = "Holo-collar"
 	desc = "An expensive holo-collar for the modern day pet."
 	icon_state = "collar_holo"
 	item_state = "collar_holo"
 	overlay_state = "collar_holo"
-	matter = list(DEFAULT_WALL_MATERIAL = 50)
+	matter = list(MAT_STEEL = 50)
 
 /obj/item/clothing/accessory/collar/holo/indigestible
 	desc = "A special variety of the holo-collar that seems to be made of a very durable fabric that fits around the neck."
@@ -285,7 +300,7 @@
 			return
 		to_chat(user,"<span class='notice'>You adjust the [name]'s tag.</span>")
 
-	var/str = copytext(reject_bad_text(input(user,"Tag text?","Set tag","")),1,MAX_NAME_LEN)
+	var/str = copytext(reject_bad_text(tgui_input_text(user,"Tag text?","Set tag","",MAX_NAME_LEN)),1,MAX_NAME_LEN)
 
 	if(!str || !length(str))
 		to_chat(user,"<span class='notice'>[name]'s tag set to be blank.</span>")
@@ -322,7 +337,7 @@
 	if(!(istype(user.get_active_hand(),I)) || !(istype(user.get_inactive_hand(),src)) || (user.stat))
 		return
 
-	var/str = copytext(reject_bad_text(input(user,"Tag text?","Set tag","")),1,MAX_NAME_LEN)
+	var/str = copytext(reject_bad_text(tgui_input_text(user,"Tag text?","Set tag","",MAX_NAME_LEN)),1,MAX_NAME_LEN)
 
 	if(!str || !length(str))
 		if(!writtenon)
@@ -349,7 +364,7 @@
 	icon_state = "holster_machete"
 	slot = ACCESSORY_SLOT_WEAPON
 	concealed_holster = 0
-	can_hold = list(/obj/item/weapon/material/knife/machete)
+	can_hold = list(/obj/item/weapon/material/knife/machete, /obj/item/weapon/kinetic_crusher/machete)
 	//sound_in = 'sound/effects/holster/sheathin.ogg'
 	//sound_out = 'sound/effects/holster/sheathout.ogg'
 
@@ -360,9 +375,350 @@
 	desc = "A silver medal awarded to a group which has demonstrated exceptional teamwork to achieve a notable feat."
 
 /obj/item/clothing/accessory/medal/silver/unity/tabiranth
-	icon = 'icons/obj/clothing/ties_vr.dmi'
-	icon_override = 'icons/mob/ties_vr.dmi'
+	icon = 'icons/inventory/accessory/item_vr.dmi'
+	icon_override = 'icons/inventory/accessory/mob_vr.dmi'
 	icon_state = "silverthree"
 	item_state = "silverthree"
 	overlay_state = "silverthree"
-	desc = "A silver medal awarded to a group which has demonstrated exceptional teamwork to achieve a notable feat. This one has two bronze service stars, denoting that it has been awarded three times."
+	desc = "A silver medal awarded to a group which has demonstrated exceptional teamwork to achieve a notable feat. This one has three bronze service stars, denoting that it has been awarded four times."
+
+/obj/item/clothing/accessory/talon
+	name = "Talon pin"
+	desc = "A collectable enamel pin that resembles ITV Talon's ship logo."
+	icon = 'icons/inventory/accessory/item_vr.dmi'
+	icon_override = 'icons/inventory/accessory/mob_vr.dmi'
+	icon_state = "talon_pin"
+	item_state = "talonpin"
+	overlay_state = "talonpin"
+
+//Casino Sentient Prize Collar
+
+/obj/item/clothing/accessory/collar/casinosentientprize
+	name = "disabled Sentient Prize Collar"
+	desc = "A collar worn by sentient prizes registered to a SPASM. Although the red text on it shows its disconnected and nonfunctional."
+
+	icon_state = "casinoslave"
+	item_state = "casinoslave"
+	overlay_state = "casinoslave"
+
+	var/sentientprizename = null	//Name for system to put on collar description
+	var/ownername = null	//Name for system to put on collar description
+	var/sentientprizeckey = null	//Ckey for system to check who is the person and ensure no abuse of system or errors
+	var/sentientprizeflavor = null	//Description to show on the SPASM
+	var/sentientprizeooc = null		//OOC text to show on the SPASM
+
+/obj/item/clothing/accessory/collar/casinosentientprize/attack_self(mob/user as mob)
+	//keeping it blank so people don't tag and reset collar status
+
+/obj/item/clothing/accessory/collar/casinosentientprize_fake
+	name = "Sentient Prize Collar"
+	desc = "A collar worn by sentient prizes registered to a SPASM. This one has been disconnected from the system and is now an accessory!"
+
+	icon_state = "casinoslave_owned"
+	item_state = "casinoslave_owned"
+	overlay_state = "casinoslave_owned"
+
+//The gold trim from one of the qipaos, separated to an accessory to preserve the color
+/obj/item/clothing/accessory/qipaogold
+	name = "gold trim"
+	desc = "Gold trim belonging to a qipao. Why would you remove this?"
+	icon = 'icons/inventory/accessory/item_vr.dmi'
+	icon_override = 'icons/inventory/accessory/mob_vr.dmi'
+	icon_state = "qipaogold"
+	item_state = "qipaogold"
+	overlay_state = "qipaogold"
+
+//Antediluvian accessory set
+/obj/item/clothing/accessory/antediluvian
+	name = "antediluvian bracers"
+	desc = "A pair of metal bracers with gold inlay. They're thin and light."
+	icon = 'icons/inventory/accessory/item_vr.dmi'
+	icon_override = 'icons/inventory/accessory/mob_vr.dmi'
+	icon_state = "antediluvian"
+	item_state = "antediluvian"
+	overlay_state = "antediluvian"
+	body_parts_covered = ARMS
+
+/obj/item/clothing/accessory/antediluvian/loincloth
+	name = "antediluvian loincloth"
+	desc = "A lengthy loincloth that drapes over the loins, obviously. It's quite long."
+	icon_state = "antediluvian_loin"
+	item_state = "antediluvian_loin"
+	overlay_state = "antediluvian_loin"
+	body_parts_covered = LOWER_TORSO
+
+//The cloaks below belong to this _vr file but their sprites are contained in non-_vr icon files due to
+//the way the poncho/cloak equipped() proc works. Sorry for the inconvenience
+/obj/item/clothing/accessory/poncho/roles/cloak/antediluvian
+	name = "antediluvian cloak"
+	desc = "A regal looking cloak of white with specks of gold woven into the fabric."
+	icon_state = "antediluvian_cloak"
+	item_state = "antediluvian_cloak"
+
+//Other clothes that I'm too lazy to port to Polaris
+/obj/item/clothing/accessory/poncho/roles/cloak/chapel
+	name = "bishop's cloak"
+	desc = "An elaborate white and gold cloak."
+	icon_state = "bishopcloak"
+	item_state = "bishopcloak"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/chapel/alt
+	name = "antibishop's cloak"
+	desc = "An elaborate black and gold cloak. It looks just a little bit evil."
+	icon_state = "blackbishopcloak"
+	item_state = "blackbishopcloak"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/half
+	name = "rough half cloak"
+	desc = "The latest fashion innovations by the Nanotrasen Uniform & Fashion Department have provided the brilliant invention of slicing a regular cloak in half! All the ponce, half the cost!"
+	icon_state = "roughcloak"
+	item_state = "roughcloak"
+	action_button_name = "Adjust Cloak"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/half/update_clothing_icon()
+	. = ..()
+	if(ismob(src.loc))
+		var/mob/M = src.loc
+		M.update_inv_wear_suit()
+
+/obj/item/clothing/accessory/poncho/roles/cloak/half/attack_self(mob/user as mob)
+	if(src.icon_state == initial(icon_state))
+		src.icon_state = "[icon_state]_open"
+		src.item_state = "[item_state]_open"
+		flags_inv = HIDETIE|HIDEHOLSTER
+		to_chat(user, "You flip the cloak over your shoulder.")
+	else
+		src.icon_state = initial(icon_state)
+		src.item_state = initial(item_state)
+		flags_inv = HIDEHOLSTER
+		to_chat(user, "You pull the cloak over your shoulder.")
+	update_clothing_icon()
+
+/obj/item/clothing/accessory/poncho/roles/cloak/shoulder
+	name = "shoulder cloak"
+	desc = "A small cape that primarily covers the left shoulder. Might help you stand out more, not necessarily for the right reasons."
+	icon_state = "cape_left"
+	item_state = "cape_left"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/shoulder/right
+	desc = "A small cape that primarily covers the right shoulder. It might look a tad cooler if it was longer."
+	icon_state = "cape_right"
+	item_state = "cape_right"
+
+//Mantles
+/obj/item/clothing/accessory/poncho/roles/cloak/mantle
+	name = "shoulder mantle"
+	desc = "Not a cloak and not really a cape either, but a silky fabric that rests on the neck and shoulders alone."
+	icon_state = "mantle"
+	item_state = "mantle"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/mantle/cargo
+	name = "cargo mantle"
+	desc = "A shoulder mantle bearing the colors of the Supply department, with a gold lapel emblazoned upon the front."
+	icon_state = "qmmantle"
+	item_state = "qmmantle"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/mantle/security
+	name = "security mantle"
+	desc = "A shoulder mantle bearing the colors of the Security department, featuring rugged molding around the collar."
+	icon_state = "hosmantle"
+	item_state = "hosmantle"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/mantle/engineering
+	name = "engineering mantle"
+	desc = "A shoulder mantle bearing the colors of the Engineering department, accenting the pristine white fabric."
+	icon_state = "cemantle"
+	item_state = "cemantle"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/mantle/research
+	name = "research mantle"
+	desc = "A shoulder mantle bearing the colors of the Research department, the material slick and hydrophobic."
+	icon_state = "rdmantle"
+	item_state = "rdmantle"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/mantle/medical
+	name = "medical mantle"
+	desc = "A shoulder mantle bearing the general colors of the Medical department, dyed a sterile nitrile cyan."
+	icon_state = "cmomantle"
+	item_state = "cmomantle"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/mantle/hop
+	name = "head of personnel mantle"
+	desc = "A shoulder mantle bearing the colors of the Head of Personnel's uniform, featuring the typical royal blue contrasted by authoritative red."
+	icon_state = "hopmantle"
+	item_state = "hopmantle"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/mantle/cap
+	name = "site manager mantle"
+	desc = "A shoulder mantle bearing the colors usually found on a Site Manager, a commanding blue with regal gold inlay."
+	icon_state = "capmantle"
+	item_state = "capmantle"
+
+//Boat cloaks
+/obj/item/clothing/accessory/poncho/roles/cloak/boat
+	name = "boat cloak"
+	desc = "A cloak that might've been worn on boats once or twice. It's just a flappy cape otherwise."
+	icon_state = "boatcloak"
+	item_state = "boatcloak"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/boat/cap
+	name = "site manager boat cloak"
+	icon_state = "capboatcloak"
+	item_state = "capboatcloak"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/boat/hop
+	name = "head of personnel boat cloak"
+	icon_state = "hopboatcloak"
+	item_state = "hopboatcloak"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/boat/security
+	name = "security boat cloak"
+	icon_state = "secboatcloak"
+	item_state = "secboatcloak"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/boat/engineering
+	name = "engineering boat cloak"
+	icon_state = "engboatcloak"
+	item_state = "engboatcloak"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/boat/atmos
+	name = "atmospherics boat cloak"
+	icon_state = "atmosboatcloak"
+	item_state = "atmosboatcloak"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/boat/medical
+	name = "medical boat cloak"
+	icon_state = "medboatcloak"
+	item_state = "medboatcloak"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/boat/service
+	name = "service boat cloak"
+	icon_state = "botboatcloak"
+	item_state = "botboatcloak"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/boat/cargo
+	name = "cargo boat cloak"
+	icon_state = "supboatcloak"
+	item_state = "supboatcloak"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/boat/mining
+	name = "mining boat cloak"
+	icon_state = "minboatcloak"
+	item_state = "minboatcloak"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/boat/science
+	name = "research boat cloak"
+	icon_state = "sciboatcloak"
+	item_state = "sciboatcloak"
+
+//Shrouds
+/obj/item/clothing/accessory/poncho/roles/cloak/shroud
+	name = "shroud cape"
+	desc = "A sharp looking cape that covers more of one side than the other. Just a bit edgy."
+	icon_state = "shroud"
+	item_state = "shroud"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/shroud/cap
+	name = "site manager shroud"
+	icon_state = "capshroud"
+	item_state = "capshroud"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/shroud/hop
+	name = "head of personnel shroud"
+	icon_state = "hopshroud"
+	item_state = "hopshroud"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/shroud/security
+	name = "security shroud"
+	icon_state = "secshroud"
+	item_state = "secshroud"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/shroud/engineering
+	name = "engineering shroud"
+	icon_state = "engshroud"
+	item_state = "engshroud"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/shroud/atmos
+	name = "atmospherics shroud"
+	icon_state = "atmosshroud"
+	item_state = "atmosshroud"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/shroud/medical
+	name = "medical shroud"
+	icon_state = "medshroud"
+	item_state = "medshroud"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/shroud/service
+	name = "service shroud"
+	icon_state = "botshroud"
+	item_state = "botshroud"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/shroud/cargo
+	name = "cargo shroud"
+	icon_state = "supshroud"
+	item_state = "supshroud"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/shroud/mining
+	name = "mining shroud"
+	icon_state = "minshroud"
+	item_state = "minshroud"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/shroud/science
+	name = "research shroud"
+	icon_state = "scishroud"
+	item_state = "scishroud"
+
+//Crop Jackets
+/obj/item/clothing/accessory/poncho/roles/cloak/crop_jacket
+	name = "white crop jacket"
+	desc = "A cut down jacket that looks like it's light enough to wear on top of some other clothes. This one's in plain white, more or less."
+	icon_state = "cropjacket_white"
+	item_state = "cropjacket_white"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/crop_jacket/blue
+	name = "blue crop jacket"
+	desc = "A cut down jacket that looks like it's light enough to wear on top of some other clothes. Let everyone know who's in control of the situation around here."
+	icon_state = "cropjacket_blue"
+	item_state = "cropjacket_blue"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/crop_jacket/red
+	name = "red crop jacket"
+	desc = "A cut down jacket that looks like it's light enough to wear on top of some other clothes. You could probably hide a holster under this without too much trouble."
+	icon_state = "cropjacket_red"
+	item_state = "cropjacket_red"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/crop_jacket/green
+	name = "green crop jacket"
+	desc = "A cut down jacket that looks like it's light enough to wear on top of some other clothes. The faded green tones bring to mind the smell of antiseptics."
+	icon_state = "cropjacket_green"
+	item_state = "cropjacket_green"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/crop_jacket/purple
+	name = "purple crop jacket"
+	desc = "A cut down jacket that looks like it's light enough to wear on top of some other clothes. This doesn't seem like very practical labwear."
+	icon_state = "cropjacket_purple"
+	item_state = "cropjacket_purple"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/crop_jacket/orange
+	name = "orange crop jacket"
+	desc = "A cut down jacket that looks like it's light enough to wear on top of some other clothes. Perfect for keeping cool whilst showing off your gains from shifting crates."
+	icon_state = "cropjacket_orange"
+	item_state = "cropjacket_orange"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/crop_jacket/charcoal
+	name = "charcoal crop jacket"
+	desc = "A cut down jacket that looks like it's light enough to wear on top of some other clothes. Dark and slightly edgy, just like its wearer."
+	icon_state = "cropjacket_charcoal"
+	item_state = "cropjacket_charcoal"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/crop_jacket/marine
+	name = "faded reflec crop jacket"
+	desc = "A cut down jacket that looks like it's light enough to wear on top of some other clothes. Seems to be made of a semi-reflective material, like an EMT's jacket."
+	icon_state = "cropjacket_marine"
+	item_state = "cropjacket_marine"
+
+/obj/item/clothing/accessory/poncho/roles/cloak/crop_jacket/drab
+	name = "drab crop jacket"
+	desc = "A cut down jacket that looks like it's light enough to wear on top of some other clothes. This one's a sort of olive-drab kind of colour."
+	icon_state = "cropjacket_drab"
+	item_state = "cropjacket_drab"
