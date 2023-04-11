@@ -67,8 +67,6 @@
 		refactory = locate() in humanform.internal_organs
 		verbs |= /mob/living/proc/ventcrawl
 		verbs |= /mob/living/proc/hide
-		verbs |= /mob/living/simple_mob/protean_blob/proc/useradio
-		verbs |= /mob/living/simple_mob/protean_blob/proc/appearanceswitch
 	else
 		update_icon()
 
@@ -452,13 +450,6 @@ var/global/list/disallowed_protean_accessories = list(
 			root.remove_from_mob(I)
 
 /mob/living/carbon/human/proc/nano_outofblob(var/mob/living/simple_mob/protean_blob/blob, force)
-	set name = "Utilize Radio"
-	set desc = "Allows a protean blob to interact with its internal radio."
-	set category = "Abilities"
-
-	if(mob_radio)
-		mob_radio.tgui_interact(src)
-
 	if(!istype(blob))
 		return
 
@@ -475,14 +466,14 @@ var/global/list/disallowed_protean_accessories = list(
 
 	if(buckled)
 		buckled.unbuckle_mob()
-	
+
 	if(LAZYLEN(buckled_mobs))
 		for(var/buckledmob in buckled_mobs)
 			riding_datum.force_dismount(buckledmob)
-	
+
 	if(pulledby)
 		pulledby.stop_pulling()
-	
+
 	stop_pulling()
 
 	//Stop healing if we are
