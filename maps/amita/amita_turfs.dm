@@ -34,7 +34,6 @@ AMITA_TURF_CREATE(/turf/simulated/floor/outdoors/grass/sif)
 	icon_state = "grass_amita"
 	initial_flooring = /decl/flooring/grass/amita
 	edge_blending_priority = 5
-	tree_chance = 10
 	grass_chance = 1
 
 	grass_types = list(
