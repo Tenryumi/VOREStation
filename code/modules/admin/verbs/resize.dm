@@ -5,11 +5,11 @@
     if(!check_rights(R_ADMIN, R_FUN))
         return
     
-    var/size_multiplier = input(usr, "Input size multiplier.", "Resize", 1) as num|null
+    var/size_multiplier = tgui_input_number(usr, "Input size multiplier.", "Resize", 1)
     if(!size_multiplier)
         return //cancelled
 
-    size_multiplier = clamp(size_multiplier, 0.01, 1000)
+    size_multiplier = clamp(size_multiplier, -50, 50)   //VOREStation Edit - being able to make people upside down is fun. Also 1000 is way, WAY too big. Honestly 50 is too big but at least you can see 50 and it doesn't break the rendering.
     var/can_be_big = L.has_large_resize_bounds()
     var/very_big = is_extreme_size(size_multiplier)
 

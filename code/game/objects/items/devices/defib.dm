@@ -13,6 +13,7 @@
 	throwforce = 6
 	preserve_item = 1
 	w_class = ITEMSIZE_LARGE
+	unacidable = TRUE
 	origin_tech = list(TECH_BIO = 4, TECH_POWER = 2)
 	action_button_name = "Remove/Replace Paddles"
 
@@ -86,7 +87,7 @@
 		reattach_paddles(user)
 	else if(istype(W, /obj/item/weapon/cell))
 		if(bcell)
-			to_chat(user, "<span class='notice'>\the [src] already has a cell.</span>")
+			to_chat(user, "<span class='notice'>\The [src] already has a cell.</span>")
 		else
 			if(!user.unEquip(W))
 				return
@@ -392,7 +393,7 @@
 	user.visible_message("<span class='warning'>\The [user] begins to place [src] on [H]'s chest.</span>", "<span class='warning'>You begin to place [src] on [H]'s chest...</span>")
 	if(!do_after(user, 30, H))
 		return
-	user.visible_message("<span class='notice'>\The [user] places [src] on [H]'s chest.</span>", "<span class='warning'>You place [src] on [H]'s chest.</span>")
+	user.visible_message("<b>\The [user]</b> places [src] on [H]'s chest.", "<span class='warning'>You place [src] on [H]'s chest.</span>")
 	playsound(src, 'sound/machines/defib_charge.ogg', 50, 0)
 
 	var/error = can_defib(H)
@@ -496,6 +497,11 @@
 	M.Weaken(rand(10,25))
 	M.updatehealth()
 	apply_brain_damage(M)
+	// VOREStation Edits Start: Defib pain
+	if(istype(M.species, /datum/species/xenochimera)) // Only do the following to Xenochimera. Handwave this however you want, this is to balance defibs on an alien race.
+		M.adjustHalLoss(220) // This hurts a LOT, stacks on top of the previous halloss.
+		M.feral += 100 // If they somehow weren't already feral, force them feral by increasing ferality var directly, to avoid any messy checks. handle_feralness() will immediately set our feral properly according to halloss anyhow.
+	// VOREStation Edits End
 	// SSgame_master.adjust_danger(-20) // VOREStation Edit - We don't use SSgame_master yet.
 
 /obj/item/weapon/shockpaddles/proc/apply_brain_damage(mob/living/carbon/human/H)

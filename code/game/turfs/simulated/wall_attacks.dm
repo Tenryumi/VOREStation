@@ -9,7 +9,7 @@
 	if(density)
 		can_open = WALL_OPENING
 		//flick("[material.icon_base]fwall_opening", src)
-		density = 0
+		density = FALSE
 		blocks_air = ZONE_BLOCKED
 		update_icon()
 		update_air()
@@ -21,7 +21,7 @@
 	else
 		can_open = WALL_OPENING
 		//flick("[material.icon_base]fwall_closing", src)
-		density = 1
+		density = TRUE
 		blocks_air = AIR_BLOCKED
 		update_icon()
 		update_air()
@@ -131,8 +131,12 @@
 
 	user.setClickCooldown(user.get_attack_speed(W))
 
-	if(!construction_stage && try_graffiti(user, W))
-		return
+/*
+//As with the floors, only this time it works AND tries pushing the wall after it's done. 
+	if(!construction_stage && user.a_intent == I_HELP)
+		if(try_graffiti(user,W))
+			return
+*/
 
 	if (!user.IsAdvancedToolUser())
 		to_chat(user, "<span class='warning'>You don't have the dexterity to do this!</span>")
@@ -171,7 +175,7 @@
 				return
 
 		// Create a ceiling to shield from the weather
-		if(outdoors)
+		if(is_outdoors())
 			if(expended_tile || R.use(1)) // Don't need to check adjacent turfs for a wall, we're building on one
 				make_indoors()
 				if(!expended_tile) // Would've already played a sound
@@ -239,6 +243,7 @@
 		return
 
 	// Basic dismantling.
+	//var/dismantle_toolspeed = 0
 	if(isnull(construction_stage) || !reinf_material)
 
 		var/cut_delay = 60 - material.cut_delay
@@ -258,6 +263,7 @@
 		else if(istype(W,/obj/item/weapon/melee/energy/blade))
 			dismantle_sound = "sparks"
 			dismantle_verb = "slicing"
+			//dismantle_toolspeed = 1
 			cut_delay *= 0.5
 		else if(istype(W,/obj/item/weapon/pickaxe))
 			var/obj/item/weapon/pickaxe/P = W
@@ -271,7 +277,7 @@
 			if(dismantle_sound)
 				playsound(src, dismantle_sound, 100, 1)
 
-			if(cut_delay<0)
+			if(cut_delay < 0)
 				cut_delay = 0
 
 			if(!do_after(user,cut_delay * W.toolspeed))
@@ -385,7 +391,7 @@
 					construction_stage = 0
 					user.update_examine_panel(src)
 					update_icon()
-					to_chat(user, "<span class='notice'>The slice through the support rods.</span>")
+					to_chat(user, "<span class='notice'>You slice through the support rods.</span>")
 					return
 			if(0)
 				if(W.is_crowbar())

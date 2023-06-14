@@ -19,8 +19,9 @@
 	selected_image = image(icon = buildmode_hud, loc = src, icon_state = "ai_sel")
 
 /mob/living/Destroy()
-	dsoverlay.loc = null //I'll take my coat with me
-	dsoverlay = null
+	if(dsoverlay)
+		dsoverlay.loc = null //I'll take my coat with me
+		dsoverlay = null
 	if(nest) //Ew.
 		if(istype(nest, /obj/structure/prop/nest))
 			var/obj/structure/prop/nest/N = nest
@@ -31,10 +32,34 @@
 		nest = null
 	if(buckled)
 		buckled.unbuckle_mob(src, TRUE)
+	//VOREStation Addition Start
+	if(tf_mob_holder && tf_mob_holder.loc == src)
+		tf_mob_holder.ckey = ckey
+		if(isbelly(loc))
+			tf_mob_holder.loc = loc
+			tf_mob_holder.forceMove(loc)
+		else
+			var/turf/get_dat_turf = get_turf(src)
+			tf_mob_holder.loc = get_dat_turf
+			tf_mob_holder.forceMove(get_dat_turf)
+		QDEL_LIST_NULL(tf_mob_holder.vore_organs)
+		tf_mob_holder.vore_organs = list()
+		for(var/obj/belly/B as anything in vore_organs)
+			B.loc = tf_mob_holder
+			B.forceMove(tf_mob_holder)
+			B.owner = tf_mob_holder
+			tf_mob_holder.vore_organs |= B
+			vore_organs -= B
+
+	if(tf_mob_holder)
+		tf_mob_holder = null
+	//VOREStation Addition End
 
 	qdel(selected_image)
 	QDEL_NULL(vorePanel) //VOREStation Add
 	QDEL_LIST_NULL(vore_organs) //VOREStation Add
+	temp_language_sources = null //VOREStation Add
+	temp_languages = null //VOREStation Add
 
 	if(LAZYLEN(organs))
 		organs_by_name.Cut()
@@ -71,16 +96,27 @@
 	if(!..())
 		return 0
 
-	usr.visible_message("<b>[src]</b> points to [A]")
+	usr.visible_message("<span class='filter_notice'><b>[src]</b> points to [A].</span>")
 	return 1
 
 /mob/living/verb/succumb()
-	set hidden = 1
-	if ((src.health < 0 && src.health > (5-src.getMaxHealth()))) // Health below Zero but above 5-away-from-death, as before, but variable
+	set name = "Succumb to death"
+	set category = "IC"
+	set desc = "Press this button if you are in crit and wish to die. Use this sparingly (ending a scene, no medical, etc.)"
+	var/confirm1 = tgui_alert(usr, "Pressing this button will kill you instantenously! Are you sure you wish to proceed?", "Confirm wish to succumb", list("No","Yes"))
+	var/confirm2 = "No"
+	if(confirm1 == "Yes")
+		confirm2 = tgui_alert(usr, "Pressing this buttom will really kill you, no going back", "Are you sure?", list("Yes", "No")) //Swapped answers to protect from accidental double clicks.
+	if (src.health < 0 && stat != DEAD && confirm1 == "Yes" && confirm2 == "Yes") // Checking both confirm1 and confirm2 for good measure. I don't trust TGUI.
 		src.death()
 		to_chat(src, "<font color='blue'>You have given up life and succumbed to death.</font>")
 	else
-		to_chat(src, "<font color='blue'>You are not injured enough to succumb to death!</font>")
+		if(stat == DEAD)
+			to_chat(src, "<font color='blue'>As much as you'd like, you can't die when already dead</font>")
+		else if(confirm1 == "No" || confirm2 == "No")
+			to_chat(src, "<font color='blue'>You chose to live another day.</font>")
+		else
+			to_chat(src, "<font color='blue'>You are not injured enough to succumb to death!</font>")
 
 /mob/living/proc/updatehealth()
 	if(status_flags & GODMODE)
@@ -156,13 +192,24 @@
 	if(amount > 0)
 		for(var/datum/modifier/M in modifiers)
 			if(!isnull(M.incoming_damage_percent))
+				if(M.energy_based)
+					M.energy_source.use(M.damage_cost*amount)
 				amount *= M.incoming_damage_percent
 			if(!isnull(M.incoming_brute_damage_percent))
+				if(M.energy_based)
+					M.energy_source.use(M.damage_cost*amount)
 				amount *= M.incoming_brute_damage_percent
 	else if(amount < 0)
 		for(var/datum/modifier/M in modifiers)
 			if(!isnull(M.incoming_healing_percent))
 				amount *= M.incoming_healing_percent
+
+	//VOREStation Additon Start
+	if(tf_mob_holder && tf_mob_holder.loc == src)
+		var/dmgmultiplier = tf_mob_holder.maxHealth / maxHealth
+		dmgmultiplier *= amount
+		tf_mob_holder.adjustBruteLoss(dmgmultiplier)
+	//VOREStation Additon End
 
 	bruteloss = min(max(bruteloss + amount, 0),(getMaxHealth()*2))
 	updatehealth()
@@ -176,8 +223,12 @@
 	if(amount > 0)
 		for(var/datum/modifier/M in modifiers)
 			if(!isnull(M.incoming_damage_percent))
+				if(M.energy_based)
+					M.energy_source.use(M.damage_cost*amount)
 				amount *= M.incoming_damage_percent
 			if(!isnull(M.incoming_oxy_damage_percent))
+				if(M.energy_based)
+					M.energy_source.use(M.damage_cost*amount)
 				amount *= M.incoming_oxy_damage_percent
 	else if(amount < 0)
 		for(var/datum/modifier/M in modifiers)
@@ -200,8 +251,12 @@
 	if(amount > 0)
 		for(var/datum/modifier/M in modifiers)
 			if(!isnull(M.incoming_damage_percent))
+				if(M.energy_based)
+					M.energy_source.use(M.damage_cost*amount)
 				amount *= M.incoming_damage_percent
 			if(!isnull(M.incoming_tox_damage_percent))
+				if(M.energy_based)
+					M.energy_source.use(M.damage_cost*amount)
 				amount *= M.incoming_tox_damage_percent
 	else if(amount < 0)
 		for(var/datum/modifier/M in modifiers)
@@ -230,14 +285,23 @@
 	if(amount > 0)
 		for(var/datum/modifier/M in modifiers)
 			if(!isnull(M.incoming_damage_percent))
+				if(M.energy_based)
+					M.energy_source.use(M.damage_cost*amount)
 				amount *= M.incoming_damage_percent
 			if(!isnull(M.incoming_fire_damage_percent))
+				if(M.energy_based)
+					M.energy_source.use(M.damage_cost*amount)
 				amount *= M.incoming_fire_damage_percent
 	else if(amount < 0)
 		for(var/datum/modifier/M in modifiers)
 			if(!isnull(M.incoming_healing_percent))
 				amount *= M.incoming_healing_percent
-
+	//VOREStation Additon Start
+	if(tf_mob_holder && tf_mob_holder.loc == src)
+		var/dmgmultiplier = tf_mob_holder.maxHealth / maxHealth
+		dmgmultiplier *= amount
+		tf_mob_holder.adjustFireLoss(dmgmultiplier)
+	//VOREStation Additon End
 	fireloss = min(max(fireloss + amount, 0),(getMaxHealth()*2))
 	updatehealth()
 
@@ -250,8 +314,12 @@
 	if(amount > 0)
 		for(var/datum/modifier/M in modifiers)
 			if(!isnull(M.incoming_damage_percent))
+				if(M.energy_based)
+					M.energy_source.use(M.damage_cost*amount)
 				amount *= M.incoming_damage_percent
 			if(!isnull(M.incoming_clone_damage_percent))
+				if(M.energy_based)
+					M.energy_source.use(M.damage_cost*amount)
 				amount *= M.incoming_clone_damage_percent
 	else if(amount < 0)
 		for(var/datum/modifier/M in modifiers)
@@ -283,6 +351,9 @@
 	if(status_flags & GODMODE)	return 0	//godmode
 	if(amount > 0)
 		for(var/datum/modifier/M in modifiers)
+			if(M.energy_based && (!isnull(M.incoming_hal_damage_percent) || !isnull(M.disable_duration_percent)))
+				M.energy_source.use(M.damage_cost*amount) // Cost of the Damage absorbed.
+				M.energy_source.use(M.energy_cost) // Cost of the Effect absorbed.
 			if(!isnull(M.incoming_damage_percent))
 				amount *= M.incoming_damage_percent
 			if(!isnull(M.incoming_hal_damage_percent))
@@ -313,7 +384,17 @@
 	return result
 
 /mob/living/proc/setMaxHealth(var/newMaxHealth)
-	health = (health/maxHealth) * (newMaxHealth) //VOREStation Add - Adjust existing health
+	var/h_mult = maxHealth / newMaxHealth	//VOREStation Add Start - Calculate change multiplier
+	if(bruteloss)							//In case a damage value is 0, divide by 0 bad
+		bruteloss = round(bruteloss / h_mult)		//Health is calculated on life based on damage types, so we update the damage and let life handle health
+	if(fireloss)
+		fireloss = round(fireloss / h_mult)
+	if(toxloss)
+		toxloss = round(toxloss / h_mult)
+	if(oxyloss)
+		oxyloss = round(oxyloss / h_mult)
+	if(cloneloss)
+		cloneloss = round(cloneloss / h_mult)	//VOREStation Add End
 	maxHealth = newMaxHealth
 
 /mob/living/Stun(amount)
@@ -559,12 +640,18 @@
 	SetStunned(0)
 	SetWeakened(0)
 
+	// undo various death related conveniences
+	sight = initial(sight)
+	see_in_dark = initial(see_in_dark)
+	see_invisible = initial(see_invisible)
+
 	// shut down ongoing problems
 	radiation = 0
 	nutrition = 400
 	bodytemperature = T20C
 	sdisabilities = 0
 	disabilities = 0
+	resting = FALSE
 
 	// fix blindness and deafness
 	blinded = 0
@@ -610,13 +697,13 @@
 	//VOREStation Edit Start - Making it so SSD people have prefs with fallback to original style.
 	if(config.allow_Metadata)
 		if(ooc_notes)
-			to_chat(usr, "[src]'s Metainfo:<br>[ooc_notes]")
+			to_chat(usr, "<span class='filter_notice'>[src]'s Metainfo:<br>[ooc_notes]</span>")
 		else if(client)
-			to_chat(usr, "[src]'s Metainfo:<br>[client.prefs.metadata]")
+			to_chat(usr, "<span class='filter_notice'>[src]'s Metainfo:<br>[client.prefs.metadata]</span>")
 		else
-			to_chat(usr, "[src] does not have any stored infomation!")
+			to_chat(usr, "<span class='filter_notice'>[src] does not have any stored infomation!</span>")
 	else
-		to_chat(usr, "OOC Metadata is not supported by this server!")
+		to_chat(usr, "<span class='filter_notice'>OOC Metadata is not supported by this server!</span>")
 	//VOREStation Edit End - Making it so SSD people have prefs with fallback to original style.
 
 	return
@@ -630,6 +717,9 @@
 		resist_grab()
 		if(!weakened)
 			process_resist()
+		else if(absorbed && isbelly(loc))			// Allow absorbed resistance
+			var/obj/belly/B = loc
+			B.relay_absorbed_resist(src)
 
 /mob/living/proc/process_resist()
 
@@ -683,7 +773,7 @@
 	set category = "IC"
 
 	resting = !resting
-	to_chat(src, "<span class='notice'>You are now [resting ? "resting" : "getting up"]</span>")
+	to_chat(src, "<span class='notice'>You are now [resting ? "resting" : "getting up"].</span>")
 	update_canmove()
 
 //called when the mob receives a bright flash
@@ -717,10 +807,8 @@
 /mob/living/proc/slip(var/slipped_on,stun_duration=8)
 	return 0
 
-/mob/living/carbon/drop_from_inventory(var/obj/item/W, var/atom/Target = null)
-	if(W in internal_organs)
-		return
-	..()
+/mob/living/carbon/drop_from_inventory(var/obj/item/W, var/atom/target = null)
+	return !(W in internal_organs) && ..()
 
 /mob/living/touch_map_edge()
 
@@ -833,24 +921,24 @@
 				if(!V.riding_datum) // If it has a riding datum, the datum handles moving the pixel_ vars.
 					pixel_y = V.mob_offset_y
 		else if(buckled)
-			anchored = 1
+			anchored = TRUE
 			canmove = 1 //The line above already makes the chair not swooce away if the sitter presses a button. No need to incapacitate them as a criminally large amount of mechanics read this var as a type of stun.
 			if(istype(buckled))
 				if(buckled.buckle_lying != -1)
 					lying = buckled.buckle_lying
 					canmove = buckled.buckle_movable
 				if(buckled.buckle_movable)
-					anchored = 0
+					anchored = FALSE
 					canmove = 1
 		else
 			lying = incapacitated(INCAPACITATION_KNOCKDOWN)
 			canmove = !incapacitated(INCAPACITATION_DISABLED)
 
 	if(lying)
-		density = 0
-		if(l_hand) 
+		density = FALSE
+		if(l_hand)
 			unEquip(l_hand)
-		if(r_hand) 
+		if(r_hand)
 			unEquip(r_hand)
 		for(var/obj/item/weapon/holder/holder in get_mob_riding_slots())
 			unEquip(holder)
@@ -868,9 +956,8 @@
 		update_transform()
 		//VOREStation Add
 		if(lying && LAZYLEN(buckled_mobs))
-			for(var/rider in buckled_mobs)
-				var/mob/living/L = rider
-				if(buckled_mobs[rider] != "riding")
+			for(var/mob/living/L as anything in buckled_mobs)
+				if(buckled_mobs[L] != "riding")
 					continue // Only boot off riders
 				if(riding_datum)
 					riding_datum.force_dismount(L)
@@ -1005,14 +1092,13 @@
 		swap_hand()
 
 /mob/living/throw_item(atom/target)
-	src.throw_mode_off()
-	if(usr.stat || !target)
-		return
-	if(target.type == /obj/screen) return
+	if(incapacitated() || !target || istype(target, /obj/screen))
+		return FALSE
 
 	var/atom/movable/item = src.get_active_hand()
 
-	if(!item) return
+	if(!item)
+		return FALSE
 
 	var/throw_range = item.throw_range
 	if (istype(item, /obj/item/weapon/grab))
@@ -1033,9 +1119,35 @@
 					N.adjustBruteLoss(rand(10,30))
 			src.drop_from_inventory(G)
 
-	src.drop_from_inventory(item)
-	if(!item || !isturf(item.loc))
-		return
+			src.visible_message("<span class='warning'>[src] has thrown [item].</span>")
+
+			if((isspace(src.loc)) || (src.lastarea?.has_gravity == 0))
+				src.inertia_dir = get_dir(target, src)
+				step(src, inertia_dir)
+			item.throw_at(target, throw_range, item.throw_speed, src)
+			item.throwing = 1 //Small edit so thrown interactions actually work!
+			return TRUE
+		else
+			return FALSE
+
+	if(!item)
+		return FALSE //Grab processing has a chance of returning null
+
+	if(a_intent == I_HELP && Adjacent(target) && isitem(item) && ishuman(target))
+		var/obj/item/I = item
+		var/mob/living/carbon/human/H = target
+		if(H.in_throw_mode && H.a_intent == I_HELP && unEquip(I))
+			H.put_in_hands(I) // If this fails it will just end up on the floor, but that's fitting for things like dionaea.
+			visible_message("<span class='filter_notice'><b>[src]</b> hands \the [H] \a [I].</span>", SPAN_NOTICE("You give \the [target] \a [I]."))
+		else
+			to_chat(src, SPAN_NOTICE("You offer \the [I] to \the [target]."))
+			do_give(H)
+		return TRUE
+
+	drop_from_inventory(item)
+
+	if(!item || QDELETED(item))
+		return TRUE //It may not have thrown, but it sure as hell left your hand successfully.
 
 	//actually throw it!
 	src.visible_message("<span class='warning'>[src] has thrown [item].</span>")
@@ -1056,6 +1168,7 @@
 
 
 	item.throw_at(target, throw_range, item.throw_speed, src)
+	return TRUE
 
 /mob/living/get_sound_env(var/pressure_factor)
 	if (hallucination)
@@ -1107,15 +1220,15 @@
 /mob/living/vv_get_header()
 	. = ..()
 	. += {"
-		<a href='?_src_=vars;rename=\ref[src]'><b>[src]</b></a><font size='1'>
-		<br><a href='?_src_=vars;datumedit=\ref[src];varnameedit=ckey'>[ckey ? ckey : "No ckey"]</a> / <a href='?_src_=vars;datumedit=\ref[src];varnameedit=real_name'>[real_name ? real_name : "No real name"]</a>
+		<a href='?_src_=vars;[HrefToken()];rename=\ref[src]'><b>[src]</b></a><font size='1'>
+		<br><a href='?_src_=vars;[HrefToken()];datumedit=\ref[src];varnameedit=ckey'>[ckey ? ckey : "No ckey"]</a> / <a href='?_src_=vars;[HrefToken()];datumedit=\ref[src];varnameedit=real_name'>[real_name ? real_name : "No real name"]</a>
 		<br>
-		BRUTE:<a href='?_src_=vars;mobToDamage=\ref[src];adjustDamage=brute'>[getBruteLoss()]</a>
-		FIRE:<a href='?_src_=vars;mobToDamage=\ref[src];adjustDamage=fire'>[getFireLoss()]</a>
-		TOXIN:<a href='?_src_=vars;mobToDamage=\ref[src];adjustDamage=toxin'>[getToxLoss()]</a>
-		OXY:<a href='?_src_=vars;mobToDamage=\ref[src];adjustDamage=oxygen'>[getOxyLoss()]</a>
-		CLONE:<a href='?_src_=vars;mobToDamage=\ref[src];adjustDamage=clone'>[getCloneLoss()]</a>
-		BRAIN:<a href='?_src_=vars;mobToDamage=\ref[src];adjustDamage=brain'>[getBrainLoss()]</a>
+		BRUTE:<a href='?_src_=vars;[HrefToken()];mobToDamage=\ref[src];adjustDamage=brute'>[getBruteLoss()]</a>
+		FIRE:<a href='?_src_=vars;[HrefToken()];mobToDamage=\ref[src];adjustDamage=fire'>[getFireLoss()]</a>
+		TOXIN:<a href='?_src_=vars;[HrefToken()];mobToDamage=\ref[src];adjustDamage=toxin'>[getToxLoss()]</a>
+		OXY:<a href='?_src_=vars;[HrefToken()];mobToDamage=\ref[src];adjustDamage=oxygen'>[getOxyLoss()]</a>
+		CLONE:<a href='?_src_=vars;[HrefToken()];mobToDamage=\ref[src];adjustDamage=clone'>[getCloneLoss()]</a>
+		BRAIN:<a href='?_src_=vars;[HrefToken()];mobToDamage=\ref[src];adjustDamage=brain'>[getBrainLoss()]</a>
 		</font>
 		"}
 
@@ -1131,3 +1244,59 @@
 // Each mob does vision a bit differently so this is just for inheritence and also so overrided procs can make the vision apply instantly if they call `..()`.
 /mob/living/proc/disable_spoiler_vision()
 	handle_vision()
+
+/**
+ * Small helper component to manage the character setup HUD icon
+ */
+/datum/component/character_setup
+	var/obj/screen/character_setup/screen_icon
+
+/datum/component/character_setup/Initialize()
+	if(!ismob(parent))
+		return COMPONENT_INCOMPATIBLE
+	. = ..()
+
+/datum/component/character_setup/RegisterWithParent()
+	. = ..()
+	RegisterSignal(parent, COMSIG_MOB_CLIENT_LOGIN, PROC_REF(create_mob_button))
+	var/mob/owner = parent
+	if(owner.client)
+		create_mob_button(parent)
+
+/datum/component/character_setup/UnregisterFromParent()
+	. = ..()
+	UnregisterSignal(parent, COMSIG_MOB_CLIENT_LOGIN)
+	var/mob/owner = parent
+	if(screen_icon)
+		owner?.client?.screen -= screen_icon
+		UnregisterSignal(screen_icon, COMSIG_CLICK)
+		qdel_null(screen_icon)
+
+/datum/component/character_setup/proc/create_mob_button(mob/user)
+	var/datum/hud/HUD = user.hud_used
+	if(!screen_icon)
+		screen_icon = new()
+		RegisterSignal(screen_icon, COMSIG_CLICK, PROC_REF(character_setup_click))
+	if(ispAI(user))
+		screen_icon.icon = 'icons/mob/pai_hud.dmi'
+		screen_icon.screen_loc = ui_acti
+	else
+		screen_icon.icon = HUD.ui_style
+		screen_icon.color = HUD.ui_color
+		screen_icon.alpha = HUD.ui_alpha
+	LAZYADD(HUD.other_important, screen_icon)
+	user.client?.screen += screen_icon
+
+/datum/component/character_setup/proc/character_setup_click(source, location, control, params, user)
+	var/mob/owner = user
+	if(owner.client?.prefs)
+		INVOKE_ASYNC(owner.client.prefs, /datum/preferences/proc/ShowChoices, owner)
+
+/**
+ * Screen object for vore panel
+ */
+/obj/screen/character_setup
+	name = "character setup"
+	icon = 'icons/mob/screen/midnight.dmi'
+	icon_state = "character"
+	screen_loc = ui_smallquad

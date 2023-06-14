@@ -431,7 +431,7 @@ var/global/list/all_objectives = list()
 		"a site manager's jumpsuit" = /obj/item/clothing/under/rank/captain,
 		"a functional AI" = /obj/item/device/aicard,
 		"a pair of magboots" = /obj/item/clothing/shoes/magboots,
-		"the station blueprints" = /obj/item/blueprints,
+		"the station blueprints" = /obj/item/areaeditor/blueprints,
 		"a nasa voidsuit" = /obj/item/clothing/suit/space/void,
 		"28 moles of phoron (full tank)" = /obj/item/weapon/tank,
 		"a sample of slime extract" = /obj/item/slime_extract,
@@ -473,15 +473,15 @@ var/global/list/all_objectives = list()
 
 /datum/objective/steal/proc/select_target()
 	var/list/possible_items_all = possible_items+possible_items_special+"custom"
-	var/new_target = input("Select target:", "Objective target", steal_target) as null|anything in possible_items_all
+	var/new_target = tgui_input_list(usr, "Select target:", "Objective target", possible_items_all)
 	if (!new_target) return
 	if (new_target == "custom")
-		var/obj/item/custom_target = input("Select type:","Type") as null|anything in typesof(/obj/item)
+		var/obj/item/custom_target = tgui_input_list(usr, "Select type:", "Type", typesof(/obj/item))
 		if (!custom_target) return
 		var/tmp_obj = new custom_target
 		var/custom_name = tmp_obj:name
 		qdel(tmp_obj)
-		custom_name = sanitize(input("Enter target name:", "Objective target", custom_name) as text|null)
+		custom_name = sanitize(tgui_input_text(usr, "Enter target name:", "Objective target", custom_name))
 		if (!custom_name) return
 		target_name = custom_name
 		steal_target = custom_target
@@ -627,12 +627,18 @@ var/global/list/all_objectives = list()
 	else
 		return 0
 
+/datum/objective/vore/check_completion()
+	if(owner && owner.vore_prey_eaten >= target_amount)
+		return 1
+	else
+		return 0
+
 // Heist objectives.
 /datum/objective/heist/proc/choose_target()
 	return
 
 /datum/objective/heist/kidnap/choose_target()
-	var/list/roles = list("Chief Engineer","Research Director","Roboticist","Chemist","Station Engineer")
+	var/list/roles = list("Chief Engineer","Research Director","Roboticist","Chemist","Engineer")
 	var/list/possible_targets = list()
 	var/list/priority_targets = list()
 
@@ -728,28 +734,28 @@ var/global/list/all_objectives = list()
 /datum/objective/heist/salvage/choose_target()
 	switch(rand(1,8))
 		if(1)
-			target = DEFAULT_WALL_MATERIAL
+			target = MAT_STEEL
 			target_amount = 300
 		if(2)
-			target = "glass"
+			target = MAT_GLASS
 			target_amount = 200
 		if(3)
-			target = "plasteel"
+			target = MAT_PLASTEEL
 			target_amount = 100
 		if(4)
-			target = "phoron"
+			target = MAT_PHORON
 			target_amount = 100
 		if(5)
-			target = "silver"
+			target = MAT_SILVER
 			target_amount = 50
 		if(6)
-			target = "gold"
+			target = MAT_GOLD
 			target_amount = 20
 		if(7)
-			target = "uranium"
+			target = MAT_URANIUM
 			target_amount = 20
 		if(8)
-			target = "diamond"
+			target = MAT_DIAMOND
 			target_amount = 20
 
 	explanation_text = "Ransack the station and escape with [target_amount] [target]."

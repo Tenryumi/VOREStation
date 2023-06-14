@@ -6,10 +6,10 @@
 	desc = "An impenetrable field of energy, capable of blocking anything as long as it's active."
 	icon = 'icons/obj/machines/shielding_vr.dmi'
 	icon_state = "shield"
-	anchored = 1
+	anchored = TRUE
 	plane = MOB_PLANE
 	layer = ABOVE_MOB_LAYER
-	density = 1
+	density = TRUE
 	invisibility = 0
 	var/obj/machinery/power/shield_generator/gen = null // Owning generator
 	var/disabled_for = 0
@@ -147,7 +147,7 @@
 			continue
 		// Note: Range is a non-exact aproximation of the spread effect. If it doesn't look good
 		// we'll need to switch to actually walking along the shields to get exact number of steps away.
-		addtimer(CALLBACK(S, .proc/impact_flash), get_dist(src, S) * 2)
+		addtimer(CALLBACK(S, PROC_REF(impact_flash)), get_dist(src, S) * 2)
 	impact_flash()
 
 // Small visual effect, makes the shield tiles brighten up by becoming more opaque for a moment
@@ -165,7 +165,7 @@
 		return
 
 	if(!damtype)
-		crash_with("CANARY: shield.take_damage() callled without damtype.")
+		stack_trace("CANARY: shield.take_damage() callled without damtype.")
 
 	if(!damage)
 		return

@@ -26,10 +26,10 @@
 	desc = "Exosuit"
 	description_info = "Alt click to strafe."
 	icon = 'icons/mecha/mecha.dmi'
-	density = 1							//Dense. To raise the heat.
+	density = TRUE							//Dense. To raise the heat.
 	opacity = 1							//Opaque. Menacing.
-	anchored = 1						//No pulling around.
-	unacidable = 1						//And no deleting hoomans inside
+	anchored = TRUE						//No pulling around.
+	unacidable = TRUE						//And no deleting hoomans inside
 	layer = MOB_LAYER					//Icon draw layer
 	infra_luminosity = 15				//Byond implementation is bugged.
 	var/initial_icon = null				//Mech type for resetting icon. Only used for reskinning kits (see custom items)
@@ -44,17 +44,6 @@
 	var/health = 300 					//Health is health
 	var/maxhealth = 300 				//Maxhealth is maxhealth.
 	var/deflect_chance = 10 			//Chance to deflect the incoming projectiles, hits, or lesser the effect of ex_act.
-	//the values in this list show how much damage will pass through, not how much will be absorbed.
-	var/list/damage_absorption = list(
-									"brute"=0.8,
-									"fire"=1.2,
-									"bullet"=0.9,
-									"laser"=1,
-									"energy"=1,
-									"bomb"=1,
-									"bio"=1,
-									"rad"=1
-									)
 
 	var/damage_minimum = 10				//Incoming damage lower than this won't actually deal damage. Scrapes shouldn't be a real thing.
 	var/minimum_penetration = 15		//Incoming damage won't be fully applied if you don't have at least 20. Almost all AP clears this.
@@ -101,7 +90,7 @@
 	var/list/equipment = new		//This lists holds what stuff you bolted onto your baby ride
 	var/obj/item/mecha_parts/mecha_equipment/selected
 	var/max_equip = 2
-	
+
 	// What direction to float in, if inertial movement is active.
 	var/float_direction = 0
 	// Process() iterator count.
@@ -212,6 +201,9 @@
 		for(var/path in starting_equipment)
 			var/obj/item/mecha_parts/mecha_equipment/ME = new path(src)
 			ME.attach(src)
+
+	START_PROCESSING(SSobj, src)
+
 	update_transform()
 
 /obj/mecha/drain_power(var/drain_check)
@@ -327,6 +319,8 @@
 
 	QDEL_NULL(spark_system)
 	QDEL_NULL(minihud)
+
+	STOP_PROCESSING(SSobj, src)
 
 	mechas_list -= src //global mech list
 	. = ..()
@@ -544,7 +538,7 @@
 	if(equipment?.len)
 		. += "It's equipped with:"
 		for(var/obj/item/mecha_parts/mecha_equipment/ME in equipment)
-			. += "[bicon(ME)] [ME]"
+			. += "\icon[ME][bicon(ME)] [ME]"
 
 /obj/mecha/proc/drop_item()//Derpfix, but may be useful in future for engineering exosuits.
 	return
@@ -567,21 +561,17 @@
 
 /obj/mecha/proc/show_radial_occupant(var/mob/user)
 	var/list/choices = list(
-		"Eject" = radial_image_eject,
 		"Toggle Airtank" = radial_image_airtoggle,
 		"Toggle Light" = radial_image_lighttoggle,
 		"View Stats" = radial_image_statpanel
 	)
 
-	var/choice = show_radial_menu(user, src, choices, custom_check = CALLBACK(src, .proc/check_occupant_radial, user), require_near = TRUE, tooltips = TRUE)
+	var/choice = show_radial_menu(user, src, choices, custom_check = CALLBACK(src, PROC_REF(check_occupant_radial), user), require_near = TRUE, tooltips = TRUE)
 	if(!check_occupant_radial(user))
 		return
 	if(!choice)
 		return
 	switch(choice)
-		if("Eject")
-			go_out()
-			add_fingerprint(usr)
 		if("Toggle Airtank")
 			use_internal_tank = !use_internal_tank
 			occupant_message("Now taking air from [use_internal_tank?"internal airtank":"environment"].")
@@ -828,7 +818,7 @@
 	if(hasInternalDamage(MECHA_INT_CONTROL_LOST))
 		move_result = mechsteprand()
 	//Up/down zmove
-	else if(direction & UP || direction & DOWN)
+	else if(direction == UP || direction == DOWN)
 		if(!can_ztravel())
 			occupant_message("<span class='warning'>Your vehicle lacks the capacity to move in that direction!</span>")
 			return FALSE
@@ -841,7 +831,7 @@
 				occupant_message("<span class='warning'>You can't move that direction from here!</span>")
 				result = FALSE
 				break
-			var/turf/dest = direction & UP ? GetAbove(T) : GetBelow(T)
+			var/turf/dest = (direction == UP) ? GetAbove(src) : GetBelow(src)
 			if(!dest)
 				occupant_message("<span class='notice'>There is nothing of interest in this direction.</span>")
 				result = FALSE
@@ -917,27 +907,19 @@
 	if(istype(obstacle, /mob))//First we check if it is a mob. Mechs mostly shouln't go through them, even while phasing.
 		var/mob/M = obstacle
 		M.Move(get_step(obstacle,src.dir))
+	else if(phasing && get_charge()>=phasing_energy_drain)//Phazon check. This could use an improvement elsewhere.
+		src.use_power(phasing_energy_drain)
+		phase()
+		. = ..(obstacle)
+		return
 	else if(istype(obstacle, /obj))//Then we check for regular obstacles.
 		var/obj/O = obstacle
-
-		if(phasing && get_charge()>=phasing_energy_drain)//Phazon check. This could use an improvement elsewhere.
-			spawn()
-				if(can_phase)
-					can_phase = FALSE
-					flick("[initial_icon]-phase", src)
-					src.loc = get_step(src,src.dir)
-					src.use_power(phasing_energy_drain)
-					sleep(get_step_delay() * 3)
-					can_phase = TRUE
-					occupant_message("Phazed.")
-			. = ..(obstacle)
-			return
 		if(istype(O, /obj/effect/portal))	//derpfix
-			src.anchored = 0				//I have no idea what this really fix.
+			src.anchored = 0				// Portals can only move unanchored objects.
 			O.Crossed(src)
 			spawn(0)//countering portal teleport spawn(0), hurr
 				src.anchored = 1
-		else if(O.anchored)
+		if(O.anchored)
 			obstacle.Bumped(src)
 		else
 			step(obstacle,src.dir)
@@ -945,6 +927,18 @@
 	else//No idea when this triggers, so i won't touch it.
 		. = ..(obstacle)
 	return
+
+/obj/mecha/proc/phase()	// Force the mecha to move forward by phasing.
+	set waitfor = FALSE
+	if(can_phase)
+		can_phase = FALSE
+		flick("[initial_icon]-phase", src)
+		forceMove(get_step(src,src.dir))
+		sleep(get_step_delay() * 3)
+		can_phase = TRUE
+		occupant_message("Phazed.")
+		return TRUE	// In the event this is sequenced
+	return FALSE
 
 ///////////////////////////////////
 ////////  Internal damage  ////////
@@ -1038,15 +1032,8 @@
 
 /obj/mecha/proc/get_damage_absorption()
 	var/obj/item/mecha_parts/component/armor/AC = internal_components[MECH_ARMOR]
-
-	if(!istype(AC))
-		return
-
-	else
-		if(AC.get_efficiency() > 0.25)
-			return AC.damage_absorption
-
-	return
+	if(istype(AC) && AC.get_efficiency() > 0.25)
+		return AC.damage_absorption
 
 /obj/mecha/proc/absorbDamage(damage,damage_type)
 	return call((proc_res["dynabsorbdamage"]||src), "dynabsorbdamage")(damage,damage_type)
@@ -1483,7 +1470,7 @@
 				else
 					to_chat(user, "<span class='notice'>\The [src] appears to be missing \the [slot].</span>")
 
-			var/remove = input(user, "Which component do you want to pry out?", "Remove Component") as null|anything in removable_components
+			var/remove = tgui_input_list(user, "Which component do you want to pry out?", "Remove Component", removable_components)
 			if(!remove)
 				return
 
@@ -1580,15 +1567,27 @@
 			for(var/slot in internal_components)
 				var/obj/item/mecha_parts/component/C = internal_components[slot]
 
-				if(C)
+				if(!C)
+					to_chat(user, "<span class='notice'>There are no components installed!</span>")
+					return
 
-					if(C.integrity < C.max_integrity)
-						while(C.integrity < C.max_integrity && NP && do_after(user, 1 SECOND, src))
-							if(NP.use(1))
-								C.adjust_integrity(10)
+				if(C.integrity >= C.max_integrity)
+					to_chat(user, "<span class='notice'>\The [C] does not require repairs.</span>")
 
-						to_chat(user, "<span class='notice'>You repair damage to \the [C].</span>")
+				else if(C.integrity < C.max_integrity)
+					to_chat(user, "<span class='notice'>You start to repair damage to \the [C].</span>")
+					while(C.integrity < C.max_integrity && NP)
+						if(do_after(user, 1 SECOND, src))
+							NP.use(1)
+							C.adjust_integrity(NP.mech_repair)
 
+							if(C.integrity >= C.max_integrity)
+								to_chat(user, "<span class='notice'>You finish repairing \the [C].</span>")
+								break
+
+							else if(NP.amount == 0)
+								to_chat(user, "<span class='warning'>Insufficient nanopaste to complete repairs!</span>")
+								break
 			return
 
 		else
@@ -1704,8 +1703,7 @@
 	return
 
 /obj/mecha/remove_air(amount)
-	var/obj/item/mecha_parts/component/gas/GC = internal_components[MECH_GAS]
-	if(use_internal_tank && (GC && prob(GC.get_efficiency() * 100)))
+	if(use_internal_tank)
 		return cabin_air.remove(amount)
 	else
 		var/turf/T = get_turf(src)
@@ -1714,7 +1712,8 @@
 	return
 
 /obj/mecha/return_air()
-	if(use_internal_tank)
+	var/obj/item/mecha_parts/component/gas/GC = internal_components[MECH_GAS]
+	if(use_internal_tank && (GC && prob(GC.get_efficiency() * 100)))
 		return cabin_air
 	return get_turf_air()
 
@@ -1964,7 +1963,7 @@
 		if(ishuman(occupant))
 			GrantActions(occupant, 1)
 	else
-		visible_message("<span class='notice'>\The [usr] starts to climb into [src.name]</span>")
+		visible_message("<b>\The [usr]</b> starts to climb into [src.name]")
 		if(enter_after(40,usr))
 			if(!src.occupant)
 				moved_inside(usr)
@@ -2440,7 +2439,7 @@
 /obj/mecha/proc/occupant_message(message as text)
 	if(message)
 		if(src.occupant && src.occupant.client)
-			to_chat(src.occupant, "[bicon(src)] [message]")
+			to_chat(src.occupant, "\icon[src][bicon(src)] [message]")
 	return
 
 /obj/mecha/proc/log_message(message as text,red=null)
@@ -2474,8 +2473,8 @@
 		var/obj/item/mecha_parts/mecha_equipment/equip = top_filter.getObj("select_equip")
 		if(equip)
 			src.selected = equip
-			src.occupant_message("You switch to [equip]")
-			src.visible_message("[src] raises [equip]")
+			src.occupant_message("You switch to [equip].")
+			src.visible_message("[src] raises [equip].")
 			send_byjax(src.occupant,"exosuit.browser","eq_list",src.get_equipment_list())
 		return
 	if(href_list["eject"])
@@ -2542,11 +2541,11 @@
 		return
 	if (href_list["change_name"])
 		if(usr != src.occupant)	return
-		var/newname = sanitizeSafe(input(occupant,"Choose new exosuit name","Rename exosuit",initial(name)) as text, MAX_NAME_LEN)
+		var/newname = sanitizeSafe(tgui_input_text(occupant,"Choose new exosuit name","Rename exosuit",initial(name), MAX_NAME_LEN), MAX_NAME_LEN)
 		if(newname)
 			name = newname
 		else
-			alert(occupant, "nope.avi")
+			tgui_alert_async(occupant, "nope.avi")
 		return
 	if (href_list["toggle_id_upload"])
 		if(usr != src.occupant)	return
@@ -2581,7 +2580,7 @@
 		if(!in_range(src, usr))	return
 		var/mob/user = top_filter.getMob("user")
 		if(user)
-			var/new_pressure = input(user,"Input new output pressure","Pressure setting",internal_tank_valve) as num
+			var/new_pressure = tgui_input_number(user,"Input new output pressure","Pressure setting",internal_tank_valve)
 			if(new_pressure)
 				internal_tank_valve = new_pressure
 				to_chat(user, "The internal pressure valve has been set to [internal_tank_valve]kPa.")
@@ -2596,7 +2595,7 @@
 			to_chat(user, "<span class='warning'>There are no passengers to remove.</span>")
 			return
 
-		var/pname = input(user, "Choose a passenger to forcibly remove.", "Forcibly Remove Passenger") as null|anything in passengers
+		var/pname = tgui_input_list(user, "Choose a passenger to forcibly remove.", "Forcibly Remove Passenger", passengers)
 
 		if (!pname)
 			return
@@ -2604,11 +2603,11 @@
 		var/obj/item/mecha_parts/mecha_equipment/tool/passenger/P = passengers[pname]
 		var/mob/occupant = P.occupant
 
-		user.visible_message("<span class='notice'>\The [user] begins opening the hatch on \the [P]...</span>", "<span class='notice'>You begin opening the hatch on \the [P]...</span>")
+		user.visible_message("<b>\The [user]</b> begins opening the hatch on \the [P]...", "<span class='notice'>You begin opening the hatch on \the [P]...</span>")
 		if (!do_after(user, 40))
 			return
 
-		user.visible_message("<span class='notice'>\The [user] opens the hatch on \the [P] and removes [occupant]!</span>", "<span class='notice'>You open the hatch on \the [P] and remove [occupant]!</span>")
+		user.visible_message("<b>\The [user]</b> opens the hatch on \the [P] and removes [occupant]!", "<span class='notice'>You open the hatch on \the [P] and remove [occupant]!</span>")
 		P.go_out()
 		P.log_message("[occupant] was removed.")
 		return
@@ -2688,7 +2687,7 @@
 		O.canmove = 1
 		O.name = AI.name
 		O.real_name = AI.real_name
-		O.anchored = 1
+		O.anchored = TRUE
 		O.aiRestorePowerRoutine = 0
 		O.control_disabled = 1 // Can't control things remotely if you're stuck in a card!
 		O.laws = AI.laws
@@ -2795,7 +2794,7 @@
 	if(prob(temp_deflect_chance))//Deflected
 		src.log_append_to_last("Armor saved.")
 		src.occupant_message("<span class='notice'>\The [user]'s attack is stopped by the armor.</span>")
-		visible_message("<span class='notice'>\The [user] rebounds off [src.name]'s armor!</span>")
+		visible_message("<b>\The [user]</b> rebounds off [src.name]'s armor!")
 		user.attack_log += text("\[[time_stamp()]\] <font color='red'>attacked [src.name]</font>")
 		playsound(src, 'sound/weapons/slash.ogg', 50, 1, -1)
 
@@ -2900,3 +2899,15 @@
 				occupant.throw_alert("mech damage", /obj/screen/alert/low_mech_integrity, 3)
 			else
 				occupant.clear_alert("mech damage")
+
+/obj/mecha/blob_act(var/obj/structure/blob/B)
+	var/datum/blob_type/blob = B?.overmind?.blob_type
+	if(!istype(blob))
+		return FALSE
+
+	var/damage = rand(blob.damage_lower, blob.damage_upper)
+	src.take_damage(damage, blob.damage_type)
+	visible_message("<span class='danger'>\The [B] [blob.attack_verb] \the [src]!</span>", "<span class='danger'>[blob.attack_message_synth]!</span>")
+	playsound(src, 'sound/effects/attackblob.ogg', 50, 1)
+
+	return ..()

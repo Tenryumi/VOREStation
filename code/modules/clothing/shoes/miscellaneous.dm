@@ -48,6 +48,33 @@
 
 	wizard_garb = 1
 
+/obj/item/clothing/shoes/flipflop
+	name = "flip flops"
+	desc = "A pair of foam flip flops. For those not afraid to show a little ankle."
+	icon_state = "thongsandal"
+	addblends = "thongsandal_a"
+
+/obj/item/clothing/shoes/cookflop
+	name = "grilling sandals"
+	desc = "All this talk of antags, greytiding, and griefing... I just wanna grill for god's sake!"
+	icon_state = "cookflops"
+	species_restricted = null
+	body_parts_covered = 0
+
+/obj/item/clothing/shoes/tourist_1
+	name = "tourist sandals"
+	desc = "Black sandals usually worn by tourists. Need I say more?"
+	icon_state = "tourist_1"
+	species_restricted = null
+	body_parts_covered = 0
+
+/obj/item/clothing/shoes/tourist_2
+	name = "tourist sandals"
+	desc = "Green sandals usually worn by tourists. Need I say more?"
+	icon_state = "tourist_2"
+	species_restricted = null
+	body_parts_covered = 0
+
 /obj/item/clothing/shoes/sandal/clogs
 	name = "plastic clogs"
 	desc = "A pair of plastic clog shoes."
@@ -117,7 +144,7 @@
 	item_state_slots = list(slot_r_hand_str = "slippers", slot_l_hand_str = "slippers")
 
 /obj/item/clothing/shoes/laceup
-	name = "black oxford  shoes"
+	name = "black oxford shoes"
 	icon_state = "oxford_black"
 
 /obj/item/clothing/shoes/laceup/grey
@@ -137,15 +164,9 @@
 	slowdown = SHOES_SLOWDOWN+0.5
 	species_restricted = null
 
-/obj/item/clothing/shoes/flipflop
-	name = "flip flops"
-	desc = "A pair of foam flip flops. For those not afraid to show a little ankle."
-	icon_state = "thongsandal"
-	addblends = "thongsandal_a"
-
 /obj/item/clothing/shoes/athletic
 	name = "athletic shoes"
-	desc = "A pair of sleek atheletic shoes. Made by and for the sporty types."
+	desc = "A pair of sleek athletic shoes. Made by and for the sporty types."
 	icon_state = "sportshoe"
 	addblends = "sportshoe_a"
 	item_state_slots = list(slot_r_hand_str = "sportheld", slot_l_hand_str = "sportheld")
@@ -205,3 +226,25 @@
 
 /obj/item/clothing/shoes/boots/ranger/yellow
 	bootcolor = "yellow"
+
+/*
+ * 80s
+ */
+
+/obj/item/clothing/shoes/sneakerspurple
+	name = "purple sneakers"
+	desc = "A stylish, expensive pair of purple sneakers."
+	icon_state = "sneakerspurple"
+	item_state = "sneakerspurple"
+
+/obj/item/clothing/shoes/sneakersblue
+	name = "blue sneakers"
+	desc = "A stylish, expensive pair of blue sneakers."
+	icon_state = "sneakersblue"
+	item_state = "sneakersblue"
+
+/obj/item/clothing/shoes/sneakersred
+	name = "red sneakers"
+	desc = "A stylish, expensive pair of red sneakers."
+	icon_state = "sneakersred"
+	item_state = "sneakersred"

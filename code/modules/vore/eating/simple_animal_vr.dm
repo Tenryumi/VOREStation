@@ -1,14 +1,14 @@
 ///////////////////// Simple Animal /////////////////////
 /mob/living/simple_mob
 	var/swallowTime = (3 SECONDS)		//How long it takes to eat its prey in 1/10 of a second. The default is 3 seconds.
-	var/list/prey_excludes = list()		//For excluding people from being eaten.
+	var/list/prey_excludes = null		//For excluding people from being eaten.
 
 //
 // Simple nom proc for if you get ckey'd into a simple_mob mob! Avoids grabs.
 //
 /mob/living/simple_mob/proc/animal_nom(mob/living/T in living_mobs(1))
 	set name = "Animal Nom"
-	set category = "IC"
+	set category = "Abilities" // Moving this to abilities from IC as it's more fitting there
 	set desc = "Since you can't grab, you get a verb!"
 
 	if(stat != CONSCIOUS)
@@ -43,12 +43,12 @@
 		to_chat(user, "<span class='warning'>This predator isn't friendly, and doesn't give a shit about your opinions of it digesting you.</span>")
 		return
 	if(vore_selected.digest_mode == DM_HOLD)
-		var/confirm = alert(user, "Enabling digestion on [name] will cause it to digest all stomach contents. Using this to break OOC prefs is against the rules. Digestion will reset after 20 minutes.", "Enabling [name]'s Digestion", "Enable", "Cancel")
+		var/confirm = tgui_alert(user, "Enabling digestion on [name] will cause it to digest all stomach contents. Using this to break OOC prefs is against the rules. Digestion will reset after 20 minutes.", "Enabling [name]'s Digestion", list("Enable", "Cancel"))
 		if(confirm == "Enable")
 			vore_selected.digest_mode = DM_DIGEST
 			addtimer(VARSET_CALLBACK(vore_selected, digest_mode, vore_default_mode), 20 MINUTES)
 	else
-		var/confirm = alert(user, "This mob is currently set to process all stomach contents. Do you want to disable this?", "Disabling [name]'s Digestion", "Disable", "Cancel")
+		var/confirm = tgui_alert(user, "This mob is currently set to process all stomach contents. Do you want to disable this?", "Disabling [name]'s Digestion", list("Disable", "Cancel"))
 		if(confirm == "Disable")
 			vore_selected.digest_mode = DM_HOLD
 
@@ -86,14 +86,16 @@
 			user.visible_message("<span class='info'>[user] swats [src] with [O]!</span>")
 			release_vore_contents()
 			for(var/mob/living/L in living_mobs(0)) //add everyone on the tile to the do-not-eat list for a while
-				if(!(L in prey_excludes)) // Unless they're already on it, just to avoid fuckery.
-					prey_excludes += L
-					addtimer(CALLBACK(src, .proc/removeMobFromPreyExcludes, weakref(L)), 5 MINUTES)
+				if(!(LAZYFIND(prey_excludes, L))) // Unless they're already on it, just to avoid fuckery.
+					LAZYSET(prey_excludes, L, world.time)
+					addtimer(CALLBACK(src, PROC_REF(removeMobFromPreyExcludes), WEAKREF(L)), 5 MINUTES)
+	else if(istype(O, /obj/item/device/healthanalyzer))
+		var/healthpercent = health/maxHealth*100
+		to_chat(user, "<span class='notice'>[src] seems to be [healthpercent]% healthy.</span>")
 	else
 		..()
 
-/mob/living/simple_mob/proc/removeMobFromPreyExcludes(weakref/target)
+/mob/living/simple_mob/proc/removeMobFromPreyExcludes(datum/weakref/target)
 	if(isweakref(target))
 		var/mob/living/L = target.resolve()
-		if(L)
-			LAZYREMOVE(prey_excludes, L)
+		LAZYREMOVE(prey_excludes, L) // It's fine to remove a null from the list if we couldn't resolve L

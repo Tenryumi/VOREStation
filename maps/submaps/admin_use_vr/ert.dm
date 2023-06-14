@@ -93,6 +93,10 @@
 	name = "\improper NRV Von Braun - Cannon Control Room"
 	icon_state = "security_sub"
 
+/area/ship/ert/brig
+	name = "\improper NRV Von Braun - Prisoner Holding Area"
+	icon_state = "brig"
+
 /area/shuttle/ert_ship_boat
 	name = "\improper NRB Robineau"
 	icon_state = "yellow"
@@ -110,12 +114,12 @@
 // The 'ship'
 /obj/effect/overmap/visitable/ship/ert_ship
 	name = "NRV Von Braun"
+	icon_state = "oberth_destroyer_g"
 	desc = "Spacefaring vessel. Broadcasting Corporate Emergency Responder IFF."
 	scanner_desc = @{"[i]Registration[/i]: Nanotrasen RRV Von Braun
 [i]Class[/i]: [i]Kepler[/i]-class Frigate
 [i]Transponder[/i]: Broadcasting (ER-CORP)
 [b]Notice[/b]: Impeding or interfering with emergency response vessels is a breach of numerous interstellar codes. Approach with caution."}
-	color = "#9999ff" //Blue
 	vessel_mass = 8000
 	vessel_size = SHIP_SIZE_LARGE
 	fore_dir = EAST

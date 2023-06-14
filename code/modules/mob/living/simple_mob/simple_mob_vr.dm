@@ -36,7 +36,7 @@
 	var/vore_stomach_flavor				// The flavortext for the first belly if not the default
 
 	var/vore_default_item_mode = IM_DIGEST_FOOD			//How belly will interact with items
-	var/vore_default_contaminates = TRUE				//Will it contaminate?
+	var/vore_default_contaminates = FALSE				//Will it contaminate?
 	var/vore_default_contamination_flavor = "Generic"	//Contamination descriptors
 	var/vore_default_contamination_color = "green"		//Contamination color
 
@@ -50,11 +50,15 @@
 
 	var/obj/item/device/radio/headset/mob_headset/mob_radio		//Adminbus headset for simplemob shenanigans.
 	does_spin = FALSE
+	can_be_drop_pred = TRUE				// Mobs are pred by default.
+	var/damage_threshold  = 0 //For some mobs, they have a damage threshold required to deal damage to them.
+
+	var/nom_mob = FALSE //If a mob is meant to be hostile for vore purposes but is otherwise not hostile, if true makes certain AI ignore the mob
 
 // Release belly contents before being gc'd!
 /mob/living/simple_mob/Destroy()
 	release_vore_contents()
-	prey_excludes.Cut()
+	LAZYCLEARLIST(prey_excludes)
 	return ..()
 
 //For all those ID-having mobs
@@ -65,8 +69,7 @@
 // Update fullness based on size & quantity of belly contents
 /mob/living/simple_mob/proc/update_fullness()
 	var/new_fullness = 0
-	for(var/belly in vore_organs)
-		var/obj/belly/B = belly
+	for(var/obj/belly/B as anything in vore_organs)
 		for(var/mob/living/M in B)
 			new_fullness += M.size_multiplier
 	new_fullness = new_fullness / size_multiplier //Divided by pred's size so a macro mob won't get macro belly from a regular prey.
@@ -81,6 +84,7 @@
 			voremob_awake = TRUE
 		update_fullness()
 		if(!vore_fullness)
+			update_transform()
 			return 0
 		else if((stat == CONSCIOUS) && (!icon_rest || !resting || !incapacitated(INCAPACITATION_DISABLED)) && (vore_icons & SA_ICON_LIVING))
 			icon_state = "[icon_living]-[vore_fullness]"
@@ -109,7 +113,7 @@
 	if(!M.allowmobvore || !M.devourable) // Don't eat people who don't want to be ate by mobs
 		//ai_log("vr/wont eat [M] because they don't allow mob vore", 3) //VORESTATION AI TEMPORARY REMOVAL
 		return 0
-	if(M in prey_excludes) // They're excluded
+	if(LAZYFIND(prey_excludes, M)) // They're excluded
 		//ai_log("vr/wont eat [M] because they are excluded", 3) //VORESTATION AI TEMPORARY REMOVAL
 		return 0
 	if(M.size_multiplier < vore_min_size || M.size_multiplier > vore_max_size)
@@ -161,9 +165,9 @@
 	vore_pounce_cooldown = world.time + 20 SECONDS // don't attempt another pounce for a while
 	if(prob(successrate)) // pounce success!
 		M.Weaken(5)
-		M.visible_message("<span class='danger'>\the [src] pounces on \the [M]!</span>!")
+		M.visible_message("<span class='danger'>\The [src] pounces on \the [M]!</span>!")
 	else // pounce misses!
-		M.visible_message("<span class='danger'>\the [src] attempts to pounce \the [M] but misses!</span>!")
+		M.visible_message("<span class='danger'>\The [src] attempts to pounce \the [M] but misses!</span>!")
 		playsound(src, 'sound/weapons/punchmiss.ogg', 25, 1, -1)
 
 	if(will_eat(M) && (!M.canmove || vore_standing_too)) //if they're edible then eat them too
@@ -212,6 +216,7 @@
 	// Since they have bellies, add verbs to toggle settings on them.
 	verbs |= /mob/living/simple_mob/proc/toggle_digestion
 	verbs |= /mob/living/simple_mob/proc/toggle_fancygurgle
+	verbs |= /mob/living/proc/vertical_nom
 
 	//A much more detailed version of the default /living implementation
 	var/obj/belly/B = new /obj/belly(src)
@@ -252,6 +257,8 @@
 		"The juices pooling beneath you sizzle against your sore skin.",
 		"The churning walls slowly pulverize you into meaty nutrients.",
 		"The stomach glorps and gurgles as it tries to work you into slop.")
+	can_be_drop_pred = TRUE // Mobs will eat anyone that decides to drop/slip into them by default.
+	B.belly_fullscreen = "yet_another_tumby"
 
 /mob/living/simple_mob/Bumped(var/atom/movable/AM, yes)
 	if(tryBumpNom(AM))
@@ -263,7 +270,7 @@
 	if(istype(tmob) && will_eat(tmob) && !istype(tmob, type) && prob(vore_bump_chance) && !ckey) //check if they decide to eat. Includes sanity check to prevent cannibalism.
 		if(tmob.canmove && prob(vore_pounce_chance)) //if they'd pounce for other noms, pounce for these too, otherwise still try and eat them if they hold still
 			tmob.Weaken(5)
-		tmob.visible_message("<span class='danger'>\the [src] [vore_bump_emote] \the [tmob]!</span>!")
+		tmob.visible_message("<span class='danger'>\The [src] [vore_bump_emote] \the [tmob]!</span>!")
 		set_AI_busy(TRUE)
 		spawn()
 			animal_nom(tmob)
@@ -277,13 +284,6 @@
 	if(istype(newloc,/turf/unsimulated/floor/sky))
 		return MOVEMENT_FAILED //Mobs aren't that stupid, probably
 	return ..() // Procede as normal.
-
-//Grab = Nomf
-/mob/living/simple_mob/UnarmedAttack(var/atom/A, var/proximity)
-	. = ..()
-
-	if(a_intent == I_GRAB && isliving(A) && !has_hands)
-		animal_nom(A)
 
 // Riding
 /datum/riding/simple_mob
@@ -309,12 +309,13 @@
 /datum/riding/simple_mob/get_offsets(pass_index) // list(dir = x, y, layer)
 	var/mob/living/simple_mob/L = ridden
 	var/scale = L.size_multiplier
+	var/scale_difference = (L.size_multiplier - rider_size) * 10
 
 	var/list/values = list(
-		"[NORTH]" = list(0, L.mount_offset_y*scale, ABOVE_MOB_LAYER),
-		"[SOUTH]" = list(0, L.mount_offset_y*scale, BELOW_MOB_LAYER),
-		"[EAST]" = list(-L.mount_offset_x*scale, L.mount_offset_y*scale, ABOVE_MOB_LAYER),
-		"[WEST]" = list(L.mount_offset_x*scale, L.mount_offset_y*scale, ABOVE_MOB_LAYER))
+		"[NORTH]" = list(0, L.mount_offset_y*scale + scale_difference, ABOVE_MOB_LAYER),
+		"[SOUTH]" = list(0, L.mount_offset_y*scale + scale_difference, BELOW_MOB_LAYER),
+		"[EAST]" = list(-L.mount_offset_x*scale, L.mount_offset_y*scale + scale_difference, ABOVE_MOB_LAYER),
+		"[WEST]" = list(L.mount_offset_x*scale, L.mount_offset_y*scale + scale_difference, ABOVE_MOB_LAYER))
 
 	return values
 
@@ -341,6 +342,7 @@
 
 	. = ..()
 	if(.)
+		riding_datum.rider_size = H.size_multiplier
 		buckled_mobs[H] = "riding"
 
 /mob/living/simple_mob/attack_hand(mob/user as mob)
@@ -371,7 +373,7 @@
 	if(buckle_mob(M))
 		visible_message("<span class='notice'>[M] starts riding [name]!</span>")
 
-/mob/living/simple_mob/handle_message_mode(message_mode, message, verb, speaking, used_radios, alt_name)
+/mob/living/simple_mob/handle_message_mode(message_mode, message, verb, used_radios, speaking, alt_name)
 	if(mob_radio)
 		switch(message_mode)
 			if("intercom")
@@ -408,7 +410,7 @@
 		choices += M
 	choices -= src
 
-	var/mob/living/T = input(src,"Who do you wish to leap at?") as null|anything in choices
+	var/mob/living/T = tgui_input_list(src, "Who do you wish to leap at?", "Target Choice", choices)
 
 	if(!T || !src || src.stat) return
 

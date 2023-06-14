@@ -13,7 +13,7 @@ BLIND     // can't see anything
 
 /obj/item/clothing/glasses
 	name = "glasses"
-	icon = 'icons/obj/clothing/glasses.dmi'
+	icon = 'icons/inventory/eyes/item.dmi'
 	w_class = ITEMSIZE_SMALL
 	slot_flags = SLOT_EYES
 	plane_slots = list(slot_glasses)
@@ -31,8 +31,8 @@ BLIND     // can't see anything
 	pickup_sound = 'sound/items/pickup/accessory.ogg'
 
 	sprite_sheets = list(
-		SPECIES_TESHARI = 'icons/mob/species/teshari/eyes.dmi',
-		SPECIES_VOX = 'icons/mob/species/vox/eyes.dmi'
+		SPECIES_TESHARI = 'icons/inventory/eyes/mob_teshari.dmi',
+		SPECIES_VOX = 'icons/inventory/eyes/mob_vox.dmi'
 		)
 
 /obj/item/clothing/glasses/update_clothing_icon()
@@ -292,6 +292,12 @@ BLIND     // can't see anything
 	item_state_slots = list(slot_r_hand_str = "glasses", slot_l_hand_str = "glasses")
 	body_parts_covered = 0
 
+/obj/item/clothing/glasses/artist
+	name = "4-D Glasses"
+	desc = "You can see in every dimension, and get four times the amount of headache!"
+	icon_state = "artist"
+	item_state = "artist_glasses"
+
 /obj/item/clothing/glasses/gglasses
 	name = "green glasses"
 	desc = "Forest green glasses, like the kind you'd wear when hatching a nasty scheme."
@@ -336,13 +342,40 @@ BLIND     // can't see anything
 	desc = "A pair of designer sunglasses."
 	icon_state = "aviator"
 
+/obj/item/clothing/glasses/sunglasses/bigshot
+	name = "colored glasses"
+	desc = "A pair of glasses with uniquely colored lenses to make you feel like a \[BIG SHOT]."
+	description_fluff = "A prototype model of the AR glasses which focused on stylization and \
+	functionality. The concept never caught on and was replaced with the earlier rendition of \
+	the modern AR glasses. These have quite clearly seen better days as the AR function no \
+	longer works, the toggle merely obscuring the users vison."
+	icon_state = "salesman"
+	var/ar = 0
+
+/obj/item/clothing/glasses/sunglasses/bigshot/examine(mob/user as mob)
+	. = ..()
+	. += to_chat(usr, "<span class='notice'>Alt-click to toggle modes.</span>")
+
+/obj/item/clothing/glasses/sunglasses/bigshot/AltClick()
+	set src in usr
+	if(usr.canmove && !usr.stat && !usr.restrained())
+		if(src.ar)
+			src.ar = !src.ar
+			icon_state = initial(icon_state)
+			to_chat(usr, "You press a small button on \the [src] and deactivate the AR mode.")
+		else
+			src.ar = !src.ar
+			icon_state = "[initial(icon_state)]_fzz"
+			to_chat(usr, "You press a small button on \the [src] and activate the AR mode.")
+		update_clothing_icon()
+
 /obj/item/clothing/glasses/welding
 	name = "welding goggles"
 	desc = "Protects the eyes from welders, approved by the mad scientist association."
 	icon_state = "welding-g"
 	item_state_slots = list(slot_r_hand_str = "welding-g", slot_l_hand_str = "welding-g")
 	action_button_name = "Flip Welding Goggles"
-	matter = list(DEFAULT_WALL_MATERIAL = 1500, "glass" = 1000)
+	matter = list(MAT_STEEL = 1500, MAT_GLASS = 1000)
 	item_flags = AIRTIGHT
 	var/up = 0
 	flash_protection = FLASH_PROTECTION_MAJOR
@@ -590,3 +623,4 @@ BLIND     // can't see anything
 			to_chat(usr, "You push \the [src] up from in front of your eyes.")
 		update_clothing_icon()
 		usr.update_action_buttons()
+

@@ -1,5 +1,5 @@
 // Spawner landmarks are used because platforms that are mapped during
-// SSatoms init try to Initialize() twice. I have no idea why and I am 
+// SSatoms init try to Initialize() twice. I have no idea why and I am
 // not paid enough to spend more time trying to debug it.
 /obj/effect/landmark/robot_platform
 	name = "recon platform spawner"
@@ -40,7 +40,7 @@
 	var/tmp/recharge_complete =       FALSE
 	var/tmp/recharger_charge_amount = 10 KILOWATTS
 	var/tmp/recharger_tick_cost =     80 KILOWATTS
-	var/weakref/recharging
+	var/datum/weakref/recharging
 
 	var/list/stored_atoms
 	var/max_stored_atoms = 1
@@ -82,7 +82,7 @@
 	components["armour"] =         new /datum/robot_component/armour/platform(src)
 
 /mob/living/silicon/robot/platform/Destroy()
-	for(var/weakref/drop_ref in stored_atoms)
+	for(var/datum/weakref/drop_ref in stored_atoms)
 		var/atom/movable/drop_atom = drop_ref.resolve()
 		if(istype(drop_atom) && !QDELETED(drop_atom) && drop_atom.loc == src)
 			drop_atom.dropInto(loc)
@@ -110,7 +110,7 @@
 
 		if(length(stored_atoms))
 			var/list/atom_names = list()
-			for(var/weakref/stored_ref in stored_atoms)
+			for(var/datum/weakref/stored_ref in stored_atoms)
 				var/atom/movable/AM = stored_ref.resolve()
 				if(istype(AM))
 					atom_names += "\a [AM]"
@@ -136,7 +136,8 @@
 	if(stat != DEAD && cell)
 
 		// TODO generalize solar occlusion to charge from the actual sun.
-		var/new_recharge_state = istype(loc, /turf/simulated/floor/outdoors) || /*, /turf/exterior) */ istype(loc, /turf/space)
+		var/turf/T = get_turf(src)
+		var/new_recharge_state = T?.is_outdoors() || isspace(T)
 		if(new_recharge_state != last_recharge_state)
 			last_recharge_state = new_recharge_state
 			if(last_recharge_state)
@@ -165,4 +166,4 @@
 
 			if(!recharge_complete && recharging_atom.percent() >= 100)
 				recharge_complete = TRUE
-				visible_message(SPAN_NOTICE("\The [src] beeps and flashes a green light above \his recharging port."))
+				visible_message("<b>\The [src]</b> beeps and flashes a green light above \his recharging port.")

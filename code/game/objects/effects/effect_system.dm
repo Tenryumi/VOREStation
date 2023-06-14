@@ -11,10 +11,11 @@ would spawn and follow the beaker, even if it is carried or thrown.
 	name = "effect"
 	icon = 'icons/effects/effects.dmi'
 	mouse_opacity = 0
-	unacidable = 1//So effect are not targeted by alien acid.
+	unacidable = TRUE//So effect are not targeted by alien acid.
 	pass_flags = PASSTABLE | PASSGRILLE
 	blocks_emissive = EMISSIVE_BLOCK_GENERIC
 	light_on = TRUE
+	plane = ABOVE_OBJ_PLANE
 
 /datum/effect/effect/system
 	var/number = 3
@@ -59,7 +60,7 @@ steam.start() -- spawns the effect
 	name = "steam"
 	icon = 'icons/effects/effects.dmi'
 	icon_state = "extinguish"
-	density = 0
+	density = FALSE
 
 /datum/effect/effect/system/steam_spread/set_up(n = 3, c = 0, turf/loc)
 	if(n > 10)
@@ -97,7 +98,7 @@ steam.start() -- spawns the effect
 	name = "sparks"
 	icon_state = "sparks"
 	var/amount = 6.0
-	anchored = 1.0
+	anchored = TRUE
 	mouse_opacity = 0
 
 /obj/effect/effect/sparks/Initialize()
@@ -167,7 +168,7 @@ steam.start() -- spawns the effect
 	name = "smoke"
 	icon_state = "smoke"
 	opacity = 1
-	anchored = 0.0
+	anchored = FALSE
 	mouse_opacity = 0
 	var/amount = 6.0
 	var/time_to_live = 100
@@ -267,11 +268,11 @@ steam.start() -- spawns the effect
 /obj/effect/effect/smoke/bad/burntfood
 	color = "#000000"
 	time_to_live = 600
-	
+
 /obj/effect/effect/smoke/bad/burntfood/process()
 	for(var/mob/living/L in get_turf(src))
 		affect(L)
-	
+
 /obj/effect/effect/smoke/bad/burntfood/affect(var/mob/living/L) // This stuff is extra-vile.
 	if (!..())
 		return 0
@@ -392,7 +393,7 @@ steam.start() -- spawns the effect
 
 /datum/effect/effect/system/smoke_spread/bad
 	smoke_type = /obj/effect/effect/smoke/bad
-	
+
 /datum/effect/effect/system/smoke_spread/bad/burntfood
 	smoke_type = /obj/effect/effect/smoke/bad/burntfood
 
@@ -421,7 +422,7 @@ steam.start() -- spawns the effect
 /obj/effect/effect/ion_trails
 	name = "ion trails"
 	icon_state = "ion_trails"
-	anchored = 1.0
+	anchored = TRUE
 
 /datum/effect/effect/system/ion_trail_follow
 	var/turf/oldposition

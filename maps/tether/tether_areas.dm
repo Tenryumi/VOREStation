@@ -215,6 +215,9 @@
 /area/tether/surfacebase/barbackmaintenance
 	name = "\improper Bar Back Maintenance"
 	icon_state = "red"
+/area/tether/surfacebase/arcade
+	name = "\improper Arcade"
+	icon_state = "green"
 
 /area/tether/surfacebase/public_garden_lg
 	name = "\improper Public Garden Looking Glass"
@@ -437,6 +440,8 @@
 	name = "\improper Medical Central Hall"
 /area/tether/surfacebase/medical/lowerhall
 	name = "\improper Medical Lower Hall"
+/area/tether/surfacebase/medical/autoresleeving
+	name = "\improper Medical Auto Resleeving"
 	//North SurfMed3-2 Stairwell
 /area/tether/surfacebase/medical/uppernorthstairwell
 	name = "\improper Medical Stairwell"
@@ -475,11 +480,10 @@
 
 /area/tether/surfacebase/entertainment
 	name = "\improper Entertainment Auditorium"
-	icon_state = "library"
+	icon_state = "entertainment"
 
 /area/tether/surfacebase/entertainment/stage
 	name = "\improper Entertainment Stage"
-	icon_state = "library"
 
 /area/tether/surfacebase/funny/clownoffice
 	name = "\improper Clown's Office"
@@ -499,7 +503,6 @@
 
 /area/tether/surfacebase/entertainment/backstage
 	name = "\improper Entertainment Backstage"
-	icon_state = "library"
 
 /area/tether/surfacebase/botanystorage
 	name = "\improper Botany Storage"
@@ -634,6 +637,13 @@
 
 /area/engineering/atmos/gas_storage
 	name = "Atmospherics Gas Storage"
+	icon_state = "atmos"
+
+/area/maintenance/engineering/atmos/airlock
+	name = "\improper Atmospherics Airlock"
+	icon_state = "atmos"
+/area/maintenance/engineering/atmos/airlock/gas
+	name = "\improper Atmospherics Airlock Gas Storage"
 	icon_state = "atmos"
 
 /area/engineering/atmos_intake
@@ -1436,6 +1446,7 @@
 /area/shuttle/excursion
 	requires_power = 1
 	icon_state = "shuttle2"
+	base_turf = /turf/simulated/floor/reinforced
 
 /area/shuttle/excursion/general
 	name = "\improper Excursion Shuttle"
@@ -1446,9 +1457,16 @@
 /area/shuttle/excursion/cargo
 	name = "\improper Excursion Shuttle Cargo"
 
+/area/shuttle/excursion/power
+	name = "\improper Excursion Shuttle Power"
+
+/*
+ * Tourbus
+ */
 /area/shuttle/tourbus
 	requires_power = 1
 	icon_state = "shuttle2"
+	base_turf = /turf/simulated/floor/reinforced
 
 /area/shuttle/tourbus/general
 	name = "\improper Tour Bus"
@@ -1456,6 +1474,9 @@
 /area/shuttle/tourbus/cockpit
 	name = "\improper Tour Bus Cockpit"
 
+/*
+ * Medbus
+ */
 /area/shuttle/medivac
 	requires_power = 1
 	icon_state = "shuttle2"
@@ -1469,6 +1490,9 @@
 /area/shuttle/medivac/engines
 	name = "\improper Medivac Engines"
 
+/*
+ * Secbus
+ */
 /area/shuttle/securiship
 	requires_power = 1
 	icon_state = "shuttle2"
@@ -1599,31 +1623,6 @@
 
 /area/bigship/teleporter
 	name = "Bigship Teleporter Room"
-
-//////// Abductor Areas ////////
-/area/unknown
-	requires_power = 0
-	flags = RAD_SHIELDED
-	icon_state = "red2"
-	limit_mob_size = FALSE
-
-/area/unknown/dorm1
-	name = "Unknown Dorm 1"
-
-/area/unknown/dorm2
-	name = "Unknown Dorm 2"
-
-/area/unknown/dorm3
-	name = "Unknown Dorm 3"
-
-/area/unknown/dorm4
-	name = "Unknown Dorm 4"
-
-/area/unknown/dorm5
-	name = "Unknown Dorm 5"
-
-/area/unknown/dorm6
-	name = "Unknown Dorm 6"
 
 // ERT/Deathsquad Shuttle
 /area/shuttle/specialops/centcom

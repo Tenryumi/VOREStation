@@ -2,6 +2,7 @@
 	icon = 'icons/turf/floors.dmi'
 	layer = TURF_LAYER
 	plane = TURF_PLANE
+	vis_flags = VIS_INHERIT_ID | VIS_INHERIT_PLANE// Important for interaction with and visualization of openspace.
 	level = 1
 	var/holy = 0
 
@@ -33,6 +34,7 @@
 	var/block_tele = FALSE      // If true, most forms of teleporting to or from this turf tile will fail.
 	var/can_build_into_floor = FALSE // Used for things like RCDs (and maybe lattices/floor tiles in the future), to see if a floor should replace it.
 	var/list/dangerous_objects // List of 'dangerous' objs that the turf holds that can cause something bad to happen when stepped on, used for AI mobs.
+	var/tmp/changing_turf
 
 /turf/Initialize(mapload)
 	. = ..()
@@ -40,8 +42,8 @@
 		Entered(AM)
 
 	//Lighting related
-	luminosity = !(dynamic_lighting)
-	
+	set_luminosity(!(dynamic_lighting))
+
 	if(opacity)
 		directional_opacity = ALL_CARDINALS
 
@@ -49,10 +51,22 @@
 	if(movement_cost && pathweight == 1) // This updates pathweight automatically.
 		pathweight = movement_cost
 
+	var/turf/Ab = GetAbove(src)
+	if(Ab)
+		Ab.multiz_turf_new(src, DOWN)
+	var/turf/Be = GetBelow(src)
+	if(Be)
+		Be.multiz_turf_new(src, UP)
+
 /turf/Destroy()
-	. = QDEL_HINT_IWILLGC
+	if (!changing_turf)
+		stack_trace("Improper turf qdel. Do not qdel turfs directly.")
+	changing_turf = FALSE
 	cleanbot_reserved_turfs -= src
+	if(connections)
+		connections.erase_all()
 	..()
+	return QDEL_HINT_IWILLGC
 
 /turf/ex_act(severity)
 	return 0
@@ -163,7 +177,7 @@
 	if(istype(mover)) // turf/Enter(...) will perform more advanced checks
 		return !density
 
-	crash_with("Non movable passed to turf CanPass : [mover]")
+	stack_trace("Non movable passed to turf CanPass : [mover]")
 	return FALSE
 
 //There's a lot of QDELETED() calls here if someone can figure out how to optimize this but not runtime when something gets deleted by a Bump/CanPass/Cross call, lemme know or go ahead and fix this mess - kevinz000
@@ -230,19 +244,17 @@
 
 /turf/proc/AdjacentTurfs(var/check_blockage = TRUE)
 	. = list()
-	for(var/t in (trange(1,src) - src))
-		var/turf/T = t
+	for(var/turf/T as anything in (trange(1,src) - src))
 		if(check_blockage)
 			if(!T.density)
 				if(!LinkBlocked(src, T) && !TurfBlockedNonWindow(T))
-					. += t
+					. += T
 		else
-			. += t
+			. += T
 
 /turf/proc/CardinalTurfs(var/check_blockage = TRUE)
 	. = list()
-	for(var/ad in AdjacentTurfs(check_blockage))
-		var/turf/T = ad
+	for(var/turf/T as anything in AdjacentTurfs(check_blockage))
 		if(T.x == src.x || T.y == src.y)
 			. += T
 
@@ -304,7 +316,7 @@
 
 /turf/proc/try_graffiti(var/mob/vandal, var/obj/item/tool)
 
-	if(!tool.sharp || !can_engrave())
+	if(!tool || !tool.sharp || !can_engrave())
 		return FALSE
 
 	if(jobban_isbanned(vandal, "Graffiti"))
@@ -318,7 +330,7 @@
 		to_chat(vandal, "<span class='warning'>There's too much graffiti here to add more.</span>")
 		return FALSE
 
-	var/message = sanitize(input("Enter a message to engrave.", "Graffiti") as null|text, trim = TRUE)
+	var/message = sanitize(tgui_input_text(usr, "Enter a message to engrave.", "Graffiti"), trim = TRUE)
 	if(!message)
 		return FALSE
 
@@ -388,3 +400,17 @@
 		ChangeTurf(/turf/simulated/floor/airless, preserve_outdoors = TRUE)
 		return TRUE
 	return FALSE
+
+
+// We're about to be the A-side in a turf translation
+/turf/proc/pre_translate_A(var/turf/B)
+	return
+// We're about to be the B-side in a turf translation
+/turf/proc/pre_translate_B(var/turf/A)
+	return
+// We were the the A-side in a turf translation
+/turf/proc/post_translate_A(var/turf/B)
+	return
+// We were the the B-side in a turf translation
+/turf/proc/post_translate_B(var/turf/A)
+	return

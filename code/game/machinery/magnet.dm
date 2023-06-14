@@ -10,7 +10,7 @@
 	name = "Electromagnetic Generator"
 	desc = "A device that uses station power to create points of magnetic energy."
 	plane = PLATING_PLANE
-	anchored = 1
+	anchored = TRUE
 	use_power = USE_POWER_IDLE
 	idle_power_usage = 50
 
@@ -188,8 +188,8 @@
 	name = "Magnetic Control Console"
 	icon = 'icons/obj/airlock_machines.dmi' // uses an airlock machine icon, THINK GREEN HELP THE ENVIRONMENT - RECYCLING!
 	icon_state = "airlock_control_standby"
-	density = 1
-	anchored = 1.0
+	density = TRUE
+	anchored = TRUE
 	use_power = USE_POWER_IDLE
 	idle_power_usage = 45
 	var/frequency = 1449
@@ -314,7 +314,7 @@
 				if(speed <= 0)
 					speed = 1
 			if("setpath")
-				var/newpath = sanitize(input(usr, "Please define a new path!",,path) as text|null)
+				var/newpath = sanitize(tgui_input_text(usr, "Please define a new path!",,path))
 				if(newpath && newpath != "")
 					moving = 0 // stop moving
 					path = newpath

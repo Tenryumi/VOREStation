@@ -29,11 +29,9 @@
 		/obj/item/device/radio/headset/heads/hop,
 		/obj/item/device/radio/headset/heads/hop/alt,
 		/obj/item/weapon/storage/box/ids = 2,
-		/obj/item/weapon/gun/energy/gun,
-		/obj/item/weapon/gun/energy/gun/martin, //VOREStation Add,
-		/obj/item/weapon/storage/box/commandkeys, //VOREStation Add,
-		/obj/item/weapon/storage/box/servicekeys, //VOREStation Add,
-		///obj/item/weapon/gun/projectile/sec/flash, //VOREStation Removal,
+		/obj/item/weapon/gun/energy/gun/compact,
+		/obj/item/weapon/storage/box/commandkeys,
+		/obj/item/weapon/storage/box/servicekeys,
 		/obj/item/device/flash)
 
 /obj/structure/closet/secure_closet/hop2
@@ -51,6 +49,15 @@
 		/obj/item/clothing/under/lawyer/red,
 		/obj/item/clothing/under/lawyer/red/skirt,
 		/obj/item/clothing/under/lawyer/oldman,
+		/obj/item/clothing/under/rank/neo_hop,
+		/obj/item/clothing/under/rank/neo_hop_skirt,
+		/obj/item/clothing/under/rank/neo_hop_parade_masc,
+		/obj/item/clothing/under/rank/neo_hop_parade_fem,
+		/obj/item/clothing/under/rank/neo_hop_turtle,
+		/obj/item/clothing/under/rank/neo_hop_turtle_skirt,
+		/obj/item/clothing/under/rank/neo_cmd_gorka,
+		/obj/item/clothing/suit/storage/toggle/labcoat/neo_hopformal,
+		/obj/item/clothing/suit/storage/toggle/labcoat/neo_civ_dep,
 		/obj/item/clothing/shoes/brown,
 		/obj/item/clothing/shoes/black,
 		/obj/item/clothing/shoes/laceup,
@@ -58,9 +65,12 @@
 		/obj/item/clothing/shoes/white,
 		/obj/item/clothing/under/rank/head_of_personnel_whimsy,
 		/obj/item/clothing/head/caphat/hop,
-		/obj/item/clothing/under/gimmick/rank/head_of_personnel/suit,
-		/obj/item/clothing/under/gimmick/rank/head_of_personnel/suit/skirt,
-		/obj/item/clothing/glasses/sunglasses)
+		/obj/item/clothing/under/suit_jacket/teal,
+		/obj/item/clothing/under/suit_jacket/teal/skirt,
+		/obj/item/clothing/glasses/sunglasses,
+		/obj/item/clothing/suit/storage/hooded/wintercoat/hop,
+		/obj/item/clothing/head/caphat/hop/beret,
+		/obj/item/clothing/head/caphat/hop/beret/white)
 
 
 /obj/structure/closet/secure_closet/hos
@@ -100,6 +110,7 @@
 		/obj/item/weapon/melee/telebaton,
 		/obj/item/clothing/head/beret/sec/corporate/hos,
 		/obj/item/clothing/suit/storage/hooded/wintercoat/security,
+		/obj/item/clothing/suit/storage/hooded/wintercoat/security/hos,
 		/obj/item/clothing/shoes/boots/winter/security,
 		/obj/item/device/flashlight/maglight,
 		/obj/item/clothing/mask/gas/half,
@@ -131,6 +142,13 @@
 		/obj/item/clothing/head/helmet/dermal,
 		/obj/item/clothing/head/helmet/warden,
 		/obj/item/clothing/head/helmet/warden/hat,
+		/obj/item/clothing/under/rank/neo_warden_red,
+		/obj/item/clothing/under/rank/neo_warden_red_skirt,
+		/obj/item/clothing/under/rank/neo_warden_blue,
+		/obj/item/clothing/suit/storage/vest/wardencoat/neo_armsco_trench,
+		/obj/item/clothing/suit/storage/vest/wardencoat/neo_bluewarden,
+		/obj/item/clothing/suit/storage/vest/wardencoat/neo_warden_heavy,
+		/obj/item/clothing/under/rank/neo_sec_gorka,
 		/obj/item/weapon/cartridge/security,
 		/obj/item/device/radio/headset/headset_sec,
 		/obj/item/device/radio/headset/headset_sec/alt,
@@ -228,10 +246,14 @@
 	req_access = list(access_forensics_lockers)
 	closet_appearance = /decl/closet_appearance/cabinet/secure
 
+	open_sound = 'sound/effects/wooden_closet_open.ogg'
+	close_sound = 'sound/effects/wooden_closet_close.ogg'
+
 	starts_with = list(
 		/obj/item/clothing/accessory/badge/holo/detective,
 		/obj/item/clothing/gloves/black,
-		///obj/item/gunbox, //VOREStation Removal,
+		///obj/item/gunbox, // VOREStation Removal
+		/obj/item/gunbox/stun,
 		/obj/item/weapon/storage/belt/detective,
 		/obj/item/weapon/storage/box/evidence,
 		/obj/item/device/radio/headset/headset_sec,
@@ -260,7 +282,7 @@ GLOBAL_LIST_BOILERPLATE(all_brig_closets, /obj/structure/closet/secure_closet/br
 	name = "brig locker"
 	req_access = list(access_brig)
 	closet_appearance = /decl/closet_appearance/secure_closet/brig
-	anchored = 1
+	anchored = TRUE
 	var/id = null
 
 	starts_with = list(
@@ -270,7 +292,7 @@ GLOBAL_LIST_BOILERPLATE(all_brig_closets, /obj/structure/closet/secure_closet/br
 /obj/structure/closet/secure_closet/posters
 	name = "morale storage"
 	req_access = list(access_security)
-	anchored = 1
+	anchored = TRUE
 
 	starts_with = list(
 		/obj/item/poster/nanotrasen,
@@ -297,7 +319,7 @@ GLOBAL_LIST_BOILERPLATE(all_brig_closets, /obj/structure/closet/secure_closet/br
 	name = "wall locker"
 	req_access = list(access_security)
 	closet_appearance = /decl/closet_appearance/wall
-	density = 1
+	density = TRUE
 
 	//too small to put a man in
 	large = 0

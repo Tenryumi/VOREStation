@@ -1,19 +1,20 @@
 var/list/pai_emotions = list(
-		"Happy" = 1,
-		"Cat" = 2,
-		"Extremely Happy" = 3,
-		"Face" = 4,
-		"Laugh" = 5,
-		"Off" = 6,
-		"Sad" = 7,
-		"Angry" = 8,
-		"What" = 9,
-		"Neutral" = 10,
-		"Silly" = 11,
-		"Nose" = 12,
-		"Smirk" = 13,
-		"Exclamation Points" = 14,
-		"Question Mark" = 15
+		"Neutral" = 1,
+		"What" = 2,
+		"Happy" = 3,
+		"Cat" = 4,
+		"Extremely Happy" = 5,
+		"Face" = 6,
+		"Laugh" = 7,
+		"Sad" = 8,
+		"Angry" = 9,
+		"Silly" = 10,
+		"Nose" = 11,
+		"Smirk" = 12,
+		"Exclamation Points" = 13,
+		"Question Mark" = 14,
+		"Blank" = 15,
+		"Off" = 16
 	)
 
 
@@ -21,7 +22,7 @@ var/global/list/pai_software_by_key = list()
 var/global/list/default_pai_software = list()
 /hook/startup/proc/populate_pai_software_list()
 	var/r = 1 // I would use ., but it'd sacrifice runtime detection
-	for(var/type in typesof(/datum/pai_software) - /datum/pai_software)
+	for(var/type in subtypesof(/datum/pai_software))
 		var/datum/pai_software/P = new type()
 		if(pai_software_by_key[P.id])
 			var/datum/pai_software/O = pai_software_by_key[P.id]

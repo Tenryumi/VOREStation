@@ -7,7 +7,7 @@
 	icon = 'icons/obj/machines/shielding_vr.dmi'
 	icon_state = "generator0"
 	circuit = /obj/item/weapon/circuitboard/shield_generator
-	density = 1
+	density = TRUE
 	var/datum/wires/shield_generator/wires = null
 	var/list/field_segments = list()    // List of all shield segments owned by this generator.
 	var/list/damaged_segments = list()  // List of shield segments that have failed and are currently regenerating.
@@ -458,7 +458,7 @@
 		if("begin_shutdown")
 			if(running < SHIELD_RUNNING) // Discharging or off
 				return
-			var/alert = alert(usr, "Are you sure you wish to do this? It will drain the power inside the internal storage rapidly.", "Are you sure?", "Yes", "No")
+			var/alert = tgui_alert(usr, "Are you sure you wish to do this? It will drain the power inside the internal storage rapidly.", "Are you sure?", list("Yes", "No"))
 			if(tgui_status(usr, state) != STATUS_INTERACTIVE)
 				return
 			if(running < SHIELD_RUNNING)
@@ -485,7 +485,7 @@
 			if(!running)
 				return TRUE
 
-			var/choice = input(usr, "Are you sure that you want to initiate an emergency shield shutdown? This will instantly drop the shield, and may result in unstable release of stored electromagnetic energy. Proceed at your own risk.") in list("Yes", "No")
+			var/choice = tgui_alert(usr, "Are you sure that you want to initiate an emergency shield shutdown? This will instantly drop the shield, and may result in unstable release of stored electromagnetic energy. Proceed at your own risk.", "Confirmation", list("No", "Yes"))
 			if((choice != "Yes") || !running)
 				return TRUE
 
@@ -505,14 +505,14 @@
 
 	switch(action)
 		if("set_range")
-			var/new_range = input(usr, "Enter new field range (1-[world.maxx]). Leave blank to cancel.", "Field Radius Control", field_radius) as num
+			var/new_range = tgui_input_number(usr, "Enter new field range (1-[world.maxx]). Leave blank to cancel.", "Field Radius Control", field_radius, world.maxx, 1)
 			if(!new_range)
 				return TRUE
 			target_radius = between(1, new_range, world.maxx)
 			return TRUE
 
 		if("set_input_cap")
-			var/new_cap = round(input(usr, "Enter new input cap (in kW). Enter 0 or nothing to disable input cap.", "Generator Power Control", round(input_cap / 1000)) as num)
+			var/new_cap = round(tgui_input_number(usr, "Enter new input cap (in kW). Enter 0 or nothing to disable input cap.", "Generator Power Control", round(input_cap / 1000)))
 			if(!new_cap)
 				input_cap = 0
 				return
@@ -710,7 +710,7 @@
 		component_parts -= cap
 		qdel(cap)
 
-	component_parts += new /obj/item/weapon/stock_parts/capacitor/omni(src)
+	component_parts += new /obj/item/weapon/stock_parts/capacitor/hyper(src)
 	component_parts += new /obj/item/weapon/smes_coil/super_capacity(src)
 	RefreshParts()
 	current_energy = max_energy

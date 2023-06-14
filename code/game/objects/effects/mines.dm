@@ -1,14 +1,14 @@
 /obj/effect/mine
 	name = "land mine"	//The name and description are deliberately NOT modified, so you can't game the mines you find.
 	desc = "A small explosive land mine."
-	density = 0
-	anchored = 1
+	density = FALSE
+	anchored = TRUE
 	icon = 'icons/obj/weapons.dmi'
 	icon_state = "uglymine"
 	var/triggered = 0
 	var/smoke_strength = 3
 	var/obj/item/weapon/mine/mineitemtype = /obj/item/weapon/mine
-	var/panel_open = 0
+	var/panel_open = FALSE
 	var/datum/wires/mines/wires = null
 	var/camo_net = FALSE	// Will the mine 'cloak' on deployment?
 
@@ -96,7 +96,8 @@
 		explode(M)
 
 	if(istype(M, /mob/living/))
-		if(!M.hovering)
+		var/mob/living/mob = M
+		if(!mob.hovering || !mob.flying)
 			explode(M)
 
 /obj/effect/mine/attackby(obj/item/W as obj, mob/living/user as mob)
@@ -398,6 +399,6 @@
 
 // This tells AI mobs to not be dumb and step on mines willingly.
 /obj/item/weapon/mine/is_safe_to_step(mob/living/L)
-	if(!L.hovering)
+	if(!L.hovering || !L.flying)
 		return FALSE
 	return ..()

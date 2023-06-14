@@ -21,6 +21,7 @@ Loot piles can be depleted, if loot_depleted is turned on.  Note that players wh
 	icon_state = "randompile"
 	density = FALSE
 	anchored = TRUE
+	unacidable = TRUE
 
 	var/list/icon_states_to_use = list() // List of icon states the pile can choose from on initialization. If empty or null, it will stay the initial icon_state.
 
@@ -189,6 +190,7 @@ Loot piles can be depleted, if loot_depleted is turned on.  Note that players wh
 		/obj/item/clothing/under/harness,
 		/obj/item/clothing/accessory/storage/webbing,
 		/obj/item/weapon/spacecash/c1,
+		/obj/item/weapon/spacecash/c5,
 		/obj/item/weapon/spacecash/c10,
 		/obj/item/weapon/spacecash/c20,
 		/obj/item/weapon/camera_assembly,
@@ -299,8 +301,8 @@ Loot piles can be depleted, if loot_depleted is turned on.  Note that players wh
 
 	uncommon_loot = list(
 		/obj/item/weapon/storage/box/sinpockets,
-		/obj/item/weapon/storage/box/practiceshells,
-		/obj/item/weapon/storage/box/blanks,
+		/obj/item/ammo_magazine/ammo_box/b12g/practice,
+		/obj/item/ammo_magazine/ammo_box/b12g/blank,
 		/obj/item/weapon/storage/box/smokes,
 		/obj/item/weapon/storage/box/metalfoam,
 		/obj/item/weapon/storage/box/handcuffs,
@@ -310,8 +312,8 @@ Loot piles can be depleted, if loot_depleted is turned on.  Note that players wh
 	rare_loot = list(
 		/obj/item/weapon/storage/box/flashbangs,
 		/obj/item/weapon/storage/box/empslite,
-		/obj/item/weapon/storage/box/flashshells,
-		/obj/item/weapon/storage/box/stunshells,
+		/obj/item/ammo_magazine/ammo_box/b12g/flash,
+		/obj/item/ammo_magazine/ammo_box/b12g/stunshell,
 		/obj/item/weapon/storage/box/teargas
 	)
 

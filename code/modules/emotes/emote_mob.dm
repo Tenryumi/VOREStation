@@ -4,7 +4,7 @@
 	var/last_emote_summary
 
 /mob/proc/get_available_emotes()
-	return global._default_mob_emotes
+	return global._default_mob_emotes.Copy()
 
 /mob/proc/can_emote(var/emote_type)
 	return (stat == CONSCIOUS)
@@ -27,6 +27,11 @@
 		if(world.time < next_emote)
 			to_chat(src, SPAN_WARNING("You cannot use another emote yet."))
 			return
+		//VOREStation Addition Start
+		if(forced_psay)
+			pme(message)
+			return
+		//VOREStation Addition End
 
 		if(act == "help")
 			if(world.time >= next_emote_refresh)
@@ -49,11 +54,11 @@
 
 		if(act == "custom")
 			if(!message)
-				message = sanitize_or_reflect(input(src,"Choose an emote to display.") as text|null, src) //VOREStation Edit - Reflect too long messages, within reason
+				message = sanitize_or_reflect(tgui_input_text(src,"Choose an emote to display."), src) //VOREStation Edit - Reflect too long messages, within reason
 			if(!message)
 				return
 			if (!m_type)
-				if(alert(src, "Is this an audible emote?", "Emote", "Yes", "No") == "No")
+				if(tgui_alert(src, "Is this an audible emote?", "Emote", list("Yes", "No")) == "No")
 					m_type = VISIBLE_MESSAGE
 				else
 					m_type = AUDIBLE_MESSAGE
@@ -123,6 +128,7 @@
 	if(findtext(subtext, "*"))
 		// abort abort!
 		to_chat(emoter, SPAN_WARNING("You may use only one \"["*"]\" symbol in your emote."))
+		to_chat(emoter, SPAN_WARNING(message))
 		return
 
 	if(pretext)
@@ -160,7 +166,7 @@
 
 	var/input
 	if(!message)
-		input = sanitize(input(src,"Choose an emote to display.") as text|null)
+		input = sanitize(tgui_input_text(src,"Choose an emote to display."))
 	else
 		input = message
 
@@ -168,6 +174,8 @@
 	var/runemessage
 	if(input)
 		formatted = format_emote(src, message)
+		if(!islist(formatted))
+			return
 		message = formatted["pretext"] + formatted["nametext"] + formatted["subtext"]
 		runemessage = formatted["subtext"]
 		// This is just personal preference (but I'm objectively right) that custom emotes shouldn't have periods at the end in runechat
@@ -184,16 +192,26 @@
 	if(message)
 		message = encode_html_emphasis(message)
 
+		var/ourfreq = null
+		if(isliving(src))
+			var/mob/living/L = src
+			if(L.voice_freq > 0 )
+				ourfreq = L.voice_freq
+
+
 		// Hearing gasp and such every five seconds is not good emotes were not global for a reason.
 		// Maybe some people are okay with that.
 		var/turf/T = get_turf(src)
+
 		if(!T) return
+		if(client)
+			playsound(T, pick(emote_sound), 25, TRUE, falloff = 1 , is_global = TRUE, frequency = ourfreq, ignore_walls = FALSE, preference = /datum/client_preference/emote_sounds)
+
 		var/list/in_range = get_mobs_and_objs_in_view_fast(T,range,2,remote_ghosts = client ? TRUE : FALSE)
 		var/list/m_viewers = in_range["mobs"]
 		var/list/o_viewers = in_range["objs"]
 
-		for(var/mob in m_viewers)
-			var/mob/M = mob
+		for(var/mob/M as anything in m_viewers)
 			spawn(0) // It's possible that it could be deleted in the meantime, or that it runtimes.
 				if(M)
 					if(isobserver(M))
@@ -201,8 +219,7 @@
 					M.show_message(message, m_type)
 					M.create_chat_message(src, "[runemessage]", FALSE, list("emote"), (m_type == AUDIBLE_MESSAGE))
 
-		for(var/obj in o_viewers)
-			var/obj/O = obj
+		for(var/obj/O as anything in o_viewers)
 			spawn(0)
 				if(O)
 					O.see_emote(src, message, m_type)

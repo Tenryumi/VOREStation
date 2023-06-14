@@ -42,9 +42,9 @@
 
 /obj/machinery/atmospherics/valve/init_dir()
 	switch(dir)
-		if(NORTH || SOUTH)
+		if(NORTH,SOUTH)
 			initialize_directions = NORTH|SOUTH
-		if(EAST || WEST)
+		if(EAST,WEST)
 			initialize_directions = EAST|WEST
 
 /obj/machinery/atmospherics/valve/get_neighbor_nodes_for_init()
@@ -301,7 +301,7 @@
 	to_chat(user, "<span class='notice'>You begin to unfasten \the [src]...</span>")
 	if (do_after(user, 40 * W.toolspeed))
 		user.visible_message( \
-			"<span class='notice'>\The [user] unfastens \the [src].</span>", \
+			"<b>\The [user]</b> unfastens \the [src].", \
 			"<span class='notice'>You have unfastened \the [src].</span>", \
 			"You hear a ratchet.")
 		deconstruct()

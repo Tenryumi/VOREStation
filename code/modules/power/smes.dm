@@ -10,8 +10,9 @@ GLOBAL_LIST_EMPTY(smeses)
 	name = "power storage unit"
 	desc = "A high-capacity superconducting magnetic energy storage (SMES) unit."
 	icon_state = "smes"
-	density = 1
-	anchored = 1
+	density = TRUE
+	anchored = TRUE
+	unacidable = TRUE
 	use_power = USE_POWER_OFF
 	circuit = /obj/item/weapon/circuitboard/smes
 	clicksound = "switch"
@@ -68,14 +69,8 @@ GLOBAL_LIST_EMPTY(smeses)
 /obj/machinery/power/smes/Initialize()
 	. = ..()
 	GLOB.smeses += src
-	for(var/d in GLOB.cardinal)
-		var/turf/T = get_step(src, d)
-		for(var/obj/machinery/power/terminal/term in T)
-			if(term && term.dir == turn(d, 180) && !term.master)
-				terminals |= term
-				term.master = src
-				term.connect_to_network()
-	if(!terminals.len)
+	add_nearby_terminals()
+	if(!check_terminals())
 		stat |= BROKEN
 		return
 	update_icon()
@@ -90,6 +85,20 @@ GLOBAL_LIST_EMPTY(smeses)
 	terminals = null
 	GLOB.smeses -= src
 	return ..()
+
+/obj/machinery/power/smes/proc/add_nearby_terminals()
+	for(var/d in GLOB.cardinal)
+		var/turf/T = get_step(src, d)
+		for(var/obj/machinery/power/terminal/term in T)
+			if(term && term.dir == turn(d, 180) && !term.master)
+				terminals |= term
+				term.master = src
+				term.connect_to_network()
+
+/obj/machinery/power/smes/proc/check_terminals()
+	if(!terminals.len)
+		return FALSE
+	return TRUE
 
 /obj/machinery/power/smes/add_avail(var/amount)
 	if(..(amount))
@@ -306,6 +315,8 @@ GLOBAL_LIST_EMPTY(smeses)
 				"<span class='filter_notice'><span class='notice'>[user.name] has added cables to the [src].</span></span>",\
 				"<span class='filter_notice'><span class='notice'>You added cables to the [src].</span></span>")
 		stat = 0
+		if(!powernet)
+			connect_to_network()
 		return FALSE
 
 	else if(W.is_wirecutter() && !building_terminal)
@@ -409,7 +420,7 @@ GLOBAL_LIST_EMPTY(smeses)
 		switch(io)
 			if(SMES_TGUI_INPUT)
 				set_input(target)
-			if(SMES_TGUI_OUTPUT)	
+			if(SMES_TGUI_OUTPUT)
 				set_output(target)
 
 

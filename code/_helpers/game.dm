@@ -226,8 +226,7 @@
 	. = list()
 	// Returns a list of mobs who can hear any of the radios given in @radios
 	var/list/speaker_coverage = list()
-	for(var/r in radios)
-		var/obj/item/device/radio/R = r // You better fucking be a radio.
+	for(var/obj/item/device/radio/R as anything in radios)
 		var/turf/speaker = get_turf(R)
 		if(speaker)
 			for(var/turf/T in hear(R.canhear_range,speaker))
@@ -250,13 +249,13 @@
 /mob/living/silicon/robot/can_hear_radio(var/list/hearturfs)
 	var/turf/T = get_turf(src)
 	var/obj/item/device/radio/borg/R = hearturfs[T] // this should be an assoc list of turf-to-radio
-	
+
 	// We heard it on our own radio? We use power for that.
 	if(istype(R) && R.myborg == src)
 		var/datum/robot_component/CO = get_component("radio")
 		if(!CO || !is_component_functioning("radio") || !cell_use_power(CO.active_usage))
 			return FALSE // Sorry, couldn't hear
-	
+
 	return R // radio, true, false, what's the difference
 
 /mob/observer/dead/can_hear_radio(var/list/hearturfs)
@@ -274,8 +273,26 @@
 	var/list/hear = dview(range,T,INVISIBILITY_MAXIMUM)
 	var/list/hearturfs = list()
 
+	// Openspace visibility handling
+	// Below turfs we can see
+	for(var/turf/simulated/open/O in hear)
+		var/turf/U = GetBelow(O)
+		while(istype(U))
+			hearturfs |= U
+			if(isopenspace(U))
+				U = GetBelow(U)
+			else
+				U = null
+
+	// Above us
+	var/above_range = range
+	var/turf/Ab = GetAbove(T)
+	while(isopenspace(Ab) && --above_range > 0)
+		hear |= dview(above_range,Ab,INVISIBILITY_MAXIMUM)
+		Ab = GetAbove(Ab)
+
 	for(var/thing in hear)
-		if(istype(thing, /obj)) //Can't use isobj() because /atom/movable returns true in that, and so lighting overlays would be included
+		if(istype(thing, /obj)) //Can't use isobj() because /atom/movable returns true in that
 			objs += thing
 			hearturfs |= get_turf(thing)
 		if(ismob(thing))
@@ -350,8 +367,7 @@
 
 /proc/flick_overlay_view(image/I, atom/target, duration, gc_after) //wrapper for the above, flicks to everyone who can see the target atom
 	var/list/viewing = list()
-	for(var/m in viewers(target))
-		var/mob/M = m
+	for(var/mob/M as anything in viewers(target))
 		if(M.client)
 			viewing += M.client
 	flick_overlay(I, viewing, duration, gc_after)

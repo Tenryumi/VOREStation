@@ -8,8 +8,8 @@
 							/obj/item/toy/blink										= 2,
 							/obj/item/clothing/under/syndicate/tacticool			= 2,
 							/obj/item/toy/sword										= 2,
-							/obj/item/weapon/gun/projectile/revolver/capgun			= 2,
-							/obj/item/toy/crossbow									= 2,
+							/obj/item/weapon/storage/box/capguntoy					= 2,
+							/obj/item/weapon/gun/projectile/revolver/toy/crossbow	= 2,
 							/obj/item/clothing/suit/syndicatefake					= 2,
 							/obj/item/weapon/storage/fancy/crayons					= 2,
 							/obj/item/toy/spinningtoy								= 2,
@@ -20,7 +20,7 @@
 							/obj/item/toy/cultsword									= 1,
 							/obj/item/toy/bouquet/fake								= 1,
 							/obj/item/clothing/accessory/badge/sheriff				= 2,
-							/obj/item/clothing/head/cowboy_hat/small				= 2,
+							/obj/item/clothing/head/cowboy/small				= 2,
 							/obj/item/toy/stickhorse								= 2
 							)
 	var/list/special_prizes = list() // Holds instanced objects, intended for admins to shove surprises inside or something.
@@ -40,7 +40,7 @@
 		var/atom/movable/AM = pick_n_take(special_prizes)
 		AM.forceMove(get_turf(src))
 		special_prizes -= AM
-	
+
 	else if(LAZYLEN(prizes))
 		var/prizeselect = pickweight(prizes)
 		new prizeselect(src.loc)
@@ -1083,7 +1083,7 @@
 /obj/machinery/computer/arcade/clawmachine
 	name = "AlliCo Grab-a-Gift"
 	desc = "Show off your arcade skills for that special someone!"
-	icon_state = "clawmachine"
+	icon_state = "clawmachine_new"
 	icon_keyboard = null
 	icon_screen = null
 	circuit = /obj/item/weapon/circuitboard/arcade/clawmachine
@@ -1125,7 +1125,7 @@
 
 			// This is not a status display message, since it's something the character
 			// themselves is meant to see BEFORE putting the money in
-			to_chat(usr, "[bicon(cashmoney)] <span class='warning'>That is not enough money.</span>")
+			to_chat(usr, "\icon[cashmoney][bicon(cashmoney)] <span class='warning'>That is not enough money.</span>")
 			return 0
 
 		if(istype(cashmoney, /obj/item/weapon/spacecash))
@@ -1182,7 +1182,7 @@
 	// Have the customer punch in the PIN before checking if there's enough money. Prevents people from figuring out acct is
 	// empty at high security levels
 	if(customer_account.security_level != 0) //If card requires pin authentication (ie seclevel 1 or 2)
-		var/attempt_pin = input("Enter pin code", "Vendor transaction") as num
+		var/attempt_pin = tgui_input_number(usr, "Enter pin code", "Vendor transaction")
 		customer_account = attempt_account_access(I.associated_account_number, attempt_pin, 2)
 
 		if(!customer_account)
@@ -1244,10 +1244,10 @@
 
 /// TGUI Stuff
 
-/obj/machinery/computer/arcade/clawmachine/tgui_interact(mob/user, ui_key = "main", datum/tgui/ui = null, force_open = 0, datum/tgui/master_ui = null, datum/tgui_state/state = GLOB.tgui_default_state)
-	ui = SStgui.try_update_ui(user, src, ui_key, ui, force_open)
+/obj/machinery/computer/arcade/clawmachine/tgui_interact(mob/user, datum/tgui/ui)
+	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
-		ui = new(user, src, ui_key, "ClawMachine", name, 300, 400, master_ui, state)
+		ui = new(user, src, "ClawMachine", name, ui_x = 300, ui_y = 400)
 		ui.autoupdate = TRUE
 		ui.open()
 
@@ -1270,7 +1270,7 @@
 
 	if(action == "newgame" && gamepaid == 1)
 		gameStatus = "CLAWMACHINE_ON"
-		icon_state = "clawmachine_move"
+		icon_state = "clawmachine_new_move"
 		instructions = "Guide the claw to the prize you want!"
 		wintick = 0
 
@@ -1307,7 +1307,7 @@
 		winscreen = "Aw, shucks. Try again!"
 	wintick = 0
 	gamepaid = 0
-	icon_state = "clawmachine"
+	icon_state = "clawmachine_new"
 	gameStatus = "CLAWMACHINE_END"
 
 /obj/machinery/computer/arcade/clawmachine/emag_act(mob/user)
@@ -1322,8 +1322,9 @@
 		gameStatus = "CLAWMACHINE_NEW"
 		emagged = 1
 		return 1
-		
+
 /obj/machinery/computer/arcade/attackby(obj/item/O, mob/user, params)
+	..()
 	if(istype(O, /obj/item/stack/arcadeticket))
 		var/obj/item/stack/arcadeticket/T = O
 		var/amount = T.get_amount()

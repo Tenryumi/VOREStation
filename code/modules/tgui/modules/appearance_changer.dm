@@ -26,6 +26,7 @@
 	var/list/valid_earstyles = list()
 	var/list/valid_tailstyles = list()
 	var/list/valid_wingstyles = list()
+	var/list/markings = null
 
 /datum/tgui_module/appearance_changer/New(
 		var/host,
@@ -38,6 +39,7 @@
 	map_name = "appearance_changer_[REF(src)]_map"
 	// Initialize map objects
 	cam_screen = new
+
 	cam_screen.name = "screen"
 	cam_screen.assigned_map = map_name
 	cam_screen.del_on_map_removal = FALSE
@@ -45,8 +47,7 @@
 
 	cam_plane_masters = get_tgui_plane_masters()
 
-	for(var/plane in cam_plane_masters)
-		var/obj/screen/instance = plane
+	for(var/obj/screen/instance as anything in cam_plane_masters)
 		instance.assigned_map = map_name
 		instance.del_on_map_removal = FALSE
 		instance.screen_loc = "[map_name]:CENTER"
@@ -64,13 +65,13 @@
 
 	owner = H
 	if(owner)
-		GLOB.moved_event.register(owner, src, .proc/update_active_camera_screen)
+		GLOB.moved_event.register(owner, src, PROC_REF(update_active_camera_screen))
 	check_whitelist = check_species_whitelist
 	whitelist = species_whitelist
 	blacklist = species_blacklist
 
 /datum/tgui_module/appearance_changer/Destroy()
-	GLOB.moved_event.unregister(owner, src, .proc/update_active_camera_screen)
+	GLOB.moved_event.unregister(owner, src, PROC_REF(update_active_camera_screen))
 	last_camera_turf = null
 	qdel(cam_screen)
 	QDEL_LIST(cam_plane_masters)
@@ -92,6 +93,9 @@
 		if("race")
 			if(can_change(APPEARANCE_RACE) && (params["race"] in valid_species))
 				if(target.change_species(params["race"]))
+					if(params["race"] == "Custom Species")
+						target.custom_species = sanitize(tgui_input_text(usr, "Input custom species name:",
+							"Custom Species Name", null, MAX_NAME_LEN), MAX_NAME_LEN)
 					cut_data()
 					generate_data(usr)
 					changed_hook(APPEARANCECHANGER_CHANGED_RACE)
@@ -110,7 +114,7 @@
 				return 1
 		if("skin_tone")
 			if(can_change_skin_tone())
-				var/new_s_tone = input(usr, "Choose your character's skin-tone:\n(Light 1 - 220 Dark)", "Skin Tone", -target.s_tone + 35) as num|null
+				var/new_s_tone = tgui_input_number(usr, "Choose your character's skin-tone:\n(Light 1 - 220 Dark)", "Skin Tone", -target.s_tone + 35, 220, 1)
 				if(isnum(new_s_tone) && can_still_topic(usr, state))
 					new_s_tone = 35 - max(min( round(new_s_tone), 220),1)
 					changed_hook(APPEARANCECHANGER_CHANGED_SKINTONE)
@@ -134,7 +138,7 @@
 					return 1
 		if("hair_color")
 			if(can_change(APPEARANCE_HAIR_COLOR))
-				var/new_hair = input("Please select hair color.", "Hair Color", rgb(target.r_hair, target.g_hair, target.b_hair)) as color|null
+				var/new_hair = input(usr, "Please select hair color.", "Hair Color", rgb(target.r_hair, target.g_hair, target.b_hair)) as color|null
 				if(new_hair && can_still_topic(usr, state))
 					var/r_hair = hex2num(copytext(new_hair, 2, 4))
 					var/g_hair = hex2num(copytext(new_hair, 4, 6))
@@ -151,7 +155,7 @@
 					return 1
 		if("facial_hair_color")
 			if(can_change(APPEARANCE_FACIAL_HAIR_COLOR))
-				var/new_facial = input("Please select facial hair color.", "Facial Hair Color", rgb(target.r_facial, target.g_facial, target.b_facial)) as color|null
+				var/new_facial = input(usr, "Please select facial hair color.", "Facial Hair Color", rgb(target.r_facial, target.g_facial, target.b_facial)) as color|null
 				if(new_facial && can_still_topic(usr, state))
 					var/r_facial = hex2num(copytext(new_facial, 2, 4))
 					var/g_facial = hex2num(copytext(new_facial, 4, 6))
@@ -162,7 +166,7 @@
 						return 1
 		if("eye_color")
 			if(can_change(APPEARANCE_EYE_COLOR))
-				var/new_eyes = input("Please select eye color.", "Eye Color", rgb(target.r_eyes, target.g_eyes, target.b_eyes)) as color|null
+				var/new_eyes = input(usr, "Please select eye color.", "Eye Color", rgb(target.r_eyes, target.g_eyes, target.b_eyes)) as color|null
 				if(new_eyes && can_still_topic(usr, state))
 					var/r_eyes = hex2num(copytext(new_eyes, 2, 4))
 					var/g_eyes = hex2num(copytext(new_eyes, 4, 6))
@@ -171,7 +175,7 @@
 						update_dna()
 						changed_hook(APPEARANCECHANGER_CHANGED_EYES)
 						return 1
-		// VOREStation Add - Ears/Tails/Wings
+		// VOREStation Add - Ears/Tails/Wings/Markings
 		if("ear")
 			if(can_change(APPEARANCE_ALL_HAIR))
 				var/datum/sprite_accessory/ears/instance = locate(params["ref"])
@@ -186,7 +190,7 @@
 				return TRUE
 		if("ears_color")
 			if(can_change(APPEARANCE_HAIR_COLOR))
-				var/new_hair = input("Please select ear color.", "Ear Color", rgb(target.r_ears, target.g_ears, target.b_ears)) as color|null
+				var/new_hair = input(usr, "Please select ear color.", "Ear Color", rgb(target.r_ears, target.g_ears, target.b_ears)) as color|null
 				if(new_hair && can_still_topic(usr, state))
 					target.r_ears = hex2num(copytext(new_hair, 2, 4))
 					target.g_ears = hex2num(copytext(new_hair, 4, 6))
@@ -197,7 +201,7 @@
 					return 1
 		if("ears2_color")
 			if(can_change(APPEARANCE_HAIR_COLOR))
-				var/new_hair = input("Please select secondary ear color.", "2nd Ear Color", rgb(target.r_ears2, target.g_ears2, target.b_ears2)) as color|null
+				var/new_hair = input(usr, "Please select secondary ear color.", "2nd Ear Color", rgb(target.r_ears2, target.g_ears2, target.b_ears2)) as color|null
 				if(new_hair && can_still_topic(usr, state))
 					target.r_ears2 = hex2num(copytext(new_hair, 2, 4))
 					target.g_ears2 = hex2num(copytext(new_hair, 4, 6))
@@ -220,7 +224,7 @@
 				return TRUE
 		if("tail_color")
 			if(can_change(APPEARANCE_HAIR_COLOR))
-				var/new_hair = input("Please select tail color.", "Tail Color", rgb(target.r_tail, target.g_tail, target.b_tail)) as color|null
+				var/new_hair = input(usr, "Please select tail color.", "Tail Color", rgb(target.r_tail, target.g_tail, target.b_tail)) as color|null
 				if(new_hair && can_still_topic(usr, state))
 					target.r_tail = hex2num(copytext(new_hair, 2, 4))
 					target.g_tail = hex2num(copytext(new_hair, 4, 6))
@@ -231,7 +235,7 @@
 					return 1
 		if("tail2_color")
 			if(can_change(APPEARANCE_HAIR_COLOR))
-				var/new_hair = input("Please select secondary tail color.", "2nd Tail Color", rgb(target.r_tail2, target.g_tail2, target.b_tail2)) as color|null
+				var/new_hair = input(usr, "Please select secondary tail color.", "2nd Tail Color", rgb(target.r_tail2, target.g_tail2, target.b_tail2)) as color|null
 				if(new_hair && can_still_topic(usr, state))
 					target.r_tail2 = hex2num(copytext(new_hair, 2, 4))
 					target.g_tail2 = hex2num(copytext(new_hair, 4, 6))
@@ -254,7 +258,7 @@
 				return TRUE
 		if("wing_color")
 			if(can_change(APPEARANCE_HAIR_COLOR))
-				var/new_hair = input("Please select wing color.", "Wing Color", rgb(target.r_wing, target.g_wing, target.b_wing)) as color|null
+				var/new_hair = input(usr, "Please select wing color.", "Wing Color", rgb(target.r_wing, target.g_wing, target.b_wing)) as color|null
 				if(new_hair && can_still_topic(usr, state))
 					target.r_wing = hex2num(copytext(new_hair, 2, 4))
 					target.g_wing = hex2num(copytext(new_hair, 4, 6))
@@ -265,7 +269,7 @@
 					return 1
 		if("wing2_color")
 			if(can_change(APPEARANCE_HAIR_COLOR))
-				var/new_hair = input("Please select secondary wing color.", "2nd Wing Color", rgb(target.r_wing2, target.g_wing2, target.b_wing2)) as color|null
+				var/new_hair = input(usr, "Please select secondary wing color.", "2nd Wing Color", rgb(target.r_wing2, target.g_wing2, target.b_wing2)) as color|null
 				if(new_hair && can_still_topic(usr, state))
 					target.r_wing2 = hex2num(copytext(new_hair, 2, 4))
 					target.g_wing2 = hex2num(copytext(new_hair, 4, 6))
@@ -274,6 +278,40 @@
 					owner.update_wing_showing()
 					changed_hook(APPEARANCECHANGER_CHANGED_HAIRCOLOR)
 					return 1
+		if("marking")
+			if(can_change(APPEARANCE_ALL_HAIR))
+				var/todo = params["todo"]
+				var/name_marking = params["name"]
+				switch (todo)
+					if (0) //delete
+						if (name_marking)
+							var/datum/sprite_accessory/marking/mark_datum = body_marking_styles_list[name_marking]
+							if (target.remove_marking(mark_datum))
+								changed_hook(APPEARANCECHANGER_CHANGED_HAIRSTYLE)
+								return TRUE
+					if (1) //add
+						var/list/usable_markings = markings.Copy() ^ body_marking_styles_list.Copy()
+						var/new_marking = tgui_input_list(usr, "Choose a body marking:", "New Body Marking", usable_markings)
+						if(new_marking && can_still_topic(usr, state))
+							var/datum/sprite_accessory/marking/mark_datum = body_marking_styles_list[new_marking]
+							if (target.add_marking(mark_datum))
+								changed_hook(APPEARANCECHANGER_CHANGED_HAIRSTYLE)
+								return TRUE
+					if (2) //move up
+						var/datum/sprite_accessory/marking/mark_datum = body_marking_styles_list[name_marking]
+						if (target.change_priority_of_marking(mark_datum, FALSE))
+							return TRUE
+					if (3) //move down
+						var/datum/sprite_accessory/marking/mark_datum = body_marking_styles_list[name_marking]
+						if (target.change_priority_of_marking(mark_datum, TRUE))
+							return TRUE
+					if (4) //color
+						var/current = markings[name_marking] ? markings[name_marking] : "#000000"
+						var/marking_color = input(usr, "Please select marking color", "Marking color", current) as color|null
+						if(marking_color && can_still_topic(usr, state))
+							var/datum/sprite_accessory/marking/mark_datum = body_marking_styles_list[name_marking]
+							if (target.change_marking_color(mark_datum, marking_color))
+								return TRUE
 		// VOREStation Add End
 	return FALSE
 
@@ -367,6 +405,11 @@
 		data["ear_style"] = target.ear_style
 		data["tail_style"] = target.tail_style
 		data["wing_style"] = target.wing_style
+		var/list/markings_data[0]
+		markings = target.get_prioritised_markings()
+		for (var/marking in markings)
+			markings_data[++markings_data.len] = list("marking_name" = marking, "marking_color" = markings[marking])
+		data["markings"] = markings_data
 		// VOREStation Add End
 
 	data["change_facial_hair"] = can_change(APPEARANCE_FACIAL_HAIR)
@@ -405,6 +448,11 @@
 	return data
 
 /datum/tgui_module/appearance_changer/proc/update_active_camera_screen()
+	cam_screen.vis_contents = list(owner) // Copied from the vore version.
+	cam_background.icon_state = "clear"
+	cam_background.fill_rect(1, 1, 1, 1)
+	local_skybox.cut_overlays()
+	/*
 	var/turf/newturf = get_turf(customize_usr ? tgui_host() : owner)
 	if(newturf == last_camera_turf)
 		return
@@ -423,6 +471,7 @@
 	local_skybox.add_overlay(SSskybox.get_skybox(get_z(newturf)))
 	local_skybox.scale_to_view(3)
 	local_skybox.set_position("CENTER", "CENTER", (world.maxx>>1) - newturf.x, (world.maxy>>1) - newturf.y)
+	*/
 
 /datum/tgui_module/appearance_changer/proc/update_dna()
 	var/mob/living/carbon/human/target = owner
@@ -542,7 +591,7 @@
 
 // VOREStation Add - Ears/Tails/Wings
 /datum/tgui_module/appearance_changer/proc/can_use_sprite(datum/sprite_accessory/X, mob/living/carbon/human/target, mob/user)
-	if(!isnull(X.species_allowed) && !(target.species.name in X.species_allowed))
+	if(!isnull(X.species_allowed) && !(target.species.name in X.species_allowed) && (!istype(target.species, /datum/species/custom))) // Letting custom species access wings/ears/tails.
 		return FALSE
 
 	if(LAZYLEN(X.ckeys_allowed) && !(user?.ckey in X.ckeys_allowed) && !(target.ckey in X.ckeys_allowed))

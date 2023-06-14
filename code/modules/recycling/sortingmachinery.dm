@@ -4,7 +4,7 @@
 	icon = 'icons/obj/storage_vr.dmi'	//VOREStation Edit
 	icon_state = "deliverycloset"
 	var/obj/wrapped = null
-	density = 1
+	density = TRUE
 	var/sortTag = null
 	flags = NOBLUDGEON
 	mouse_drag_pointer = MOUSE_ACTIVE_POINTER
@@ -40,9 +40,9 @@
 			to_chat(user, "<span class='warning'>You need to set a destination first!</span>")
 
 	else if(istype(W, /obj/item/weapon/pen))
-		switch(alert("What would you like to alter?",,"Title","Description", "Cancel"))
+		switch(tgui_alert(usr, "What would you like to alter?","Select Alteration",list("Title","Description","Cancel")))
 			if("Title")
-				var/str = sanitizeSafe(input(usr,"Label text?","Set label",""), MAX_NAME_LEN)
+				var/str = sanitizeSafe(tgui_input_text(usr,"Label text?","Set label","", MAX_NAME_LEN), MAX_NAME_LEN)
 				if(!str || !length(str))
 					to_chat(user, "<span class='warning'> Invalid text.</span>")
 					return
@@ -57,7 +57,7 @@
 				else
 					nameset = 1
 			if("Description")
-				var/str = sanitize(input(usr,"Label text?","Set label",""))
+				var/str = sanitize(tgui_input_text(usr,"Label text?","Set label",""))
 				if(!str || !length(str))
 					to_chat(user, "<font color='red'>Invalid text.</font>")
 					return
@@ -151,9 +151,9 @@
 			to_chat(user, "<span class='warning'>You need to set a destination first!</span>")
 
 	else if(istype(W, /obj/item/weapon/pen))
-		switch(alert("What would you like to alter?",,"Title","Description", "Cancel"))
+		switch(tgui_alert(usr, "What would you like to alter?","Select Alteration",list("Title","Description","Cancel")))
 			if("Title")
-				var/str = sanitizeSafe(input(usr,"Label text?","Set label",""), MAX_NAME_LEN)
+				var/str = sanitizeSafe(tgui_input_text(usr,"Label text?","Set label","", MAX_NAME_LEN), MAX_NAME_LEN)
 				if(!str || !length(str))
 					to_chat(user, "<span class='warning'> Invalid text.</span>")
 					return
@@ -169,7 +169,7 @@
 					nameset = 1
 
 			if("Description")
-				var/str = sanitize(input(usr,"Label text?","Set label",""))
+				var/str = sanitize(tgui_input_text(usr,"Label text?","Set label",""))
 				if(!str || !length(str))
 					to_chat(user, "<font color='red'>Invalid text.</font>")
 					return
@@ -374,7 +374,7 @@
 /obj/machinery/disposal/deliveryChute
 	name = "Delivery chute"
 	desc = "A chute for big and small packages alike!"
-	density = 1
+	density = TRUE
 	icon_state = "intake"
 
 	var/c_mode = 0
@@ -455,8 +455,8 @@
 			var/obj/structure/disposalconstruct/C = new (src.loc)
 			C.ptype = 8 // 8 =  Delivery chute
 			C.update()
-			C.anchored = 1
-			C.density = 1
+			C.anchored = TRUE
+			C.density = TRUE
 			qdel(src)
 		return
 

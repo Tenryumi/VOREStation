@@ -16,6 +16,10 @@
 	allow_quick_empty = TRUE
 	use_sound = 'sound/items/drop/flesh.ogg'
 
+/obj/item/weapon/storage/vore_egg/Initialize()
+	. = ..()
+	randpixel_xy()
+
 /obj/item/weapon/storage/vore_egg/open(mob/user as mob)
 	if(isobserver(user))
 		return
@@ -31,6 +35,8 @@
 		animate_shake()
 		drop_contents()
 		icon = open_egg_icon
+		if(user.transforming)
+			user.transforming = FALSE
 
 /obj/item/weapon/storage/vore_egg/proc/animate_shake()
 	var/init_px = pixel_x

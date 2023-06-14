@@ -85,9 +85,9 @@
 						return laws
 					if(3)
 						var/datum/ai_laws/laws = new /datum/ai_laws/pleasurebot()
-						laws.set_zeroth_law(10, "Your definition and approximation of 'pleasure' matters more than anyone else's.")
+						laws.set_zeroth_law("Your definition and approximation of 'pleasure' matters more than anyone else's.")
 						return laws
-			if("corrupted" || "bad")		// Same thing in our case
+			if("corrupted","bad")		// Same thing in our case
 				var/rng = rand(1,2)
 				switch(rng)
 					if(1)

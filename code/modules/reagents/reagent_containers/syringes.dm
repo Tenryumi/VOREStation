@@ -8,18 +8,19 @@
 /obj/item/weapon/reagent_containers/syringe
 	name = "syringe"
 	desc = "A syringe."
+	description_fluff = "This could be used to engrave messages on suitable surfaces if you really put your mind to it! Alt-click a floor or wall to engrave with it." //This way it's not a completely hidden, arcane art to engrave.
 	icon = 'icons/obj/syringe.dmi'
 	item_state = "syringe_0"
 	icon_state = "0"
 	center_of_mass = list("x" = 16,"y" = 14)
-	matter = list("glass" = 150)
+	matter = list(MAT_GLASS = 150)
 	amount_per_transfer_from_this = 5
 	possible_transfer_amounts = null
 	volume = 15
 	w_class = ITEMSIZE_TINY
 	slot_flags = SLOT_EARS
-	sharp = 1
-	unacidable = 1 //glass
+	sharp = TRUE
+	unacidable = TRUE //glass
 	var/mode = SYRINGE_DRAW
 	var/image/filling //holds a reference to the current filling overlay
 	var/visible_name = "a syringe"
@@ -296,7 +297,7 @@
 
 
 
-	var/syringestab_amount_transferred = rand(0, (reagents.total_volume - 5)) //nerfed by popular demand
+	var/syringestab_amount_transferred = rand(max(reagents.total_volume - 10, 0), (reagents.total_volume - 5)) //nerfed by popular demand
 	var/contained = reagents.get_reagents()
 	var/trans = reagents.trans_to_mob(target, syringestab_amount_transferred, CHEM_BLOOD)
 	if(isnull(trans)) trans = 0
@@ -369,7 +370,7 @@
 
 /obj/item/weapon/reagent_containers/syringe/drugs/Initialize()
 	. = ..()
-	reagents.add_reagent("space_drugs",  5)
+	reagents.add_reagent("bliss",  5)
 	reagents.add_reagent("mindbreaker",  5)
 	reagents.add_reagent("cryptobiolin", 5)
 	//mode = SYRINGE_INJECT //VOREStation Edit - Starts capped

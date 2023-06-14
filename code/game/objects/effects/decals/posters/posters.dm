@@ -3,7 +3,7 @@
 		if(exact)
 			return decls_repository.get_decl(path)
 		else
-			var/list/L = decls_repository.get_decls_of_type(path) 
+			var/list/L = decls_repository.get_decls_of_type(path)
 			return L[pick(L)]
 	return null
 
@@ -27,8 +27,10 @@
 		src.poster_decl = get_poster_decl(poster_decl, TRUE)
 	else
 		src.poster_decl = get_poster_decl(/decl/poster, FALSE)
-	
-	name += " - No. [src.poster_decl.name]"
+		while (istype(src.poster_decl, /decl/poster/lewd))
+			src.poster_decl = get_poster_decl(/decl/poster, FALSE)
+
+	name += " - [src.poster_decl.name]"
 	return ..()
 
 //Places the poster on a wall
@@ -58,8 +60,8 @@
 		if (locate(/obj/structure/sign/poster) in T)
 			stuff_on_wall = 1
 			break
-	
-	if(stuff_on_wall)		
+
+	if(stuff_on_wall)
 		to_chat(user, "<span class='notice'>There is already a poster there!</span>")
 		return FALSE
 
@@ -71,7 +73,7 @@
 		to_chat(user, "<span class='notice'>You place the poster!</span>")
 		qdel(src)
 		return TRUE
-	
+
 	P.roll_and_drop(P.loc)
 	qdel(src)
 	return FALSE
@@ -99,13 +101,14 @@
 
 	var/mob/M = usr
 	var/list/options = list()
-	for(var/decl/poster/posteroption in decls_repository.get_decls_of_type(/decl/poster))
-		options[posteroption.listing_name] = posteroption
+	var/list/decl/poster/posters = decls_repository.get_decls_of_type(/decl/poster)
+	for(var/option in posters)
+		options[posters[option].name] = posters[option]
 
-	var/choice = input(M,"Choose a poster!","Customize Poster") in options
+	var/choice = tgui_input_list(M, "Choose a poster!", "Customize Poster", options)
 	if(src && choice && !M.stat && in_range(M,src))
 		poster_decl = options[choice]
-		name = "rolled-up poly-poster - No.[poster_decl.icon_state]"
+		name = "rolled-up poly-poster - [src.poster_decl.name]"
 		to_chat(M, "The poster is now: [choice].")
 
 
@@ -117,7 +120,7 @@
 	desc = "A large piece of space-resistant printed paper. "
 	icon = 'icons/obj/contraband_vr.dmi' //VOREStation Edit
 	icon_state = "poster" //VOREStation Edit
-	anchored = 1
+	anchored = TRUE
 	var/decl/poster/poster_decl = null
 	var/target_poster_decl_path = /decl/poster
 	var/roll_type = /obj/item/poster
@@ -155,7 +158,9 @@
 	else if(ispath(P))
 		src.poster_decl = get_poster_decl(P, TRUE)
 	else
-		src.poster_decl = get_poster_decl(target_poster_decl_path, FALSE)		
+		src.poster_decl = get_poster_decl(/decl/poster, FALSE)
+		while (istype(src.poster_decl, /decl/poster/lewd))
+			src.poster_decl = get_poster_decl(/decl/poster, FALSE)
 
 	name = "[initial(name)] - [poster_decl.name]"
 	desc = "[initial(desc)] [poster_decl.desc]"
@@ -179,7 +184,7 @@
 	if(ruined)
 		return
 
-	if(alert("Do I want to rip the poster from the wall?","You think...","Yes","No") == "Yes")
+	if(tgui_alert(usr, "Do I want to rip the poster from the wall?","You think...",list("Yes","No")) == "Yes")
 
 		if(ruined || !user.Adjacent(src))
 			return

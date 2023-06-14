@@ -30,7 +30,7 @@
 	spawn_positions = 2
 	pto_type = PTO_CIVILIAN
 	alt_titles = list("Hydroponicist" = /datum/alt_title/hydroponicist, "Cultivator" = /datum/alt_title/cultivator, "Farmer" = /datum/alt_title/farmer,
-						"Gardener" = /datum/alt_title/gardener, "Florist" = /datum/alt_title/florsit)
+						"Gardener" = /datum/alt_title/gardener, "Florist" = /datum/alt_title/florsit, "Rancher" = /datum/alt_title/rancher)
 
 /datum/alt_title/hydroponicist
 	title = "Hydroponicist"
@@ -45,6 +45,10 @@
 	title = "Florist"
 	title_blurb = "A Florist may be less professional than their counterparts, and are more likely to tend to the public gardens if they aren't needed elsewhere."
 
+/datum/alt_title/rancher
+	title = "Rancher"
+	title_blurb = "A Rancher is tasked with the care, feeding, raising, and harvesting of livestock."
+
 
 /datum/job/qm
 	pto_type = PTO_CARGO
@@ -56,6 +60,9 @@
 
 /datum/alt_title/cargo_supervisor
 	title = "Cargo Supervisor"
+
+/datum/job/qm/get_request_reasons()
+	return list("Training crew")
 
 
 /datum/job/cargo_tech
@@ -123,7 +130,7 @@
 	spawn_positions = 2
 	alt_titles = list("Journalist" = /datum/alt_title/journalist, "Reporter" =  /datum/alt_title/reporter, "Writer" = /datum/alt_title/writer,
 					"Historian" = /datum/alt_title/historian, "Archivist" = /datum/alt_title/archivist, "Professor" = /datum/alt_title/professor,
-					"Academic" = /datum/alt_title/academic, "Philosopher" = /datum/alt_title/philosopher)
+					"Academic" = /datum/alt_title/academic, "Philosopher" = /datum/alt_title/philosopher, "Curator" = /datum/alt_title/curator)
 	pto_type = PTO_CIVILIAN
 
 /datum/alt_title/reporter
@@ -150,6 +157,9 @@
 	title = "Philosopher"
 	title_blurb = "The Philosopher uses the Library as a base of operation to ruminate on nature of life and other great questions, and share their opinions with the crew."
 
+/datum/alt_title/curator
+	title = "Curator"
+	title_blurb = "The Curator uses the Library as a base of operation to gather the finest of art for display and preservation."
 
 /datum/job/lawyer
 	disallow_jobhop = TRUE
@@ -193,6 +203,38 @@
 	title = "Monk"
 
 
+//////////////////////////////////
+//		      	Pilot
+//////////////////////////////////
+
+/datum/job/pilot
+	title = "Pilot"
+	flag = PILOT
+	departments = list(DEPARTMENT_CIVILIAN)
+	department_flag = CIVILIAN
+	faction = "Station"
+	total_positions = 2
+	spawn_positions = 2
+	supervisors = "the Head of Personnel"
+	selection_color = "#515151"
+	economic_modifier = 5
+	minimal_player_age = 3
+	pto_type = PTO_CIVILIAN
+	access = list(access_eva, access_maint_tunnels, access_external_airlocks, access_pilot)
+	minimal_access = list(access_eva, access_maint_tunnels, access_external_airlocks, access_pilot)
+	outfit_type = /decl/hierarchy/outfit/job/pilot
+	job_description = "A Pilot flies the various shuttles in the Virgo-Erigone System."
+	alt_titles = list("Co-Pilot" = /datum/alt_title/co_pilot, "Navigator" = /datum/alt_title/navigator, "Helmsman" = /datum/alt_title/helmsman)
+
+/datum/alt_title/co_pilot
+	title = "Co-Pilot"
+	title_blurb = "A Co-Pilot is there primarily to assist main pilot as well as learn from them"
+
+/datum/alt_title/navigator
+	title = "Navigator"
+
+/datum/alt_title/helmsman
+	title = "Helmsman"
 
 //////////////////////////////////
 //			Entertainer
@@ -216,7 +258,8 @@
 	job_description = "An entertainer does just that, entertains! Put on plays, play music, sing songs, tell stories, or read your favorite fanfic."
 	alt_titles = list("Performer" = /datum/alt_title/performer, "Musician" = /datum/alt_title/musician, "Stagehand" = /datum/alt_title/stagehand,
 						"Actor" = /datum/alt_title/actor, "Dancer" = /datum/alt_title/dancer, "Singer" = /datum/alt_title/singer,
-						"Magician" = /datum/alt_title/magician, "Comedian" = /datum/alt_title/comedian, "Tragedian" = /datum/alt_title/tragedian)
+						"Magician" = /datum/alt_title/magician, "Comedian" = /datum/alt_title/comedian, "Tragedian" = /datum/alt_title/tragedian,
+						"Artist" = /datum/alt_title/artist)
 
 // Entertainer Alt Titles
 /datum/alt_title/actor
@@ -254,3 +297,7 @@
 /datum/alt_title/tragedian
 	title = "Tragedian"
 	title_blurb = "A Tragedian will focus on making people think about life and world around them! Life is a tragedy, and who's better to convey its emotions than you?"
+
+/datum/alt_title/artist
+	title = "Artist"
+	title_blurb = "An Artist's calling is to create beautiful arts! Whatever form may they take, create and have people astonished with your creativity."

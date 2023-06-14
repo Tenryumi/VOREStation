@@ -60,6 +60,7 @@
 	for(var/organ in organs)
 		qdel(organ)
 	QDEL_NULL(nif)	//VOREStation Add
+	worn_clothing.Cut()
 	return ..()
 
 /mob/living/carbon/human/Stat()
@@ -334,11 +335,6 @@
 		log_runtime(EXCEPTION("Warning: human/Topic was called with item [href_list["item"]], but the item Topic is deprecated!"))
 		// handle_strip(href_list["item"],usr)
 
-	// VOREStation Start
-	if(href_list["ooc_notes"])
-		src.Examine_OOC()
-	// VOREStation End
-
 	if (href_list["criminal"])
 		if(hasHUD(usr,"security"))
 
@@ -356,7 +352,7 @@
 						for (var/datum/data/record/R in data_core.security)
 							if (R.fields["id"] == E.fields["id"])
 
-								var/setcriminal = input(usr, "Specify a new criminal status for this person.", "Security HUD", R.fields["criminal"]) in list("None", "*Arrest*", "Incarcerated", "Parolled", "Released", "Cancel")
+								var/setcriminal = tgui_input_list(usr, "Specify a new criminal status for this person.", "Security HUD", list("None", "*Arrest*", "Incarcerated", "Parolled", "Released", "Cancel"))
 
 								if(hasHUD(usr, "security"))
 									if(setcriminal != "Cancel")
@@ -373,7 +369,7 @@
 												U.handle_regular_hud_updates()
 
 			if(!modified)
-				to_chat(usr, "<font color='red'>Unable to locate a data core entry for this person.</font>")
+				to_chat(usr, "<span class='filter_notice'><font color='red'>Unable to locate a data core entry for this person.</font></span>")
 
 	if (href_list["secrecord"])
 		if(hasHUD(usr,"security"))
@@ -390,17 +386,20 @@
 					for (var/datum/data/record/R in data_core.security)
 						if (R.fields["id"] == E.fields["id"])
 							if(hasHUD(usr,"security"))
-								to_chat(usr, "<b>Name:</b> [R.fields["name"]]	<b>Criminal Status:</b> [R.fields["criminal"]]")
-								to_chat(usr, "<b>Minor Crimes:</b> [R.fields["mi_crim"]]")
-								to_chat(usr, "<b>Details:</b> [R.fields["mi_crim_d"]]")
-								to_chat(usr, "<b>Major Crimes:</b> [R.fields["ma_crim"]]")
-								to_chat(usr, "<b>Details:</b> [R.fields["ma_crim_d"]]")
-								to_chat(usr, "<b>Notes:</b> [R.fields["notes"]]")
-								to_chat(usr, "<a href='?src=\ref[src];secrecordComment=`'>\[View Comment Log\]</a>")
+								var/list/security_hud_text = list()
+								security_hud_text += "<b>Name:</b> [R.fields["name"]]	<b>Criminal Status:</b> [R.fields["criminal"]]"
+								security_hud_text += "<b>Species:</b> [R.fields["species"]]"
+								security_hud_text += "<b>Minor Crimes:</b> [R.fields["mi_crim"]]"
+								security_hud_text += "<b>Details:</b> [R.fields["mi_crim_d"]]"
+								security_hud_text += "<b>Major Crimes:</b> [R.fields["ma_crim"]]"
+								security_hud_text += "<b>Details:</b> [R.fields["ma_crim_d"]]"
+								security_hud_text += "<b>Notes:</b> [R.fields["notes"]]"
+								security_hud_text += "<a href='?src=\ref[src];secrecordComment=`'>\[View Comment Log\]</a>"
+								to_chat(usr, "<span class='filter_notice'>[jointext(security_hud_text, "<br>")]</span>")
 								read = 1
 
 			if(!read)
-				to_chat(usr, "<font color='red'>Unable to locate a data core entry for this person.</font>")
+				to_chat(usr, "<span class='filter_notice'><font color='red'>Unable to locate a data core entry for this person.</font></span>")
 
 	if (href_list["secrecordComment"])
 		if(hasHUD(usr,"security"))
@@ -423,11 +422,11 @@
 									to_chat(usr, "[R.fields[text("com_[]", counter)]]")
 									counter++
 								if (counter == 1)
-									to_chat(usr, "No comment found")
-								to_chat(usr, "<a href='?src=\ref[src];secrecordadd=`'>\[Add comment\]</a>")
+									to_chat(usr, "<span class='filter_notice'>No comment found.</span>")
+								to_chat(usr, "<span class='filter_notice'><a href='?src=\ref[src];secrecordadd=`'>\[Add comment\]</a></span>")
 
 			if(!read)
-				to_chat(usr, "<font color='red'>Unable to locate a data core entry for this person.</font>")
+				to_chat(usr, "<span class='filter_notice'><font color='red'>Unable to locate a data core entry for this person.</font></span>")
 
 	if (href_list["secrecordadd"])
 		if(hasHUD(usr,"security"))
@@ -442,7 +441,7 @@
 					for (var/datum/data/record/R in data_core.security)
 						if (R.fields["id"] == E.fields["id"])
 							if(hasHUD(usr,"security"))
-								var/t1 = sanitize(input("Add Comment:", "Sec. records", null, null)  as message)
+								var/t1 = sanitize(tgui_input_text(usr, "Add Comment:", "Sec. records", null, null, multiline = TRUE, prevent_enter = TRUE))
 								if ( !(t1) || usr.stat || usr.restrained() || !(hasHUD(usr,"security")) )
 									return
 								var/counter = 1
@@ -471,7 +470,7 @@
 					for (var/datum/data/record/R in data_core.general)
 						if (R.fields["id"] == E.fields["id"])
 
-							var/setmedical = input(usr, "Specify a new medical status for this person.", "Medical HUD", R.fields["p_stat"]) in list("*SSD*", "*Deceased*", "Physically Unfit", "Active", "Disabled", "Cancel")
+							var/setmedical = tgui_input_list(usr, "Specify a new medical status for this person.", "Medical HUD", list("*SSD*", "*Deceased*", "Physically Unfit", "Active", "Disabled", "Cancel"))
 
 							if(hasHUD(usr,"medical"))
 								if(setmedical != "Cancel")
@@ -489,7 +488,7 @@
 											U.handle_regular_hud_updates()
 
 			if(!modified)
-				to_chat(usr, "<font color='red'>Unable to locate a data core entry for this person.</font>")
+				to_chat(usr, "<span class='filter_notice'><font color='red'>Unable to locate a data core entry for this person.</font></span>")
 
 	if (href_list["medrecord"])
 		if(hasHUD(usr,"medical"))
@@ -506,18 +505,21 @@
 					for (var/datum/data/record/R in data_core.medical)
 						if (R.fields["id"] == E.fields["id"])
 							if(hasHUD(usr,"medical"))
-								to_chat(usr, "<b>Name:</b> [R.fields["name"]]	<b>Blood Type:</b> [R.fields["b_type"]]")
-								to_chat(usr, "<b>DNA:</b> [R.fields["b_dna"]]")
-								to_chat(usr, "<b>Minor Disabilities:</b> [R.fields["mi_dis"]]")
-								to_chat(usr, "<b>Details:</b> [R.fields["mi_dis_d"]]")
-								to_chat(usr, "<b>Major Disabilities:</b> [R.fields["ma_dis"]]")
-								to_chat(usr, "<b>Details:</b> [R.fields["ma_dis_d"]]")
-								to_chat(usr, "<b>Notes:</b> [R.fields["notes"]]")
-								to_chat(usr, "<a href='?src=\ref[src];medrecordComment=`'>\[View Comment Log\]</a>")
+								var/list/medical_hud_text = list()
+								medical_hud_text += "<b>Name:</b> [R.fields["name"]]	<b>Blood Type:</b> [R.fields["b_type"]]"
+								medical_hud_text += "<b>Species:</b> [R.fields["species"]]"
+								medical_hud_text += "<b>DNA:</b> [R.fields["b_dna"]]"
+								medical_hud_text += "<b>Minor Disabilities:</b> [R.fields["mi_dis"]]"
+								medical_hud_text += "<b>Details:</b> [R.fields["mi_dis_d"]]"
+								medical_hud_text += "<b>Major Disabilities:</b> [R.fields["ma_dis"]]"
+								medical_hud_text += "<b>Details:</b> [R.fields["ma_dis_d"]]"
+								medical_hud_text += "<b>Notes:</b> [R.fields["notes"]]"
+								medical_hud_text += "<a href='?src=\ref[src];medrecordComment=`'>\[View Comment Log\]</a>"
+								to_chat(usr, "<span class='filter_notice'>[jointext(medical_hud_text, "<br>")]</span>")
 								read = 1
 
 			if(!read)
-				to_chat(usr, "<font color='red'>Unable to locate a data core entry for this person.</font>")
+				to_chat(usr, "<span class='filter_notice'><font color='red'>Unable to locate a data core entry for this person.</font></span>")
 
 	if (href_list["medrecordComment"])
 		if(hasHUD(usr,"medical"))
@@ -540,11 +542,11 @@
 									to_chat(usr, "[R.fields[text("com_[]", counter)]]")
 									counter++
 								if (counter == 1)
-									to_chat(usr, "No comment found")
-								to_chat(usr, "<a href='?src=\ref[src];medrecordadd=`'>\[Add comment\]</a>")
+									to_chat(usr, "<span class='filter_notice'>No comment found.</span>")
+								to_chat(usr, "<span class='filter_notice'><a href='?src=\ref[src];medrecordadd=`'>\[Add comment\]</a></span>")
 
 			if(!read)
-				to_chat(usr, "<font color='red'>Unable to locate a data core entry for this person.</font>")
+				to_chat(usr, "<span class='filter_notice'><font color='red'>Unable to locate a data core entry for this person.</font></span>")
 
 	if (href_list["medrecordadd"])
 		if(hasHUD(usr,"medical"))
@@ -559,8 +561,94 @@
 					for (var/datum/data/record/R in data_core.medical)
 						if (R.fields["id"] == E.fields["id"])
 							if(hasHUD(usr,"medical"))
-								var/t1 = sanitize(input("Add Comment:", "Med. records", null, null)  as message)
+								var/t1 = sanitize(tgui_input_text(usr, "Add Comment:", "Med. records", null, null, multiline = TRUE, prevent_enter = TRUE))
 								if ( !(t1) || usr.stat || usr.restrained() || !(hasHUD(usr,"medical")) )
+									return
+								var/counter = 1
+								while(R.fields[text("com_[]", counter)])
+									counter++
+								if(istype(usr,/mob/living/carbon/human))
+									var/mob/living/carbon/human/U = usr
+									R.fields[text("com_[counter]")] = text("Made by [U.get_authentification_name()] ([U.get_assignment()]) on [time2text(world.realtime, "DDD MMM DD hh:mm:ss")], [game_year]<BR>[t1]")
+								if(istype(usr,/mob/living/silicon/robot))
+									var/mob/living/silicon/robot/U = usr
+									R.fields[text("com_[counter]")] = text("Made by [U.name] ([U.modtype] [U.braintype]) on [time2text(world.realtime, "DDD MMM DD hh:mm:ss")], [game_year]<BR>[t1]")
+
+	if (href_list["emprecord"])
+		if(hasHUD(usr,"best"))
+			var/perpname = "wot"
+			var/read = 0
+
+			var/obj/item/weapon/card/id/I = GetIdCard()
+			if(I)
+				perpname = I.registered_name
+			else
+				perpname = name
+			for (var/datum/data/record/E in data_core.general)
+				if (E.fields["name"] == perpname)
+					for (var/datum/data/record/R in data_core.general)
+						if (R.fields["id"] == E.fields["id"])
+							if(hasHUD(usr,"best"))
+								var/list/emp_hud_text = list()
+								emp_hud_text += "<b>Name:</b> [R.fields["name"]]"
+								emp_hud_text += "<b>Species:</b> [R.fields["species"]]"
+								emp_hud_text += "<b>Assignment:</b> [R.fields["real_rank"]] ([R.fields["rank"]])"
+								emp_hud_text += "<b>Home System:</b> [R.fields["home_system"]]"
+								emp_hud_text += "<b>Birthplace:</b> [R.fields["birthplace"]]"
+								emp_hud_text += "<b>Citizenship:</b> [R.fields["citizenship"]]"
+								emp_hud_text += "<b>Primary Employer:</b> [R.fields["personal_faction"]]"
+								emp_hud_text += "<b>Religious Beliefs:</b> [R.fields["religion"]]"
+								emp_hud_text += "<b>Known Languages:</b> [R.fields["languages"]]"
+								emp_hud_text += "<b>Notes:</b> [R.fields["notes"]]"
+								emp_hud_text += "<a href='?src=\ref[src];emprecordComment=`'>\[View Comment Log\]</a>"
+								to_chat(usr, "<span class='filter_notice'>[jointext(emp_hud_text, "<br>")]</span>")
+								read = 1
+
+			if(!read)
+				to_chat(usr, "<span class='filter_notice'><font color='red'>Unable to locate a data core entry for this person.</font></span>")
+
+	if (href_list["emprecordComment"])
+		if(hasHUD(usr,"best"))
+			var/perpname = "wot"
+			var/read = 0
+
+			var/obj/item/weapon/card/id/I = GetIdCard()
+			if(I)
+				perpname = I.registered_name
+			else
+				perpname = name
+			for (var/datum/data/record/E in data_core.general)
+				if (E.fields["name"] == perpname)
+					for (var/datum/data/record/R in data_core.general)
+						if (R.fields["id"] == E.fields["id"])
+							if(hasHUD(usr,"best"))
+								read = 1
+								var/counter = 1
+								while(R.fields[text("com_[]", counter)])
+									to_chat(usr, "[R.fields[text("com_[]", counter)]]")
+									counter++
+								if (counter == 1)
+									to_chat(usr, "<span class='filter_notice'>No comment found.</span>")
+								to_chat(usr, "<span class='filter_notice'><a href='?src=\ref[src];emprecordadd=`'>\[Add comment\]</a></span>")
+
+			if(!read)
+				to_chat(usr, "<span class='filter_notice'><font color='red'>Unable to locate a data core entry for this person.</font></span>")
+
+	if (href_list["emprecordadd"])
+		if(hasHUD(usr,"best"))
+			var/perpname = "wot"
+			var/obj/item/weapon/card/id/I = GetIdCard()
+			if(I)
+				perpname = I.registered_name
+			else
+				perpname = name
+			for (var/datum/data/record/E in data_core.general)
+				if (E.fields["name"] == perpname)
+					for (var/datum/data/record/R in data_core.general)
+						if (R.fields["id"] == E.fields["id"])
+							if(hasHUD(usr,"best"))
+								var/t1 = sanitize(tgui_input_text(usr, "Add Comment:", "Emp. records", null, null, multiline = TRUE, prevent_enter = TRUE))
+								if ( !(t1) || usr.stat || usr.restrained() || !(hasHUD(usr,"best")) )
 									return
 								var/counter = 1
 								while(R.fields[text("com_[]", counter)])
@@ -575,6 +663,12 @@
 	if (href_list["lookitem"])
 		var/obj/item/I = locate(href_list["lookitem"])
 		src.examinate(I)
+
+	if (href_list["lookitem_desc_only"])
+		var/obj/item/I = locate(href_list["lookitem_desc_only"])
+		if(!I)
+			return
+		usr.examinate(I, 1)
 
 	if (href_list["lookmob"])
 		var/mob/M = locate(href_list["lookmob"])
@@ -591,13 +685,16 @@
 				src << browse(null, "window=flavor_changes")
 				return
 			if("general")
-				var/msg = sanitize(input(usr,"Update the general description of your character. This will be shown regardless of clothing.","Flavor Text",html_decode(flavor_texts[href_list["flavor_change"]])) as message, extra = 0)	//VOREStation Edit: separating out OOC notes
-				flavor_texts[href_list["flavor_change"]] = msg
+				var/msg = strip_html_simple(tgui_input_text(usr,"Update the general description of your character. This will be shown regardless of clothing.","Flavor Text",html_decode(flavor_texts[href_list["flavor_change"]]), multiline = TRUE, prevent_enter = TRUE))	//VOREStation Edit: separating out OOC notes
+				if(msg)
+					flavor_texts[href_list["flavor_change"]] = msg
+					set_flavor()
 				return
 			else
-				var/msg = sanitize(input(usr,"Update the flavor text for your [href_list["flavor_change"]].","Flavor Text",html_decode(flavor_texts[href_list["flavor_change"]])) as message, extra = 0)
-				flavor_texts[href_list["flavor_change"]] = msg
-				set_flavor()
+				var/msg = strip_html_simple(tgui_input_text(usr,"Update the flavor text for your [href_list["flavor_change"]].","Flavor Text",html_decode(flavor_texts[href_list["flavor_change"]]), multiline = TRUE, prevent_enter = TRUE))
+				if(msg)
+					flavor_texts[href_list["flavor_change"]] = msg
+					set_flavor()
 				return
 	..()
 	return
@@ -699,7 +796,7 @@
 /mob/living/carbon/human/proc/play_xylophone()
 	if(!src.xylophone)
 		var/datum/gender/T = gender_datums[get_visible_gender()]
-		visible_message("<font color='red'>\The [src] begins playing [T.his] ribcage like a xylophone. It's quite spooky.</font>","<font color='blue'>You begin to play a spooky refrain on your ribcage.</font>","<font color='red'>You hear a spooky xylophone melody.</font>")
+		visible_message("<span class='filter_notice'><font color='red'>\The [src] begins playing [T.his] ribcage like a xylophone. It's quite spooky.</font></span>","<span class='notice'>You begin to play a spooky refrain on your ribcage.</span>","<span class='filter_notice'><font color='red'>You hear a spooky xylophone melody.</font></span>")
 		var/song = pick('sound/effects/xylophone1.ogg','sound/effects/xylophone2.ogg','sound/effects/xylophone3.ogg')
 		playsound(src, song, 50, 1, -1)
 		xylophone = 1
@@ -730,19 +827,19 @@
 		src.verbs -= /mob/living/carbon/human/proc/morph
 		return
 
-	var/new_facial = input("Please select facial hair color.", "Character Generation",rgb(r_facial,g_facial,b_facial)) as color
+	var/new_facial = input(usr, "Please select facial hair color.", "Character Generation",rgb(r_facial,g_facial,b_facial)) as color
 	if(new_facial)
 		r_facial = hex2num(copytext(new_facial, 2, 4))
 		g_facial = hex2num(copytext(new_facial, 4, 6))
 		b_facial = hex2num(copytext(new_facial, 6, 8))
 
-	var/new_hair = input("Please select hair color.", "Character Generation",rgb(r_hair,g_hair,b_hair)) as color
+	var/new_hair = input(usr, "Please select hair color.", "Character Generation",rgb(r_hair,g_hair,b_hair)) as color
 	if(new_facial)
 		r_hair = hex2num(copytext(new_hair, 2, 4))
 		g_hair = hex2num(copytext(new_hair, 4, 6))
 		b_hair = hex2num(copytext(new_hair, 6, 8))
 
-	var/new_eyes = input("Please select eye color.", "Character Generation",rgb(r_eyes,g_eyes,b_eyes)) as color
+	var/new_eyes = input(usr, "Please select eye color.", "Character Generation",rgb(r_eyes,g_eyes,b_eyes)) as color
 	if(new_eyes)
 		r_eyes = hex2num(copytext(new_eyes, 2, 4))
 		g_eyes = hex2num(copytext(new_eyes, 4, 6))
@@ -750,7 +847,7 @@
 		update_eyes()
 
 	// hair
-	var/list/all_hairs = typesof(/datum/sprite_accessory/hair) - /datum/sprite_accessory/hair
+	var/list/all_hairs = subtypesof(/datum/sprite_accessory/hair)
 	var/list/hairs = list()
 
 	// loop through potential hairs
@@ -759,14 +856,14 @@
 		hairs.Add(H.name) // add hair name to hairs
 		qdel(H) // delete the hair after it's all done
 
-	var/new_style = input("Please select hair style", "Character Generation",h_style)  as null|anything in hairs
+	var/new_style = tgui_input_list(usr, "Please select hair style", "Character Generation", hairs)
 
 	// if new style selected (not cancel)
 	if (new_style)
 		h_style = new_style
 
 	// facial hair
-	var/list/all_fhairs = typesof(/datum/sprite_accessory/facial_hair) - /datum/sprite_accessory/facial_hair
+	var/list/all_fhairs = subtypesof(/datum/sprite_accessory/facial_hair)
 	var/list/fhairs = list()
 
 	for(var/x in all_fhairs)
@@ -774,12 +871,12 @@
 		fhairs.Add(H.name)
 		qdel(H)
 
-	new_style = input("Please select facial style", "Character Generation",f_style)  as null|anything in fhairs
+	new_style = tgui_input_list(usr, "Please select facial style", "Character Generation", fhairs)
 
 	if(new_style)
 		f_style = new_style
 
-	var/new_gender = alert(usr, "Please select gender.", "Character Generation", "Male", "Female", "Neutral")
+	var/new_gender = tgui_alert(usr, "Please select gender.", "Character Generation", list("Male", "Female", "Neutral"))
 	if (new_gender)
 		if(new_gender == "Male")
 			gender = MALE
@@ -790,7 +887,7 @@
 	regenerate_icons()
 	check_dna()
 	var/datum/gender/T = gender_datums[get_visible_gender()]
-	visible_message("<font color='blue'>\The [src] morphs and changes [T.his] appearance!</font>", "<font color='blue'>You change your appearance!</font>", "<font color='red'>Oh, god!  What the hell was that?  It sounded like flesh getting squished and bone ground into a different shape!</font>")
+	visible_message("<span class='notice'>\The [src] morphs and changes [T.his] appearance!</span>", "<span class='notice'>You change your appearance!</span>", "<span class='filter_notice'><font color='red'>Oh, god!  What the hell was that?  It sounded like flesh getting squished and bone ground into a different shape!</font></span>")
 
 /mob/living/carbon/human/proc/remotesay()
 	set name = "Project mind"
@@ -807,19 +904,19 @@
 	var/list/creatures = list()
 	for(var/mob/living/carbon/h in mob_list)
 		creatures += h
-	var/mob/target = input("Who do you want to project your mind to ?") as null|anything in creatures
+	var/mob/target = tgui_input_list(usr, "Who do you want to project your mind to?", "Project Mind", creatures)
 	if (isnull(target))
 		return
 
-	var/say = sanitize(input("What do you wish to say"))
+	var/say = sanitize(tgui_input_text(usr, "What do you wish to say?"))
 	if(mRemotetalk in target.mutations)
-		target.show_message("<font color='blue'> You hear [src.real_name]'s voice: [say]</font>")
+		target.show_message("<span class='filter_say'><font color='blue'>You hear [src.real_name]'s voice: [say]</font></span>")
 	else
-		target.show_message("<font color='blue'> You hear a voice that seems to echo around the room: [say]</font>")
-	usr.show_message("<font color='blue'> You project your mind into [target.real_name]: [say]</font>")
+		target.show_message("<span class='filter_say'><font color='blue'>You hear a voice that seems to echo around the room: [say]</font></span>")
+	usr.show_message("<span class='filter_say'><font color='blue'>You project your mind into [target.real_name]: [say]</font></span>")
 	log_say("(TPATH to [key_name(target)]) [say]",src)
 	for(var/mob/observer/dead/G in mob_list)
-		G.show_message("<i>Telepathic message from <b>[src]</b> to <b>[target]</b>: [say]</i>")
+		G.show_message("<span class='filter_say'><i>Telepathic message from <b>[src]</b> to <b>[target]</b>: [say]</i></span>")
 
 /mob/living/carbon/human/proc/remoteobserve()
 	set name = "Remote View"
@@ -849,7 +946,7 @@
 			continue
 		creatures += h
 
-	var/mob/target = input ("Who do you want to project your mind to ?") as mob in creatures
+	var/mob/target = input ("Who do you want to project your mind to?") as mob in creatures
 
 	if (target)
 		remoteview_target = target
@@ -858,13 +955,25 @@
 		remoteview_target = null
 		reset_view(0)
 
-/mob/living/carbon/human/get_visible_gender()
-	if(wear_suit && wear_suit.flags_inv & HIDEJUMPSUIT && ((head && head.flags_inv & HIDEMASK) || wear_mask))
-		return PLURAL //plural is the gender-neutral default
-	if(species)
-		if(species.ambiguous_genders)
-			return PLURAL // regardless of what you're wearing, your gender can't be figured out
-	return get_gender()
+/mob/living/carbon/human/get_visible_gender(mob/user, force)
+	switch(force)
+		if(VISIBLE_GENDER_FORCE_PLURAL)
+			return PLURAL
+		if(VISIBLE_GENDER_FORCE_IDENTIFYING)
+			return get_gender()
+		if(VISIBLE_GENDER_FORCE_BIOLOGICAL)
+			return gender
+		else
+			if(((wear_mask?.flags_inv & HIDEFACE) || (head?.flags_inv & HIDEMASK) || (head?.flags_inv & HIDEFACE)) && (wear_suit?.flags_inv & HIDEJUMPSUIT))
+				return PLURAL
+			if(species?.ambiguous_genders && user)
+				if(ishuman(user))
+					var/mob/living/carbon/human/human = user
+					if(!istype(human.species, species))
+						return PLURAL
+				else if(!isobserver(user) && !issilicon(user))
+					return PLURAL
+			return get_gender()
 
 /mob/living/carbon/human/proc/increase_germ_level(n)
 	if(gloves)
@@ -920,7 +1029,7 @@
 	set name = "sim"
 	set background = 1
 
-	var/damage = input("Wound damage","Wound damage") as num
+	var/damage = input(usr, "Wound damage","Wound damage") as num
 
 	var/germs = 0
 	var/tdamage = 0
@@ -1044,10 +1153,10 @@
 		self = 1
 	if(!self)
 		usr.visible_message("<span class='notice'>[usr] kneels down, puts [TU.his] hand on [src]'s wrist and begins counting [T.his] pulse.</span>",\
-		"You begin counting [src]'s pulse")
+		"<span class='filter_notice'>You begin counting [src]'s pulse.</span>")
 	else
 		usr.visible_message("<span class='notice'>[usr] begins counting [T.his] pulse.</span>",\
-		"You begin counting your pulse.")
+		"<span class='filter_notice'>You begin counting your pulse.</span>")
 
 	if(src.pulse)
 		to_chat(usr, "<span class='notice'>[self ? "You have a" : "[src] has a"] pulse! Counting...</span>")
@@ -1055,7 +1164,7 @@
 		to_chat(usr, "<span class='danger'>[src] has no pulse!</span>")	//it is REALLY UNLIKELY that a dead person would check his own pulse
 		return
 
-	to_chat(usr, "You must[self ? "" : " both"] remain still until counting is finished.")
+	to_chat(usr, "<span class='filter_notice'>You must[self ? "" : " both"] remain still until counting is finished.</span>")
 	if(do_mob(usr, src, 60))
 		var/message = "<span class='notice'>[self ? "Your" : "[src]'s"] pulse is [src.get_pulse(GETPULSE_HAND)].</span>"
 		to_chat(usr,message)
@@ -1193,7 +1302,7 @@
 		to_chat(src, "<span class='warning'>You cannot reach the floor.</span>")
 		return
 
-	var/direction = input(src,"Which way?","Tile selection") as anything in list("Here","North","South","East","West")
+	var/direction = tgui_input_list(src,"Which way?","Tile selection", list("Here","North","South","East","West"))
 	if (direction != "Here")
 		T = get_step(T,text2dir(direction))
 	if (!istype(T))
@@ -1209,7 +1318,7 @@
 
 	var/max_length = bloody_hands * 30 //tweeter style
 
-	var/message = sanitize(input("Write a message. It cannot be longer than [max_length] characters.","Blood writing", ""))
+	var/message = sanitize(tgui_input_text(usr, "Write a message. It cannot be longer than [max_length] characters.","Blood writing", ""))
 
 	if (message)
 		var/used_blood_amount = round(length(message) / 30, 1)
@@ -1353,11 +1462,11 @@
 	usr.setClickCooldown(20)
 
 	if(usr.stat > 0)
-		to_chat(usr, "You are unconcious and cannot do that!")
+		to_chat(usr, "<span class='filter_notice'>You are unconcious and cannot do that!</span>")
 		return
 
 	if(usr.restrained())
-		to_chat(usr, "You are restrained and cannot do that!")
+		to_chat(usr, "<span class='filter_notice'>You are restrained and cannot do that!</span>")
 		return
 
 	var/mob/S = src
@@ -1371,7 +1480,7 @@
 		var/obj/item/organ/external/current_limb = organs_by_name[limb]
 		if(current_limb && current_limb.dislocated > 0 && !current_limb.is_parent_dislocated()) //if the parent is also dislocated you will have to relocate that first
 			limbs |= current_limb
-	var/obj/item/organ/external/current_limb = input(usr,"Which joint do you wish to relocate?") as null|anything in limbs
+	var/obj/item/organ/external/current_limb = tgui_input_list(usr, "Which joint do you wish to relocate?", "Joint Choice", limbs)
 
 	if(!current_limb)
 		return
@@ -1393,10 +1502,8 @@
 		to_chat(S, "<span class='danger'>[U] pops your [current_limb.joint] back in!</span>")
 	current_limb.relocate()
 
-/mob/living/carbon/human/drop_from_inventory(var/obj/item/W, var/atom/Target = null)
-	if(W in organs)
-		return
-	..()
+/mob/living/carbon/human/drop_from_inventory(var/obj/item/W, var/atom/target = null)
+	return !(W in organs) && ..()
 
 /mob/living/carbon/human/reset_view(atom/A, update_hud = 1)
 	..()
@@ -1468,7 +1575,7 @@
 	set category = "Object"
 
 	if(stat) return
-	var/datum/category_group/underwear/UWC = input(usr, "Choose underwear:", "Show/hide underwear") as null|anything in global_underwear.categories
+	var/datum/category_group/underwear/UWC = tgui_input_list(usr, "Choose underwear:", "Show/hide underwear", global_underwear.categories)
 	if(!UWC) return
 	var/datum/category_item/underwear/UWI = all_underwear[UWC.name]
 	if(!UWI || UWI.name == "None")

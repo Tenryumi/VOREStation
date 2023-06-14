@@ -197,7 +197,15 @@ default behaviour is:
 				now_pushing = 0
 				return
 
-		step(AM, t)
+		var/turf/T = AM.loc
+		var/turf/T2 = get_step(AM,t)
+		if(!T2) // Map edge
+			now_pushing = 0
+			return
+		var/move_time = movement_delay(loc, t)
+		move_time = DS2NEARESTTICK(move_time)
+		if(AM.Move(T2, t, move_time))
+			Move(T, t, move_time)
 
 		if(ishuman(AM) && AM:grabbed_by)
 			for(var/obj/item/weapon/grab/G in AM:grabbed_by)
@@ -283,9 +291,10 @@ default behaviour is:
 				var/mob/living/M = pulling
 				M.dragged(src, oldloc)
 
-			pulling.Move(oldloc, 0, movetime) // the pullee tries to reach our previous position
-			if(pulling && get_dist(src, pulling) > 1) // the pullee couldn't keep up
-				stop_pulling()
+			if(pulling)								// Check it AGAIN after previous steps just in case
+				pulling.Move(oldloc, 0, movetime) // the pullee tries to reach our previous position
+				if(get_dist(src, pulling) > 1) // the pullee couldn't keep up
+					stop_pulling()
 
 	if(!isturf(loc))
 		return

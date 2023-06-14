@@ -76,9 +76,9 @@
 	. = ..()
 
 	if(!(mat_container_flags & MATCONTAINER_NO_INSERT))
-		RegisterSignal(parent, COMSIG_PARENT_ATTACKBY, .proc/on_attackby)
+		RegisterSignal(parent, COMSIG_PARENT_ATTACKBY, PROC_REF(on_attackby))
 	if(mat_container_flags & MATCONTAINER_EXAMINE)
-		RegisterSignal(parent, COMSIG_PARENT_EXAMINE, .proc/on_examine)
+		RegisterSignal(parent, COMSIG_PARENT_EXAMINE, PROC_REF(on_examine))
 
 
 /datum/component/material_container/vv_edit_var(var_name, var_value)
@@ -86,12 +86,12 @@
 	. = ..()
 	if(var_name == NAMEOF(src, mat_container_flags) && parent)
 		if(!(old_flags & MATCONTAINER_EXAMINE) && mat_container_flags & MATCONTAINER_EXAMINE)
-			RegisterSignal(parent, COMSIG_PARENT_EXAMINE, .proc/on_examine)
+			RegisterSignal(parent, COMSIG_PARENT_EXAMINE, PROC_REF(on_examine))
 		else if(old_flags & MATCONTAINER_EXAMINE && !(mat_container_flags & MATCONTAINER_EXAMINE))
 			UnregisterSignal(parent, COMSIG_PARENT_EXAMINE)
 
 		if(old_flags & MATCONTAINER_NO_INSERT && !(mat_container_flags & MATCONTAINER_NO_INSERT))
-			RegisterSignal(parent, COMSIG_PARENT_ATTACKBY, .proc/on_attackby)
+			RegisterSignal(parent, COMSIG_PARENT_ATTACKBY, PROC_REF(on_attackby))
 		else if(!(old_flags & MATCONTAINER_NO_INSERT) && mat_container_flags & MATCONTAINER_NO_INSERT)
 			UnregisterSignal(parent, COMSIG_PARENT_ATTACKBY)
 
@@ -99,9 +99,8 @@
 /datum/component/material_container/proc/on_examine(datum/source, mob/user, list/examine_texts)
 	SIGNAL_HANDLER
 
-	for(var/I in materials)
-		var/datum/material/M = I
-		var/amt = materials[I]
+	for(var/datum/material/M as anything in materials)
+		var/amt = materials[M]
 		if(amt)
 			examine_texts += "<span class='notice'>It has [amt] units of [lowertext(M.name)] stored.</span>"
 
@@ -116,7 +115,7 @@
 		if(!(mat_container_flags & MATCONTAINER_SILENT))
 			to_chat(user, "<span class='warning'>[parent] won't accept [I]!</span>")
 		return
-	. = COMPONENT_NO_AFTERATTACK
+	. = COMPONENT_CANCEL_ATTACK_CHAIN
 	var/datum/callback/pc = precondition
 	if(pc && !pc.Invoke(user))
 		return
@@ -153,6 +152,11 @@
 			to_chat(user, "<span class='warning'>[parent] cannot contain [material].</span>")
 			return
 
+	// Our sheet had no material. Whoops.
+	if(!matter_per_sheet)
+		to_chat(user, "<span class='warning'>[S] does not contain any matter acceptable by [parent].</span>")
+		return
+
 	// If we can't fit the material for one sheet, we're full.
 	if(!has_space(matter_per_sheet))
 		to_chat(user, "<span class='warning'>[parent] is full. Please remove materials from [parent] in order to insert more.</span>")
@@ -169,7 +173,7 @@
 
 	// It shouldn't be possible to add more matter than our max
 	ASSERT((total_amount + (matter_per_sheet * sheets_to_use)) <= max_amount)
-	
+
 	// Use the amount of sheets from the stack
 	if(!S.use(sheets_to_use))
 		to_chat(user, "<span class='warning'>Something went wrong with your stack. Split it manually and try again.</span>")
@@ -327,13 +331,13 @@
 
 	var/list/mats_to_remove = list() //Assoc list MAT | AMOUNT
 
-	for(var/x in mats) //Loop through all required materials
-		var/datum/material/req_mat = x
+	for(var/datum/material/req_mat as anything in mats) //Loop through all required materials
+		var/imat = req_mat
 		if(!istype(req_mat))
 			req_mat = GET_MATERIAL_REF(req_mat) //Get the ref if necesary
 		if(!materials[req_mat]) //Do we have the resource?
 			return FALSE //Can't afford it
-		var/amount_required = mats[x] * multiplier
+		var/amount_required = mats[imat] * multiplier
 		if(!(materials[req_mat] >= amount_required)) // do we have enough of the resource?
 			return FALSE //Can't afford it
 		mats_to_remove[req_mat] += amount_required //Add it to the assoc list of things to remove
@@ -359,7 +363,7 @@
 	if(materials[M] < (sheet_amt * SHEET_MATERIAL_AMOUNT))
 		sheet_amt = round(materials[M] / SHEET_MATERIAL_AMOUNT)
 
-	var/obj/item/stack/S = M.stack_type	
+	var/obj/item/stack/S = M.stack_type
 	var/max_stack_size = initial(S.max_amount)
 
 	var/count = 0
@@ -392,8 +396,8 @@
 	if(!mats || !mats.len)
 		return FALSE
 
-	for(var/x in mats) //Loop through all required materials
-		var/datum/material/req_mat = x
+	for(var/datum/material/req_mat as anything in mats) //Loop through all required materials
+		var/imat = req_mat
 		if(!istype(req_mat))
 			if(ispath(req_mat) || istext(req_mat)) //Is this an actual material, or is it a category?
 				req_mat = GET_MATERIAL_REF(req_mat) //Get the ref
@@ -404,7 +408,7 @@
 			// 	else
 			// 		continue
 
-		if(!has_enough_of_material(req_mat, mats[x], multiplier))//Not a category, so just check the normal way
+		if(!has_enough_of_material(req_mat, mats[imat], multiplier))//Not a category, so just check the normal way
 			return FALSE
 
 	return TRUE

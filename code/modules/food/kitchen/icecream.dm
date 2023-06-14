@@ -12,8 +12,8 @@
 	desc = "Ding-aling ding dong. Get your NanoTrasen-approved ice cream!"
 	icon = 'icons/obj/kitchen.dmi'
 	icon_state = "icecream_vat"
-	density = 1
-	anchored = 0
+	density = TRUE
+	anchored = FALSE
 	use_power = USE_POWER_OFF
 	flags = OPENCONTAINER | NOREACT
 
@@ -92,7 +92,7 @@
 		var/obj/item/weapon/reagent_containers/food/snacks/icecream/I = O
 		if(!I.ice_creamed)
 			if(product_types[dispense_flavour] > 0)
-				src.visible_message("[bicon(src)] <span class='info'>[user] scoops delicious [flavour_name] icecream into [I].</span>")
+				src.visible_message("\icon[src][bicon(src)] <span class='info'>[user] scoops delicious [flavour_name] icecream into [I].</span>")
 				product_types[dispense_flavour] -= 1
 				I.add_ice_cream(flavour_name)
 			//	if(beaker)

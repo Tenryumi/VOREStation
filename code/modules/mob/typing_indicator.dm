@@ -12,6 +12,9 @@
 	return I
 
 /mob/proc/init_typing_indicator(var/set_state = "typing")
+	if(typing_indicator)
+		qdel(typing_indicator)
+		typing_indicator = null
 	typing_indicator = new
 	typing_indicator.appearance = generate_speech_bubble(null, set_state)
 	typing_indicator.appearance_flags |= (RESET_COLOR|PIXEL_SCALE)			//VOREStation Edit
@@ -23,18 +26,22 @@
 			cut_overlay(typing_indicator, TRUE)
 		return
 
-	if(!typing_indicator)
-		init_typing_indicator("[speech_bubble_appearance()]_typing")
+	var/cur_bubble_appearance = custom_speech_bubble
+	if(!cur_bubble_appearance || cur_bubble_appearance == "default")
+		cur_bubble_appearance = speech_bubble_appearance()
+	if(!typing_indicator || cur_typing_indicator != cur_bubble_appearance)
+		init_typing_indicator("[cur_bubble_appearance]_typing")
 
 	if(state && !typing)
 		add_overlay(typing_indicator, TRUE)
 		typing = TRUE
+		typing_indicator_active = typing_indicator
 	else if(typing)
-		cut_overlay(typing_indicator, TRUE)
+		cut_overlay(typing_indicator_active, TRUE)
 		typing = FALSE
-
-	if(shadow) //Multi-Z above-me shadows
-		shadow.set_typing_indicator(state)
+		if(typing_indicator_active != typing_indicator)
+			qdel(typing_indicator_active)
+		typing_indicator_active = null
 
 	return state
 
@@ -43,7 +50,7 @@
 	set hidden = 1
 
 	set_typing_indicator(TRUE)
-	var/message = input("","say (text)") as text
+	var/message = tgui_input_text(usr, "Type your message:", "Say")
 	set_typing_indicator(FALSE)
 
 	if(message)
@@ -54,8 +61,27 @@
 	set hidden = 1
 
 	set_typing_indicator(TRUE)
-	var/message = input("","me (text)") as message //VOREStation Edit
+	var/message = tgui_input_text(usr, "Type your message:", "Emote", multiline = TRUE)
 	set_typing_indicator(FALSE)
 
 	if(message)
 		me_verb(message)
+
+// No typing indicators here, but this is the file where the wrappers are, so...
+/mob/verb/whisper_wrapper()
+	set name = ".Whisper"
+	set hidden = 1
+
+	var/message = tgui_input_text(usr, "Type your message:", "Whisper")
+
+	if(message)
+		whisper(message)
+
+/mob/verb/subtle_wrapper()
+	set name = ".Subtle"
+	set hidden = 1
+
+	var/message = tgui_input_text(usr, "Type your message:", "Subtle", multiline = TRUE)
+
+	if(message)
+		me_verb_subtle(message)

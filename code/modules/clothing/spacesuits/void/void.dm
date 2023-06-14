@@ -14,18 +14,8 @@
 
 	//Species-specific stuff.
 	species_restricted = list("Human", "Promethean")
-	sprite_sheets_refit = list(
-		SPECIES_UNATHI = 'icons/mob/species/unathi/helmet.dmi',
-		SPECIES_TAJ = 'icons/mob/species/tajaran/helmet.dmi',
-		SPECIES_SKRELL = 'icons/mob/species/skrell/helmet.dmi'
-		//Teshari have a general sprite sheet defined in modules/clothing/clothing.dm
-		)
-	sprite_sheets_obj = list(
-		SPECIES_UNATHI = 'icons/obj/clothing/species/unathi/hats.dmi',
-		SPECIES_TAJ = 'icons/obj/clothing/species/tajaran/hats.dmi',
-		SPECIES_SKRELL = 'icons/obj/clothing/species/skrell/hats.dmi',
-		SPECIES_TESHARI = 'icons/obj/clothing/species/teshari/hats.dmi'
-		)
+	sprite_sheets = VR_SPECIES_SPRITE_SHEETS_HEAD_MOB
+	sprite_sheets_obj = VR_SPECIES_SPRITE_SHEETS_HEAD_ITEM
 
 	light_overlay = "helmet_light"
 	var/no_cycle = FALSE	//stop this item from being put in a cycler
@@ -42,20 +32,10 @@
 	max_heat_protection_temperature = SPACE_SUIT_MAX_HEAT_PROTECTION_TEMPERATURE
 	min_pressure_protection = 0 * ONE_ATMOSPHERE
 	max_pressure_protection = 10 * ONE_ATMOSPHERE
-
+	action_button_name = "Toggle Helmet"
 	species_restricted = list("Human", SPECIES_SKRELL, "Promethean")
-	sprite_sheets_refit = list(
-		SPECIES_UNATHI = 'icons/mob/species/unathi/suit.dmi',
-		SPECIES_TAJ = 'icons/mob/species/tajaran/suit.dmi',
-		SPECIES_SKRELL = 'icons/mob/species/skrell/suit.dmi'
-		//Teshari have a general sprite sheet defined in modules/clothing/clothing.dm
-		)
-	sprite_sheets_obj = list(
-		SPECIES_UNATHI = 'icons/obj/clothing/species/unathi/suits.dmi',
-		SPECIES_TAJ = 'icons/obj/clothing/species/tajaran/suits.dmi',
-		SPECIES_SKRELL = 'icons/obj/clothing/species/skrell/suits.dmi',
-		SPECIES_TESHARI = 'icons/obj/clothing/species/teshari/suits.dmi'
-		)
+	sprite_sheets = VR_SPECIES_SPRITE_SHEETS_SUIT_MOB
+	sprite_sheets_obj = VR_SPECIES_SPRITE_SHEETS_SUIT_ITEM
 
 	//Breach thresholds, should ideally be inherited by most (if not all) voidsuits.
 	//With 0.2 resiliance, will reach 10 breach damage after 3 laser carbine blasts or 8 smg hits.
@@ -67,12 +47,23 @@
 	var/obj/item/clothing/head/helmet/helmet = null   // Deployable helmet, if any.
 	var/obj/item/weapon/tank/tank = null              // Deployable tank, if any.
 	var/obj/item/device/suit_cooling_unit/cooler = null// Cooling unit, for FBPs.  Cannot be installed alongside a tank.
-	
+
 	//Cycler settings
 	var/no_cycle = FALSE	//stop this item from being put in a cycler
 
+//Does it spawn with any Inbuilt devices?
+/obj/item/clothing/suit/space/void/Initialize()
+	. = ..()
+	if(boots && ispath(boots))
+		boots = new boots(src)
+	if(helmet && ispath(helmet))
+		helmet = new helmet(src)
+	if(tank && ispath(tank))
+		tank = new tank(src)
+
 /obj/item/clothing/suit/space/void/examine(user)
 	. = ..()
+	. += to_chat(usr, "<span class='notice'>Alt-click to relase Tank/Cooling unit if installed.</span>")
 	for(var/obj/item/I in list(helmet,boots,tank,cooler))
 		. += "It has \a [I] installed."
 	if(tank && in_range(src,user))
@@ -97,28 +88,28 @@
 
 	if(boots)
 		if (H.equip_to_slot_if_possible(boots, slot_shoes))
-			boots.canremove = 0
+			boots.canremove = FALSE
 
 	if(helmet)
 		if(H.head)
 			to_chat(M, "You are unable to deploy your suit's helmet as \the [H.head] is in the way.")
 		else if (H.equip_to_slot_if_possible(helmet, slot_head))
 			to_chat(M, "Your suit's helmet deploys with a hiss.")
-			helmet.canremove = 0
+			helmet.canremove = FALSE
 
 	if(tank)
 		if(H.s_store) //In case someone finds a way.
 			to_chat(M, "Alarmingly, the valve on your suit's installed tank fails to engage.")
 		else if (H.equip_to_slot_if_possible(tank, slot_s_store))
 			to_chat(M, "The valve on your suit's installed tank safely engages.")
-			tank.canremove = 0
+			tank.canremove = FALSE
 
 	if(cooler)
 		if(H.s_store) //Ditto
 			to_chat(M, "Alarmingly, the cooling unit installed into your suit fails to deploy.")
 		else if (H.equip_to_slot_if_possible(cooler, slot_s_store))
 			to_chat(M, "Your suit's cooling unit deploys.")
-			cooler.canremove = 0
+			cooler.canremove = FALSE
 
 /obj/item/clothing/suit/space/void/dropped()
 	..()
@@ -126,7 +117,7 @@
 	var/mob/living/carbon/human/H
 
 	if(helmet)
-		helmet.canremove = 1
+		helmet.canremove = TRUE
 		H = helmet.loc
 		if(istype(H))
 			if(helmet && H.head == helmet)
@@ -134,7 +125,7 @@
 				helmet.forceMove(src)
 
 	if(boots)
-		boots.canremove = 1
+		boots.canremove = TRUE
 		H = boots.loc
 		if(istype(H))
 			if(boots && H.shoes == boots)
@@ -142,11 +133,11 @@
 				boots.forceMove(src)
 
 	if(tank)
-		tank.canremove = 1
+		tank.canremove = TRUE
 		tank.forceMove(src)
 
 	if(cooler)
-		cooler.canremove = 1
+		cooler.canremove = TRUE
 		cooler.forceMove(src)
 
 /obj/item/clothing/suit/space/void/proc/attach_helmet(var/obj/item/clothing/head/helmet/space/void/helm)
@@ -165,13 +156,18 @@
 	helmet.set_light_flags(helmet.light_flags & ~LIGHT_ATTACHED)
 	helmet = null
 
-/obj/item/clothing/suit/space/void/verb/toggle_helmet()
+/obj/item/clothing/suit/space/void/ui_action_click(mob/living/user, action_name)
+	if(..())
+		return TRUE
+	toggle_helmet()
 
+/obj/item/clothing/suit/space/void/verb/toggle_helmet()
 	set name = "Toggle Helmet"
 	set category = "Object"
 	set src in usr
 
-	if(!istype(src.loc,/mob/living)) return
+	if(!isliving(loc))
+		return
 
 	if(!helmet)
 		to_chat(usr, "There is no helmet installed.")
@@ -179,43 +175,44 @@
 
 	var/mob/living/carbon/human/H = usr
 
-	if(!istype(H))
-		return
-	if(H.stat)
-		return
-	if(H.wear_suit != src)
-		return
+	if(!istype(H)) return
+	if(H.stat) return
+	if(H.wear_suit != src) return
+
+	if(helmet.light_on)
+		to_chat(H, SPAN_NOTICE("The helmet light shuts off as it retracts."))
+		helmet.update_flashlight(H)
 
 	if(H.head == helmet)
-		to_chat(H, "<span class='notice'>You retract your suit helmet.</span>")
-		helmet.canremove = 1
+		to_chat(H, SPAN_NOTICE("You retract your suit helmet."))
+		helmet.canremove = TRUE
 		H.drop_from_inventory(helmet)
 		helmet.forceMove(src)
+		playsound(src.loc, 'sound/machines/click2.ogg', 75, 1)
 	else
 		if(H.head)
-			to_chat(H, "<span class='danger'>You cannot deploy your helmet while wearing \the [H.head].</span>")
+			to_chat(H, SPAN_DANGER("You cannot deploy your helmet while wearing \the [H.head]."))
 			return
 		if(H.equip_to_slot_if_possible(helmet, slot_head))
-			helmet.pickup(H)
-			helmet.canremove = 0
+			helmet.canremove = FALSE
 			to_chat(H, "<span class='info'>You deploy your suit helmet, sealing you off from the world.</span>")
-	
-	if(helmet.light_system == STATIC_LIGHT)
-		helmet.update_light()
+			playsound(src.loc, 'sound/machines/click2.ogg', 75, 1)
+
+/obj/item/clothing/suit/space/void/AltClick(mob/living/user)
+	eject_tank()
 
 /obj/item/clothing/suit/space/void/verb/eject_tank()
-
 	set name = "Eject Voidsuit Tank/Cooler"
 	set category = "Object"
 	set src in usr
 
 	if(!istype(src.loc,/mob/living)) return
 
-	if(!tank && !cooler)
-		to_chat(usr, "There is no tank or cooling unit inserted.")
-		return
-
 	var/mob/living/carbon/human/H = usr
+
+	if(!tank && !cooler)
+		to_chat(H, SPAN_NOTICE("There is no tank or cooling unit inserted."))
+		return
 
 	if(!istype(H)) return
 	if(H.stat) return
@@ -228,8 +225,9 @@
 	else
 		removing = cooler
 		cooler = null
-	to_chat(H, "<span class='info'>You press the emergency release, ejecting \the [removing] from your suit.</span>")
-	removing.canremove = 1
+	to_chat(H, SPAN_DANGER("You press the emergency release, ejecting \the [removing] from your suit."))
+	playsound(src.loc, 'sound/machines/click.ogg', 75, 1)
+	removing.canremove = TRUE
 	H.drop_from_inventory(removing)
 
 /obj/item/clothing/suit/space/void/attackby(obj/item/W as obj, mob/user as mob)
@@ -245,7 +243,7 @@
 
 	if(W.is_screwdriver())
 		if(helmet || boots || tank)
-			var/choice = input("What component would you like to remove?") as null|anything in list(helmet,boots,tank,cooler)
+			var/choice = tgui_input_list(usr, "What component would you like to remove?", "Remove Component", list(helmet,boots,tank,cooler))
 			if(!choice) return
 
 			if(choice == tank)	//No, a switch doesn't work here. Sorry. ~Techhead

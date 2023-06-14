@@ -7,7 +7,6 @@
 
 /obj/machinery/telecomms/relay/preset/station
 	id = "Station Relay"
-	listening_level = 1
 	autolinkers = list("s_relay")
 
 /obj/machinery/telecomms/relay/preset/telecomms
@@ -28,7 +27,7 @@
 	id = "CentCom Relay"
 	hide = 1
 	toggled = 1
-	//anchored = 1
+	//anchored = TRUE
 	//use_power = 0
 	//idle_power_usage = 0
 	produces_heat = 0

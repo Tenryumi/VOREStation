@@ -22,8 +22,8 @@
 	desc = "It stores, sorts, and dispenses seeds."
 	icon = 'icons/obj/vending.dmi'
 	icon_state = "seeds"
-	density = 1
-	anchored = 1
+	density = TRUE
+	anchored = TRUE
 	use_power = USE_POWER_IDLE
 	idle_power_usage = 100
 
@@ -43,41 +43,46 @@
 	..()
 	wires = new(src)
 	if(!contraband_seeds.len)
-		contraband_seeds = pick(list(
-			list(
-					/obj/item/seeds/ambrosiavulgarisseed = 3,
-					/obj/item/seeds/greengrapeseed = 3,
-					/obj/item/seeds/reishimycelium = 2,
-					/obj/item/seeds/bloodtomatoseed = 1
-					),
-			list(
-					/obj/item/seeds/ambrosiavulgarisseed = 3,
-					/obj/item/seeds/plastiseed = 3,
-					/obj/item/seeds/kudzuseed = 2,
-					/obj/item/seeds/rose/blood = 1
-					),
-			list(
-					/obj/item/seeds/ambrosiavulgarisseed = 3,
-					/obj/item/seeds/amanitamycelium = 3,
-					/obj/item/seeds/libertymycelium = 2,
-					/obj/item/seeds/glowshroom = 1
-					),
-			list(
-					/obj/item/seeds/ambrosiavulgarisseed = 3,
-					/obj/item/seeds/glowberryseed = 3,
-					/obj/item/seeds/icepepperseed = 2,
-					/obj/item/seeds/bluetomatoseed = 1
-					),
-			list(
-					/obj/item/seeds/durian = 2,
-					/obj/item/seeds/ambrosiadeusseed = 1,
-					/obj/item/seeds/killertomatoseed = 1
-					),
-			list(
-					/obj/item/seeds/ambrosiavulgarisseed = 3,
-					/obj/item/seeds/random = 6
-					)
-			))
+		contraband_seeds = pick( 	/// Some form of ambrosia in all lists.
+			prob(30);list( /// General produce
+				/obj/item/seeds/ambrosiavulgarisseed = 3,
+				/obj/item/seeds/greengrapeseed = 3,
+				/obj/item/seeds/icepepperseed = 2,
+				/obj/item/seeds/kudzuseed = 1
+			),
+			prob(30);list( ///Mushroom batch
+				/obj/item/seeds/ambrosiavulgarisseed = 1,
+				/obj/item/seeds/glowberryseed = 2,
+				/obj/item/seeds/libertymycelium = 1,
+				/obj/item/seeds/reishimycelium = 2,
+				/obj/item/seeds/sporemycelium = 1
+			),
+			prob(15);list( /// Survivalist
+				/obj/item/seeds/ambrosiadeusseed = 2,
+				/obj/item/seeds/redtowermycelium = 2,
+				/obj/item/seeds/vale = 2,
+				/obj/item/seeds/siflettuce = 2
+			),
+			prob(20);list( /// Cold plants
+				/obj/item/seeds/ambrosiavulgarisseed = 2,
+				/obj/item/seeds/thaadra = 2,
+				/obj/item/seeds/icepepperseed = 2,
+				/obj/item/seeds/siflettuce = 1
+			),
+			prob(10);list( ///Poison party
+				/obj/item/seeds/ambrosiavulgarisseed = 3,
+				/obj/item/seeds/surik = 1,
+				/obj/item/seeds/telriis = 1,
+				/obj/item/seeds/nettleseed = 2,
+				/obj/item/seeds/poisonberryseed = 1
+			),
+			prob(5);list( /// Extra poison party!
+				/obj/item/seeds/ambrosiainfernusseed = 1,
+				/obj/item/seeds/amauri = 1,
+				/obj/item/seeds/surik = 1,
+				/obj/item/seeds/deathberryseed = 1 /// Very ow.
+			)
+		)
 	return
 
 /obj/machinery/seed_storage/process()
@@ -384,7 +389,7 @@
 /obj/machinery/seed_storage/attackby(var/obj/item/O as obj, var/mob/user as mob)
 	if (istype(O, /obj/item/seeds) && !lockdown)
 		add(O)
-		user.visible_message("[user] puts \the [O.name] into \the [src].", "You put \the [O] into \the [src].")
+		user.visible_message("<span class ='filter_notice'>[user] puts \the [O.name] into \the [src].</span>", "<span class ='filter_notice'>You put \the [O] into \the [src].</span>")
 		return
 	else if (istype(O, /obj/item/weapon/storage/bag/plants) && !lockdown)
 		var/obj/item/weapon/storage/P = O
@@ -393,17 +398,17 @@
 			++loaded
 			add(G)
 		if (loaded)
-			user.visible_message("[user] puts the seeds from \the [O.name] into \the [src].", "You put the seeds from \the [O.name] into \the [src].")
+			user.visible_message("<span class ='filter_notice'>[user] puts the seeds from \the [O.name] into \the [src].</span>", "<span class ='filter_notice'>You put the seeds from \the [O.name] into \the [src].</span>")
 		else
 			to_chat(user, "<span class='notice'>There are no seeds in \the [O.name].</span>")
 		return
 	else if(O.is_wrench())
 		playsound(src, O.usesound, 50, 1)
 		anchored = !anchored
-		to_chat(user, "You [anchored ? "wrench" : "unwrench"] \the [src].")
+		to_chat(user, "<span class ='filter_notice'>You [anchored ? "wrench" : "unwrench"] \the [src].</span>")
 	else if(O.is_screwdriver())
 		panel_open = !panel_open
-		to_chat(user, "You [panel_open ? "open" : "close"] the maintenance panel.")
+		to_chat(user, "<span class ='filter_notice'>You [panel_open ? "open" : "close"] the maintenance panel.</span>")
 		playsound(src, O.usesound, 50, 1)
 		cut_overlays()
 		if(panel_open)

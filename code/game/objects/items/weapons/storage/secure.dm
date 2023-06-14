@@ -80,16 +80,27 @@
 		return
 	..()
 
+/obj/item/weapon/storage/secure/AltClick(mob/user as mob)
+	if (isliving(user) && Adjacent(user) && (src.locked == 1))
+		to_chat(user, "<span class='warning'>[src] is locked and cannot be opened!</span>")
+	else if (isliving(user) && Adjacent(user) && (!src.locked))
+		src.open(usr)
+	else
+		for(var/mob/M in range(1))
+			if (M.s_active == src)
+				src.close(M)
+	src.add_fingerprint(user)
+	return
 
 /obj/item/weapon/storage/secure/attack_self(mob/user as mob)
 	tgui_interact(user)
 
 /obj/item/weapon/storage/secure/tgui_interact(mob/user, datum/tgui/ui = null)
-	ui = SStgui.try_update_ui(user, src, ui)	
+	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "SecureSafe", name)
 		ui.open()
-		
+
 /obj/item/weapon/storage/secure/tgui_data(mob/user)
 	var/list/data = list()
 	data["locked"] = locked
@@ -186,8 +197,8 @@
 	force = 8.0
 	w_class = ITEMSIZE_NO_CONTAINER
 	max_w_class = ITEMSIZE_LARGE // This was 8 previously...
-	anchored = 1.0
-	density = 0
+	anchored = TRUE
+	density = FALSE
 	cant_hold = list(/obj/item/weapon/storage/secure/briefcase)
 	starts_with = list(
 		/obj/item/weapon/paper,

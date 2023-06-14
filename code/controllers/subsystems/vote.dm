@@ -35,8 +35,7 @@ SUBSYSTEM_DEF(vote)
 	// Before doing the vote, see if anyone is playing.
 	// If not, just do the transfer.
 	var/players_are_in_round = FALSE
-	for(var/a in player_list) // Mobs with clients attached.
-		var/mob/living/L = a
+	for(var/mob/living/L as anything in player_list) // Mobs with clients attached.
 		if(!istype(L)) // Exclude ghosts and other weird things.
 			continue
 		if(L.stat == DEAD) // Dead mobs aren't playing.
@@ -232,11 +231,11 @@ SUBSYSTEM_DEF(vote)
 						choices.Add(antag.role_text)
 				choices.Add("None")
 			if(VOTE_CUSTOM)
-				question = sanitizeSafe(input(usr, "What is the vote for?") as text|null)
+				question = sanitizeSafe(tgui_input_text(usr, "What is the vote for?"))
 				if(!question)
 					return 0
 				for(var/i = 1 to 10)
-					var/option = capitalize(sanitize(input(usr, "Please enter an option or hit cancel to finish") as text|null))
+					var/option = capitalize(sanitize(tgui_input_text(usr, "Please enter an option or hit cancel to finish")))
 					if(!option || mode || !usr.client)
 						break
 					choices.Add(option)
@@ -303,7 +302,7 @@ SUBSYSTEM_DEF(vote)
 
 		. += "</table><hr>"
 		if(admin)
-			. += "(<a href='?src=\ref[src];vote=cancel'>Cancel Vote</a>) "
+			. += "(<a href='?src=\ref[src];[HrefToken()];vote=cancel'>Cancel Vote</a>) "
 	else
 		. += "<h2>Start a vote:</h2><hr><ul><li>"
 		if(admin || config.allow_vote_restart)
@@ -318,7 +317,7 @@ SUBSYSTEM_DEF(vote)
 			. += "<font color='grey'>Crew Transfer (Disallowed)</font>"
 
 		if(admin)
-			. += "\t(<a href='?src=\ref[src];vote=toggle_restart'>[config.allow_vote_restart ? "Allowed" : "Disallowed"]</a>)"
+			. += "\t(<a href='?src=\ref[src];[HrefToken()];vote=toggle_restart'>[config.allow_vote_restart ? "Allowed" : "Disallowed"]</a>)"
 		. += "</li><li>"
 
 		if(admin || config.allow_vote_mode)
@@ -327,7 +326,7 @@ SUBSYSTEM_DEF(vote)
 			. += "<font color='grey'>GameMode (Disallowed)</font>"
 
 		if(admin)
-			. += "\t(<a href='?src=\ref[src];vote=toggle_gamemode'>[config.allow_vote_mode ? "Allowed" : "Disallowed"]</a>)"
+			. += "\t(<a href='?src=\ref[src];[HrefToken()];vote=toggle_gamemode'>[config.allow_vote_mode ? "Allowed" : "Disallowed"]</a>)"
 		. += "</li><li>"
 
 		if(!antag_add_failed && config.allow_extra_antags)
@@ -337,7 +336,7 @@ SUBSYSTEM_DEF(vote)
 		. += "</li>"
 
 		if(admin)
-			. += "<li><a href='?src=\ref[src];vote=custom'>Custom</a></li>"
+			. += "<li><a href='?src=\ref[src];[HrefToken()];vote=custom'>Custom</a></li>"
 		. += "</ul><hr>"
 
 	. += "<a href='?src=\ref[src];vote=close' style='position:absolute;right:50px'>Close</a></body></html>"
@@ -352,7 +351,7 @@ SUBSYSTEM_DEF(vote)
 
 		if("cancel")
 			if(usr.client.holder)
-				if("Yes" == alert(usr, "You are about to cancel this vote. Are you sure?", "Cancel Vote", "No", "Yes"))
+				if("Yes" == tgui_alert(usr, "You are about to cancel this vote. Are you sure?", "Cancel Vote", list("No", "Yes")))
 					reset()
 		if("toggle_restart")
 			if(usr.client.holder)
@@ -363,7 +362,12 @@ SUBSYSTEM_DEF(vote)
 
 		if(VOTE_RESTART)
 			if(config.allow_vote_restart || usr.client.holder)
-				initiate_vote(VOTE_RESTART, usr.key)
+				var/admin_number_present = send2irc_adminless_only(usr.ckey, usr)
+				if(admin_number_present <= 0 || usr.client.holder)
+					if(tgui_alert(usr, "Are you sure you want to start a RESTART VOTE? You should only do this if the server is dying and no staff are around to investigate.", "RESTART VOTE", list("No", "Yes I want to start a RESTART VOTE")) == "Yes I want to start a RESTART VOTE")
+						initiate_vote(VOTE_RESTART, usr.key)
+				else
+					to_chat(usr, "<span class = 'warning'>You can't start a RESTART VOTE while there are staff around. If you are having an issue with the round, please ahelp it.</span>")
 		if(VOTE_GAMEMODE)
 			if(config.allow_vote_mode || usr.client.holder)
 				initiate_vote(VOTE_GAMEMODE, usr.key)

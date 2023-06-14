@@ -42,8 +42,10 @@
 #define COMSIG_PARENT_QDELETING "parent_qdeleting"
 /// generic topic handler (usr, href_list)
 #define COMSIG_TOPIC "handle_topic"
-/// from datum ui_act (usr, action)
+/// from datum tgui_act (usr, action)
 #define COMSIG_UI_ACT "COMSIG_UI_ACT"
+/// from datum tgui_fallback (payload)
+#define COMSIG_UI_FALLBACK "COMSIG_UI_FALLBACK"
 
 
 /// fires on the target datum when an element is attached to it (/datum/element)
@@ -58,8 +60,8 @@
 #define COMSIG_ATOM_AFTER_SUCCESSFUL_INITIALIZE "atom_init_success"
 ///from base of atom/attackby(): (/obj/item, /mob/living, params)
 #define COMSIG_PARENT_ATTACKBY "atom_attackby"
-///Return this in response if you don't want afterattack to be called
-	#define COMPONENT_NO_AFTERATTACK (1<<0)
+///Return this in response if you don't want later item attack procs to be called.
+	#define COMPONENT_CANCEL_ATTACK_CHAIN (1<<0)
 ///from base of atom/attack_hulk(): (/mob/living/carbon/human)
 #define COMSIG_ATOM_HULK_ATTACK "hulk_attack"
 ///from base of atom/animal_attack(): (/mob/user)
@@ -94,6 +96,7 @@
 #define COMSIG_ATOM_BUMPED "atom_bumped"
 ///from base of atom/ex_act(): (severity, target)
 #define COMSIG_ATOM_EX_ACT "atom_ex_act"
+	#define COMPONENT_IGNORE_EXPLOSION (1<<0)
 ///from base of atom/emp_act(): (severity)
 #define COMSIG_ATOM_EMP_ACT "atom_emp_act"
 ///from base of atom/fire_act(): (exposed_temperature, exposed_volume)
@@ -218,27 +221,22 @@
 #define COMSIG_TURF_CHANGE "turf_change"
 ///from base of atom/has_gravity(): (atom/asker, list/forced_gravities)
 #define COMSIG_TURF_HAS_GRAVITY "turf_has_gravity"
-///from base of turf/New(): (turf/source, direction)
+///from base of turf/multiz_turf_del(): (turf/source, direction)
+#define COMSIG_TURF_MULTIZ_DEL "turf_multiz_del"
+///from base of turf/multiz_turf_new: (turf/source, direction)
 #define COMSIG_TURF_MULTIZ_NEW "turf_multiz_new"
 
 // /atom/movable signals
 
-///from base of atom/movable/Moved(): (/atom)
+///from base of atom/movable/Move(): (atom/newloc, dir, movetime)
 #define COMSIG_MOVABLE_PRE_MOVE "movable_pre_move"
 	#define COMPONENT_MOVABLE_BLOCK_PRE_MOVE (1<<0)
 ///from base of atom/movable/Moved(): (/atom, dir)
 #define COMSIG_MOVABLE_MOVED "movable_moved"
 ///from base of atom/movable/Cross(): (/atom/movable)
 #define COMSIG_MOVABLE_CROSS "movable_cross"
-///from base of atom/movable/Crossed(): (/atom/movable)
-#define COMSIG_MOVABLE_CROSSED "movable_crossed"
 ///when we cross over something (calling Crossed() on that atom)
 #define COMSIG_CROSSED_MOVABLE "crossed_movable"
-///from base of atom/movable/Uncross(): (/atom/movable)
-#define COMSIG_MOVABLE_UNCROSS "movable_uncross"
-	#define COMPONENT_MOVABLE_BLOCK_UNCROSS (1<<0)
-///from base of atom/movable/Uncrossed(): (/atom/movable)
-#define COMSIG_MOVABLE_UNCROSSED "movable_uncrossed"
 ///from base of atom/movable/Bump(): (/atom)
 #define COMSIG_MOVABLE_BUMP "movable_bump"
 ///from base of atom/movable/throw_impact(): (/atom/hit_atom, /datum/thrownthing/throwingdatum)
@@ -401,10 +399,6 @@
 #define COMSIG_CARBON_EMBED_RIP "item_embed_start_rip"
 ///called when removing a given item from a mob, from mob/living/carbon/remove_embedded_object(mob/living/carbon/target, /obj/item)
 #define COMSIG_CARBON_EMBED_REMOVAL "item_embed_remove_safe"
-
-// /mob/living/simple_animal/hostile signals
-#define COMSIG_HOSTILE_ATTACKINGTARGET "hostile_attackingtarget"
-	#define COMPONENT_HOSTILE_NO_ATTACK (1<<0)
 
 // /obj signals
 
@@ -777,3 +771,11 @@
 	#define COMPONENT_BLOCK_LIGHT_EATER (1<<0)
 ///from base of [/datum/element/light_eater/proc/devour]: (atom/eaten_light)
 #define COMSIG_LIGHT_EATER_DEVOUR "light_eater_devour"
+
+// conflict checking elements
+/// (id) - returns flags - Registered on something by conflict checking elements.
+#define COMSIG_CONFLICT_ELEMENT_CHECK "conflict_element_check"
+	/// A conflict was found
+	#define ELEMENT_CONFLICT_FOUND	(1<<0)
+//From reagents touch_x.
+#define COMSIG_REAGENTS_TOUCH "reagent_touch"

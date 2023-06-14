@@ -1,6 +1,7 @@
 // Reorganized and somewhat cleaned up.
 // AI code has been made into a datum, inside the AI module folder.
 
+
 /mob/living/simple_mob
 	name = "animal"
 	desc = ""
@@ -37,6 +38,7 @@
 	var/image/modifier_overlay = null // Holds overlays from modifiers.
 	var/image/eye_layer = null		// Holds the eye overlay.
 	var/has_eye_glow = FALSE		// If true, adds an overlay over the lighting plane for [icon_state]-eyes.
+	var/custom_eye_color = null
 	attack_icon = 'icons/effects/effects.dmi' //Just the default, played like the weapon attack anim
 	attack_icon_state = "slash" //Just the default
 
@@ -45,7 +47,7 @@
 	var/has_langs = list(LANGUAGE_GALCOM)// Text name of their language if they speak something other than galcom. They speak the first one.
 
 	//Movement things.
-	var/movement_cooldown = 5			// Lower is faster.
+	var/movement_cooldown = 1			//VOREStation Edit - 1 is slower than normal human speed // Lower is faster.
 	var/movement_sound = null			// If set, will play this sound when it moves on its own will.
 	var/turn_sound = null				// If set, plays the sound when the mob's dir changes in most cases.
 	var/movement_shake_radius = 0		// If set, moving will shake the camera of all living mobs within this radius slightly.
@@ -59,6 +61,7 @@
 	var/harm_intent_damage = 3		// How much an unarmed harm click does to this mob.
 	var/list/loot_list = list()		// The list of lootable objects to drop, with "/path = prob%" structure
 	var/obj/item/weapon/card/id/myid// An ID card if they have one to give them access to stuff.
+	var/organ_names = /decl/mob_organ_names //'False' bodyparts that can be shown as hit by projectiles in place of the default humanoid bodyplan.
 
 	//Mob environment settings
 	var/minbodytemp = 250			// Minimum "okay" temperature in kelvin
@@ -160,10 +163,24 @@
 	var/limb_icon
 	// Used for if the mob can drop limbs. Overrides the icon cache key, so it doesn't keep remaking the icon needlessly.
 	var/limb_icon_key
+	var/understands_common = TRUE 		//VOREStation Edit - Makes it so that simplemobs can understand galcomm without being able to speak it.
+	var/heal_countdown = 5				//VOREStation Edit - A cooldown ticker for passive healing
+	var/list/myid_access = list() //VOREStation Edit
+	var/ID_provided = FALSE //VOREStation Edit
+	// VOREStation Add: Move/Shoot/Attack delays based on damage
+	var/damage_fatigue_mult = 0			// Our multiplier for how heavily mobs are affected by injury. [UPDATE THIS IF THE FORMULA CHANGES]: Formula = injury_level = round(rand(1,3) * damage_fatigue_mult * clamp(((rand(2,5) * (h / getMaxHealth())) - rand(0,2)), 1, 5))
+	var/injury_level = 0 				// What our injury level is. Rather than being the flat damage, this is the amount added to various delays to simulate injuries in a manner as lightweight as possible.
+	var/threshold = 0.6					// When we start slowing down. Configure this setting per-mob. Default is 60%
+	var/injury_enrages = FALSE				// Do injuries enrage (aka strengthen) our mob? If yes, we'll interpret how hurt we are differently.
+	// VOREStation Add End
 
 /mob/living/simple_mob/Initialize()
 	verbs -= /mob/verb/observe
 	health = maxHealth
+
+	if(ID_provided) //VOREStation Edit
+		myid = new /obj/item/weapon/card/id(src)
+		myid.access = myid_access.Copy()
 
 	for(var/L in has_langs)
 		languages |= GLOB.all_languages[L]
@@ -172,6 +189,9 @@
 
 	if(has_eye_glow)
 		add_eyes()
+
+	if(organ_names)
+		organ_names = GET_DECL(organ_names)
 
 	return ..()
 
@@ -228,11 +248,13 @@
 
 	// Turf related slowdown
 	var/turf/T = get_turf(src)
-	if(T && T.movement_cost && !hovering) // Flying mobs ignore turf-based slowdown. Aquatic mobs ignore water slowdown, and can gain bonus speed in it.
+	if(T && T.movement_cost && (!hovering || !flying)) // Flying mobs ignore turf-based slowdown. Aquatic mobs ignore water slowdown, and can gain bonus speed in it.
 		if(istype(T,/turf/simulated/floor/water) && aquatic_movement)
 			. -= aquatic_movement - 1
 		else
 			. += T.movement_cost
+		if(flying)
+			adjust_nutrition(-0.5)
 
 	if(purge)//Purged creatures will move more slowly. The more time before their purge stops, the slower they'll move.
 		if(. <= 0)
@@ -242,9 +264,16 @@
 	if(m_intent == "walk")
 		. *= 1.5
 
-	 . += config.animal_delay
+	// VOREStation Edit Start
+	if(injury_enrages) // If we enrage, then do this, else
+		. -= injury_level
+	else
+		. += injury_level
+	// VOREStation Edit Stop
 
-	 . += ..()
+	. += config.animal_delay
+
+	. += ..()
 
 
 /mob/living/simple_mob/Stat()
@@ -280,3 +309,31 @@
 	hud_list[STATUS_HUD]  = gen_hud_image(buildmode_hud, src, "ai_0", plane = PLANE_BUILDMODE)
 	hud_list[LIFE_HUD]	  = gen_hud_image(buildmode_hud, src, "ais_1", plane = PLANE_BUILDMODE)
 	add_overlay(hud_list)
+
+//VOREStation Add Start		Makes it so that simplemobs can understand galcomm without being able to speak it.
+/mob/living/simple_mob/say_understands(var/mob/other, var/datum/language/speaking = null)
+	if(understands_common && speaking?.name == LANGUAGE_GALCOM)
+		return TRUE
+	return ..()
+//Vorestation Add End
+
+/decl/mob_organ_names
+	var/list/hit_zones = list("body") //When in doubt, it's probably got a body.
+
+/*
+ * VOREStation Add
+ * How injured are we? Returns a number that is then added to movement cooldown and firing/melee delay respectively.
+ * Called by movement_delay and our firing/melee delay checks
+*/
+/mob/living/simple_mob/proc/get_injury_level(var/mob/living/simple_mob/M)
+	var/h = getMaxHealth() - getOxyLoss() - getToxLoss() - getFireLoss() - getBruteLoss() - getCloneLoss() - halloss // We're not updating our actual health here bc we want updatehealth() and other checks to handle that
+	if(h > 0) 												// Safety to prevent division by 0 errors
+		if((h / getMaxHealth()) <= threshold) 				// Essentially, did our health go down? We don't modify want to modify our total slowdown if we didn't actually take damage, and aren't below our threshold %
+			var/totaldelay = round(rand(1,3) * damage_fatigue_mult * clamp(((rand(2,5) * (h / getMaxHealth())) - rand(0,2)), 1, 5)) 	// totaldelay is how much delay we're going to feed into attacks and movement. Do NOT change this formula unless you know how to math.
+			injury_level = totaldelay 						// Adds our returned slowdown to the mob's injury level
+
+/mob/living/simple_mob/updatehealth()	// We don't want to fully override the check, just hook our own code in
+	get_injury_level()					// We check how injured we are, then actually update the mob on how hurt we are.
+	. = ..() 							// Calling parent here, actually updating our mob on how hurt we are.
+
+// VOREStation Add End

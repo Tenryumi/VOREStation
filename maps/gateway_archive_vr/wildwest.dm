@@ -41,7 +41,7 @@
 	else
 		chargesa--
 		insistinga = 0
-		var/wish = input("You want...","Wish") as null|anything in list("Power","Wealth","Immortality","To Kill","Peace")
+		var/wish = tgui_input_list(usr, "You want...","Wish", list("Power","Wealth","Immortality","To Kill","Peace"))
 		switch(wish)
 			if("Power")
 				to_chat(user, "<B>Your wish is granted, but at a terrible cost...</B>")
@@ -121,7 +121,7 @@
 
 	if(istype(M, /mob/living/carbon/human) || istype(M, /mob/living/carbon/monkey))
 		for(var/mob/O in viewers(world.view, src.loc))
-			to_chat(O, "<font color='red'>[M] triggered the [bicon(src)] [src]</font>")
+			to_chat(O, "<font color='red'>[M] triggered the \icon[src][bicon(src)] [src]</font>")
 		triggered = 1
 		call(src,triggerproc)(M)
 

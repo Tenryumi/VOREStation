@@ -47,6 +47,10 @@
 	display_name = "Glasses, hipster"
 	path = /obj/item/clothing/glasses/regular/hipster
 
+/datum/gear/eyes/glasses/threedglasses
+	display_name = "Glasses, 3D"
+	path = /obj/item/clothing/glasses/threedglasses
+
 /datum/gear/eyes/glasses/monocle
 	display_name = "monocle"
 	path = /obj/item/clothing/glasses/monocle
@@ -104,7 +108,7 @@
 /datum/gear/eyes/meson
 	display_name = "Optical Meson Scanners (Engineering, Science, Mining)"
 	path = /obj/item/clothing/glasses/meson
-	allowed_roles = list("Station Engineer","Chief Engineer","Atmospheric Technician", "Scientist", "Research Director", "Shaft Miner")
+	allowed_roles = list("Engineer","Chief Engineer","Atmospheric Technician", "Scientist", "Research Director", "Shaft Miner")
 
 /datum/gear/eyes/meson/prescription
 	display_name = "Optical Meson Scanners, prescription (Engineering, Science, Mining)"

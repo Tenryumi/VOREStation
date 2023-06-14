@@ -14,8 +14,8 @@
 	desc = "A pneumatic waste disposal unit."
 	icon = 'icons/obj/pipes/disposal.dmi'
 	icon_state = "disposal"
-	anchored = 1
-	density = 1
+	anchored = TRUE
+	density = TRUE
 	var/datum/gas_mixture/air_contents	// internal reservoir
 	var/mode = 1	// item mode 0=off 1=charging 2=charged
 	var/flush = 0	// true if flush handle is pulled
@@ -85,8 +85,8 @@
 					var/obj/structure/disposalconstruct/C = new (src.loc)
 					src.transfer_fingerprints_to(C)
 					C.ptype = 6 // 6 = disposal unit
-					C.anchored = 1
-					C.density = 1
+					C.anchored = TRUE
+					C.density = TRUE
 					C.update()
 					qdel(src)
 				return
@@ -110,7 +110,7 @@
 	if(istype(I, /obj/item/weapon/material/ashtray))
 		var/obj/item/weapon/material/ashtray/A = I
 		if(A.contents.len > 0)
-			user.visible_message("<span class='notice'>\The [user] empties \the [A.name] into [src].</span>")
+			user.visible_message("<b>\The [user]</b> empties \the [A] into [src].")
 			for(var/obj/item/O in A.contents)
 				O.forceMove(src)
 			A.update_icon()
@@ -523,6 +523,15 @@
 		H.vent_gas(loc)
 		qdel(H)
 
+/obj/machinery/disposal/hitby(atom/movable/AM)
+	. = ..()
+	if(istype(AM, /obj/item) && !istype(AM, /obj/item/projectile))
+		if(prob(75))
+			AM.forceMove(src)
+			visible_message("\The [AM] lands in \the [src].")
+		else
+			visible_message("\The [AM] bounces off of \the [src]'s rim!")
+
 /obj/machinery/disposal/CanPass(atom/movable/mover, turf/target)
 	if(istype(mover, /obj/item/projectile))
 		return 1
@@ -741,8 +750,9 @@
 	icon = 'icons/obj/pipes/disposal.dmi'
 	name = "disposal pipe"
 	desc = "An underfloor disposal pipe."
-	anchored = 1
-	density = 0
+	anchored = TRUE
+	density = FALSE
+	unacidable = TRUE
 
 	level = 1			// underfloor only
 	var/dpdir = 0		// bitmask of pipe directions
@@ -1018,8 +1028,8 @@
 	C.subtype = src.subtype
 	src.transfer_fingerprints_to(C)
 	C.set_dir(dir)
-	C.density = 0
-	C.anchored = 1
+	C.density = FALSE
+	C.anchored = TRUE
 	C.update()
 
 	qdel(src)
@@ -1513,8 +1523,8 @@
 	desc = "An outlet for the pneumatic disposal system."
 	icon = 'icons/obj/pipes/disposal.dmi'
 	icon_state = "outlet"
-	density = 1
-	anchored = 1
+	density = TRUE
+	anchored = TRUE
 	var/active = 0
 	var/turf/target	// this will be where the output objects are 'thrown' to.
 	var/mode = 0
@@ -1528,6 +1538,12 @@
 	var/obj/structure/disposalpipe/trunk/trunk = locate() in loc
 	if(trunk)
 		trunk.linked = src	// link the pipe trunk to self
+
+/obj/structure/disposaloutlet/Destroy()
+	var/obj/structure/disposalpipe/trunk/trunk = locate() in loc
+	if(trunk && trunk.linked == src)
+		trunk.linked = null
+	return ..()
 
 	// expel the contents of the holder object, then delete it
 	// called when the holder exits the outlet
@@ -1576,8 +1592,8 @@
 				src.transfer_fingerprints_to(C)
 				C.ptype = 7 // 7 =  outlet
 				C.update()
-				C.anchored = 1
-				C.density = 1
+				C.anchored = TRUE
+				C.density = TRUE
 				qdel(src)
 			return
 		else

@@ -1,8 +1,8 @@
 //trees
 /obj/structure/flora/tree
 	name = "tree"
-	anchored = 1
-	density = 1
+	anchored = TRUE
+	density = TRUE
 	pixel_x = -16
 	plane = MOB_PLANE // You know what, let's play it safe.
 	layer = ABOVE_MOB_LAYER
@@ -47,7 +47,7 @@
 	if(is_stump)
 		if(istype(W,/obj/item/weapon/shovel))
 			if(do_after(user, 5 SECONDS))
-				visible_message("<span class='notice'>\The [user] digs up \the [src] stump with \the [W].</span>")
+				visible_message("<b>\The [user]</b> digs up \the [src] stump with \the [W].")
 				qdel(src)
 		return
 
@@ -101,8 +101,7 @@
 		return
 
 	if(product && product_amount) // Make wooden logs.
-		var/obj/item/stack/material/M = new product(get_turf(src))
-		M.amount = product_amount
+		var/obj/item/stack/material/M = new product(get_turf(src), product_amount)
 		M.update_icon()
 	visible_message("<span class='danger'>\The [src] is felled!</span>")
 	stump()
@@ -272,12 +271,12 @@
 
 	harvest_tool = /obj/item/weapon/material/knife
 	max_harvests = 2
-	min_harvests = -4
+	min_harvests = 0
 	harvest_loot = list(
 		/obj/item/weapon/reagent_containers/food/snacks/siffruit = 20,
-		/obj/item/weapon/reagent_containers/food/snacks/grown/sifpod = 5,
+		/obj/item/weapon/reagent_containers/food/snacks/grown/sif/sifpod = 5,
 		/obj/item/seeds/sifbulb = 1
-		)
+	)
 
 	var/light_shift = 0
 

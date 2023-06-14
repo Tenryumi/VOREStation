@@ -40,6 +40,7 @@
 	var/ricochets = 0
 	var/ricochets_max = 2
 	var/ricochet_chance = 30
+	var/can_miss = TRUE
 
 	//Hitscan
 	var/hitscan = FALSE		//Whether this is hitscan. If it is, speed is basically ignored.
@@ -83,10 +84,10 @@
 
 	//Misc/Polaris variables
 
-	var/def_zone = ""	//Aiming at
-	var/mob/firer = null//Who shot it
-	var/silenced = 0	//Attack message
-	var/shot_from = "" // name of the object which shot us
+	var/def_zone = ""	 //Aiming at
+	var/mob/firer = null //Who shot it
+	var/silenced = FALSE //Attack message
+	var/shot_from = ""   // name of the object which shot us
 
 	var/accuracy = 0
 	var/dispersion = 0.0
@@ -139,6 +140,10 @@
 	var/impact_effect_type = null
 
 	var/list/impacted_mobs = list()
+
+	// TGMC Ammo HUD Port
+	var/hud_state = "unknown" // What HUD state we use when we have ammunition.
+	var/hud_state_empty = "unknown" // The empty state. DON'T USE _FLASH IN THE NAME OF THE EMPTY STATE STRING, THAT IS ADDED BY THE CODE.
 
 /obj/item/projectile/proc/Range()
 	range--
@@ -320,10 +325,10 @@
 		return
 	if(isnum(angle))
 		setAngle(angle)
-	var/turf/starting = get_turf(src)
+	starting = get_turf(src)
 	if(isnull(Angle))	//Try to resolve through offsets if there's no angle set.
 		if(isnull(xo) || isnull(yo))
-			crash_with("WARNING: Projectile [type] deleted due to being unable to resolve a target after angle was null!")
+			stack_trace("WARNING: Projectile [type] deleted due to being unable to resolve a target after angle was null!")
 			qdel(src)
 			return
 		var/turf/target = locate(CLAMP(starting + xo, 1, world.maxx), CLAMP(starting + yo, 1, world.maxy), starting.z)
@@ -400,7 +405,7 @@
 		xo = targloc.x - curloc.x
 		setAngle(Get_Angle(src, targloc) + spread)
 	else
-		crash_with("WARNING: Projectile [type] fired without either mouse parameters, or a target atom to aim at!")
+		stack_trace("WARNING: Projectile [type] fired without either mouse parameters, or a target atom to aim at!")
 		qdel(src)
 
 /proc/calculate_projectile_angle_and_pixel_offsets(mob/user, params)
@@ -650,8 +655,8 @@
 		return
 
 	//roll to-hit
-	miss_modifier = max(15*(distance-2) - accuracy + miss_modifier + target_mob.get_evasion(), 0)
-	var/hit_zone = get_zone_with_miss_chance(def_zone, target_mob, miss_modifier, ranged_attack=(distance > 1 || original != target_mob)) //if the projectile hits a target we weren't originally aiming at then retain the chance to miss
+	miss_modifier = max(15*(distance-2) - accuracy + miss_modifier + target_mob.get_evasion(), -100)
+	var/hit_zone = get_zone_with_miss_chance(def_zone, target_mob, miss_modifier, ranged_attack=(distance > 1 || original != target_mob), force_hit = !can_miss) //if the projectile hits a target we weren't originally aiming at then retain the chance to miss
 
 	var/result = PROJECTILE_FORCE_MISS
 	if(hit_zone)
@@ -667,21 +672,27 @@
 
 	if(result == PROJECTILE_FORCE_MISS)
 		if(!silenced)
-			target_mob.visible_message("<span class='notice'>\The [src] misses \the [target_mob] narrowly!</span>")
+			target_mob.visible_message("<b>\The [src]</b> misses \the [target_mob] narrowly!")
 			playsound(target_mob, "bullet_miss", 75, 1)
 		return FALSE
+
+	var/impacted_organ = parse_zone(def_zone)
+	if(istype(target_mob, /mob/living/simple_mob))
+		var/mob/living/simple_mob/SM = target_mob
+		var/decl/mob_organ_names/organ_plan = SM.organ_names
+		impacted_organ = pick(organ_plan.hit_zones)
 
 	//hit messages
 	if(silenced)
 		playsound(target_mob, hitsound, 5, 1, -1)
-		to_chat(target_mob, span("critical", "You've been hit in the [parse_zone(def_zone)] by \the [src]!"))
+		to_chat(target_mob, span("critical", "You've been hit in the [impacted_organ] by \the [src]!"))
 	else
 		var/volume = vol_by_damage()
 		playsound(target_mob, hitsound, volume, 1, -1)
 		// X has fired Y is now given by the guns so you cant tell who shot you if you could not see the shooter
 		target_mob.visible_message(
-			span("danger", "\The [target_mob] was hit in the [parse_zone(def_zone)] by \the [src]!"),
-			span("critical", "You've been hit in the [parse_zone(def_zone)] by \the [src]!")
+			span("danger", "\The [target_mob] was hit in the [impacted_organ] by \the [src]!"),
+			span("critical", "You've been hit in the [impacted_organ] by \the [src]!")
 		)
 
 	//admin logs
@@ -742,7 +753,7 @@
 /obj/item/projectile/proc/launch_from_gun(atom/target, target_zone, mob/user, params, angle_override, forced_spread, obj/item/weapon/gun/launcher)
 
 	shot_from = launcher.name
-	silenced = launcher.silenced
+	silenced |= launcher.silenced // Silent bullets (e.g., BBs) are always silent
 	if(user)
 		firer = user
 

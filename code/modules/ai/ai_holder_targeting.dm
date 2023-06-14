@@ -4,7 +4,8 @@
 	var/hostile = FALSE						// Do we try to hurt others?
 	var/retaliate = FALSE					// Attacks whatever struck it first. Mobs will still attack back if this is false but hostile is true.
 	var/mauling = FALSE						// Attacks unconscious mobs
-	var/handle_corpse = FALSE					// Allows AI to acknowledge corpses (e.g. nurse spiders)
+	var/unconscious_vore = FALSE			//VOREStation Add - allows a mob to go for unconcious targets IF their vore prefs align
+	var/handle_corpse = FALSE				// Allows AI to acknowledge corpses (e.g. nurse spiders)
 
 	var/atom/movable/target = null			// The thing (mob or object) we're trying to kill.
 	var/atom/movable/preferred_target = null// If set, and if given the chance, we will always prefer to target this over other options.
@@ -20,6 +21,8 @@
 	var/list/attackers = list()				// List of strings of names of people who attacked us before in our life.
 											// This uses strings and not refs to allow for disguises, and to avoid needing to use weakrefs.
 	var/destructive = FALSE					// Will target 'neutral' structures/objects and not just 'hostile' ones.
+
+	var/forgive_resting = TRUE				//VOREStation add - If TRUE on a RETALIATE mob, then mob will drop target if it becomes hostile to you but hasn't taken damage
 
 // A lot of this is based off of /TG/'s AI code.
 
@@ -69,10 +72,10 @@
 // Step 4, give us our selected target.
 /datum/ai_holder/proc/give_target(new_target, urgent = FALSE)
 	ai_log("give_target() : Given '[new_target]', urgent=[urgent].", AI_LOG_TRACE)
-	
+
 	if(target)
 		remove_target()
-	
+
 	target = new_target
 
 	if(target != null)
@@ -114,11 +117,9 @@
 	return closest_targets
 
 /datum/ai_holder/proc/can_attack(atom/movable/the_target, var/vision_required = TRUE)
+	ai_log("can_attack() : Entering.", AI_LOG_TRACE)
 	if(!can_see_target(the_target) && vision_required)
 		return FALSE
-
-	if(istype(the_target, /mob/zshadow))
-		return FALSE // no
 
 	if(isliving(the_target))
 		var/mob/living/L = the_target
@@ -131,8 +132,24 @@
 			if(L.stat == UNCONSCIOUS)	// Do we have mauling? Yes? Then maul people who are sleeping but not SSD
 				if(mauling)
 					return TRUE
+				//VOREStation Add Start
+				else if(unconscious_vore && L.allowmobvore)
+					var/mob/living/simple_mob/vore/eater = holder
+					if(eater.will_eat(L))
+						return TRUE
+					else
+						return FALSE
+				//VOREStation Add End
 				else
 					return FALSE
+		//VOREStation add start
+		else if(forgive_resting && !isbelly(holder.loc))	//Doing it this way so we only think about the other conditions if the var is actually set
+			if((holder.health == holder.maxHealth) && !hostile && (L.resting || L.weakened || L.stunned))	//If our health is full, no one is fighting us, we can forgive
+				var/mob/living/simple_mob/vore/eater = holder
+				if(!eater.will_eat(L))		//We forgive people we can eat by eating them
+					set_stance(STANCE_IDLE)
+					return FALSE	//Forgiven
+		//VOREStation add end
 		if(holder.IIsAlly(L))
 			return FALSE
 		return TRUE
@@ -218,6 +235,7 @@
 
 // Updates the last known position of the target.
 /datum/ai_holder/proc/track_target_position()
+	ai_log("track_target_position() : Entering.", AI_LOG_TRACE)
 	if(!target)
 		lose_target_position()
 
@@ -231,13 +249,14 @@
 
 // Resets the last known position to null.
 /datum/ai_holder/proc/lose_target_position()
+	ai_log("lose_target_position() : Entering.", AI_LOG_TRACE)
 	if(last_turf_display && target_last_seen_turf)
 		target_last_seen_turf.cut_overlay(last_turf_overlay)
 	ai_log("lose_target_position() : Last position is being reset.", AI_LOG_INFO)
 	target_last_seen_turf = null
 
 // Responds to a hostile action against its mob.
-/datum/ai_holder/proc/react_to_attack(atom/movable/attacker)
+/datum/ai_holder/proc/react_to_attack(atom/movable/attacker, ignore_timers = FALSE)
 	if(holder.stat) // We're dead.
 		ai_log("react_to_attack() : Was attacked by [attacker], but we are dead/unconscious.", AI_LOG_TRACE)
 		return FALSE
@@ -247,15 +266,14 @@
 	if(holder.IIsAlly(attacker)) // I'll overlook it THIS time...
 		ai_log("react_to_attack() : Was attacked by [attacker], but they were an ally.", AI_LOG_TRACE)
 		return FALSE
-	if(target) // Already fighting someone. Switching every time we get hit would impact our combat performance.
-		if(!retaliate)	// If we don't get to fight back, we don't fight back...
-			ai_log("react_to_attack() : Was attacked by [attacker], but we already have a target.", AI_LOG_TRACE)
-			on_attacked(attacker) // So we attack immediately and not threaten.
-			return FALSE
-		else if(check_attacker(attacker) && world.time > last_target_time + 3 SECONDS)	// Otherwise, let 'er rip
-			ai_log("react_to_attack() : Was attacked by [attacker]. Can retaliate, waited 3 seconds.", AI_LOG_INFO)
-			on_attacked(attacker) // So we attack immediately and not threaten.
-			return give_target(attacker) // Also handles setting the appropiate stance.
+	if(target && !ignore_timers && (world.time < last_target_time + 8 SECONDS)) // Already fighting someone. Switching every time we get hit would impact our combat performance.
+		ai_log("react_to_attack() : Was attacked by [attacker], but we switched targets too recently to change.", AI_LOG_TRACE)
+		on_attacked(attacker)
+		return FALSE
+
+	if(holder.resting)	// I can't kill someone while I'm laying down!
+		ai_log("react_to_attack() : AI is resting. Getting up.", AI_LOG_TRACE)
+		holder.lay_down()
 
 	if(stance == STANCE_SLEEP) // If we're asleep, try waking up if someone's wailing on us.
 		ai_log("react_to_attack() : AI is asleep. Waking up.", AI_LOG_TRACE)
@@ -272,7 +290,7 @@
 
 // Checks to see if an atom attacked us lately
 /datum/ai_holder/proc/check_attacker(var/atom/movable/A)
-	return (A in attackers)
+	return (A.name in attackers)
 
 // We were attacked by this thing recently
 /datum/ai_holder/proc/add_attacker(var/atom/movable/A)

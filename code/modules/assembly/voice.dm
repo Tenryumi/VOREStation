@@ -3,7 +3,7 @@
 	desc = "A small electronic device able to record a voice sample, and send a signal when that sample is repeated."
 	icon_state = "voice"
 	origin_tech = list(TECH_MAGNET = 1)
-	matter = list(DEFAULT_WALL_MATERIAL = 500, MAT_GLASS = 50)
+	matter = list(MAT_STEEL = 500, MAT_GLASS = 50)
 	var/listening = 0
 	var/recorded	//the activation message
 
@@ -13,7 +13,7 @@
 		recorded = msg
 		listening = 0
 		var/turf/T = get_turf(src)	//otherwise it won't work in hand
-		T.visible_message("[bicon(src)] beeps, \"Activation message is '[recorded]'.\"")
+		T.visible_message("\icon[src][bicon(src)] beeps, \"Activation message is '[recorded]'.\"")
 	else
 		if(findtext(msg, recorded))
 			pulse(0)
@@ -23,7 +23,7 @@
 		if(!holder)
 			listening = !listening
 			var/turf/T = get_turf(src)
-			T.visible_message("[bicon(src)] beeps, \"[listening ? "Now" : "No longer"] recording input.\"")
+			T.visible_message("\icon[src][bicon(src)] beeps, \"[listening ? "Now" : "No longer"] recording input.\"")
 
 
 /obj/item/device/assembly/voice/attack_self(mob/user)

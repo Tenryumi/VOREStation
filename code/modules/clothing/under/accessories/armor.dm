@@ -336,8 +336,8 @@
 	icon_state = "comtag"
 
 /obj/item/clothing/accessory/armor/tag/nt
-	name = "\improper CORPORATE SECURITY tag"
-	desc = "An armor tag with the words CORPORATE SECURITY printed in red lettering on it."
+	name = "\improper NANOTRASEN tag"
+	desc = "An armor tag with the word NANOTRASEN printed in red lettering on it and an accompanying company logo."
 	icon_state = "nanotag"
 
 /obj/item/clothing/accessory/armor/tag/pcrc
@@ -345,9 +345,9 @@
 	desc = "An armor tag with the words PROXIMA CENTAURI RISK CONTROL printed in cyan lettering on it."
 	icon_state = "pcrctag"
 
-/obj/item/clothing/accessory/armor/tag/saare
-	name = "\improper SAARE tag"
-	desc = "An armor tag with the acronym SAARE printed in olive-green lettering on it."
+/obj/item/clothing/accessory/armor/tag/hedberg
+	name = "\improper HEDBERG-HAMMARSTROM tag"
+	desc = "An armor tag with the name HEDBERG-HAMMARSTROM printed in olive-green lettering on it."
 	icon_state = "saaretag"
 
 /obj/item/clothing/accessory/armor/tag/opos
@@ -397,7 +397,7 @@
 /obj/item/clothing/accessory/armor/helmcover
 	name = "helmet cover"
 	desc = "A fabric cover for armored helmets."
-	icon_override = 'icons/mob/ties.dmi'
+	icon_override = 'icons/inventory/accessory/mob.dmi'
 	icon = 'icons/obj/clothing/modular_armor.dmi'
 	icon_state = "helmcover_blue"
 	slot = ACCESSORY_SLOT_HELM_C

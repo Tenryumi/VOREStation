@@ -1,17 +1,19 @@
 /obj/random
 	name = "random object"
 	desc = "This item type is used to spawn random objects at round-start"
-	icon = 'icons/misc/mark.dmi'
-	icon_state = "rup"
+	icon = 'icons/misc/random_spawners.dmi'
+	icon_state = "generic"
 	var/spawn_nothing_percentage = 0 // this variable determines the likelyhood that this random object will not spawn anything
 	var/drop_get_turf = TRUE
 
-// creates a new object and deletes itself
+
 /obj/random/Initialize()
+	. = INITIALIZE_HINT_QDEL
 	..()
-	if(!prob(spawn_nothing_percentage))
-		try_spawn_item()
-	return INITIALIZE_HINT_QDEL
+	if (prob(spawn_nothing_percentage))
+		return
+	try_spawn_item()
+
 
 /obj/random/proc/try_spawn_item()
 	var/atom/result = spawn_item()
@@ -59,7 +61,7 @@ var/list/random_useful_
 	if(prob(70)) // Misc. junk
 		if(!random_junk_)
 			random_junk_ = subtypesof(/obj/item/trash)
-			random_junk_ += /obj/effect/decal/cleanable/spiderling_remains
+			random_junk_ += /obj/effect/decal/cleanable/bug_remains
 			random_junk_ += /obj/effect/decal/remains/mouse
 			random_junk_ += /obj/effect/decal/remains/robot
 			random_junk_ += /obj/item/weapon/paper/crumpled
@@ -80,7 +82,7 @@ var/list/random_useful_
 /obj/random/single
 	name = "randomly spawned object"
 	desc = "This item type is used to randomly spawn a given object at round-start"
-	icon_state = "x3"
+	icon_state = "generic"
 	var/spawn_object = null
 
 /obj/random/single/item_to_spawn()
@@ -104,8 +106,8 @@ var/list/multi_point_spawns
 /obj/random_multi
 	name = "random object spawn point"
 	desc = "This item type is used to spawn random objects at round-start. Only one spawn point for a given group id is selected."
-	icon = 'icons/misc/mark.dmi'
-	icon_state = "x3"
+	icon = 'icons/misc/random_spawners.dmi'
+	icon_state = "generic_3"
 	invisibility = INVISIBILITY_MAXIMUM
 	var/id     // Group id
 	var/weight // Probability weight for this spawn point

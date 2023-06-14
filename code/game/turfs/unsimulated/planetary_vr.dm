@@ -58,6 +58,10 @@
 	alpha = 0xFF
 	VIRGO3B_SET_ATMOS
 
+//other set - for map building
+/turf/unsimulated/wall2/planetary/virgo3b_better
+	icon_state = "riveted2"
+
 /turf/unsimulated/wall/planetary/virgo3b_better
 	name = "facility wall"
 	desc = "An eight-meter tall carbyne wall. For when the wildlife on your planet is mostly militant megacorps."
@@ -67,6 +71,9 @@
 **                              **
 **            Amita             **
 **                              **
+//other set - for map building
+/turf/unsimulated/wall2/planetary/virgo3b_better
+	icon_state = "riveted2"
 *********************************/
 
 //Atmosphere properties

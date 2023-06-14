@@ -238,8 +238,7 @@ Example: USING PROCCALL = BLOCKING, SELECT = FORCE_NULLS, PRIORITY = HIGH SELECT
 	do
 		CHECK_TICK
 		finished = TRUE
-		for(var/i in running)
-			var/datum/SDQL2_query/query = i
+		for(var/datum/SDQL2_query/query as anything in running)
 			if(QDELETED(query))
 				running -= query
 				continue
@@ -446,7 +445,7 @@ GLOBAL_DATUM_INIT(sdql2_vv_statobj, /obj/effect/statclick/SDQL2_VV_all, new(null
 					ENABLE_BITFIELD(options, SDQL2_OPTION_DO_NOT_AUTOGC)
 
 /datum/SDQL2_query/proc/ARun()
-	INVOKE_ASYNC(src, .proc/Run)
+	INVOKE_ASYNC(src, PROC_REF(Run))
 
 /datum/SDQL2_query/proc/Run()
 	if(SDQL2_IS_RUNNING)
@@ -562,8 +561,7 @@ GLOBAL_DATUM_INIT(sdql2_vv_statobj, /obj/effect/statclick/SDQL2_VV_all, new(null
 		location = list(location)
 
 	if(type == "*")
-		for(var/i in location)
-			var/datum/d = i
+		for(var/datum/d as anything in location)
 			if(d.can_vv_get() || superuser)
 				out += d
 			SDQL2_TICK_CHECK
@@ -672,7 +670,7 @@ GLOBAL_DATUM_INIT(sdql2_vv_statobj, /obj/effect/statclick/SDQL2_VV_all, new(null
 
 /datum/SDQL2_query/proc/SDQL_print(object, list/text_list, print_nulls = TRUE)
 	if(is_proper_datum(object))
-		text_list += "<A HREF='?_src_=vars;Vars=\ref[object]'>\ref[object]</A> : [object]"
+		text_list += "<A HREF='?_src_=vars;[HrefToken()];Vars=\ref[object]'>\ref[object]</A> : [object]"
 		if(istype(object, /atom))
 			var/atom/A = object
 			var/turf/T = A.loc

@@ -31,8 +31,9 @@
 
 /decl/hierarchy/outfit/job/service/bartender/post_equip(mob/living/carbon/human/H)
 	..()
-	for(var/obj/item/clothing/accessory/permit/gun/bar/permit in H.back.contents)
-		permit.set_name(H.real_name)
+	if(H.back)
+		for(var/obj/item/clothing/accessory/permit/gun/bar/permit in H.back.contents)
+			permit.set_name(H.real_name)
 
 /decl/hierarchy/outfit/job/service/bartender/barista
 	name = OUTFIT_JOB_NAME("Barista")
@@ -68,6 +69,7 @@
 	backpack = /obj/item/weapon/storage/backpack/hydroponics
 	satchel_one = /obj/item/weapon/storage/backpack/satchel/hyd
 	messenger_bag = /obj/item/weapon/storage/backpack/messenger/hyd
+	sports_bag = /obj/item/weapon/storage/backpack/sport/hyd
 	id_type = /obj/item/weapon/card/id/civilian/service/botanist	//VOREStation Edit
 	pda_type = /obj/item/device/pda/botanist
 

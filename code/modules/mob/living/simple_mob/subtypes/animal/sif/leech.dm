@@ -60,7 +60,7 @@
 
 	holder_type = /obj/item/weapon/holder/leech
 
-	movement_cooldown = 0
+	movement_cooldown = -2
 	aquatic_movement = -2
 
 	melee_damage_lower = 1
@@ -68,6 +68,8 @@
 	attack_armor_pen = 15
 	attack_sharp = TRUE
 	attacktext = list("nipped", "bit", "pinched")
+
+	organ_names = /decl/mob_organ_names/leech
 
 	armor = list(
 		"melee" = 10,
@@ -99,7 +101,7 @@
 	if(!istype(H))
 		return .
 
-	if(istype(L.buckled, /obj/vehicle) || L.hovering) // Ignore people hovering or on boats.
+	if(istype(L.buckled, /obj/vehicle) || L.hovering || L.flying) // Ignore people hovering or on boats.
 		return TRUE
 
 	if(!.)
@@ -260,7 +262,7 @@
 			to_chat(user, span("warning","There are no viable hosts within range..."))
 			return
 
-		M = input(src,"Who do we wish to infest?") in null|choices
+		M = tgui_input_list(src, "Who do we wish to infest?", "Target Choice", choices)
 
 	if(!M || !src) return
 
@@ -359,7 +361,7 @@
 			to_chat(src, span("warning","There are no viable hosts within range..."))
 			return
 
-		M = input(src,"Who do we wish to inject?") in null|choices
+		M = tgui_input_list(src, "Who do we wish to inject?", "Target Choice", choices)
 
 	if(!M || stat)
 		return
@@ -401,7 +403,7 @@
 		return
 
 	if(host)
-		var/chem = input("Select a chemical to produce.", "Chemicals") as null|anything in produceable_chemicals
+		var/chem = tgui_input_list(usr, "Select a chemical to produce.", "Chemicals", produceable_chemicals)
 		inject_meds(chem)
 
 /mob/living/simple_mob/animal/sif/leech/proc/inject_meds(var/chem)
@@ -428,7 +430,7 @@
 
 		var/target
 		if(client)
-			target = input("Select an organ to feed on.", "Organs") as null|anything in host_internal_organs
+			target = tgui_input_list(usr, "Select an organ to feed on.", "Organs", host_internal_organs)
 			if(!target)
 				to_chat(src, span("alien","We decide not to feed."))
 				return
@@ -497,3 +499,6 @@
 			holder.a_intent = I_HURT
 	else
 		holder.a_intent = I_HURT
+
+/decl/mob_organ_names/leech
+	hit_zones = list("mouthparts", "central segment", "tail segment")

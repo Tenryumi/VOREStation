@@ -84,7 +84,8 @@
 			/obj/item/weapon/reagent_containers/chem_disp_cartridge/orange,
 			/obj/item/weapon/reagent_containers/chem_disp_cartridge/lime,
 			/obj/item/weapon/reagent_containers/chem_disp_cartridge/watermelon,
-			/obj/item/weapon/reagent_containers/chem_disp_cartridge/lemon
+			/obj/item/weapon/reagent_containers/chem_disp_cartridge/lemon,
+			/obj/item/weapon/reagent_containers/chem_disp_cartridge/grapesoda
 		)
 
 /obj/machinery/chemical_dispenser/bar_alc
@@ -105,7 +106,8 @@
 			/obj/item/weapon/reagent_containers/chem_disp_cartridge/beer,
 			/obj/item/weapon/reagent_containers/chem_disp_cartridge/kahlua,
 			/obj/item/weapon/reagent_containers/chem_disp_cartridge/whiskey,
-			/obj/item/weapon/reagent_containers/chem_disp_cartridge/wine,
+			/obj/item/weapon/reagent_containers/chem_disp_cartridge/redwine,
+			/obj/item/weapon/reagent_containers/chem_disp_cartridge/whitewine,
 			/obj/item/weapon/reagent_containers/chem_disp_cartridge/vodka,
 			/obj/item/weapon/reagent_containers/chem_disp_cartridge/gin,
 			/obj/item/weapon/reagent_containers/chem_disp_cartridge/rum,
@@ -114,7 +116,8 @@
 			/obj/item/weapon/reagent_containers/chem_disp_cartridge/cognac,
 			/obj/item/weapon/reagent_containers/chem_disp_cartridge/cider,
 			/obj/item/weapon/reagent_containers/chem_disp_cartridge/ale,
-			/obj/item/weapon/reagent_containers/chem_disp_cartridge/mead
+			/obj/item/weapon/reagent_containers/chem_disp_cartridge/mead,
+			/obj/item/weapon/reagent_containers/chem_disp_cartridge/bitters
 		)
 
 /obj/machinery/chemical_dispenser/bar_coffee
@@ -132,6 +135,7 @@
 			/obj/item/weapon/reagent_containers/chem_disp_cartridge/hot_coco,
 			/obj/item/weapon/reagent_containers/chem_disp_cartridge/milk,
 			/obj/item/weapon/reagent_containers/chem_disp_cartridge/cream,
+			/obj/item/weapon/reagent_containers/chem_disp_cartridge/sugar,
 			/obj/item/weapon/reagent_containers/chem_disp_cartridge/tea,
 			/obj/item/weapon/reagent_containers/chem_disp_cartridge/ice,
 			/obj/item/weapon/reagent_containers/chem_disp_cartridge/mint,
@@ -140,5 +144,7 @@
 			/obj/item/weapon/reagent_containers/chem_disp_cartridge/lime,
 			/obj/item/weapon/reagent_containers/chem_disp_cartridge/berry,
 			/obj/item/weapon/reagent_containers/chem_disp_cartridge/greentea,
-			/obj/item/weapon/reagent_containers/chem_disp_cartridge/decaf
+			/obj/item/weapon/reagent_containers/chem_disp_cartridge/decaf,
+			/obj/item/weapon/reagent_containers/chem_disp_cartridge/chaitea,
+			/obj/item/weapon/reagent_containers/chem_disp_cartridge/decafchai
 		)

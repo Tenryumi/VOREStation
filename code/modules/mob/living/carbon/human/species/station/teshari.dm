@@ -38,7 +38,7 @@
 	damage_overlays = 'icons/mob/human_races/masks/dam_teshari.dmi'
 	damage_mask = 'icons/mob/human_races/masks/dam_mask_teshari.dmi'
 	blood_mask = 'icons/mob/human_races/masks/blood_teshari.dmi'
-	suit_storage_icon = 'icons/mob/species/teshari/belt_mirror.dmi'
+	suit_storage_icon = 'icons/inventory/suit_store/mob_teshari.dmi'
 
 	fire_icon_state = "generic" // Humanoid is too big for them and spriting a new one is really annoying.
 
@@ -55,10 +55,11 @@
 	gluttonous = 1
 	blood_volume = 400
 	hunger_factor = 0.2
+	soft_landing = TRUE
 
 	ambiguous_genders = TRUE
 
-	spawn_flags = SPECIES_CAN_JOIN | SPECIES_IS_WHITELISTED	| SPECIES_NO_POSIBRAIN
+	spawn_flags = SPECIES_CAN_JOIN | SPECIES_IS_WHITELISTED
 	appearance_flags = HAS_HAIR_COLOR | HAS_SKIN_COLOR | HAS_EYE_COLOR
 	bump_flag = MONKEY
 	swap_flags = MONKEY|SLIME|SIMPLE_ANIMAL
@@ -74,7 +75,7 @@
 	breath_cold_level_2 = 100	//Default 180
 	breath_cold_level_3 = 60	//Default 100
 
-	heat_level_1 = 320	//Default 360
+	heat_level_1 = 330	//Default 360
 	heat_level_2 = 370	//Default 400
 	heat_level_3 = 600	//Default 1000
 
@@ -141,7 +142,7 @@
 		/datum/mob_descriptor/build = -3
 	)
 
-	var/static/list/flight_bodyparts = list(
+/*	var/static/list/flight_bodyparts = list(
 		BP_L_ARM,
 		BP_R_ARM,
 		BP_L_HAND,
@@ -150,7 +151,7 @@
 	var/static/list/flight_suit_blacklisted_types = list(
 		/obj/item/clothing/suit/space,
 		/obj/item/clothing/suit/straight_jacket
-	)
+	)*/
 
 	default_emotes = list(
 		/decl/emote/audible/teshsqueak,
@@ -161,13 +162,13 @@
 /datum/species/teshari/equip_survival_gear(var/mob/living/carbon/human/H)
 	..()
 	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/sandal(H),slot_shoes)
-
+/*
 /datum/species/teshari/handle_falling(mob/living/carbon/human/H, atom/hit_atom, damage_min, damage_max, silent, planetary)
 
 	// Tesh can glide to save themselves from some falls. Basejumping bird
 	// without parachute, or falling bird without free wings, goes splat.
 
-	// Are we landing from orbit, or handcuffed/unconscious/tied to something? 
+	// Are we landing from orbit, or handcuffed/unconscious/tied to something?
 	if(planetary || !istype(H) || H.incapacitated(INCAPACITATION_DEFAULT|INCAPACITATION_DISABLED))
 		return ..()
 
@@ -207,7 +208,8 @@
 	// Handled!
 	if(!silent)
 		to_chat(H, SPAN_NOTICE("You catch the air in your wings and greatly slow your fall."))
-		landing.visible_message(SPAN_NOTICE("\The [H] glides down from above, landing safely."))
+		landing.visible_message("<b>\The [H]</b> glides down from above, landing safely.")
 		H.Stun(1)
 		playsound(H, "rustle", 25, 1)
 	return TRUE
+*/

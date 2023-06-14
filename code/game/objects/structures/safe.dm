@@ -10,8 +10,8 @@ FLOOR SAFES
 	desc = "A huge chunk of metal with a dial embedded in it. Fine print on the dial reads \"Scarborough Arms - 2 tumbler safe, guaranteed thermite resistant, explosion resistant, and assistant resistant.\""
 	icon = 'icons/obj/structures.dmi'
 	icon_state = "safe"
-	anchored = 1
-	density = 1
+	anchored = TRUE
+	density = TRUE
 	var/open = 0		//is the safe open?
 	var/tumbler_1_pos	//the tumbler position- from 0 to 72
 	var/tumbler_1_open	//the tumbler position to open at- 0 to 72
@@ -22,15 +22,17 @@ FLOOR SAFES
 	var/maxspace = 24	//the maximum combined w_class of stuff in the safe
 
 
-/obj/structure/safe/New()
+/obj/structure/safe/Initialize()
 	tumbler_1_pos = rand(0, 72)
 	tumbler_1_open = rand(0, 72)
 
 	tumbler_2_pos = rand(0, 72)
 	tumbler_2_open = rand(0, 72)
 
+	if(. != INITIALIZE_HINT_QDEL)
+		return INITIALIZE_HINT_LATELOAD
 
-/obj/structure/safe/Initialize()
+/obj/structure/safe/LateInitialize()
 	. = ..()
 	for(var/obj/item/I in loc)
 		if(space >= maxspace)
@@ -115,7 +117,7 @@ FLOOR SAFES
 				if(canhear)
 					to_chat(user, "<span class='notice'>You hear a [pick("click", "chink", "clink")] from \the [src].</span>")
 					playsound(src, 'sound/machines/click.ogg', 20, 1)
-			check_unlocked(user, canhear)		
+			check_unlocked(user, canhear)
 
 		updateUsrDialog()
 		return
@@ -170,7 +172,7 @@ FLOOR SAFES
 /obj/structure/safe/floor
 	name = "floor safe"
 	icon_state = "floorsafe"
-	density = 0
+	density = FALSE
 	level = 1	//underfloor
 	plane = PLATING_PLANE
 	layer = ABOVE_UTILITY

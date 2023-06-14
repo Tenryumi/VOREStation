@@ -27,13 +27,13 @@
 	open_sound = 'sound/items/zip.ogg'
 	close_sound = 'sound/items/zip.ogg'
 	var/item_path = /obj/item/bodybag
-	density = 0
+	density = FALSE
 	storage_capacity = (MOB_MEDIUM * 2) - 1
 	var/contains_body = 0
 
 /obj/structure/closet/body_bag/attackby(var/obj/item/W as obj, mob/user as mob)
 	if (istype(W, /obj/item/weapon/pen))
-		var/t = input(user, "What would you like the label to be?", text("[]", src.name), null)  as text
+		var/t = tgui_input_text(user, "What would you like the label to be?", text("[]", src.name), null, MAX_NAME_LEN	)
 		if (user.get_active_hand() != W)
 			return
 		if (!in_range(src, user) && src.loc != user)
@@ -59,7 +59,7 @@
 
 /obj/structure/closet/body_bag/close()
 	if(..())
-		density = 0
+		density = FALSE
 		return 1
 	return 0
 
@@ -148,8 +148,7 @@
 
 /obj/structure/closet/body_bag/cryobag/attack_hand(mob/living/user)
 	if(used)
-		var/confirm = alert(user, "Are you sure you want to open \the [src]? \
-		\The [src] will expire upon opening it.", "Confirm Opening", "No", "Yes")
+		var/confirm = tgui_alert(user, "Are you sure you want to open \the [src]? \The [src] will expire upon opening it.", "Confirm Opening", list("No", "Yes"))
 		if(confirm == "Yes")
 			..() // Will call `toggle()` and open the bag.
 	else

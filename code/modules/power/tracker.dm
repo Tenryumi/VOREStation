@@ -8,14 +8,16 @@
 	desc = "A solar directional tracker."
 	icon = 'icons/obj/power.dmi'
 	icon_state = "tracker"
-	anchored = 1
-	density = 1
+	anchored = TRUE
+	density = TRUE
 	use_power = USE_POWER_OFF
 	var/glass_type = /obj/item/stack/material/glass
 
 	var/id = 0
 	var/sun_angle = 0		// sun angle as set by sun datum
 	var/obj/machinery/power/solar_control/control = null
+	var/SOLAR_MAX_DIST = 40		//VOREStation Addition
+
 
 /obj/machinery/power/tracker/Initialize(mapload, glass_type)
 	. = ..()
@@ -58,8 +60,7 @@
 			var/obj/item/solar_assembly/S = new(loc)
 			S.tracker = TRUE
 			S.anchored = TRUE
-			var/obj/item/stack/glass = new glass_type(loc)
-			glass.amount = 2
+			new glass_type(loc, 2)
 			playsound(src, 'sound/items/Deconstruct.ogg', 50, 1)
 			user.visible_message("<span class='notice'>[user] takes the glass off the tracker.</span>")
 			qdel(src)

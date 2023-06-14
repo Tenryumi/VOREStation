@@ -185,11 +185,7 @@ Thus, the two variables affect pump operation are set in New():
 		update_use_power(!use_power)
 
 	if(signal.data["set_output_pressure"])
-		target_pressure = between(
-			0,
-			text2num(signal.data["set_output_pressure"]),
-			ONE_ATMOSPHERE*50
-		)
+		target_pressure = between(0, text2num(signal.data["set_output_pressure"]), ONE_ATMOSPHERE*50)
 
 	if(signal.data["status"])
 		spawn(2)
@@ -229,7 +225,7 @@ Thus, the two variables affect pump operation are set in New():
 				if("max")
 					target_pressure = max_pressure_setting
 				if("set")
-					var/new_pressure = input(usr,"Enter new output pressure (0-[max_pressure_setting]kPa)","Pressure control",src.target_pressure) as num
+					var/new_pressure = tgui_input_number(usr,"Enter new output pressure (0-[max_pressure_setting]kPa)","Pressure control",src.target_pressure,max_pressure_setting,0)
 					src.target_pressure = between(0, new_pressure, max_pressure_setting)
 			. = TRUE
 
@@ -256,7 +252,7 @@ Thus, the two variables affect pump operation are set in New():
 	to_chat(user, "<span class='notice'>You begin to unfasten \the [src]...</span>")
 	if (do_after(user, 40 * W.toolspeed))
 		user.visible_message( \
-			"<span class='notice'>\The [user] unfastens \the [src].</span>", \
+			"<b>\The [user]</b> unfastens \the [src].", \
 			"<span class='notice'>You have unfastened \the [src].</span>", \
 			"You hear ratchet.")
 		deconstruct()

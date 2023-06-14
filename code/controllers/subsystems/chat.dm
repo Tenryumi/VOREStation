@@ -13,8 +13,7 @@ SUBSYSTEM_DEF(chat)
 
 /datum/controller/subsystem/chat/fire()
 	var/list/msg_queue = src.msg_queue // Local variable for sanic speed.
-	for(var/i in msg_queue)
-		var/client/C = i
+	for(var/client/C as anything in msg_queue)
 		var/list/messages = msg_queue[C]
 		msg_queue -= C
 		if (C)
@@ -53,7 +52,7 @@ SUBSYSTEM_DEF(chat)
 		for(var/I in target)
 			var/client/C = CLIENT_FROM_VAR(I) //Grab us a client if possible
 
-			if(!C)
+			if(!C || !C.chatOutput)
 				continue // No client? No care.
 			else if(C.chatOutput.broken)
 				DIRECT_OUTPUT(C, original_message)
@@ -66,7 +65,7 @@ SUBSYSTEM_DEF(chat)
 	else
 		var/client/C = CLIENT_FROM_VAR(target) //Grab us a client if possible
 
-		if(!C)
+		if(!C || !C.chatOutput)
 			return // No client? No care.
 		else if(C.chatOutput.broken)
 			DIRECT_OUTPUT(C, original_message)

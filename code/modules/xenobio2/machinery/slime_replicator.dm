@@ -8,8 +8,8 @@
 	desc = "A machine for creating slimes from cores. Amazing!"
 	icon = 'icons/obj/xenoarchaeology.dmi'
 	icon_state = "restruct_0"
-	density = 1
-	anchored = 1
+	density = TRUE
+	anchored = TRUE
 	circuit = /obj/item/weapon/circuitboard/slimereplicator
 	var/obj/item/xenoproduct/slime/core/core = null
 	var/inuse
@@ -57,7 +57,7 @@
 
 /obj/machinery/slime/replicator/proc/replicate_slime()
 	if(!src.core)
-		src.visible_message("[bicon(src)] [src] pings unhappily.")
+		src.visible_message("\icon[src][bicon(src)] [src] pings unhappily.")
 	else if(inuse)
 		return
 

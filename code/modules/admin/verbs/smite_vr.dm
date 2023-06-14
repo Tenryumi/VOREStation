@@ -8,9 +8,9 @@
 	if(!istype(target))
 		return
 
-	var/list/smite_types = list(SMITE_SHADEKIN_ATTACK,SMITE_SHADEKIN_NOMF,SMITE_REDSPACE_ABDUCT,SMITE_AUTOSAVE,SMITE_AUTOSAVE_WIDE)
+	var/list/smite_types = list(SMITE_SHADEKIN_ATTACK,SMITE_SHADEKIN_NOMF,SMITE_AD_SPAM,SMITE_REDSPACE_ABDUCT,SMITE_AUTOSAVE,SMITE_AUTOSAVE_WIDE)
 
-	var/smite_choice = input("Select the type of SMITE for [target]","SMITE Type Choice") as null|anything in smite_types
+	var/smite_choice = tgui_input_list(usr, "Select the type of SMITE for [target]","SMITE Type Choice", smite_types)
 	if(!smite_choice)
 		return
 
@@ -34,7 +34,7 @@
 			if(!Ts)
 				return //Didn't find shadekin spawn turf
 
-			var/mob/living/simple_mob/shadekin/red/ai/shadekin = new(Ts)
+			var/mob/living/simple_mob/shadekin/red/shadekin = new(Ts)
 			//Abuse of shadekin
 			shadekin.real_name = shadekin.name
 			shadekin.init_vore()
@@ -70,14 +70,14 @@
 				"Orange Eyes (Light)" = /mob/living/simple_mob/shadekin/orange/white,
 				"Orange Eyes (Brown)" = /mob/living/simple_mob/shadekin/orange/brown,
 				"Rivyr (Unique)" = /mob/living/simple_mob/shadekin/blue/rivyr)
-			var/kin_type = input("Select the type of shadekin for [target] nomf","Shadekin Type Choice") as null|anything in kin_types
+			var/kin_type = tgui_input_list(usr, "Select the type of shadekin for [target] nomf","Shadekin Type Choice", kin_types)
 			if(!kin_type || !target)
 				return
 
 
 			kin_type = kin_types[kin_type]
 
-			var/myself = alert("Control the shadekin yourself or delete pred and prey after?","Control Shadekin?","Control","Cancel","Delete")
+			var/myself = tgui_alert(usr, "Control the shadekin yourself or delete pred and prey after?","Control Shadekin?",list("Control","Cancel","Delete"))
 			if(myself == "Cancel" || !target)
 				return
 
@@ -128,6 +128,10 @@
 		if(SMITE_AUTOSAVE_WIDE)
 			fake_autosave(target, src, TRUE)
 
+		if(SMITE_AD_SPAM)
+			if(target.client)
+				target.client.create_fake_ad_popup_multiple(/obj/screen/popup/default, 15)
+
 		else
 			return //Injection? Don't print any messages.
 
@@ -146,6 +150,7 @@ var/redspace_abduction_z
 		redspace_abduction_z = -1
 		to_chat(user,"<span class='warning'>This is the first use of the verb this shift, it will take a minute to configure the abduction z-level. It will be z[world.maxz+1].</span>")
 		var/z = ++world.maxz
+		world.max_z_changed()
 		for(var/x = 1 to world.maxx)
 			for(var/y = 1 to world.maxy)
 				var/turf/T = locate(x,y,z)
@@ -232,7 +237,7 @@ var/redspace_abduction_z
 
 	to_chat(target, "<span class='notice' style='font: small-caps bold large monospace!important'>Autosaving your progress, please wait...</span>")
 	target << 'sound/effects/ding.ogg'
-	
+
 	var/static/list/bad_tips = list(
 		"Did you know that black shoes protect you from electrocution while hacking?",
 		"Did you know that airlocks always have a wire that disables ID checks?",

@@ -12,12 +12,16 @@
 	ui_header = "ntnrc_idle.gif"
 	available_on_ntnet = 1
 	tgui_id = "NtosNetChat"
-	var/last_message				// Used to generate the toolbar icon
+	/// Used to generate the toolbar icon
+	var/last_message
 	var/username
 	var/active_channel
 	var/list/channel_history = list()
-	var/operator_mode = FALSE		// Channel operator mode
-	var/netadmin_mode = FALSE		// Administrator mode (invisible to other users + bypasses passwords)
+	/// Channel operator mode
+	var/operator_mode = FALSE
+	/// Administrator mode (invisible to other users + bypasses passwords)
+	var/netadmin_mode = FALSE
+	usage_flags = PROGRAM_ALL
 
 /datum/computer_file/program/chatclient/New()
 	username = "DefaultUser[rand(100, 999)]"
@@ -83,8 +87,7 @@
 				return TRUE
 			var/mob/living/user = usr
 			if(can_run(user, TRUE, access_network))
-				for(var/C in ntnet_global.chat_channels)
-					var/datum/ntnet_conversation/chan = C
+				for(var/datum/ntnet_conversation/chan as anything in ntnet_global.chat_channels)
 					chan.remove_client(src)
 				netadmin_mode = TRUE
 				return TRUE
@@ -92,8 +95,7 @@
 			var/newname = sanitize(params["new_name"])
 			if(!newname)
 				return
-			for(var/C in ntnet_global.chat_channels)
-				var/datum/ntnet_conversation/chan = C
+			for(var/datum/ntnet_conversation/chan as anything in ntnet_global.chat_channels)
 				if(src in chan.clients)
 					chan.add_status_message("[username] is now known as [newname].")
 			username = newname
@@ -163,8 +165,7 @@
 		ui_header = "ntnrc_idle.gif"
 
 /datum/computer_file/program/chatclient/kill_program(forced = FALSE)
-	for(var/C in ntnet_global.chat_channels)
-		var/datum/ntnet_conversation/channel = C
+	for(var/datum/ntnet_conversation/channel as anything in ntnet_global.chat_channels)
 		channel.remove_client(src)
 	..()
 
@@ -172,7 +173,7 @@
 	var/list/data = list()
 	data["can_admin"] = can_run(user, FALSE, access_network)
 	return data
-	
+
 /datum/computer_file/program/chatclient/tgui_data(mob/user)
 	if(!ntnet_global || !ntnet_global.chat_channels)
 		return list()
@@ -180,8 +181,7 @@
 	var/list/data = get_header_data()
 
 	var/list/all_channels = list()
-	for(var/C in ntnet_global.chat_channels)
-		var/datum/ntnet_conversation/conv = C
+	for(var/datum/ntnet_conversation/conv as anything in ntnet_global.chat_channels)
 		if(conv && conv.title)
 			all_channels.Add(list(list(
 				"chan" = conv.title,

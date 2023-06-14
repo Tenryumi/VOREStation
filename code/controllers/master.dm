@@ -68,7 +68,7 @@ GLOBAL_REAL(Master, /datum/controller/master) = new
 			qdel(Master)
 		else
 			var/list/subsytem_types = subtypesof(/datum/controller/subsystem)
-			sortTim(subsytem_types, /proc/cmp_subsystem_init)
+			sortTim(subsytem_types, GLOBAL_PROC_REF(cmp_subsystem_init))
 			for(var/I in subsytem_types)
 				_subsystems += new I
 		Master = src
@@ -83,7 +83,7 @@ GLOBAL_REAL(Master, /datum/controller/master) = new
 
 /datum/controller/master/Shutdown()
 	processing = FALSE
-	sortTim(subsystems, /proc/cmp_subsystem_init)
+	sortTim(subsystems, GLOBAL_PROC_REF(cmp_subsystem_init))
 	reverseRange(subsystems)
 	for(var/datum/controller/subsystem/ss in subsystems)
 		log_world("Shutting down [ss.name] subsystem...")
@@ -173,7 +173,7 @@ GLOBAL_REAL(Master, /datum/controller/master) = new
 	to_chat(world, "<span class='boldannounce'>MC: Initializing subsystems...</span>")
 
 	// Sort subsystems by init_order, so they initialize in the correct order.
-	sortTim(subsystems, /proc/cmp_subsystem_init)
+	sortTim(subsystems, GLOBAL_PROC_REF(cmp_subsystem_init))
 
 	var/start_timeofday = REALTIMEOFDAY
 	// Initialize subsystems.
@@ -196,7 +196,7 @@ GLOBAL_REAL(Master, /datum/controller/master) = new
 	GLOB.revdata = new // It can load revdata now, from tgs or .git or whatever
 
 	// Sort subsystems by display setting for easy access.
-	sortTim(subsystems, /proc/cmp_subsystem_display)
+	sortTim(subsystems, GLOBAL_PROC_REF(cmp_subsystem_display))
 	// Set world options.
 	#ifdef UNIT_TEST
 	world.sleep_offline = 0
@@ -248,8 +248,7 @@ GLOBAL_REAL(Master, /datum/controller/master) = new
 	var/list/tickersubsystems = list()
 	var/list/runlevel_sorted_subsystems = list(list())	//ensure we always have at least one runlevel
 	var/timer = world.time
-	for (var/thing in subsystems)
-		var/datum/controller/subsystem/SS = thing
+	for (var/datum/controller/subsystem/SS as anything in subsystems)
 		if (SS.flags & SS_NO_FIRE)
 			continue
 		SS.queued_time = 0
@@ -258,7 +257,7 @@ GLOBAL_REAL(Master, /datum/controller/master) = new
 		SS.state = SS_IDLE
 		if (SS.flags & SS_TICKER)
 			tickersubsystems += SS
-			timer += world.tick_lag * rand(1, 5)
+			timer += world.tick_lag * rand(0,1)
 			SS.next_fire = timer
 			continue
 
@@ -277,9 +276,9 @@ GLOBAL_REAL(Master, /datum/controller/master) = new
 	queue_tail = null
 	//these sort by lower priorities first to reduce the number of loops needed to add subsequent SS's to the queue
 	//(higher subsystems will be sooner in the queue, adding them later in the loop means we don't have to loop thru them next queue add)
-	sortTim(tickersubsystems, /proc/cmp_subsystem_priority)
+	sortTim(tickersubsystems, GLOBAL_PROC_REF(cmp_subsystem_priority))
 	for(var/I in runlevel_sorted_subsystems)
-		sortTim(runlevel_sorted_subsystems, /proc/cmp_subsystem_priority)
+		sortTim(runlevel_sorted_subsystems, GLOBAL_PROC_REF(cmp_subsystem_priority))
 		I += tickersubsystems
 
 	var/cached_runlevel = current_runlevel
@@ -333,14 +332,16 @@ GLOBAL_REAL(Master, /datum/controller/master) = new
 			var/checking_runlevel = current_runlevel
 			if(cached_runlevel != checking_runlevel)
 				//resechedule subsystems
+				var/list/old_subsystems = current_runlevel_subsystems
 				cached_runlevel = checking_runlevel
 				current_runlevel_subsystems = runlevel_sorted_subsystems[cached_runlevel]
-				var/stagger = world.time
-				for(var/I in current_runlevel_subsystems)
-					var/datum/controller/subsystem/SS = I
-					if(SS.next_fire <= world.time)
-						stagger += world.tick_lag * rand(1, 5)
-						SS.next_fire = stagger
+
+				//now we'll go through all the subsystems we want to offset and give them a next_fire
+				for(var/datum/controller/subsystem/SS as anything in current_runlevel_subsystems)
+					//we only want to offset it if it's new and also behind
+					if(SS.next_fire > world.time || (SS in old_subsystems))
+						continue
+					SS.next_fire = world.time + world.tick_lag * rand(0, DS2TICKS(min(SS.wait, 2 SECONDS)))
 
 			subsystems_to_check = current_runlevel_subsystems
 		else
@@ -550,8 +551,7 @@ GLOBAL_REAL(Master, /datum/controller/master) = new
 	for(var/I in runlevel_SS)
 		subsystemstocheck |= I
 
-	for (var/thing in subsystemstocheck)
-		var/datum/controller/subsystem/SS = thing
+	for (var/datum/controller/subsystem/SS as anything in subsystemstocheck)
 		if (!SS || !istype(SS))
 			//list(SS) is so if a list makes it in the subsystem list, we remove the list, not the contents
 			subsystems -= list(SS)
@@ -598,8 +598,7 @@ GLOBAL_REAL(Master, /datum/controller/master) = new
 	//disallow more than one map to load at once, multithreading it will just cause race conditions
 	while(map_loading)
 		stoplag()
-	for(var/S in subsystems)
-		var/datum/controller/subsystem/SS = S
+	for(var/datum/controller/subsystem/SS as anything in subsystems)
 		SS.StartLoadingMap()
 
 	map_loading = TRUE
@@ -608,6 +607,5 @@ GLOBAL_REAL(Master, /datum/controller/master) = new
 	if(!quiet)
 		admin_notice("<span class='danger'>Map is finished.  Unlocking.</span>", R_DEBUG)
 	map_loading = FALSE
-	for(var/S in subsystems)
-		var/datum/controller/subsystem/SS = S
+	for(var/datum/controller/subsystem/SS as anything in subsystems)
 		SS.StopLoadingMap()

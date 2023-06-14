@@ -5,8 +5,8 @@
 	desc = "Used to cool people down for medical reasons. Totally."
 	icon = 'icons/obj/cryogenics.dmi' // map only
 	icon_state = "pod_preview"
-	density = 1
-	anchored = 1.0
+	density = TRUE
+	anchored = TRUE
 	layer = UNDER_JUNK_LAYER
 	interact_offline = 1
 
@@ -189,7 +189,7 @@
 		var/mob/M = grab.affecting
 		qdel(grab)
 		put_mob(M)
-			
+
 	return
 
 /obj/machinery/atmospherics/unary/cryo_cell/MouseDrop_T(var/mob/target, var/mob/user) //Allows borgs to put people into cryo without external assistance
@@ -226,6 +226,9 @@
 			if(occupant.bodytemperature < 225)
 				if(occupant.getToxLoss())
 					occupant.adjustToxLoss(max(-1, -20/occupant.getToxLoss()))
+				if(occupant.radiation || occupant.accumulated_rads)
+					occupant.radiation -= 25
+					occupant.accumulated_rads -= 25
 				var/heal_brute = occupant.getBruteLoss() ? min(1, 20/occupant.getBruteLoss()) : 0
 				var/heal_fire = occupant.getFireLoss() ? min(1, 20/occupant.getFireLoss()) : 0
 				occupant.heal_organ_damage(heal_brute,heal_fire)

@@ -2,6 +2,7 @@
 	name = "mecha weapon"
 	range = RANGED
 	origin_tech = list(TECH_MATERIAL = 3, TECH_COMBAT = 3)
+	matter = list(MAT_STEEL = 6000, MAT_GLASS = 3000)
 	var/projectile //Type of projectile fired.
 	var/projectiles = 1 //Amount of projectiles loaded.
 	var/projectiles_per_shot = 1 //Amount of projectiles fired per single shot.
@@ -91,3 +92,9 @@
 			P.accuracy += M.accuracy
 		if(!isnull(M.accuracy_dispersion))
 			P.dispersion = max(P.dispersion + M.accuracy_dispersion, 0)
+
+	if(ishuman(user))
+		var/mob/living/carbon/human/H = user
+		if(H.species)
+			P.accuracy += H.species.gun_accuracy_mod
+			P.dispersion = max(P.dispersion + H.species.gun_accuracy_dispersion_mod, 0)

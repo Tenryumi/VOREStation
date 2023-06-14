@@ -25,7 +25,10 @@
 	selection_color = "#999999"
 	economic_modifier = 7
 	minimal_player_age = 14
-	pto_type = null
+	playtime_only = TRUE
+	pto_type = PTO_TALON
+	timeoff_factor = 1
+	dept_time_required = 60
 	access = list(access_talon)
 	minimal_access = list(access_talon)
 	alt_titles = list("Talon Commander" = /datum/alt_title/talon_commander)
@@ -49,7 +52,9 @@
 	selection_color = "#aaaaaa"
 	economic_modifier = 5
 	minimal_player_age = 14
-	pto_type = null
+	playtime_only = TRUE
+	pto_type = PTO_TALON
+	timeoff_factor = 1
 	access = list(access_talon)
 	minimal_access = list(access_talon)
 	alt_titles = list("Talon Medic" = /datum/alt_title/talon_medic)
@@ -74,7 +79,9 @@
 	selection_color = "#aaaaaa"
 	economic_modifier = 5
 	minimal_player_age = 14
-	pto_type = null
+	playtime_only = TRUE
+	pto_type = PTO_TALON
+	timeoff_factor = 1
 	access = list(access_talon)
 	minimal_access = list(access_talon)
 	alt_titles = list("Talon Technician" = /datum/alt_title/talon_tech)
@@ -99,7 +106,9 @@
 	selection_color = "#aaaaaa"
 	economic_modifier = 5
 	minimal_player_age = 14
-	pto_type = null
+	playtime_only = TRUE
+	pto_type = PTO_TALON
+	timeoff_factor = 1
 	access = list(access_talon)
 	minimal_access = list(access_talon)
 	alt_titles = list("Talon Helmsman" = /datum/alt_title/talon_helmsman)
@@ -124,13 +133,41 @@
 	selection_color = "#aaaaaa"
 	economic_modifier = 5
 	minimal_player_age = 14
-	pto_type = null
+	playtime_only = TRUE
+	pto_type = PTO_TALON
+	timeoff_factor = 1
 	access = list(access_talon)
 	minimal_access = list(access_talon)
 	alt_titles = list("Talon Security" = /datum/alt_title/talon_security)
 
 /datum/alt_title/talon_security
 	title = "Talon Security"
+
+/datum/job/talon_miner
+	title = "Talon Miner"
+	flag = TALMIN
+	department_flag = TALON
+	job_description = "The miner's job is to excavate ores and refine them for the Talon's use, as well as for trading."
+	supervisors = "the ITV Talon's captain"
+	outfit_type = /decl/hierarchy/outfit/job/talon_miner
+
+	offmap_spawn = TRUE
+	faction = "Station" //Required for SSjob to allow people to join as it
+	departments = list(DEPARTMENT_TALON)
+	total_positions = 1
+	spawn_positions = 1
+	selection_color = "#aaaaaa"
+	economic_modifier = 5
+	minimal_player_age = 14
+	playtime_only = TRUE
+	pto_type = PTO_TALON
+	timeoff_factor = 1
+	access = list(access_talon)
+	minimal_access = list(access_talon)
+	alt_titles = list("Talon Excavator" = /datum/alt_title/talon_excavator)
+
+/datum/alt_title/talon_excavator
+	title = "Talon Excavator"
 
 //////////////////////TALON OUTFITS//////////////////////
 
@@ -233,3 +270,20 @@
 	satchel_one = /obj/item/weapon/storage/backpack/satchel/talon
 	messenger_bag = /obj/item/weapon/storage/backpack/messenger/talon
 
+/decl/hierarchy/outfit/job/talon_miner
+	name = OUTFIT_JOB_NAME("Talon Miner")
+	hierarchy_type = /decl/hierarchy/outfit/job
+
+	id_type = /obj/item/weapon/card/id/talon/miner
+	id_slot = slot_wear_id
+	pda_type = null
+	flags = OUTFIT_HAS_BACKPACK|OUTFIT_EXTENDED_SURVIVAL
+
+	l_ear = /obj/item/device/radio/headset/talon
+	shoes = /obj/item/clothing/shoes/boots/workboots
+	r_pocket = /obj/item/weapon/storage/bag/ore
+	l_pocket = /obj/item/weapon/tool/crowbar
+	uniform = /obj/item/clothing/under/rank/talon/basic
+	backpack = /obj/item/weapon/storage/backpack/talon
+	satchel_one = /obj/item/weapon/storage/backpack/satchel/talon
+	messenger_bag = /obj/item/weapon/storage/backpack/messenger/talon

@@ -4,12 +4,12 @@
 	icon_state = "default"
 	dynamic_lighting = 0
 	plane = SPACE_PLANE
-
+	flags = TURF_ACID_IMMUNE
 	temperature = T20C
 	thermal_conductivity = OPEN_HEAT_TRANSFER_COEFFICIENT
 	can_build_into_floor = TRUE
 	var/keep_sprite = FALSE
-	var/edge = 0 //If we're an edge
+	var/edge = FALSE //If we're an edge
 	var/forced_dirs = 0 //Force this one to pretend it's an overedge turf
 
 /turf/space/Initialize()

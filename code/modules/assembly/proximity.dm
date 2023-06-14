@@ -3,7 +3,7 @@
 	desc = "Used for scanning and alerting when someone enters a certain proximity."
 	icon_state = "prox"
 	origin_tech = list(TECH_MAGNET = 1)
-	matter = list(DEFAULT_WALL_MATERIAL = 800, MAT_GLASS = 200)
+	matter = list(MAT_STEEL = 800, MAT_GLASS = 200)
 	wires = WIRE_PULSE
 
 	secured = 0
@@ -47,7 +47,7 @@
 	var/turf/mainloc = get_turf(src)
 	pulse(0)
 	if(!holder)
-		mainloc.visible_message("[bicon(src)] *beep* *beep*", "*beep* *beep*")
+		mainloc.visible_message("\icon[src][bicon(src)] *beep* *beep*", "*beep* *beep*")
 
 /obj/item/device/assembly/prox_sensor/process()
 	if(scanning)

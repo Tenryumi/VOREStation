@@ -25,11 +25,15 @@ var/list/obj/machinery/requests_console/allConsoles = list()
 /obj/machinery/requests_console
 	name = "requests console"
 	desc = "A console intended to send requests to different departments on the station."
-	anchored = 1
+	anchored = TRUE
 	icon = 'icons/obj/terminals_vr.dmi' //VOREStation Edit
-	icon_state = "req_comp0"
+	icon_state = "req_comp_0"
 	layer = ABOVE_WINDOW_LAYER
 	circuit = /obj/item/weapon/circuitboard/request
+	blocks_emissive = NONE
+	light_power = 0.25
+	light_color = "#00ff00"
+	vis_flags = VIS_HIDE // They have an emissive that looks bad in openspace due to their wall-mounted nature
 	var/department = "Unknown" //The list of all departments on the station (Determined from this variable on each unit) Set this to the same thing if you want several consoles in one department
 	var/list/message_log = list() //List of all messages
 	var/departmentType = 0 		//Bitflag. Zero is reply-only. Map currently uses raw numbers instead of defines.
@@ -55,20 +59,8 @@ var/list/obj/machinery/requests_console/allConsoles = list()
 	light_range = 0
 	var/datum/announcement/announcement = new
 
-/obj/machinery/requests_console/power_change()
-	..()
-	update_icon()
-
-/obj/machinery/requests_console/update_icon()
-	if(stat & NOPOWER)
-		if(icon_state != "req_comp_off")
-			icon_state = "req_comp_off"
-	else
-		if(icon_state == "req_comp_off")
-			icon_state = "req_comp[newmessagepriority]"
-
-/obj/machinery/requests_console/New()
-	..()
+/obj/machinery/requests_console/Initialize()
+	. = ..()
 
 	announcement.title = "[department] announcement"
 	announcement.newscast = 1
@@ -82,7 +74,7 @@ var/list/obj/machinery/requests_console/allConsoles = list()
 	if(departmentType & RC_INFO)
 		req_console_information |= department
 
-	set_light(1)
+	update_icon()
 
 /obj/machinery/requests_console/Destroy()
 	allConsoles -= src
@@ -99,6 +91,24 @@ var/list/obj/machinery/requests_console/allConsoles = list()
 		if(departmentType & RC_INFO)
 			req_console_information -= department
 	return ..()
+
+/obj/machinery/requests_console/power_change()
+	..()
+	update_icon()
+
+/obj/machinery/requests_console/update_icon()
+	cut_overlays()
+
+	if(stat & NOPOWER)
+		set_light(0)
+		set_light_on(FALSE)
+		icon_state = "req_comp_off"
+	else
+		icon_state = "req_comp_[newmessagepriority]"
+		add_overlay(mutable_appearance(icon, "req_comp_ov[newmessagepriority]"))
+		add_overlay(emissive_appearance(icon, "req_comp_ov[newmessagepriority]"))
+		set_light(2)
+		set_light_on(TRUE)
 
 /obj/machinery/requests_console/attack_hand(user as mob)
 	if(..(user))
@@ -135,15 +145,15 @@ var/list/obj/machinery/requests_console/allConsoles = list()
 /obj/machinery/requests_console/tgui_act(action, list/params)
 	if(..())
 		return TRUE
-	
+
 	add_fingerprint(usr)
-	
+
 	switch(action)
 		if("write")
 			if(reject_bad_text(params["write"]))
 				recipient = params["write"] //write contains the string of the receiving department's name
 
-				var/new_message = sanitize(input("Write your message:", "Awaiting Input", ""))
+				var/new_message = sanitize(tgui_input_text(usr, "Write your message:", "Awaiting Input", ""))
 				if(new_message)
 					message = new_message
 					screen = RCS_MESSAUTH
@@ -159,7 +169,7 @@ var/list/obj/machinery/requests_console/allConsoles = list()
 				. = TRUE
 
 		if("writeAnnouncement")
-			var/new_message = sanitize(input("Write your message:", "Awaiting Input", ""))
+			var/new_message = sanitize(tgui_input_text(usr, "Write your message:", "Awaiting Input", ""))
 			if(new_message)
 				message = new_message
 			else
@@ -188,7 +198,7 @@ var/list/obj/machinery/requests_console/allConsoles = list()
 				screen = RCS_SENTPASS
 				message_log += list(list("Message sent to [recipient]", "[message]"))
 			else
-				audible_message(text("[bicon(src)] *The Requests Console beeps: 'NOTICE: No server detected!'"),,4)
+				audible_message(text("\icon[src][bicon(src)] *The Requests Console beeps: 'NOTICE: No server detected!'"),,4)
 			. = TRUE
 
 		//Handle printing
@@ -212,8 +222,7 @@ var/list/obj/machinery/requests_console/allConsoles = list()
 				for (var/obj/machinery/requests_console/Console in allConsoles)
 					if(Console.department == department)
 						Console.newmessagepriority = 0
-						Console.icon_state = "req_comp0"
-						Console.set_light(1)
+						Console.update_icon()
 			if(tempScreen == RCS_MAINMENU)
 				reset_message()
 			screen = tempScreen
@@ -229,7 +238,7 @@ var/list/obj/machinery/requests_console/allConsoles = list()
 	if(computer_deconstruction_screwdriver(user, O))
 		return
 	if(istype(O, /obj/item/device/multitool))
-		var/input = sanitize(input(usr, "What Department ID would you like to give this request console?", "Multitool-Request Console Interface", department))
+		var/input = sanitize(tgui_input_text(usr, "What Department ID would you like to give this request console?", "Multitool-Request Console Interface", department))
 		if(!input)
 			to_chat(usr, "No input found. Please hang up and try your call again.")
 			return

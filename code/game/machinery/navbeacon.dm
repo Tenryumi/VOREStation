@@ -9,7 +9,7 @@ var/global/list/navbeacons = list()	// no I don't like putting this in, but it w
 	name = "navigation beacon"
 	desc = "A beacon used for bot navigation."
 	plane = PLATING_PLANE
-	anchored = 1
+	anchored = TRUE
 	var/open = 0		// true if cover is open
 	var/locked = 1		// true if controls are locked
 	var/freq = null		// DEPRECATED we don't use radios anymore!
@@ -150,7 +150,7 @@ Transponder Codes:<UL>"}
 			usr.set_machine(src)
 
 			if(href_list["locedit"])
-				var/newloc = sanitize(input("Enter New Location", "Navigation Beacon", location) as text|null)
+				var/newloc = sanitize(tgui_input_text(usr, "Enter New Location", "Navigation Beacon", location, MAX_NAME_LEN))
 				if(newloc)
 					location = newloc
 					updateDialog()
@@ -158,12 +158,14 @@ Transponder Codes:<UL>"}
 			else if(href_list["edit"])
 				var/codekey = href_list["code"]
 
-				var/newkey = input("Enter Transponder Code Key", "Navigation Beacon", codekey) as text|null
+				var/newkey = tgui_input_text(usr, "Enter Transponder Code Key", "Navigation Beacon", codekey, MAX_NAME_LEN)
+				newkey = sanitize(newkey,MAX_NAME_LEN)
 				if(!newkey)
 					return
 
 				var/codeval = codes[codekey]
-				var/newval = input("Enter Transponder Code Value", "Navigation Beacon", codeval) as text|null
+				var/newval = tgui_input_text(usr, "Enter Transponder Code Value", "Navigation Beacon", codeval, MAX_NAME_LEN)
+				newval = sanitize(newval,MAX_NAME_LEN)
 				if(!newval)
 					newval = codekey
 					return
@@ -180,11 +182,13 @@ Transponder Codes:<UL>"}
 
 			else if(href_list["add"])
 
-				var/newkey = input("Enter New Transponder Code Key", "Navigation Beacon") as text|null
+				var/newkey = tgui_input_text(usr, "Enter New Transponder Code Key", "Navigation Beacon", null, MAX_NAME_LEN)
+				newkey = sanitize(newkey,MAX_NAME_LEN)
 				if(!newkey)
 					return
 
-				var/newval = input("Enter New Transponder Code Value", "Navigation Beacon") as text|null
+				var/newval = tgui_input_text(usr, "Enter New Transponder Code Value", "Navigation Beacon", null, MAX_NAME_LEN)
+				newval = sanitize(newval,MAX_NAME_LEN)
 				if(!newval)
 					newval = "1"
 					return

@@ -2,8 +2,8 @@
 	name = "broken macninery"
 	desc = "Broken beyond repair, but looks like you can still salvage something from this if you had a prying implement."
 	icon = 'icons/obj/salvageable.dmi'
-	density = 1
-	anchored = 1
+	density = TRUE
+	anchored = TRUE
 	var/salvageable_parts = list()
 
 /obj/structure/salvageable/proc/dismantle()
@@ -18,7 +18,7 @@
 		playsound(src, I.usesound, 50, 1)
 		var/actual_time = I.toolspeed * 170
 		user.visible_message( \
-			"<span class='notice'>\The [user] begins salvaging from \the [src].</span>", \
+			"<b>\The [user]</b> begins salvaging from \the [src].", \
 			"<span class='notice'>You start salvaging from \the [src].</span>")
 		if(do_after(user, actual_time, target = src))
 			user.visible_message( \
@@ -242,6 +242,42 @@
 	if((. = ..()))
 		playsound(src, 'sound/machines/shutdown.ogg', 60, 1)
 
+///////////////////
+//// COMPUTERS ////
+///////////////////
+
+/obj/structure/salvageable/console
+	name = "console"
+	icon_state = "console0"
+	salvageable_parts = list(
+		/obj/item/stack/cable_coil{amount = 5} = 90,
+		/obj/item/stack/material/glass{amount = 5} = 70,
+		/obj/item/trash/material/circuit = 60,
+		/obj/item/trash/material/metal = 60,
+		/obj/item/weapon/stock_parts/capacitor = 40,
+		/obj/item/weapon/stock_parts/capacitor = 40,
+		/obj/item/weapon/stock_parts/scanning_module = 40,
+		/obj/item/weapon/stock_parts/scanning_module = 40
+	)
+
+/obj/structure/salvageable/personal/Initialize()
+	. = ..()
+	icon_state = "console[rand(0,2)]"
+
+/obj/structure/salvageable/shuttle_console
+	name = "shuttle console"
+	icon_state = "shuttle"
+	salvageable_parts = list(
+		/obj/item/stack/cable_coil{amount = 5} = 90,
+		/obj/item/stack/material/glass{amount = 5} = 70,
+		/obj/item/trash/material/circuit = 60,
+		/obj/item/trash/material/metal = 60,
+		/obj/item/weapon/stock_parts/capacitor = 40,
+		/obj/item/weapon/stock_parts/capacitor = 40,
+		/obj/item/weapon/stock_parts/scanning_module = 40,
+		/obj/item/weapon/stock_parts/scanning_module = 40
+	)
+
 //////////////////
 //// ONE STAR ////
 //////////////////
@@ -362,5 +398,32 @@
 		/obj/item/weapon/computer_hardware/processor_unit/photonic = 40,
 		/obj/item/weapon/computer_hardware/card_slot = 40,
 		/obj/item/weapon/computer_hardware/card_slot = 40,
+		/obj/item/weapon/computer_hardware/network_card/advanced = 40
+	)
+
+
+/obj/structure/salvageable/slotmachine1
+	name = "broken slot machine"
+	icon_state = "slot1"
+	salvageable_parts = list(
+		/obj/item/stack/cable_coil{amount = 5} = 90,
+		/obj/item/weapon/stock_parts/console_screen = 90,
+		/obj/item/stack/cable_coil{amount = 5} = 90,
+		/obj/item/stack/material/glass{amount = 5} = 90,
+		/obj/item/weapon/stock_parts/capacitor = 60,
+		/obj/item/weapon/stock_parts/capacitor = 60,
+		/obj/item/weapon/computer_hardware/network_card/advanced = 40
+	)
+
+/obj/structure/salvageable/slotmachine2
+	name = "broken slot machine"
+	icon_state = "slot2"
+	salvageable_parts = list(
+		/obj/item/stack/cable_coil{amount = 5} = 90,
+		/obj/item/weapon/stock_parts/console_screen = 90,
+		/obj/item/stack/cable_coil{amount = 5} = 90,
+		/obj/item/stack/material/glass{amount = 5} = 90,
+		/obj/item/weapon/stock_parts/capacitor = 60,
+		/obj/item/weapon/stock_parts/capacitor = 60,
 		/obj/item/weapon/computer_hardware/network_card/advanced = 40
 	)

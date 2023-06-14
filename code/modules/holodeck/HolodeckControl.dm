@@ -64,6 +64,10 @@
 	"Courtroom" 		= new/datum/holodeck_program(/area/holodeck/source_courtroom, list('sound/music/traitor.ogg')),
 	"Chessboard"		= new/datum/holodeck_program(/area/holodeck/source_chess),
 	"Micro Building Area"		= new/datum/holodeck_program(/area/holodeck/source_smoleworld), //VOREStation add
+	"Gym"				= new/datum/holodeck_program(/area/holodeck/source_gym), //VOREStation add
+	"Game Room"			= new/datum/holodeck_program(/area/holodeck/source_game_room), //VOREStation add
+	"Patient Ward"		= new/datum/holodeck_program(/area/holodeck/source_patient_ward), //VOREStation add
+	"Inside"			= new/datum/holodeck_program(/area/holodeck/the_uwu_zone, list('sound/vore/sunesound/prey/loop.ogg')), //VOREStation add
 	"Turn Off" 			= new/datum/holodeck_program(/area/holodeck/source_plating, list())
 	)
 
@@ -314,6 +318,9 @@
 	for(var/obj/effect/decal/cleanable/blood/B in linkedholodeck)
 		qdel(B)
 
+	for(var/obj/effect/landmark/L in linkedholodeck)
+		qdel(L)
+
 	holographic_objs = A.copy_contents_to(linkedholodeck , 1)
 	for(var/obj/holo_obj in holographic_objs)
 		holo_obj.alpha *= 0.8 //give holodeck objs a slight transparency
@@ -329,8 +336,15 @@
 
 	linkedholodeck.sound_env = A.sound_env
 
+	if(prog == powerdown_program)
+		linkedholodeck.requires_power = TRUE
+	else
+		linkedholodeck.requires_power = FALSE
+	linkedholodeck.power_change()
+
 	spawn(30)
 		for(var/obj/effect/landmark/L in linkedholodeck)
+			L.delete_me = 1
 			if(L.name=="Atmospheric Test Start")
 				spawn(20)
 					var/turf/T = get_turf(L)

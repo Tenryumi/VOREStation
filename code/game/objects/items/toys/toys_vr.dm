@@ -1,9 +1,45 @@
+/* Virgo Toys!
+ * Contains:
+ *		Mistletoe
+ *		Plushies
+ *		Pet rocks
+ *		Chew toys
+ *		Cat toys
+ *		Fake flash
+ *		Big red button
+ *		Garden gnome
+ *		Toy AI
+ *      Hand buzzer
+ *      Toy cuffs
+ *      Toy nuke
+ *		Toy gibber
+ *		Toy xeno
+ *		Russian revolver
+ *		Trick revolver
+ *		Toy chainsaw
+ *		Random miniature spawner
+ *		Snake popper
+ *		Professor Who universal ID
+ *		Professor Who sonic driver
+ *		Action figures
+ *		Desk toys
+ */
+
+
+/*
+ * Mistletoe
+ */
 /obj/item/toy/mistletoe
 	name = "mistletoe"
 	desc = "You are supposed to kiss someone under these"
 	icon = 'icons/obj/toy_vr.dmi'
 	icon_state = "mistletoe"
 
+/*
+ * Plushies
+ */
+// HEY FUTURE PLUSHIE CODERS: IF YOU'RE ADDING A SNOWFLAKE PLUSH ITEM USE PATH /obj/item/toy/plushie/fluff
+// the loadout entry shouldn't be able to grab those if everything goes right
 /obj/item/toy/plushie/lizardplushie
 	name = "lizard plushie"
 	desc = "An adorable stuffed toy that resembles a lizardperson."
@@ -51,18 +87,61 @@
 	attack_verb = list("beeped", "booped", "pinged")
 
 /obj/item/toy/plushie/borgplushie/medihound
+	name = "medihound plushie"
 	icon_state = "medihound"
 
 /obj/item/toy/plushie/borgplushie/scrubpuppy
+	name = "janihound plushie"
 	icon_state = "scrubpuppy"
 
-/obj/item/toy/plushie/borgplushie/drakiesec
+/obj/item/toy/plushie/borgplushie/drake
 	icon = 'icons/obj/drakietoy_vr.dmi'
+	var/lights_glowing = FALSE
+
+/obj/item/toy/plushie/borgplushie/drake/AltClick(mob/living/user)
+	. = ..()
+	var/turf/T = get_turf(src)
+	if(!T.AdjacentQuick(user)) // So people aren't messing with these from across the room
+		return FALSE
+	lights_glowing = !lights_glowing
+	to_chat(user, "<span class='notice'>You turn the [src]'s glow-fabric [lights_glowing ? "on" : "off"].</span>")
+	update_icon()
+
+/obj/item/toy/plushie/borgplushie/drake/update_icon()
+	cut_overlays()
+	if (lights_glowing)
+		add_overlay(emissive_appearance(icon, "[icon_state]-lights"))
+
+/obj/item/toy/plushie/borgplushie/drake/get_description_info()
+	return "The lights on the plushie can be toggled [lights_glowing ? "off" : "on"] by alt-clicking on it."
+
+/obj/item/toy/plushie/borgplushie/drake/sec
+	name = "security drake plushie"
 	icon_state = "secdrake"
 
-/obj/item/toy/plushie/borgplushie/drakiemed
-	icon = 'icons/obj/drakietoy_vr.dmi'
+/obj/item/toy/plushie/borgplushie/drake/med
+	name = "medical drake plushie"
 	icon_state = "meddrake"
+
+/obj/item/toy/plushie/borgplushie/drake/sci
+	name = "science drake plushie"
+	icon_state = "scidrake"
+
+/obj/item/toy/plushie/borgplushie/drake/jani
+	name = "janitor drake plushie"
+	icon_state = "janidrake"
+
+/obj/item/toy/plushie/borgplushie/drake/eng
+	name = "engineering drake plushie"
+	icon_state = "engdrake"
+
+/obj/item/toy/plushie/borgplushie/drake/mine
+	name = "mining drake plushie"
+	icon_state = "minedrake"
+
+/obj/item/toy/plushie/borgplushie/drake/trauma
+	name = "trauma drake plushie"
+	icon_state = "traumadrake"
 
 /obj/item/toy/plushie/foxbear
 	name = "toy fox"
@@ -95,43 +174,11 @@
 		playsound(user, 'sound/voice/shriek1.ogg', 10, 0)
 		src.visible_message("<span class='danger'>Skreee!</span>")
 		cooldown = 1
-		addtimer(CALLBACK(src, .proc/cooldownreset), 50)
+		addtimer(CALLBACK(src, PROC_REF(cooldownreset)), 50)
 	return ..()
 
 /obj/item/toy/plushie/vox/proc/cooldownreset()
 	cooldown = 0
-
-/*
-* 4/9/21 *
-* IPC Plush
-* Toaster plush
-* Snake plush
-* Cube plush
-* Pip plush
-* Moth plush
-* Crab plush
-* Possum plush
-* Goose plush
-* White mouse plush
-* Pet rock
-* Pet rock (m)
-* Pet rock (f)
-* Chew toys
-* Cat toy * 2
-* Toy flash
-* Toy button
-* Gnome
-* Toy AI
-* Buzzer ring
-* Fake handcuffs
-* Nuke toy
-* Toy gibber
-* Toy xeno
-* Fake gun * 2
-* Toy chainsaw
-* Random tabletop miniature spawner
-* snake popper
-*/
 
 /obj/item/toy/plushie/ipc
 	name = "IPC plushie"
@@ -172,13 +219,12 @@
 	else
 		return ..()
 
-
 /obj/item/toy/plushie/ipc/attack_self(mob/user as mob)
 	if(!cooldown)
 		playsound(user, 'sound/machines/ping.ogg', 10, 0)
 		src.visible_message("<span class='danger'>Ping!</span>")
 		cooldown = 1
-		addtimer(CALLBACK(src, .proc/cooldownreset), 50)
+		addtimer(CALLBACK(src, PROC_REF(cooldownreset)), 50)
 	return ..()
 
 /obj/item/toy/plushie/ipc/proc/cooldownreset()
@@ -195,7 +241,7 @@
 		playsound(user, 'sound/machines/ding.ogg', 10, 0)
 		src.visible_message("<span class='danger'>Ding!</span>")
 		cooldown = 1
-		addtimer(CALLBACK(src, .proc/cooldownreset), 50)
+		addtimer(CALLBACK(src, PROC_REF(cooldownreset)), 50)
 	return ..()
 
 /obj/item/toy/plushie/snakeplushie
@@ -228,14 +274,14 @@
 			atom_say(pick(responses))
 			playsound(user, 'sound/effects/whistle.ogg', 10, 0)
 			cooldown = 1
-			addtimer(CALLBACK(src, .proc/cooldownreset), 50)
+			addtimer(CALLBACK(src, PROC_REF(cooldownreset)), 50)
 		return ..()
 
 /obj/item/toy/plushie/marketable_pip/attack_self(mob/user as mob)
 	if(!cooldown)
 		playsound(user, 'sound/effects/whistle.ogg', 10, 0)
 		cooldown = 1
-		addtimer(CALLBACK(src, .proc/cooldownreset), 50)
+		addtimer(CALLBACK(src, PROC_REF(cooldownreset)), 50)
 	return ..()
 
 /obj/item/toy/plushie/marketable_pip/proc/cooldownreset()
@@ -253,7 +299,7 @@
 		playsound(user, 'sound/voice/moth/scream_moth.ogg', 10, 0)
 		src.visible_message("<span class='danger'>Aaaaaaa.</span>")
 		cooldown = 1
-		addtimer(CALLBACK(src, .proc/cooldownreset), 50)
+		addtimer(CALLBACK(src, PROC_REF(cooldownreset)), 50)
 	return ..()
 
 /obj/item/toy/plushie/moth/proc/cooldownreset()
@@ -274,7 +320,9 @@
 
 /obj/item/toy/plushie/goose
 	name = "goose plushie"
-	desc = "An adorable likeness of a terrifying beast. It's simple existance chills you to the bone and compells you to hide any loose objects it might steal."
+	desc = "An adorable likeness of a terrifying beast. \
+	It's simple existance chills you to the bone and \
+	compells you to hide any loose objects it might steal."
 	icon = 'icons/obj/toy_vr.dmi'
 	icon_state = "goose"
 	attack_verb = list("honked")
@@ -284,9 +332,54 @@
 	icon_state = "mouse"
 	icon = 'icons/obj/toy_vr.dmi'
 
+/obj/item/toy/plushie/susred
+	name = "red spaceman plushie"
+	desc = "A suspicious looking red spaceman plushie. Why does it smell like the vents?"
+	icon = 'icons/obj/toy_vr.dmi'
+	icon_state = "sus_red"
+	attack_verb = list("stabbed", "slashed")
+
+/obj/item/toy/plushie/ipc/toaster/attack_self(mob/user as mob)
+	if(!cooldown)
+		playsound(user, 'sound/weapons/slice.ogg', 10, 0)
+		src.visible_message("<span class='danger'>Stab!</span>")
+		cooldown = 1
+		addtimer(CALLBACK(src, PROC_REF(cooldownreset)), 50)
+	return ..()
+
+/obj/item/toy/plushie/susblue
+	name = "blue spaceman plushie"
+	desc = "A dapper looking blue spaceman plushie. Looks very intuitive."
+	icon = 'icons/obj/toy_vr.dmi'
+	icon_state = "sus_blue"
+
+/obj/item/toy/plushie/suswhite
+	name = "white spaceman plushie"
+	desc = "A whiny looking white spaceman plushie. Looks like it could cry at any moment."
+	icon = 'icons/obj/toy_vr.dmi'
+	icon_state = "sus_white"
+
+/obj/item/toy/plushie/bigcat
+	name = "big cat plushie"
+	desc = "A big, fluffy looking cat that just looks very huggable."
+	icon = 'icons/obj/toy_vr.dmi'
+	icon_state = "big_cat"
+
+/obj/item/toy/plushie/basset
+	name = "basset plushie"
+	desc = "A sleepy looking basset hound plushie."
+	icon = 'icons/obj/toy_vr.dmi'
+	icon_state = "basset"
+
+/*
+ * Pet rocks
+ */
 /obj/item/toy/rock
 	name = "pet rock"
-	desc = "A stuffed version of the classic pet. The soft ones were made after kids kept throwing them at each other. It has a small piece of soft plastic that you can draw on if you wanted."
+	desc = "A stuffed version of the classic pet. \
+	The soft ones were made after kids kept throwing \
+	them at each other. It has a small piece of soft \
+	plastic that you can draw on if you wanted."
 	icon = 'icons/obj/toy_vr.dmi'
 	icon_state = "rock"
 	attack_verb = list("grug'd", "unga'd")
@@ -294,7 +387,7 @@
 /obj/item/toy/rock/attackby(obj/item/I as obj, mob/living/user as mob, proximity)
 	if(!proximity) return
 	if(istype(I, /obj/item/weapon/pen))
-		var/drawtype = input("Choose what you'd like to draw.", "Faces") in list("fred","roxie","rock")
+		var/drawtype = tgui_alert(user, "Choose what you'd like to draw.", "Faces", list("fred","roxie","rock","Cancel"))
 		switch(drawtype)
 			if("fred")
 				src.icon_state = "fred"
@@ -307,6 +400,9 @@
 				to_chat(user, "You draw a face on the rock and pull aside the plastic slightly, revealing a small pink bow.")
 	return
 
+/*
+ * Chew toys
+ */
 /obj/item/toy/chewtoy
 	name = "chew toy"
 	desc = "A red hard-rubber chew toy shaped like a bone. Perfect for your dog! You wouldn't want to chew on it, right?"
@@ -330,6 +426,9 @@
 	playsound(loc, 'sound/items/drop/plushie.ogg', 50, 1)
 	user.visible_message("<span class='notice'><b>\The [user]</b> gnaws on [src]!</span>","<span class='notice'>You gnaw on [src]!</span>")
 
+/*
+ * Cat toys
+ */
 /obj/item/toy/cat_toy
 	name = "toy mouse"
 	desc = "A colorful toy mouse!"
@@ -349,6 +448,9 @@
 		slot_r_hand_str = 'icons/mob/items/righthand_material.dmi',
 		)
 
+/*
+ * Fake flash
+ */
 /obj/item/toy/flash
 	name = "toy flash"
 	desc = "FOR THE REVOLU- Oh wait, that's just a toy."
@@ -368,12 +470,15 @@
 		flick("[initial(icon_state)]2", src)
 		user.visible_message("<span class='disarm'>[user] doesn't blind [M] with the toy flash!</span>")
 		cooldown = 1
-		addtimer(CALLBACK(src, .proc/cooldownreset), 50)
+		addtimer(CALLBACK(src, PROC_REF(cooldownreset)), 50)
 		return ..()
 
 /obj/item/toy/flash/proc/cooldownreset()
 	cooldown = 0
 
+/*
+ * Big red button
+ */
 /obj/item/toy/redbutton
 	name = "big red button"
 	desc = "A big, plastic red button. Reads 'From HonkCo Pranks?' on the back."
@@ -394,12 +499,18 @@
 	else
 		to_chat(user, "<span class='alert'>Nothing happens.</span>")
 
+/*
+ * Garden gnome
+ */
 /obj/item/toy/gnome
 	name = "garden gnome"
 	desc = "It's a gnome, not a gnelf. Made of weak ceramic."
 	icon = 'icons/obj/toy_vr.dmi'
 	icon_state = "gnome"
 
+/*
+ * Toy AI
+ */
 /obj/item/toy/AI
 	name = "toy AI"
 	desc = "A little toy model AI core with real law announcing action!"
@@ -428,12 +539,15 @@
 			user.visible_message("<span class='notice'>[user] asks the AI core to state laws.</span>")
 			user.visible_message("<span class='notice'>[src] says \"[answer]\"</span>")
 		cooldown = 1
-		addtimer(CALLBACK(src, .proc/cooldownreset), 50)
+		addtimer(CALLBACK(src, PROC_REF(cooldownreset)), 50)
 		return ..()
 
 /obj/item/toy/AI/proc/cooldownreset()
 	cooldown = 0
 
+/*
+ * Hand buzzer
+ */
 /obj/item/clothing/gloves/ring/buzzer/toy
 	name = "steel ring"
 	desc = "Torus shaped finger decoration. It has a small piece of metal on the palm-side."
@@ -460,6 +574,9 @@
 
 	return 0
 
+/*
+ * Toy cuffs
+ */
 /obj/item/weapon/handcuffs/fake
 	name = "plastic handcuffs"
 	desc = "Use this to keep plastic prisoners in line."
@@ -484,6 +601,9 @@
 	foldable = null
 	can_hold = list(/obj/item/weapon/handcuffs/fake, /obj/item/weapon/handcuffs/legcuffs/fake)
 
+/*
+ * Toy nuke
+ */
 /obj/item/toy/nuke
 	name = "\improper Nuclear Fission Explosive toy"
 	desc = "A plastic model of a Nuclear Fission Explosive."
@@ -510,6 +630,9 @@
 	if(istype(I, /obj/item/weapon/disk/nuclear))
 		to_chat(user, "<span class='alert'>Nice try. Put that disk back where it belongs.</span>")
 
+/*
+ * Toy gibber
+ */
 /obj/item/toy/minigibber
 	name = "miniature gibber"
 	desc = "A miniature recreation of NanoTrasen's famous meat grinder. Equipped with a special interlock that prevents insertion of organic material."
@@ -533,7 +656,7 @@
 
 /obj/item/toy/minigibber/attackby(obj/O, mob/user, params)
 	if(istype(O,/obj/item/toy/figure) || istype(O,/obj/item/toy/character) && O.loc == user)
-		to_chat(user, "<span class='notice'>You start feeding \the [O] [bicon(O)] into \the [src]'s mini-input.</span>")
+		to_chat(user, "<span class='notice'>You start feeding \the [O] \icon[O][bicon(O)] into \the [src]'s mini-input.</span>")
 		if(do_after(user, 10, target = src))
 			if(O.loc != user)
 				to_chat(user, "<span class='alert'>\The [O] is too far away to feed into \the [src]!</span>")
@@ -547,6 +670,9 @@
 
 	else ..()
 
+/*
+ * Toy xeno
+ */
 /obj/item/toy/toy_xeno
 	icon = 'icons/obj/toy_vr.dmi'
 	icon_state = "xeno"
@@ -571,6 +697,9 @@
 		to_chat(user, "<span class='warning'>The string on [src] hasn't rewound all the way!</span>")
 		return
 
+/*
+ * Russian revolver
+ */
 /obj/item/toy/russian_revolver
 	name = "russian revolver"
 	desc = "For fun and games!"
@@ -641,6 +770,9 @@
 		to_chat(user, "<span class='warning'>[src] needs to be reloaded.</span>")
 		return FALSE
 
+/*
+ * Trick revolver
+ */
 /obj/item/toy/russian_revolver/trick_revolver
 	name = "\improper .357 revolver"
 	desc = "A suspicious revolver. Uses .357 ammo."
@@ -668,6 +800,9 @@
 	sleep(5)
 	icon_state = "[initial(icon_state)]"
 
+/*
+ * Toy chainsaw
+ */
 /obj/item/toy/chainsaw
 	name = "Toy Chainsaw"
 	desc = "A toy chainsaw with a rubber edge. Ages 8 and up"
@@ -684,12 +819,15 @@
 	if(!cooldown)
 		playsound(user, 'sound/weapons/chainsaw_startup.ogg', 10, 0)
 		cooldown = 1
-		addtimer(CALLBACK(src, .proc/cooldownreset), 50)
+		addtimer(CALLBACK(src, PROC_REF(cooldownreset)), 50)
 	return ..()
 
 /obj/item/toy/chainsaw/proc/cooldownreset()
 	cooldown = 0
 
+/*
+ * Random miniature spawner
+ */
 /obj/random/miniature
 	name = "Random miniature"
 	desc = "This is a random miniature."
@@ -699,6 +837,9 @@
 /obj/random/miniature/item_to_spawn()
 	return pick(typesof(/obj/item/toy/character))
 
+/*
+ * Snake popper
+ */
 /obj/item/toy/snake_popper
 	name = "bread tube"
 	desc = "Bread in a tube. Chewy...and surprisingly tasty."
@@ -775,3 +916,227 @@
 		real = 2
 		to_chat(user, "<span class='notice'>You short out the bluespace refill system of [src].</span>")
 
+/*
+ * Professor Who universal ID
+ */
+/obj/item/clothing/under/universalid
+	name = "identification card"
+	desc = "A novelty identification card based on Professor Who's Universal ID."
+	icon = 'icons/obj/toy_vr.dmi'
+	icon_state = "universal_id"
+	w_class = ITEMSIZE_TINY
+	slot_flags = SLOT_ID | SLOT_EARS
+	body_parts_covered = 0
+	equip_sound = null
+
+	sprite_sheets = null
+
+	item_state = "golem"  //This is dumb and hacky but was here when I got here.
+	worn_state = "golem"  //It's basically just a coincidentally black iconstate in the file.
+
+/*
+ * Professor Who sonic driver
+ */
+/obj/item/weapon/tool/screwdriver/sdriver
+	name = "sonic driver"
+	desc = "A novelty screwdriver that uses tiny magnets to manipulate screws."
+	icon = 'icons/obj/toy_vr.dmi'
+	icon_state = "sonic_driver"
+	item_state = "screwdriver_black"
+	usesound = 'sound/items/sonic_driver.ogg'
+	toolspeed = 1
+	random_color = FALSE
+
+/*
+ * Professor Who time capsule
+ */
+/obj/item/weapon/storage/box/timecap
+	name = "action time capsule"
+	desc = "A toy recreation of the Time Capsule from Professor Who. Can hold up to two action figures."
+	icon = 'icons/obj/toy_vr.dmi'
+	icon_state = "time_cap"
+	can_hold = list(/obj/item/toy/figure)
+	max_w_class = ITEMSIZE_TINY
+	max_storage_space = ITEMSIZE_COST_TINY * 2
+	use_sound = 'sound/machines/click.ogg'
+	drop_sound = 'sound/items/drop/accessory.ogg'
+	pickup_sound = 'sound/items/pickup/accessory.ogg'
+
+/*
+ * Action figures
+ */
+/obj/item/toy/figure/ranger
+	name = "Space Ranger action figure"
+	desc = "A \"Space Life\" brand Space Ranger action figure."
+	icon = 'icons/obj/toy_vr.dmi'
+	icon_state = "ranger"
+	toysay = "To the Fontier and beyond!"
+
+/obj/item/toy/figure/leadbandit
+	name = "Bandit Leader action figure"
+	desc = "A \"Space Life\" brand Bandit Leader action figure."
+	icon = 'icons/obj/toy_vr.dmi'
+	icon_state = "bandit_lead"
+	toysay = "Give us yer bluespace crystals!"
+
+/obj/item/toy/figure/bandit
+	name = "Bandit action figure"
+	desc = "A \"Space Life\" brand Bandit action figure."
+	icon = 'icons/obj/toy_vr.dmi'
+	icon_state = "bandit"
+	toysay = "Stick em' up!"
+
+/obj/item/toy/figure/abe
+	name = "Action Abe action figure"
+	desc = "A \"Space Life\" brand Action Abe action figure."
+	icon = 'icons/obj/toy_vr.dmi'
+	icon_state = "action_abe"
+	toysay = "Four score and seven decades ago..."
+
+/obj/item/toy/figure/profwho
+	name = "Professor Who action figure"
+	desc = "A \"Space Life\" brand Professor Who action figure."
+	icon = 'icons/obj/toy_vr.dmi'
+	icon_state = "prof_who"
+	toysay = "Smells like... bad wolf..."
+
+/obj/item/toy/figure/prisoner
+	name = "prisoner action figure"
+	desc = "A \"Space Life\" brand prisoner action figure."
+	icon = 'icons/obj/toy_vr.dmi'
+	icon_state = "prisoner"
+	toysay = "I did not hit her! I did not!"
+
+/obj/item/toy/figure/error
+	name = "completely glitched action figure"
+	desc = "A \"Space Life\" brand... wait, what the hell is this thing? It seems to be requesting the sweet release of death."
+	icon = 'icons/obj/toy_vr.dmi'
+	icon_state = "glitched"
+	toysay = "AaAAaAAAaAaaaAAA!!!!!"
+
+/*
+ * Desk toys
+ */
+/obj/item/weapon/toy/desk
+	icon = 'icons/obj/toy_vr.dmi'
+	var/on = FALSE
+	var/activation_sound = 'sound/machines/click.ogg'
+
+/obj/item/weapon/toy/desk/update_icon()
+	if(on)
+		icon_state = "[initial(icon_state)]-on"
+	else
+		icon_state = "[initial(icon_state)]"
+
+/obj/item/weapon/toy/desk/proc/activate(mob/user as mob)
+	on = !on
+	playsound(src.loc, activation_sound, 75, 1)
+	update_icon()
+	return 1
+
+/obj/item/weapon/toy/desk/attack_self(mob/user)
+	activate(user)
+
+/obj/item/weapon/toy/desk/AltClick(mob/user)
+	activate(user)
+
+/obj/item/weapon/toy/desk/MouseDrop(mob/user as mob) // Code from Paper bin, so you can still pick up the deck
+	if((user == usr && (!( usr.restrained() ) && (!( usr.stat ) && (usr.contents.Find(src) || in_range(src, usr))))))
+		if(!istype(usr, /mob/living/simple_mob))
+			if( !usr.get_active_hand() )		//if active hand is empty
+				var/mob/living/carbon/human/H = user
+				var/obj/item/organ/external/temp = H.organs_by_name["r_hand"]
+
+				if (H.hand)
+					temp = H.organs_by_name["l_hand"]
+				if(temp && !temp.is_usable())
+					to_chat(user,"<span class='notice'>You try to move your [temp.name], but cannot!</span>")
+					return
+
+				to_chat(user,"<span class='notice'>You pick up [src].</span>")
+				user.put_in_hands(src)
+
+	return
+
+/obj/item/weapon/toy/desk/newtoncradle
+	name = "\improper Newton's cradle"
+	desc = "A ancient 21th century super-weapon model demonstrating that Sir Isaac Newton is the deadliest sonuvabitch in space."
+	description_fluff = "Aside from car radios, Eridanian Dregs are reportedly notorious for stealing these things. It is often \
+	theorized that the very same ball bearings are used in black-market cybernetics."
+	icon_state = "newtoncradle"
+
+/obj/item/weapon/toy/desk/fan
+	name = "office fan"
+	desc = "Your greatest fan."
+	description_fluff = "For weeks, the atmospherics department faced a conundrum on how to lower temperatures in a localized \
+	area through complicated pipe channels and ventilation systems. The problem was promptly solved by ordering several desk fans."
+	icon_state = "fan"
+
+/obj/item/weapon/toy/desk/officetoy
+	name = "office toy"
+	desc = "A generic microfusion powered office desk toy. Only generates magnetism and ennui."
+	description_fluff = "The mechanism inside is a Hephasteus trade secret. No peeking!"
+	icon_state = "desktoy"
+
+/obj/item/weapon/toy/desk/dippingbird
+	name = "dipping bird toy"
+	desc = "Engineers marvel at this scale model of a primitive thermal engine. It's highly debated why the majority of owners \
+	were in low-level bureaucratic jobs."
+	description_fluff = "One of the key essentials for every Eridanian suit - it's practically a rite of passage to own one \
+	of these things."
+	icon_state = "dippybird"
+
+/obj/item/weapon/toy/desk/stellardelight
+	name = "\improper Stellar Delight model"
+	desc = "A scale model of the Stellar Delight. Includes flashing lights!"
+	icon_state = "stellar_delight"
+
+/*
+ * Party popper
+ */
+/obj/item/weapon/toy/partypopper
+	name = "party popper"
+	desc = "Instructions : Aim away from face. Wait for appropriate timing. Pull cord, enjoy confetti."
+	icon = 'icons/obj/toy_vr.dmi'
+	icon_state = "partypopper"
+	w_class = ITEMSIZE_TINY
+	drop_sound = 'sound/items/drop/cardboardbox.ogg'
+	pickup_sound = 'sound/items/pickup/cardboardbox.ogg'
+
+/obj/item/weapon/toy/partypopper/attack_self(mob/user as mob)
+	if(icon_state == "partypopper")
+		user.visible_message("<span class='notice'>[user] pulls on the string, releasing a burst of confetti!</span>", "<span class='notice'>You pull on the string, releasing a burst of confetti!</span>")
+		playsound(src, 'sound/effects/snap.ogg', 50, TRUE)
+		var/datum/effect/effect/system/confetti_spread/s = new /datum/effect/effect/system/confetti_spread
+		s.set_up(5, 1, src)
+		s.start()
+		icon_state = "partypopper_e"
+		var/turf/T = get_step(src, user.dir)
+		if(!turf_clear(T))
+			T = get_turf(src)
+		new /obj/effect/decal/cleanable/confetti(T)
+	else
+		to_chat(user, "<span class='notice'>The [src] is already spent!</span>")
+
+/*
+ * Snow Globes
+ */
+/obj/item/weapon/toy/snowglobe
+	name = "snowglobe"
+	icon = 'icons/obj/snowglobe_vr.dmi'
+
+/obj/item/weapon/toy/snowglobe/snowvillage
+	desc = "Depicts a small, quaint village buried in snow."
+	icon_state = "smolsnowvillage"
+
+/obj/item/weapon/toy/snowglobe/tether
+	desc = "Depicts a massive space elevator reaching to the sky."
+	icon_state = "smoltether"
+
+/obj/item/weapon/toy/snowglobe/stellardelight
+	desc = "Depicts an interstellar spacecraft."
+	icon_state = "smolstellardelight"
+
+/obj/item/weapon/toy/snowglobe/rascalspass
+	desc = "Depicts a nanotrasen facility on a temperate world."
+	icon_state = "smolrascalspass"

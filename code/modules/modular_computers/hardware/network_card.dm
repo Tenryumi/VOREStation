@@ -8,11 +8,19 @@ var/global/ntnet_card_uid = 1
 	critical = 0
 	icon_state = "netcard_basic"
 	hardware_size = 1
-	var/identification_id = null	// Identification ID. Technically MAC address of this device. Can't be changed by user.
-	var/identification_string = "" 	// Identification string, technically nickname seen in the network. Can be set by user.
-	var/long_range = 0
-	var/ethernet = 0 // Hard-wired, therefore always on, ignores NTNet wireless checks.
 	malfunction_probability = 1
+
+	/// Identification ID. Technically MAC address of this device. Can't be changed by user.
+	var/identification_id = null
+	/// Identification string, technically nickname seen in the network. Can be set by user.
+	var/identification_string = ""
+
+	/// Long-range cards have stronger connections, letting them reach relays from connected Z-levels.
+	var/long_range = 0
+	/// Hard-wired, therefore always on, ignores NTNet wireless checks.
+	var/ethernet = 0
+	/// If set, uses the value to funnel connections through another network card.
+	var/proxy_id
 
 /obj/item/weapon/computer_hardware/network_card/diagnostics(var/mob/user)
 	..()
@@ -103,11 +111,10 @@ var/global/ntnet_card_uid = 1
 		var/holderz = get_z(holder2)
 		if(!holderz) //no reception in nullspace
 			return 0
-		var/list/zlevels_in_range = using_map.get_map_levels(holderz, FALSE)
+		var/list/zlevels_in_range = using_map.get_map_levels(holderz, FALSE)// VOREStation Edit - , om_range = DEFAULT_OVERMAP_RANGE)
 		var/list/zlevels_in_long_range = using_map.get_map_levels(holderz, TRUE, om_range = DEFAULT_OVERMAP_RANGE) - zlevels_in_range
 		var/best = 0
-		for(var/relay in ntnet_global.relays)
-			var/obj/machinery/ntnet_relay/R = relay
+		for(var/obj/machinery/ntnet_relay/R as anything in ntnet_global.relays)
 			//Relay is down
 			if(!R.operable())
 				continue

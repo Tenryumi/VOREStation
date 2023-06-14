@@ -30,7 +30,7 @@
 	desc = "A large, flat platform made for putting things on. Or people."
 	icon = 'icons/obj/vehicles_vr.dmi'	//VOREStation Edit
 	icon_state = "cargo_trailer"
-	anchored = 0
+	anchored = FALSE
 	passenger_allowed = 0
 	locked = 0
 
@@ -48,6 +48,7 @@
 	key = new key_type(src)
 	var/image/I = new(icon = 'icons/obj/vehicles_vr.dmi', icon_state = "cargo_engine_overlay", layer = src.layer + 0.2) //over mobs		//VOREStation edit
 	add_overlay(I)
+	update_icon()
 	turn_off()	//so engine verbs are correctly set
 
 /obj/vehicle/train/engine/Move(var/turf/destination)
@@ -128,6 +129,8 @@
 //-------------------------------------------
 /obj/vehicle/train/engine/turn_on()
 	if(!key)
+		return
+	if(!cell)
 		return
 	else
 		..()
@@ -230,7 +233,9 @@
 	if (on)
 		to_chat(usr, "You start [src]'s engine.")
 	else
-		if(cell.charge < charge_use)
+		if(!cell)
+			to_chat(usr, "[src] doesn't appear to have a power cell!")
+		else if(cell.charge < charge_use)
 			to_chat(usr, "[src] is out of power.")
 		else
 			to_chat(usr, "[src]'s engine won't start.")
@@ -385,9 +390,9 @@
 	src.active_engines = active_engines
 
 	if(!lead && !tow)
-		anchored = 0
+		anchored = FALSE
 	else
-		anchored = 1
+		anchored = TRUE
 
 // VOREStation Edit Start - Overlay stuff for the chair-like effect
 /obj/vehicle/train/engine/update_icon()

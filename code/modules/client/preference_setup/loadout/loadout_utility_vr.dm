@@ -35,7 +35,7 @@
 /datum/gear/utility/dufflebag/med
 	display_name = "medical dufflebag"
 	path = /obj/item/weapon/storage/backpack/dufflebag/med
-	allowed_roles = list("Medical Doctor","Chief Medical Officer","Chemist","Paramedic","Geneticist","Psychiatrist","Field Medic")
+	allowed_roles = list("Medical Doctor","Chief Medical Officer","Chemist","Paramedic","Geneticist","Psychiatrist")
 
 /datum/gear/utility/dufflebag/med/emt
 	display_name = "EMT dufflebag"
@@ -49,7 +49,7 @@
 /datum/gear/utility/dufflebag/eng
 	display_name = "engineering dufflebag"
 	path = /obj/item/weapon/storage/backpack/dufflebag/eng
-	allowed_roles = list("Chief Engineer","Atmospheric Technician","Station Engineer")
+	allowed_roles = list("Chief Engineer","Atmospheric Technician","Engineer")
 
 /datum/gear/utility/dufflebag/sci
 	display_name = "science dufflebag"
@@ -57,15 +57,24 @@
 	allowed_roles = list("Research Director","Scientist","Roboticist","Xenobiologist","Xenobotanist")
 
 /datum/gear/utility/dufflebag/explorer
-	display_name = "explorer dufflebag"
+	display_name = "away team dufflebag"
 	path = /obj/item/weapon/storage/backpack/dufflebag/explorer
-	allowed_roles = list("Pathfinder","Explorer")
 
 /datum/gear/utility/dufflebag/talon
-	display_name = "ITV dufflebag"
+	display_name = "Talon dufflebag"
 	path = /obj/item/weapon/storage/backpack/dufflebag/explorer
 
 /datum/gear/utility/ID
 	display_name = "contractor identification card"
 	path = /obj/item/weapon/card/id/event/polymorphic/altcard
 	cost = 1
+
+/datum/gear/utility/bs_bracelet
+	display_name = "bluespace bracelet"
+	path = /obj/item/clothing/gloves/bluespace
+	cost = 5
+
+/datum/gear/utility/walkpod
+	display_name = "podzu music player"
+	path = /obj/item/device/walkpod
+	cost = 2

@@ -6,19 +6,25 @@
 	var/obj/item/weapon/tank/internal = null//Human/Monkey
 	var/obj/item/clothing/mask/wear_mask = null//Carbon
 
-/mob/living/equip_to_storage(obj/item/newitem)
+/mob/living/equip_to_storage(obj/item/newitem, user_initiated = FALSE)
 	// Try put it in their backpack
 	if(istype(src.back,/obj/item/weapon/storage))
 		var/obj/item/weapon/storage/backpack = src.back
 		if(backpack.can_be_inserted(newitem, 1))
-			newitem.forceMove(src.back)
-			return 1
+			if(user_initiated)
+				backpack.handle_item_insertion(newitem)
+			else
+				newitem.forceMove(src.back)
+			return src.back
 
 	// Try to place it in any item that can store stuff, on the mob.
 	for(var/obj/item/weapon/storage/S in src.contents)
 		if (S.can_be_inserted(newitem, 1))
-			newitem.forceMove(S)
-			return 1
+			if(user_initiated)
+				S.handle_item_insertion(newitem)
+			else
+				newitem.forceMove(S)
+			return S
 	return 0
 
 //Returns the thing in our active hand
@@ -43,7 +49,7 @@
 		. = drop_r_hand(Target)
 
 	if (istype(item_dropped) && !QDELETED(item_dropped) && is_preference_enabled(/datum/client_preference/drop_sounds))
-		addtimer(CALLBACK(src, .proc/make_item_drop_sound, item_dropped), 1)
+		addtimer(CALLBACK(src, PROC_REF(make_item_drop_sound), item_dropped), 1)
 
 /mob/proc/make_item_drop_sound(obj/item/I)
 	if(QDELETED(I))
@@ -113,14 +119,14 @@
 	// We're the first!
 	if(!L)
 		L = list()
-	
+
 	// Lefty grab!
 	if (istype(l_hand, /obj/item/weapon/grab))
 		var/obj/item/weapon/grab/G = l_hand
 		L |= G.affecting
 		if(mobchain_limit-- > 0)
 			G.affecting?.ret_grab(L, mobchain_limit) // Recurse! They can update the list. It's the same instance as ours.
-	
+
 	// Righty grab!
 	if (istype(r_hand, /obj/item/weapon/grab))
 		var/obj/item/weapon/grab/G = r_hand
@@ -138,7 +144,7 @@
 
 	if(!checkClickCooldown())
 		return
-	
+
 	setClickCooldown(1)
 
 	if(istype(loc,/obj/mecha)) return
@@ -266,7 +272,7 @@
 	if(..())
 		return TRUE
 
-	// If anyone wants the inventory panel to actually work, 
+	// If anyone wants the inventory panel to actually work,
 	// add code to handle actions "mask", "l_hand", "r_hand", "back", "pockets", and "internals" here
 	// No mobs other than humans actually supported stripping or putting stuff on before the /datum/inventory_panel was
 	// created, so feature parity demands not adding that and risking breaking stuff
@@ -301,7 +307,7 @@
 	if(istype(H.w_uniform, /obj/item/clothing/under))
 		suit = H.w_uniform
 
-	
+
 	var/list/slots = list()
 	for(var/entry in H.species.hud.gear)
 		var/list/slot_ref = H.species.hud.gear[entry]
@@ -316,7 +322,7 @@
 		)))
 	data["slots"] = slots
 
-	
+
 	var/list/specialSlots = list()
 	if(H.species.hud.has_hands)
 		specialSlots.Add(list(list(
@@ -339,12 +345,12 @@
 	data["sensors"] = FALSE
 	if(istype(suit) && suit.has_sensor == 1)
 		data["sensors"] = TRUE
-	
+
 	data["handcuffed"] = FALSE
 	if(H.handcuffed)
 		data["handcuffed"] = TRUE
 		data["handcuffedParams"] = list("slot" = slot_handcuffed)
-	
+
 	data["legcuffed"] = FALSE
 	if(H.legcuffed)
 		data["legcuffed"] = TRUE

@@ -17,12 +17,14 @@
 	maxHealth = 30
 	melee_damage_lower = 2
 	melee_damage_upper = 4
-	movement_cooldown = 0
+	movement_cooldown = -2
 	hovering = TRUE
 
 	attacktext = list("slammed into")
 	attack_sound = 'sound/effects/slime_squish.ogg'
 	say_list_type = /datum/say_list/spore
+
+	organ_names = /decl/mob_organ_names/spore
 
 	var/mob/living/carbon/human/infested = null // The human this thing is totally not making into a zombie.
 	var/can_infest = FALSE
@@ -151,3 +153,6 @@
 	if(helpers)
 		to_chat(src, span("notice", "Your attack is assisted by [helpers] other spore\s."))
 	return damage_to_do
+
+/decl/mob_organ_names/spore
+	hit_zones = list("sporangium", "stolon", "sporangiophore")

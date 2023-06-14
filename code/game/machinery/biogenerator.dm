@@ -17,8 +17,8 @@
 	desc = "Converts plants into biomass, which can be used for fertilizer and sort-of-synthetic products."
 	icon = 'icons/obj/biogenerator_vr.dmi' //VOREStation Edit
 	icon_state = "biogen-stand"
-	density = 1
-	anchored = 1
+	density = TRUE
+	anchored = TRUE
 	circuit = /obj/item/weapon/circuitboard/biogenerator
 	use_power = USE_POWER_IDLE
 	idle_power_usage = 40
@@ -101,8 +101,9 @@
 		BIOGEN_ITEM("Winter Coat", /obj/item/clothing/suit/storage/hooded/wintercoat, 1, 500),
 		//VOREStation Edit - Algae for oxygen generator
 		BIOGEN_ITEM("4 Algae Sheets", /obj/item/stack/material/algae, 4, 400),
+		BIOGEN_ITEM("50 Algae Sheets", /obj/item/stack/material/algae, 50, 5000),
 	)
-	
+
 /obj/machinery/biogenerator/tgui_static_data(mob/user)
 	var/list/static_data[0]
 
@@ -141,7 +142,7 @@
 	. = TRUE
 	switch(action)
 		if("activate")
-			INVOKE_ASYNC(src, .proc/activate)
+			INVOKE_ASYNC(src, PROC_REF(activate))
 			return TRUE
 		if("detach")
 			if(beaker)
@@ -155,7 +156,7 @@
 
 			if(!(category in item_list) || !(name in item_list[category])) // Not trying something that's not in the list, are you?
 				return
-			
+
 			var/datum/data/biogenerator_item/bi = item_list[category][name]
 			if(!istype(bi))
 				var/datum/data/biogenerator_reagent/br = item_list[category][name]
@@ -175,7 +176,7 @@
 				beaker.reagents.add_reagent(br.reagent_id, amt_to_actually_dispense)
 				playsound(src, 'sound/machines/reagent_dispense.ogg', 25, 1)
 				return
-			
+
 			var/cost = round(bi.cost / build_eff)
 			if(cost > points)
 				to_chat(usr, "<span class='danger'>Insufficient biomass.</span>")
@@ -183,8 +184,7 @@
 
 			points -= cost
 			if(ispath(bi.equipment_path, /obj/item/stack))
-				var/obj/item/stack/S = new bi.equipment_path(loc)
-				S.amount = bi.equipment_amt
+				new bi.equipment_path(loc, bi.equipment_amt)
 				playsound(src, 'sound/machines/vending/vending_drop.ogg', 100, 1)
 				return TRUE
 

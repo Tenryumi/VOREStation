@@ -16,7 +16,7 @@
 
 	var/speech_bubble_appearance = "normal"					// Part of icon_state to use for speech bubbles when talking.	See talk.dmi for available icons.
 	var/fire_icon_state = "humanoid"						// The icon_state used inside OnFire.dmi for when on fire.
-	var/suit_storage_icon = 'icons/mob/belt_mirror.dmi'		// Icons used for worn items in suit storage slot.
+	var/suit_storage_icon = 'icons/inventory/suit_store/mob.dmi' // Icons used for worn items in suit storage slot.
 
 	// Damage overlay and masks.
 	var/damage_overlays = 'icons/mob/human_races/masks/dam_human.dmi'
@@ -53,9 +53,9 @@
 
 	var/taste_sensitivity = TASTE_NORMAL							// How sensitive the species is to minute tastes.
 	var/allergens = null									// Things that will make this species very sick
-	var/allergen_reaction = AG_TOX_DMG|AG_OXY_DMG|AG_EMOTE|AG_PAIN|AG_WEAKEN		// What type of reactions will you have? These the 'main' options and are intended to approximate anaphylactic shock at high doses.
-	var/allergen_damage_severity = 1.2							// How bad are reactions to the allergen? Touch with extreme caution.
-	var/allergen_disable_severity = 3							// Whilst this determines how long nonlethal effects last and how common emotes are.
+	var/allergen_reaction = AG_TOX_DMG|AG_OXY_DMG|AG_EMOTE|AG_PAIN|AG_BLURRY|AG_CONFUSE	// What type of reactions will you have? These the 'main' options and are intended to approximate anaphylactic shock at high doses.
+	var/allergen_damage_severity = 2.5							// How bad are reactions to the allergen? Touch with extreme caution.
+	var/allergen_disable_severity = 10							// Whilst this determines how long nonlethal effects last and how common emotes are.
 
 	var/min_age = 17
 	var/max_age = 70
@@ -72,7 +72,7 @@
 
 	// The languages the species can't speak without an assisted organ.
 	// This list is a guess at things that no one other than the parent species should be able to speak
-	var/list/assisted_langs = list(LANGUAGE_EAL, LANGUAGE_SKRELLIAN, LANGUAGE_SKRELLIANFAR, LANGUAGE_ROOTLOCAL, LANGUAGE_ROOTGLOBAL, LANGUAGE_VOX) //VOREStation Edit
+	var/list/assisted_langs = list(LANGUAGE_EAL, LANGUAGE_SKRELLIAN, LANGUAGE_ROOTLOCAL, LANGUAGE_ROOTGLOBAL, LANGUAGE_VOX, LANGUAGE_PROMETHEAN) //VOREStation Edit
 
 	//Soundy emotey things.
 	var/scream_verb_1p = "scream"
@@ -99,15 +99,18 @@
 	var/flash_mod =     1								// Stun from blindness modifier (flashes and flashbangs)
 	var/flash_burn =    0								// how much damage to take from being flashed if light hypersensitive
 	var/sound_mod =     1								// Multiplier to the effective *range* of flashbangs. a flashbang's bang hits an entire screen radius, with some falloff.
-	var/chem_strength_heal =	1						// Multiplier to most beneficial chem strength
-	var/chem_strength_pain =	1						// Multiplier to painkiller strength (could be used in a negative trait to simulate long-term addiction reducing effects, etc.)
-	var/chem_strength_tox =		1						// Multiplier to toxic chem strength (inc. chloral/sopo/mindbreaker/etc. thresholds)
+	var/throwforce_absorb_threshold = 0					// Ignore damage of thrown items below this value
+
+	var/chem_strength_heal =    1						// Multiplier to most beneficial chem strength
+	var/chem_strength_pain =    1						// Multiplier to painkiller strength (could be used in a negative trait to simulate long-term addiction reducing effects, etc.)
+	var/chem_strength_tox =	    1						// Multiplier to toxic chem strength (inc. chloral/sopo/mindbreaker/etc. thresholds)
+	var/chem_strength_alcohol = 1						// Multiplier to alcohol strength; 0.5 = half, 0 = no effect at all, 2 = double, etc.
+
 	var/chemOD_threshold =		1						// Multiplier to overdose threshold; lower = easier overdosing
 	var/chemOD_mod =		1						// Damage modifier for overdose; higher = more damage from ODs
-	var/alcohol_mod =		1						// Multiplier to alcohol strength; 0.5 = half, 0 = no effect at all, 2 = double, etc.
 	var/pain_mod =			1						// Multiplier to pain effects; 0.5 = half, 0 = no effect (equal to NO_PAIN, really), 2 = double, etc.
 	var/spice_mod =			1						// Multiplier to spice/capsaicin/frostoil effects; 0.5 = half, 0 = no effect (immunity), 2 = double, etc.
-	var/trauma_mod = 		1						// Affects traumatic shock (how fast pain crit happens). 0 = no effect (immunity to pain crit), 2 = double etc.Overriden by "can_feel_pain" var	
+	var/trauma_mod = 		1						// Affects traumatic shock (how fast pain crit happens). 0 = no effect (immunity to pain crit), 2 = double etc.Overriden by "can_feel_pain" var
 	// set below is EMP interactivity for nonsynth carbons
 	var/emp_sensitivity =		0			// bitflag. valid flags are: EMP_PAIN, EMP_BLIND, EMP_DEAFEN, EMP_CONFUSE, EMP_STUN, and EMP_(BRUTE/BURN/TOX/OXY)_DMG
 	var/emp_dmg_mod =		1			// Multiplier to all EMP damage sustained by the mob, if it's EMP-sensitive
@@ -129,6 +132,7 @@
 	var/breath_type = "oxygen"								// Non-oxygen gas breathed, if any.
 	var/poison_type = "phoron"								// Poisonous air.
 	var/exhale_type = "carbon_dioxide"						// Exhaled gas type.
+	var/water_breather = FALSE
 
 	var/body_temperature = 310.15							// Species will try to stabilize at this temperature. (also affects temperature processing)
 
@@ -200,13 +204,15 @@
 	var/has_glowing_eyes = 0								// Whether the eyes are shown above all lighting
 	var/water_movement = 0									// How much faster or slower the species is in water
 	var/snow_movement = 0									// How much faster or slower the species is on snow
-
+	var/can_space_freemove = FALSE							// Can we freely move in space?
+	var/can_zero_g_move	= FALSE								// What about just in zero-g non-space?
 
 	var/item_slowdown_mod = 1								// How affected by item slowdown the species is.
 	var/primitive_form										// Lesser form, if any (ie. monkey for humans)
 	var/greater_form										// Greater form, if any, ie. human for monkeys.
 	var/holder_type
 	var/gluttonous											// Can eat some mobs. 1 for mice, 2 for monkeys, 3 for people.
+	var/soft_landing = FALSE								// Can fall down and land safely on small falls.
 
 	var/rarity_value = 1									// Relative rarity/collector value for this species.
 	var/economic_modifier = 2								// How much money this species makes
@@ -271,6 +277,10 @@
 	var/wikilink = null //link to wiki page for species
 	var/icon_height = 32
 	var/agility = 20 //prob() to do agile things
+	var/gun_accuracy_mod = 0	// More is better
+	var/gun_accuracy_dispersion_mod = 0	// More is worse
+
+	var/sort_hint = SPECIES_SORT_NORMAL
 
 /datum/species/proc/update_attack_types()
 	unarmed_attacks = list()
@@ -304,6 +314,14 @@
 		if(!inherent_verbs)
 			inherent_verbs = list()
 		inherent_verbs |= /mob/living/carbon/human/proc/regurgitate
+
+	update_sort_hint()
+
+/datum/species/proc/update_sort_hint()
+	if(spawn_flags & SPECIES_IS_RESTRICTED)
+		sort_hint = SPECIES_SORT_RESTRICTED
+	else if(spawn_flags & SPECIES_IS_WHITELISTED)
+		sort_hint = SPECIES_SORT_WHITELISTED
 
 /datum/species/proc/sanitize_name(var/name, var/robot = 0)
 	return sanitizeName(name, MAX_NAME_LEN, robot)
@@ -489,7 +507,7 @@
 
 // Called when lying down on a water tile.
 /datum/species/proc/can_breathe_water()
-	return FALSE
+	return water_breather
 
 // Impliments different trails for species depending on if they're wearing shoes.
 /datum/species/proc/get_move_trail(var/mob/living/carbon/human/H)
@@ -530,4 +548,22 @@
 		H.adjustToxLoss(amount)
 
 /datum/species/proc/handle_falling(mob/living/carbon/human/H, atom/hit_atom, damage_min, damage_max, silent, planetary)
+	if(soft_landing)
+		if(planetary || !istype(H))
+			return FALSE
+
+		var/turf/landing = get_turf(hit_atom)
+		if(!istype(landing))
+			return FALSE
+
+		if(!silent)
+			to_chat(H, SPAN_NOTICE("You manage to lower impact of the fall and land safely."))
+			landing.visible_message("<b>\The [H]</b> lowers down from above, landing safely.")
+			playsound(H, "rustle", 25, 1)
+		return TRUE
+
 	return FALSE
+
+/datum/species/proc/post_spawn_special(mob/living/carbon/human/H)
+	return
+

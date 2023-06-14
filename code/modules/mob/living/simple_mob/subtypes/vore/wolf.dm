@@ -3,7 +3,7 @@
 	desc = "Some sort of wolf, a descendent or otherwise of regular Earth canidae. They look almost exactly like their \
 	Earth counterparts, except for the fact that their fur is a uniform grey. Some do show signs of unique coloration, and they \
 	love to nip and bite at things, as well as sniffing around. They seem to mark their territory by way of scent-marking/urinating on things."
-	value = CATALOGUER_REWARD_MEDIUM
+	value = CATALOGUER_REWARD_EASY
 
 /mob/living/simple_mob/animal/wolf
 	name = "grey wolf"
@@ -19,15 +19,19 @@
 	response_disarm = "bops"
 	response_harm = "hits"
 
-	movement_cooldown = 5
+	movement_cooldown = 1.5
 
 	harm_intent_damage = 5
 	melee_damage_lower = 5
 	melee_damage_upper = 12
 
+	meat_type = /obj/item/weapon/reagent_containers/food/snacks/meat
+	meat_amount = 5
+
 	minbodytemp = 200
 
 	ai_holder_type = /datum/ai_holder/simple_mob/melee/evasive
+	catalogue_data = list(/datum/category_item/catalogue/fauna/wolf)
 
 // Activate Noms!
 /mob/living/simple_mob/animal/wolf
@@ -42,7 +46,7 @@
 	health = 40
 	maxHealth = 40
 
-	movement_cooldown = 3
+	movement_cooldown = 0
 
 	harm_intent_damage = 5
 	melee_damage_lower = 10
@@ -98,7 +102,7 @@
 		riding_datum = new /datum/riding/simple_mob(src)
 	verbs |= /mob/living/simple_mob/proc/animal_mount
 	verbs |= /mob/living/proc/toggle_rider_reins
-	movement_cooldown = 2
+	movement_cooldown = -1
 
 /mob/living/simple_mob/animal/wolf/direwolf/MouseDrop_T(mob/living/M, mob/living/user)
 	return

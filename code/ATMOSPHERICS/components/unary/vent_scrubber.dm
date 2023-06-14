@@ -20,7 +20,7 @@
 
 	var/hibernate = 0 //Do we even process?
 	var/scrubbing = 1 //0 = siphoning, 1 = scrubbing
-	var/list/scrubbing_gas = list("carbon_dioxide")
+	var/list/scrubbing_gas = list("carbon_dioxide", "phoron")
 
 	var/panic = 0 //is this scrubber panicked?
 
@@ -42,6 +42,12 @@
 	if (!id_tag)
 		assign_uid()
 		id_tag = num2text(uid)
+
+/obj/machinery/atmospherics/unary/vent_scrubber/proc/update_area()
+	initial_loc = get_area(loc)
+	area_uid = "\ref[initial_loc]"
+	assign_uid()
+	id_tag = num2text(uid)
 
 /obj/machinery/atmospherics/unary/vent_scrubber/Destroy()
 	unregister_radio(src, frequency)
@@ -281,7 +287,7 @@
 	to_chat(user, "<span class='notice'>You begin to unfasten \the [src]...</span>")
 	if (do_after(user, 40 * W.toolspeed))
 		user.visible_message( \
-			"<span class='notice'>\The [user] unfastens \the [src].</span>", \
+			"<b>\The [user]</b> unfastens \the [src].", \
 			"<span class='notice'>You have unfastened \the [src].</span>", \
 			"You hear a ratchet.")
 		deconstruct()

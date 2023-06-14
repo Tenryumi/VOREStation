@@ -34,12 +34,6 @@
 /obj/item/clothing/suit/storage/vest/hos
 	armor = list(melee = 50, bullet = 40, laser = 40, energy = 25, bomb = 25, bio = 0, rad = 0)
 
-/obj/item/clothing/suit/storage/vest/hoscoat/jensen
-	name = "armored trenchcoat"
-	desc = "A trenchcoat augmented with a special alloy for some protection and style."
-	icon_state = "hostrench"
-	flags_inv = HIDEHOLSTER
-
 // Override Polaris's "confederate" naming convention. I hate it.
 /obj/item/clothing/suit/storage/vest/solgov
 	name = "peacekeeper armored vest"
@@ -61,16 +55,16 @@
 	name = "marine body armor"
 	desc = "When I joined the Corps, we didn't have any fancy-schmanzy armor. We had sticks! Two sticks, and a rock for the whole platoon-and we had to <i>share</i> the rock!"
 	icon_state = "unsc_armor"
-	icon = 'icons/obj/clothing/suits_vr.dmi'
-	icon_override = 'icons/mob/suit_vr.dmi'
+	icon = 'icons/inventory/suit/item_vr.dmi'
+	icon_override = 'icons/inventory/suit/mob_vr.dmi'
 	body_parts_covered = UPPER_TORSO|LOWER_TORSO // ToDo: Break up the armor into smaller bits.
 
 /obj/item/clothing/suit/armor/combat/imperial
 	name = "imperial soldier armor"
 	desc = "Made out of an especially light metal, it lets you conquer in style."
 	icon_state = "ge_armor"
-	icon = 'icons/obj/clothing/suits_vr.dmi'
-	icon_override = 'icons/mob/suit_vr.dmi'
+	icon = 'icons/inventory/suit/item_vr.dmi'
+	icon_override = 'icons/inventory/suit/mob_vr.dmi'
 	body_parts_covered = UPPER_TORSO|LOWER_TORSO
 
 /obj/item/clothing/suit/armor/combat/imperial/centurion
@@ -79,12 +73,12 @@
 	icon_state = "ge_armorcent"
 
 /obj/item/clothing/suit/storage/vest/wardencoat/alt2
-	icon = 'icons/obj/clothing/suits_vr.dmi'
-	icon_override = 'icons/mob/suit_vr.dmi'
+	icon = 'icons/inventory/suit/item_vr.dmi'
+	icon_override = 'icons/inventory/suit/mob_vr.dmi'
 
 /obj/item/clothing/suit/storage/vest/hoscoat/jensen/alt
-	icon = 'icons/obj/clothing/suits_vr.dmi'
-	icon_override = 'icons/mob/suit_vr.dmi'
+	icon = 'icons/inventory/suit/item_vr.dmi'
+	icon_override = 'icons/inventory/suit/mob_vr.dmi'
 
 // Armor Versions Here
 /obj/item/clothing/suit/armor/combat/crusader
@@ -120,7 +114,65 @@
 	icon_state = "bedevere"
 	body_parts_covered = UPPER_TORSO|LOWER_TORSO
 
+
+
 //Deluxe explorer suit
 /obj/item/clothing/suit/armor/pcarrier/explorer/deluxe
 	name = "modular explorer suit"
 	desc = "A modification of the explorer suit with a modular armor system. Requires you to insert armor plates."
+
+// 'Crusader' armor
+/obj/item/clothing/suit/armor/crusader
+	name = "crusader armor"
+	desc = "God will protect those who defend his faith."
+
+	armor = list("melee" = 50, "bullet" = 50, "laser" = 50, "energy" = 25, "bomb" = 30, "bio" = 0, "rad" = 0)
+
+	icon = 'icons/inventory/suit/item_vr.dmi'
+	default_worn_icon = 'icons/inventory/suit/mob_vr.dmi'
+	icon_state = "crusader_suit"
+
+/obj/item/clothing/head/helmet/crusader
+	name = "crusader helmet"
+	desc = "God will protect those who defend his faith."
+
+	armor = list("melee" = 50, "bullet" = 50, "laser" = 50, "energy" = 25, "bomb" = 30, "bio" = 0, "rad" = 0)
+
+	icon = 'icons/inventory/head/item_vr.dmi'
+	default_worn_icon = 'icons/inventory/head/mob_vr.dmi'
+	icon_state = "crusader_head"
+
+/obj/item/clothing/suit/armor/combat/crusader_explo
+	name = "explorer low tech suit"
+	desc = "A low tech armoured suit for exploring harsh environments."
+	icon_state = "crusader_explo"
+	icon = 'icons/obj/clothing/knights_vr.dmi'
+	icon_override = 'icons/obj/clothing/knights_vr.dmi'
+	flags = THICKMATERIAL
+	body_parts_covered = UPPER_TORSO|LOWER_TORSO|LEGS|ARMS
+	min_cold_protection_temperature = SPACE_SUIT_MIN_COLD_PROTECTION_TEMPERATURE
+	cold_protection = UPPER_TORSO|LOWER_TORSO|LEGS|ARMS
+	slowdown=0
+	siemens_coefficient = 0.9
+	armor = list(melee = 30, bullet = 20, laser = 20, energy = 20, bomb = 35, bio = 75, rad = 35) // Inferior to sec vests in bullet/laser but better for environmental protection.
+	allowed = list(
+		/obj/item/device/flashlight,
+		/obj/item/weapon/gun,
+		/obj/item/ammo_magazine,
+		/obj/item/weapon/melee,
+		/obj/item/weapon/material/knife,
+		/obj/item/weapon/tank,
+		/obj/item/device/radio,
+		/obj/item/weapon/pickaxe
+		)
+
+/obj/item/clothing/suit/armor/combat/crusader_explo/FM
+	name = "field medic low tech suit"
+	icon_state = "crusader_explo/FM"
+
+// martian miner coat
+/obj/item/clothing/suit/storage/vest/martian_miner
+	name = "martian miner's coat"
+	desc = "A sturdy, rugged coat once favoured by miners on Mars. These coats became strongly associated with early Martian Independence movements as a result, and remain moderately popular amongst members of the Third Ares Confederation."
+	icon_state = "martian_miner"
+	armor = list(melee = 25, bullet = 15, laser = 15, energy = 0, bomb = 25, bio = 0, rad = 0)

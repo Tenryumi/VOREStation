@@ -16,8 +16,8 @@
 	desc = "A set of wooden shelves, perfect for placing books on."
 	icon = 'icons/obj/library.dmi'
 	icon_state = "book-0"
-	anchored = 1
-	density = 1
+	anchored = TRUE
+	density = TRUE
 	opacity = 1
 
 /obj/structure/bookcase/Initialize()
@@ -33,7 +33,7 @@
 		O.loc = src
 		update_icon()
 	else if(istype(O, /obj/item/weapon/pen))
-		var/newname = sanitizeSafe(input("What would you like to title this bookshelf?"), MAX_NAME_LEN)
+		var/newname = sanitizeSafe(tgui_input_text(usr, "What would you like to title this bookshelf?", null, null, MAX_NAME_LEN), MAX_NAME_LEN)
 		if(!newname)
 			return
 		else
@@ -57,7 +57,7 @@
 
 /obj/structure/bookcase/attack_hand(var/mob/user as mob)
 	if(contents.len)
-		var/obj/item/weapon/book/choice = input("Which book would you like to remove from the shelf?") as null|obj in contents
+		var/obj/item/weapon/book/choice = tgui_input_list(usr, "Which book would you like to remove from the shelf?", "Book Selection", contents)
 		if(choice)
 			if(!usr.canmove || usr.stat || usr.restrained() || !in_range(loc, usr))
 				return
@@ -104,7 +104,7 @@ Book Cart
 	name = "book cart"
 	icon = 'icons/obj/library.dmi'
 	icon_state = "bookcart-0"
-	anchored = 0
+	anchored = FALSE
 	opacity = 0
 
 /obj/structure/bookcase/bookcart/attackby(obj/item/O as obj, mob/user as mob)
@@ -226,10 +226,10 @@ Book Cart End
 		if(unique)
 			to_chat(user, "These pages don't seem to take the ink well. Looks like you can't modify it.")
 			return
-		var/choice = input("What would you like to change?") in list("Title", "Contents", "Author", "Cancel")
+		var/choice = tgui_input_list(usr, "What would you like to change?", "Change What?", list("Title", "Contents", "Author", "Cancel"))
 		switch(choice)
 			if("Title")
-				var/newtitle = reject_bad_text(sanitizeSafe(input("Write a new title:")))
+				var/newtitle = reject_bad_text(sanitizeSafe(tgui_input_text(usr, "Write a new title:")))
 				if(!newtitle)
 					to_chat(usr, "The title is invalid.")
 					return
@@ -237,14 +237,14 @@ Book Cart End
 					src.name = newtitle
 					src.title = newtitle
 			if("Contents")
-				var/content = sanitize(input("Write your book's contents (HTML NOT allowed):") as message|null, MAX_BOOK_MESSAGE_LEN)
+				var/content = sanitize(input(usr, "Write your book's contents (HTML NOT allowed):") as message|null, MAX_BOOK_MESSAGE_LEN)
 				if(!content)
 					to_chat(usr, "The content is invalid.")
 					return
 				else
 					src.dat += content
 			if("Author")
-				var/newauthor = sanitize(input(usr, "Write the author's name:"))
+				var/newauthor = sanitize(tgui_input_text(usr, "Write the author's name:"))
 				if(!newauthor)
 					to_chat(usr, "The name is invalid.")
 					return
@@ -309,6 +309,8 @@ Book Cart End
 	var/list/pages = list() //the contents of each page
 
 /obj/item/weapon/book/bundle/proc/show_content(mob/user as mob)
+	if(!pages.len)
+		return
 	var/dat
 	var/obj/item/weapon/W = pages[page]
 	// first

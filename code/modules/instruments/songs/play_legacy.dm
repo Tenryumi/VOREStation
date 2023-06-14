@@ -80,12 +80,14 @@
 	if((world.time - MUSICIAN_HEARCHECK_MINDELAY) > last_hearcheck)
 		do_hearcheck()
 	var/sound/music_played = sound(soundfile)
-	for(var/i in hearing_mobs)
-		var/mob/M = i
+	for(var/mob/M as anything in hearing_mobs)
 		/* Would be nice
 		if(user && HAS_TRAIT(user, TRAIT_MUSICIAN) && isliving(M))
 			var/mob/living/L = M
 			L.apply_status_effect(STATUS_EFFECT_GOOD_MUSIC)
 		*/
+		if(!M)
+			hearing_mobs -= M
+			continue
 		M.playsound_local(source, null, volume * using_instrument.volume_multiplier, S = music_played, preference = /datum/client_preference/instrument_toggle, volume_channel = VOLUME_CHANNEL_INSTRUMENTS)
 		// Could do environment and echo later but not for now

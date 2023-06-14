@@ -20,7 +20,7 @@ GLOBAL_REAL(GLOB, /datum/controller/global_vars)
 	Initialize(exclude_these)
 
 /datum/controller/global_vars/Destroy(force)
-	crash_with("There was an attempt to qdel the global vars holder!")
+	stack_trace("There was an attempt to qdel the global vars holder!")
 	if(!force)
 		return QDEL_HINT_LETMELIVE
 
@@ -36,7 +36,7 @@ GLOBAL_REAL(GLOB, /datum/controller/global_vars)
 	if(!statclick)
 		statclick = new/obj/effect/statclick/debug(null, "Initializing...", src)
 
-	stat("GLOB:", statclick.update("Edit"))
+	stat("GLOB:", "Button Removed Due To Crashing") //VOREStation Edit
 
 /datum/controller/global_vars/vv_edit_var(var_name, var_value)
 	if(gvars_datum_protected_varlist[var_name])

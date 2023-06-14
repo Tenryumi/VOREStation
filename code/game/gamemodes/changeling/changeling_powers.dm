@@ -102,7 +102,8 @@ var/global/list/possible_changeling_IDs = list("Alpha","Beta","Gamma","Delta","E
 
 	var/mob/living/carbon/human/H = src
 	if(istype(H))
-		var/datum/absorbed_dna/newDNA = new(H.real_name, H.dna, H.species.name, H.languages, H.identifying_gender, H.flavor_texts)
+		var/saved_dna = H.dna.Clone() /// Prevent transform from breaking. 
+		var/datum/absorbed_dna/newDNA = new(H.real_name, saved_dna, H.species.name, H.languages, H.identifying_gender, H.flavor_texts, H.modifiers)
 		absorbDNA(newDNA)
 
 	return 1
@@ -221,7 +222,7 @@ var/global/list/possible_changeling_IDs = list("Alpha","Beta","Gamma","Delta","E
 	var/list/victims = list()
 	for(var/mob/living/carbon/C in oview(changeling.sting_range))
 		victims += C
-	var/mob/living/carbon/T = input(src, "Who will we sting?") as null|anything in victims
+	var/mob/living/carbon/T = tgui_input_list(src, "Who will we sting?", "Sting!", victims)
 
 	if(!T)
 		return

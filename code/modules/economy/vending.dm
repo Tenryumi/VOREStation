@@ -11,8 +11,9 @@
 	desc = "A generic vending machine."
 	icon = 'icons/obj/vending.dmi'
 	icon_state = "generic"
-	anchored = 1
-	density = 1
+	anchored = TRUE
+	density = TRUE
+	unacidable = TRUE
 	clicksound = "button"
 
 	// Power
@@ -36,7 +37,15 @@
 	var/list/products	= list() // For each, use the following pattern:
 	var/list/contraband	= list() // list(/type/path = amount,/type/path2 = amount2)
 	var/list/premium 	= list() // No specified amount = only one in stock
+	/// Set automatically, allows coin use
+	var/has_premium = FALSE
 	var/list/prices     = list() // Prices for each item, list(/type/path = price), items not in the list don't have a price.
+	/// Set automatically, enables pricing
+	var/has_prices = FALSE
+	// This one is used for refill cartridge use.
+	var/list/refill	= list() // For each, use the following pattern:
+	// Enables refilling with appropriate cartridges
+	var/refillable = TRUE
 
 	// List of vending_product items available.
 	var/list/product_records = list()
@@ -60,6 +69,7 @@
 	emagged = 0 //Ignores if somebody doesn't have card access to that machine.
 	var/seconds_electrified = 0 //Shock customers like an airlock.
 	var/shoot_inventory = 0 //Fire items at customers! We're broken!
+	var/shoot_inventory_chance = 1
 
 	var/scan_id = 1
 	var/obj/item/weapon/coin/coin
@@ -115,14 +125,42 @@ GLOBAL_LIST_EMPTY(vending_products)
 			product_records.Add(product)
 			GLOB.vending_products[entry] = 1
 
+	if(LAZYLEN(prices))
+		has_prices = TRUE
+	if(LAZYLEN(premium))
+		has_premium = TRUE
+
+
+	if(!LAZYLEN(refill) && refillable)			// Manually setting refill list prevents the automatic population. By default filled with all entries from normal product.
+		refill += products
+
+	LAZYCLEARLIST(products)
+	LAZYCLEARLIST(contraband)
+	LAZYCLEARLIST(premium)
+	LAZYCLEARLIST(prices)
+	all_products.Cut()
+
+/obj/machinery/vending/proc/refill_inventory()
+	if(!(LAZYLEN(refill)))		//This shouldn't happen, but just in case...
+		return
+
+	for(var/entry in refill)
+		var/datum/stored_item/vending_product/current_product
+		for(var/datum/stored_item/vending_product/product in product_records)
+			if(product.item_path == entry)
+				current_product = product
+				break
+		if(!current_product)
+			continue
+		else
+			current_product.refill_products(refill[entry])
+
 /obj/machinery/vending/Destroy()
 	qdel(wires)
 	wires = null
 	qdel(coin)
 	coin = null
-	for(var/datum/stored_item/vending_product/R in product_records)
-		qdel(R)
-	product_records = null
+	QDEL_NULL_LIST(product_records)
 	return ..()
 
 /obj/machinery/vending/ex_act(severity)
@@ -146,7 +184,7 @@ GLOBAL_LIST_EMPTY(vending_products)
 /obj/machinery/vending/emag_act(var/remaining_charges, var/mob/user)
 	if(!emagged)
 		emagged = 1
-		to_chat(user, "You short out \the [src]'s product lock.")
+		to_chat(user, "<span class='filter_notice'>You short out \the [src]'s product lock.</span>")
 		return 1
 
 /obj/machinery/vending/attackby(obj/item/weapon/W as obj, mob/user as mob)
@@ -155,6 +193,29 @@ GLOBAL_LIST_EMPTY(vending_products)
 	if(I || istype(W, /obj/item/weapon/spacecash))
 		attack_hand(user)
 		return
+	else if(istype(W, /obj/item/weapon/refill_cartridge))
+		if(stat & (BROKEN|NOPOWER))
+			to_chat(user, "<span class='notice'>You cannot refill [src] while it is not functioning.</span>")
+			return
+		if(!anchored)
+			to_chat(user, "<span class='notice'>You cannot refill [src] while it is not secured.</span>")
+			return
+		if(panel_open)
+			to_chat(user, "<span class='notice'>You cannot refill [src] while it's panel is open.</span>")
+			return
+		if(!refillable)
+			to_chat(user, "<span class='notice'>\the [src] does not have a refill port.</span>")
+			return
+		var/obj/item/weapon/refill_cartridge/RC = W
+		if(RC.can_refill(src))
+			to_chat(user, "<span class='notice'>You refill [src] using [RC].</span>")
+			user.drop_from_inventory(RC)
+			qdel(RC)
+			refill_inventory()
+			return
+		else
+			to_chat(user, "<span class='notice'>You cannot refill [src] with [RC].</span>")
+			return
 	else if(W.is_screwdriver())
 		panel_open = !panel_open
 		to_chat(user, "You [panel_open ? "open" : "close"] the maintenance panel.")
@@ -171,7 +232,7 @@ GLOBAL_LIST_EMPTY(vending_products)
 		if(panel_open)
 			attack_hand(user)
 		return
-	else if(istype(W, /obj/item/weapon/coin) && premium.len > 0)
+	else if(istype(W, /obj/item/weapon/coin) && has_premium)
 		user.drop_item()
 		W.forceMove(src)
 		coin = W
@@ -182,9 +243,9 @@ GLOBAL_LIST_EMPTY(vending_products)
 	else if(W.is_wrench())
 		playsound(src, W.usesound, 100, 1)
 		if(anchored)
-			user.visible_message("[user] begins unsecuring \the [src] from the floor.", "You start unsecuring \the [src] from the floor.")
+			user.visible_message("<span class='filter_notice'>[user] begins unsecuring \the [src] from the floor.</span>", "<span class='filter_notice'>You start unsecuring \the [src] from the floor.</span>")
 		else
-			user.visible_message("[user] begins securing \the [src] to the floor.", "You start securing \the [src] to the floor.")
+			user.visible_message("<span class='filter_notice'>[user] begins securing \the [src] to the floor.</span>", "<span class='filter_notice'>You start securing \the [src] to the floor.</span>")
 
 		if(do_after(user, 20 * W.toolspeed))
 			if(!src) return
@@ -209,7 +270,7 @@ GLOBAL_LIST_EMPTY(vending_products)
 
 		// This is not a status display message, since it's something the character
 		// themselves is meant to see BEFORE putting the money in
-		to_chat(usr, "[bicon(cashmoney)] <span class='warning'>That is not enough money.</span>")
+		to_chat(usr, "\icon[cashmoney][bicon(cashmoney)] <span class='warning'>That is not enough money.</span>")
 		return 0
 
 	if(istype(cashmoney, /obj/item/weapon/spacecash))
@@ -266,7 +327,7 @@ GLOBAL_LIST_EMPTY(vending_products)
 	// Have the customer punch in the PIN before checking if there's enough money. Prevents people from figuring out acct is
 	// empty at high security levels
 	if(customer_account.security_level != 0) //If card requires pin authentication (ie seclevel 1 or 2)
-		var/attempt_pin = input("Enter pin code", "Vendor transaction") as num
+		var/attempt_pin = tgui_input_number(usr, "Enter pin code", "Vendor transaction")
 		customer_account = attempt_account_access(I.associated_account_number, attempt_pin, 2)
 
 		if(!customer_account)
@@ -350,7 +411,7 @@ GLOBAL_LIST_EMPTY(vending_products)
 	var/list/data = list()
 	var/list/listed_products = list()
 
-	data["chargesMoney"] = length(prices) > 0 ? TRUE : FALSE
+	data["chargesMoney"] = has_prices ? TRUE : FALSE
 	for(var/key = 1 to product_records.len)
 		var/datum/stored_item/vending_product/I = product_records[key]
 
@@ -426,7 +487,7 @@ GLOBAL_LIST_EMPTY(vending_products)
 				return FALSE
 
 			if(!coin)
-				to_chat(usr, "There is no coin in this machine.")
+				to_chat(usr, "<span class='filter_notice'>There is no coin in this machine.</span>")
 				return
 
 			coin.forceMove(src.loc)
@@ -477,7 +538,7 @@ GLOBAL_LIST_EMPTY(vending_products)
 			var/obj/item/weapon/card/id/C = H.GetIdCard()
 
 			if(!vendor_account || vendor_account.suspended)
-				to_chat(usr, "Vendor account offline. Unable to process transaction.")
+				to_chat(usr, "<span class='filter_notice'>Vendor account offline. Unable to process transaction.</span>")
 				flick("[icon_state]-deny",src)
 				vend_ready = TRUE
 				return
@@ -558,7 +619,7 @@ GLOBAL_LIST_EMPTY(vending_products)
 
 	use_power(vend_power_usage)	//actuators and stuff
 	flick("[icon_state]-vend",src)
-	addtimer(CALLBACK(src, .proc/delayed_vend, R, user), vend_delay)
+	addtimer(CALLBACK(src, PROC_REF(delayed_vend), R, user), vend_delay)
 
 /obj/machinery/vending/proc/delayed_vend(datum/stored_item/vending_product/R, mob/user)
 	R.get_product(get_turf(src))
@@ -567,7 +628,7 @@ GLOBAL_LIST_EMPTY(vending_products)
 	if(prob(1))
 		sleep(3)
 		if(R.get_product(get_turf(src)))
-			visible_message("<span class='notice'>\The [src] clunks as it vends an additional item.</span>")
+			visible_message("<b>\The [src]</b> clunks as it vends an additional item.")
 	playsound(src, "sound/[vending_sound]", 100, 1, 1)
 
 	GLOB.items_sold_shift_roundstat++
@@ -618,7 +679,7 @@ GLOBAL_LIST_EMPTY(vending_products)
 		return 0
 
 	if (src.anchored || usr:stat)
-		to_chat(usr, "It is bolted down!")
+		to_chat(usr, "<span class='filter_notice'>It is bolted down!</span>")
 		return 0
 	src.set_dir(turn(src.dir, 270))
 	return 1
@@ -663,7 +724,7 @@ GLOBAL_LIST_EMPTY(vending_products)
 		speak(slogan)
 		last_slogan = world.time
 
-	if(shoot_inventory && prob(2))
+	if(shoot_inventory && prob(shoot_inventory_chance))
 		throw_item()
 
 	return
@@ -703,20 +764,20 @@ GLOBAL_LIST_EMPTY(vending_products)
 
 //Somebody cut an important wire and now we're following a new definition of "pitch."
 /obj/machinery/vending/proc/throw_item()
-	var/obj/throw_item = null
+	var/obj/item/throw_item = null
 	var/mob/living/target = locate() in view(7,src)
 	if(!target)
 		return 0
 
-	for(var/datum/stored_item/vending_product/R in product_records)
+	for(var/datum/stored_item/vending_product/R in shuffle(product_records))
 		throw_item = R.get_product(loc)
 		if(!throw_item)
 			continue
 		break
 	if(!throw_item)
-		return 0
-	spawn(0)
-		throw_item.throw_at(target, 16, 3, src)
+		return FALSE
+	throw_item.vendor_action(src)
+	INVOKE_ASYNC(throw_item, TYPE_PROC_REF(/atom/movable, throw_at), target, rand(3, 10), rand(1, 3), src)
 	visible_message("<span class='warning'>\The [src] launches \a [throw_item] at \the [target]!</span>")
 	return 1
 

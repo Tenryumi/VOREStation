@@ -24,7 +24,7 @@
 	var/languages=null
 	var/list/flavor=null
 	var/gender = null
-	var/list/body_descriptors = null
+	var/list/body_descriptors = null // Guess we'll keep null.
 	var/list/genetic_modifiers = list() // Modifiers with the MODIFIER_GENETIC flag are saved.  Note that only the type is saved, not an instance.
 
 /datum/dna2/record/proc/GetData()
@@ -54,7 +54,8 @@
 	newrecord.implant = implant
 	newrecord.flavor = flavor
 	newrecord.gender = gender
-	newrecord.body_descriptors = body_descriptors.Copy()
+	if(body_descriptors)
+		newrecord.body_descriptors = body_descriptors.Copy()
 	newrecord.genetic_modifiers = genetic_modifiers.Copy()
 	return newrecord
 
@@ -65,8 +66,8 @@
 	desc = "It scans DNA structures."
 	icon = 'icons/obj/Cryogenic2.dmi'
 	icon_state = "scanner_0"
-	density = 1
-	anchored = 1.0
+	density = TRUE
+	anchored = TRUE
 	use_power = USE_POWER_IDLE
 	idle_power_usage = 50
 	active_power_usage = 300
@@ -274,7 +275,7 @@
 	desc = "Scan DNA."
 	icon_keyboard = "med_key"
 	icon_screen = "dna"
-	density = 1
+	density = TRUE
 	circuit = /obj/item/weapon/circuitboard/scan_consolenew
 	var/selected_ui_block = 1.0
 	var/selected_ui_subblock = 1.0
@@ -290,7 +291,7 @@
 	var/obj/machinery/dna_scannernew/connected = null
 	var/obj/item/weapon/disk/data/disk = null
 	var/selected_menu_key = PAGE_UI
-	anchored = 1
+	anchored = TRUE
 	use_power = USE_POWER_IDLE
 	idle_power_usage = 10
 	active_power_usage = 400
@@ -740,7 +741,7 @@
 
 	// Cooldown
 	injector_ready = FALSE
-	addtimer(CALLBACK(src, .proc/injector_cooldown_finish), 30 SECONDS)
+	addtimer(CALLBACK(src, PROC_REF(injector_cooldown_finish)), 30 SECONDS)
 
 	// Create it
 	var/datum/dna2/record/buf = buffers[buffer_id]

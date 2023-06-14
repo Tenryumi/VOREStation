@@ -3,5 +3,7 @@
 	fire_delay = 4
 
 /obj/item/weapon/gun/energy/stunrevolver
-	icon = 'icons/obj/gun_vr.dmi'
 	charge_cost = 400
+
+/obj/item/weapon/gun/energy/taser/mounted/cyborg
+	charge_cost = 160

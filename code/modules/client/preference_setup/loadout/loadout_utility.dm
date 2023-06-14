@@ -21,8 +21,7 @@
 /datum/gear/utility/communicator/New()
 	..()
 	var/list/communicators = list()
-	for(var/communicator in typesof(/obj/item/device/communicator) - list(/obj/item/device/communicator/integrated,/obj/item/device/communicator/commlink)) //VOREStation Edit - Remove Commlink
-		var/obj/item/device/communicator_type = communicator
+	for(var/obj/item/device/communicator_type as anything in typesof(/obj/item/device/communicator) - list(/obj/item/device/communicator/integrated,/obj/item/device/communicator/commlink)) //VOREStation Edit - Remove Commlink
 		communicators[initial(communicator_type.name)] = communicator_type
 	gear_tweaks += new/datum/gear_tweak/path(sortAssoc(communicators))
 
@@ -31,7 +30,7 @@
 	path = /obj/item/device/camera
 
 /datum/gear/utility/codex
-	display_name = "the traveler's guide to vir"
+	display_name = "the traveler's guide to Virgo-Erigone"
 	path = /obj/item/weapon/book/codex //VOREStation Edit
 	cost = 0
 
@@ -73,8 +72,12 @@
 	path = /obj/item/weapon/folder/yellow
 
 /datum/gear/utility/paicard
-	display_name = "personal AI device"
+	display_name = "personal AI device (classic)"
 	path = /obj/item/device/paicard
+
+/datum/gear/utility/paicard_b
+	display_name = "personal AI device (new)"
+	path = /obj/item/device/paicard/typeb
 
 /datum/gear/utility/securecase
 	display_name = "secure briefcase"
@@ -90,37 +93,37 @@
 	display_name = "flashlight"
 	path = /obj/item/device/flashlight
 
-/datum/gear/utility/flashlight_blue
-	display_name = "flashlight, blue"
-	path = /obj/item/device/flashlight/color
-
-/datum/gear/utility/flashlight_orange
-	display_name = "flashlight, orange"
-	path = /obj/item/device/flashlight/color/orange
-
-/datum/gear/utility/flashlight_red
-	display_name = "flashlight, red"
-	path = /obj/item/device/flashlight/color/red
-
-/datum/gear/utility/flashlight_yellow
-	display_name = "flashlight, yellow"
-	path = /obj/item/device/flashlight/color/yellow
-
 /datum/gear/utility/maglight
 	display_name = "flashlight, maglight"
 	path = /obj/item/device/flashlight/maglight
 	cost = 2
+
+/datum/gear/utility/flashlight/color
+	display_name = "flashlight, small (selection)"
+	path = /obj/item/device/flashlight/color
+
+/datum/gear/utility/flashlight/color/New()
+	..()
+	var/list/flashlights = list(
+	"Blue Flashlight" = /obj/item/device/flashlight/color,
+	"Red Flashlight" = /obj/item/device/flashlight/color/red,
+	"Green Flashlight" = /obj/item/device/flashlight/color/green,
+	"Yellow Flashlight" = /obj/item/device/flashlight/color/yellow,
+	"Purple Flashlight" = /obj/item/device/flashlight/color/purple,
+	"Orange Flashlight" = /obj/item/device/flashlight/color/orange
+	)
+	gear_tweaks += new/datum/gear_tweak/path(flashlights)
 
 /datum/gear/utility/battery
 	display_name = "cell, device"
 	path = /obj/item/weapon/cell/device
 
 /datum/gear/utility/pen
-	display_name = "Fountain Pen"
+	display_name = "fountain pen"
 	path = /obj/item/weapon/pen/fountain
 
 /datum/gear/utility/umbrella
-	display_name = "Umbrella"
+	display_name = "umbrella"
 	path = /obj/item/weapon/melee/umbrella
 	cost = 3
 
@@ -132,7 +135,7 @@
 	display_name = "wheelchair selection"
 	path = /obj/item/wheelchair
 	cost = 4
-	
+
 /datum/gear/utility/wheelchair/New()
 	..()
 	gear_tweaks += gear_tweak_free_color_choice
@@ -141,6 +144,11 @@
 		"motorized wheelchair" = /obj/item/wheelchair/motor
 	)
 	gear_tweaks += new/datum/gear_tweak/path(wheelchairs)
+
+/datum/gear/utility/lantern
+	display_name = "lantern"
+	path = /obj/item/device/flashlight/lantern
+	cost = 2
 
 /****************
 modular computers

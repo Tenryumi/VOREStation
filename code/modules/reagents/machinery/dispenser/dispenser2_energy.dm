@@ -15,7 +15,7 @@
 		for(var/id in dispense_reagents)
 			var/datum/reagent/R = SSchemistry.chemical_reagents[id]
 			if(!R)
-				crash_with("[src] at [x],[y],[z] failed to find reagent '[id]'!")
+				stack_trace("[src] at [x],[y],[z] failed to find reagent '[id]'!")
 				dispense_reagents -= id
 				continue
 			var/obj/item/weapon/reagent_containers/chem_disp_cartridge/C = cartridges[R.name]
@@ -31,7 +31,8 @@
 	dispense_reagents = list(
 		"hydrogen", "lithium", "carbon", "nitrogen", "oxygen", "fluorine", "sodium",
 		"aluminum", "silicon", "phosphorus", "sulfur", "chlorine", "potassium", "iron",
-		"copper", "mercury", "radium", "water", "ethanol", "sugar", "sacid", "tungsten"
+		"copper", "mercury", "radium", "water", "ethanol", "sugar", "sacid", "tungsten",
+		"calcium"
 		)
 
 /obj/machinery/chemical_dispenser/ert
@@ -46,17 +47,17 @@
 /obj/machinery/chemical_dispenser/bar_soft
 	dispense_reagents = list(
 		"water", "ice", "coffee", "cream", "tea", "icetea", "cola", "spacemountainwind", "dr_gibb", "space_up", "tonic",
-		"sodawater", "lemon_lime", "sugar", "orangejuice", "limejuice", "watermelonjuice", "thirteenloko", "grapesoda"
+		"sodawater", "lemonjuice", "lemon_lime", "sugar", "orangejuice", "limejuice", "watermelonjuice", "thirteenloko", "grapesoda"
 		)
 
 /obj/machinery/chemical_dispenser/bar_alc
 	dispense_reagents = list(
 		"lemon_lime", "sugar", "orangejuice", "limejuice", "sodawater", "tonic", "beer", "kahlua",
-		"whiskey", "wine", "vodka", "cider", "gin", "rum", "tequilla", "vermouth", "cognac", "ale", "mead", "bitters"
+		"whiskey", "redwine", "whitewine", "vodka", "cider", "gin", "rum", "tequilla", "vermouth", "cognac", "ale", "mead", "bitters"
 		)
 
 /obj/machinery/chemical_dispenser/bar_coffee
 	dispense_reagents = list(
 		"coffee", "cafe_latte", "soy_latte", "hot_coco", "milk", "cream", "tea", "ice",
-		"orangejuice", "lemonjuice", "limejuice", "berryjuice", "mint", "decaf"
+		"orangejuice", "lemonjuice", "limejuice", "berryjuice", "mint", "decaf", "greentea"
 		)

@@ -8,7 +8,7 @@
 		return 1
 	if(feedback)
 		if(status[1] == HUMAN_EATING_NO_MOUTH)
-			to_chat(src, "Where do you intend to put \the [food]? You don't have a mouth!")
+			to_chat(src, "Where do you intend to put [food]? You don't have a mouth!")
 		else if(status[1] == HUMAN_EATING_BLOCKED_MOUTH)
 			to_chat(src, "<span class='warning'>\The [status[2]] is in the way!</span>")
 	return 0
@@ -19,7 +19,7 @@
 		return 1
 	if(feedback)
 		if(status[1] == HUMAN_EATING_NO_MOUTH)
-			to_chat(feeder, "Where do you intend to put \the [food]? \The [src] doesn't have a mouth!")
+			to_chat(feeder, "Where do you intend to put [food]? \The [src] doesn't have a mouth!")
 		else if(status[1] == HUMAN_EATING_BLOCKED_MOUTH)
 			to_chat(feeder, "<span class='warning'>\The [status[2]] is in the way!</span>")
 	return 0
@@ -94,6 +94,14 @@
 
 /mob/living/carbon/human/get_gender()
 	return identifying_gender ? identifying_gender : gender
+
+/mob/living/carbon/human/name_gender() /// Returns proper names for gender identites
+	if(identifying_gender == "plural")
+		return "other"
+	if(identifying_gender == "neuter")
+		return "none"
+	else
+		return get_gender()
 
 // This is the 'mechanical' check for synthetic-ness, not appearance
 // Returns the company that made the synthetic

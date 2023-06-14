@@ -83,7 +83,7 @@ var/list/ghost_traps
 	to_chat(target, "<b>Remember, the purpose of your existence is to serve the crew and the station. Above all else, do no harm.</b>")
 	to_chat(target, "<b>Use say #b to speak to other artificial intelligences.</b>")
 	var/turf/T = get_turf(target)
-	T.visible_message("<span class='notice'>\The [src] chimes quietly.</span>")
+	T.visible_message("<b>\The [src]</b> chimes quietly.")
 	var/obj/item/device/mmi/digital/posibrain/P = target.loc
 	if(!istype(P)) //wat
 		return
@@ -93,7 +93,7 @@ var/list/ghost_traps
 
 // Allows people to set their own name. May or may not need to be removed for posibrains if people are dumbasses.
 /datum/ghosttrap/proc/set_new_name(var/mob/target)
-	var/newname = sanitizeSafe(input(target,"Enter a name, or leave blank for the default name.", "Name change","") as text, MAX_NAME_LEN)
+	var/newname = sanitizeSafe(tgui_input_text(target,"Enter a name, or leave blank for the default name.", "Name change","", MAX_NAME_LEN), MAX_NAME_LEN)
 	if (newname != "")
 		target.real_name = newname
 		target.name = target.real_name

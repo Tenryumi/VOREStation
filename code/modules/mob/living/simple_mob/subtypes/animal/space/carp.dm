@@ -37,7 +37,7 @@
 	faction = "carp"
 	maxHealth = 25
 	health = 25
-	movement_cooldown = 0 // Carp go fast
+	movement_cooldown = -2
 	hovering = TRUE
 
 	response_help = "pets the"
@@ -51,7 +51,9 @@
 	attack_sound = 'sound/weapons/bite.ogg'
 	attacktext = list("bitten")
 
-	meat_amount = 1
+	organ_names = /decl/mob_organ_names/fish
+
+	meat_amount = 5
 	meat_type = /obj/item/weapon/reagent_containers/food/snacks/carpmeat
 
 	ai_holder_type = /datum/ai_holder/simple_mob/melee
@@ -82,7 +84,7 @@
 
 	maxHealth = 50
 	health = 50
-	movement_cooldown = 5 // Slower than the younger carp.
+	movement_cooldown = 1 // Slower than the younger carp.
 	mob_size = MOB_LARGE
 
 	pixel_x = -16
@@ -90,7 +92,7 @@
 	icon_expected_width = 64
 	icon_expected_height = 32
 
-	meat_amount = 3
+	meat_amount = 7
 
 
 /mob/living/simple_mob/animal/space/carp/large/huge
@@ -103,7 +105,7 @@
 
 	maxHealth = 230
 	health = 230
-	movement_cooldown = 10
+	movement_cooldown = 3
 
 	melee_damage_lower = 15 // About 20 DPS.
 	melee_damage_upper = 25
@@ -113,7 +115,7 @@
 	icon_expected_width = 64
 	icon_expected_height = 64
 
-	meat_amount = 10
+	meat_amount = 15
 
 
 /mob/living/simple_mob/animal/space/carp/holographic
@@ -153,5 +155,3 @@
 /mob/living/simple_mob/animal/space/carp/holographic/death()
 	..()
 	derez()
-
-

@@ -18,7 +18,7 @@
 /client/proc/admin_memo_write()
 	var/savefile/F = new(MEMOFILE)
 	if(F)
-		var/memo = sanitize(input(src,"Type your memo\n(Leaving it blank will delete your current memo):","Write Memo",null) as null|message, extra = 0)
+		var/memo = sanitize(tgui_input_text(src,"Type your memo\n(Leaving it blank will delete your current memo):","Write Memo",null, multiline = TRUE, prevent_enter = TRUE), extra = 0)
 		switch(memo)
 			if(null)
 				return
@@ -47,7 +47,7 @@
 	if(F)
 		var/ckey
 		if(check_rights(R_SERVER,0))	//high ranking admins can delete other admin's memos
-			ckey = input(src,"Whose memo shall we remove?","Remove Memo",null) as null|anything in F.dir
+			ckey = tgui_input_list(src,"Whose memo shall we remove?","Remove Memo", F.dir)
 		else
 			ckey = src.ckey
 		if(ckey)

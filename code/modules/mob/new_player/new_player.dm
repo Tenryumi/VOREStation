@@ -11,11 +11,11 @@
 
 	invisibility = 101
 
-	density = 0
+	density = FALSE
 	stat = 2
 	canmove = 0
 
-	anchored = 1	//  don't get pushed around
+	anchored = TRUE	//  don't get pushed around
 
 	var/created_for
 
@@ -30,10 +30,11 @@
 
 /mob/new_player/proc/new_player_panel_proc()
 	var/output = "<div align='center'>"
-	/* VOREStation Removal
-	output += "[using_map.get_map_info()]"
+
+	output += "<b>Current Map:</b><br>"
+	output += "[using_map.full_name]"
 	output +="<hr>"
-	VOREStation Removal End */
+
 	output += "<p><a href='byond://?src=\ref[src];show_preferences=1'>Character Setup</A></p>"
 
 	if(!ticker || ticker.current_state <= GAME_STATE_PREGAME)
@@ -67,21 +68,26 @@
 			else
 				output += "<p><a href='byond://?src=\ref[src];showpoll=1'>Show Player Polls</A></p>"
 
-	if(client.check_for_new_server_news())
-		output += "<p><b><a href='byond://?src=\ref[src];shownews=1'>Show Game Updates</A> (NEW!)</b></p>"
-	else
-		output += "<p><a href='byond://?src=\ref[src];shownews=1'>Show Game Updates</A></p>"
+	output += "<p><a href='byond://?src=\ref[src];open_changelog=1'>View Changelog</A></p>"
 
 	if(SSsqlite.can_submit_feedback(client))
 		output += "<p>[href(src, list("give_feedback" = 1), "Give Feedback")]</p>"
 
 	if(GLOB.news_data.station_newspaper)
-		output += "<a href='byond://?src=\ref[src];open_station_news=1'>Show [using_map.station_name] News</A>"
+		if(client.prefs.lastlorenews == GLOB.news_data.newsindex)
+			output += "<p><a href='byond://?src=\ref[src];open_station_news=1'>Show [using_map.station_name] News</A></p>"
+		else
+			output += "<p><b><a href='byond://?src=\ref[src];open_station_news=1'>Show [using_map.station_name] News (NEW!)</A></b></p>"
 
 	output += "</div>"
 
-	if(GLOB.news_data.station_newspaper && !client.seen_news)
+	if (client.prefs.lastlorenews == GLOB.news_data.newsindex)
+		client.seen_news = 1
+
+	if(GLOB.news_data.station_newspaper && !client.seen_news && client.is_preference_enabled(/datum/client_preference/show_lore_news))
 		show_latest_news(GLOB.news_data.station_newspaper)
+		client.prefs.lastlorenews = GLOB.news_data.newsindex
+		SScharacter_setup.queue_preferences_save(client.prefs)
 
 	panel = new(src, "Welcome","Welcome", 210, 300, src) // VOREStation Edit
 	panel.set_window_options("can_close=0")
@@ -132,9 +138,7 @@
 		new_player_panel_proc()
 
 	if(href_list["observe"])
-		var/alert_time = ticker?.current_state <= GAME_STATE_SETTING_UP ? 1 : round(config.respawn_time/10/60)
-
-		if(alert(src,"Are you sure you wish to observe? You will have to wait up to [alert_time] minute\s before being able to spawn into the game!","Player Setup","Yes","No") == "Yes")
+		if(tgui_alert(src,"Are you sure you wish to observe? If you do, make sure to not use any knowledge gained from observing if you decide to join later.","Player Setup",list("Yes","No")) == "Yes")
 			if(!client)	return 1
 
 			//Make a new mannequin quickly, and allow the observer to take the appearance
@@ -176,7 +180,7 @@
 		if(!ticker || ticker.current_state != GAME_STATE_PLAYING)
 			to_chat(usr, "<font color='red'>The round is either not ready, or has already finished...</font>")
 			return
-		
+
 		var/time_till_respawn = time_till_respawn()
 		if(time_till_respawn == -1) // Special case, never allowed to respawn
 			to_chat(usr, "<span class='warning'>Respawning is not allowed!</span>")
@@ -187,7 +191,7 @@
 		if(client.prefs.species != "Human" && !check_rights(R_ADMIN, 0)) //VORESTATION EDITS: THE COMMENTED OUT AREAS FROM LINE 154 TO 178
 			if (config.usealienwhitelist)
 				if(!is_alien_whitelisted(src, client.prefs.species))
-					alert(src, "You are currently not whitelisted to Play [client.prefs.species].")
+					tgui_alert(src, "You are currently not whitelisted to Play [client.prefs.species].")
 					return 0
 */
 		LateChoices()
@@ -214,13 +218,13 @@
 			return
 
 		if(!is_alien_whitelisted(src, GLOB.all_species[client.prefs.species]))
-			alert(src, "You are currently not whitelisted to play [client.prefs.species].")
+			tgui_alert(src, "You are currently not whitelisted to play [client.prefs.species].")
 			return 0
 
 		var/datum/species/S = GLOB.all_species[client.prefs.species]
-		
+
 		if(!(S.spawn_flags & SPECIES_CAN_JOIN))
-			alert(src,"Your current species, [client.prefs.species], is not available for play on the station.")
+			tgui_alert_async(src,"Your current species, [client.prefs.species], is not available for play on the station.")
 			return 0
 
 		AttemptLateSpawn(href_list["SelectedJob"],client.prefs.spawnpoint)
@@ -342,6 +346,9 @@
 		else
 			client.feedback_form = new(client)
 
+	if(href_list["open_changelog"])
+		src << link("https://wiki.vore-station.net/Changelog")
+
 /mob/new_player/proc/handle_server_news()
 	if(!client)
 		return
@@ -361,7 +368,7 @@
 		popup.set_content(dat)
 		popup.open()
 
-/mob/new_player/proc/time_till_respawn()
+/mob/proc/time_till_respawn()
 	if(!ckey)
 		return -1 // What?
 
@@ -381,14 +388,21 @@
 
 /mob/new_player/proc/IsJobAvailable(rank)
 	var/datum/job/job = job_master.GetJob(rank)
-	if(!job)	return 0
-	if(!job.is_position_available()) return 0
-	if(jobban_isbanned(src,rank))	return 0
-	if(!job.player_old_enough(src.client))	return 0
+	if(!job)
+		return 0
+	if(!job.is_position_available())
+		return 0
+	if(jobban_isbanned(src,rank))
+		return 0
+	if(!job.player_old_enough(src.client))
+		return 0
 	//VOREStation Add
-	if(!job.player_has_enough_playtime(src.client))	return 0
-	if(!is_job_whitelisted(src,rank))	return 0
-	if(!job.player_has_enough_pto(src.client)) return 0
+	if(!job.player_has_enough_playtime(src.client))
+		return 0
+	if(!is_job_whitelisted(src,rank))
+		return 0
+	if(!job.player_has_enough_pto(src.client))
+		return 0
 	//VOREStation Add End
 	return 1
 
@@ -403,7 +417,7 @@
 		to_chat(usr, "<span class='notice'>There is an administrative lock on entering the game!</span>")
 		return 0
 	if(!IsJobAvailable(rank))
-		alert(src,"[rank] is not available. Please try another.")
+		tgui_alert_async(src,"[rank] is not available. Please try another.")
 		return 0
 	if(!spawn_checks_vr(rank)) return 0 // VOREStation Insert
 	if(!client)
@@ -473,6 +487,12 @@
 		AnnounceArrival(character, rank, join_message, announce_channel, character.z)
 		data_core.manifest_inject(character)
 		ticker.minds += character.mind//Cyborgs and AIs handle this in the transform proc.	//TODO!!!!! ~Carn
+	if(ishuman(character))
+		if(character.client.prefs.auto_backup_implant)
+			var/obj/item/weapon/implant/backup/imp = new(src)
+
+			if(imp.handle_implant(character,character.zone_sel.selecting))
+				imp.post_implant(character)
 
 	qdel(src) // Delete new_player mob
 
@@ -507,7 +527,7 @@
 	for(var/datum/job/job in job_master.occupations)
 		if(job && IsJobAvailable(job.title))
 			// Checks for jobs with minimum age requirements
-			if(job.minimum_character_age && (client.prefs.age < job.minimum_character_age))
+			if((job.minimum_character_age || job.min_age_by_species) && (client.prefs.age < job.get_min_age(client.prefs.species, client.prefs.organ_data["brain"])))
 				continue
 			// Checks for jobs set to "Never" in preferences	//TODO: Figure out a better way to check for this
 			if(!(client.prefs.GetJobDepartment(job, 1) & job.flag))
@@ -591,6 +611,17 @@
 		if(chosen_language)
 			if(is_lang_whitelisted(src,chosen_language) || (new_character.species && (chosen_language.name in new_character.species.secondary_langs)))
 				new_character.add_language(lang)
+	for(var/key in client.prefs.language_custom_keys)
+		if(client.prefs.language_custom_keys[key])
+			var/datum/language/keylang = GLOB.all_languages[client.prefs.language_custom_keys[key]]
+			if(keylang)
+				new_character.language_keys[key] = keylang
+	// VOREStation Add: Preferred Language Setting;
+	if(client.prefs.preferred_language) // Do we have a preferred language?
+		var/datum/language/def_lang = GLOB.all_languages[client.prefs.preferred_language]
+		if(def_lang)
+			new_character.default_language = def_lang
+	// VOREStation Add End
 	// And uncomment this, too.
 	//new_character.dna.UpdateSE()
 

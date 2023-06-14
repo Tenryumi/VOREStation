@@ -2,12 +2,12 @@
 	name = "virtual reality sleeper"
 	desc = "A fancy bed with built-in sensory I/O ports and connectors to interface users' minds with their bodies in virtual reality."
 	icon = 'icons/obj/Cryogenic2.dmi'
-	icon_state = "syndipod_0"
+	icon_state = "body_scanner_0"
 
-	var/base_state = "syndipod_"
+	var/base_state = "body_scanner_"
 
-	density = 1
-	anchored = 1
+	density = TRUE
+	anchored = TRUE
 	circuit = /obj/item/weapon/circuitboard/vr_sleeper
 	var/mob/living/carbon/human/occupant = null
 	var/mob/living/carbon/human/avatar = null
@@ -40,7 +40,7 @@
 	if(stat & (NOPOWER|BROKEN))
 		if(occupant)
 			go_out()
-			visible_message("<span class='notice'>\The [src] emits a low droning sound, before the pod door clicks open.</span>")
+			visible_message("<b>\The [src]</b> emits a low droning sound, before the pod door clicks open.")
 		return
 	else if(eject_dead && occupant && occupant.stat == DEAD) // If someone dies somehow while inside, spit them out.
 		visible_message("<span class='warning'>\The [src] sounds an alarm, swinging its hatch open.</span>")
@@ -88,9 +88,9 @@
 
 
 
-/obj/machinery/sleeper/relaymove(var/mob/user)
+/obj/machinery/vr_sleeper/relaymove(var/mob/user)
 	..()
-	if(usr.incapacitated())
+	if(user.incapacitated())
 		return
 	go_out()
 
@@ -182,10 +182,11 @@
 	if(!occupant)
 		return
 
-	if(!forced && avatar && alert(avatar, "Someone wants to remove you from virtual reality. Do you want to leave?", "Leave VR?", "Yes", "No") == "No")
+	if(!forced && avatar && tgui_alert(avatar, "Someone wants to remove you from virtual reality. Do you want to leave?", "Leave VR?", list("Yes", "No")) == "No")
 		return
 
-	avatar.exit_vr()
+	if(avatar)
+		avatar.exit_vr()
 	avatar = null
 
 	if(occupant.client)
@@ -218,7 +219,7 @@
 
 	avatar = occupant.vr_link
 	// If they've already enterred VR, and are reconnecting, prompt if they want a new body
-	if(avatar && alert(occupant, "You already have a [avatar.stat == DEAD ? "" : "deceased "]Virtual Reality avatar. Would you like to use it?", "New avatar", "Yes", "No") == "No")
+	if(avatar && tgui_alert(occupant, "You already have a [avatar.stat == DEAD ? "" : "deceased "]Virtual Reality avatar. Would you like to use it?", "New avatar", list("Yes", "No")) == "No")
 		// Delink the mob
 		occupant.vr_link = null
 		avatar = null
@@ -230,7 +231,7 @@
 		for(var/obj/effect/landmark/virtual_reality/sloc in landmarks_list)
 			vr_landmarks += sloc.name
 
-		S = input(occupant, "Please select a location to spawn your avatar at:", "Spawn location") as null|anything in vr_landmarks
+		S = tgui_input_list(occupant, "Please select a location to spawn your avatar at:", "Spawn location", vr_landmarks)
 		if(!S)
 			return 0
 
@@ -244,12 +245,17 @@
 		if(occupant.species.name != "Promethean" && occupant.species.name != "Human" && mirror_first_occupant)
 			avatar.shapeshifter_change_shape(occupant.species.name)
 		avatar.forceMove(get_turf(S))			// Put the mob on the landmark, instead of inside it
-		avatar.Sleeping(1)
+
 
 		occupant.enter_vr(avatar)
+		//Yes, I am using a aheal just so your markings transfer over, I could not get .prefs.copy_to working. This is very stupid, and I can't be assed to rewrite this.  Too bad!
+		avatar.revive()
+		avatar.revive()
+		avatar.verbs += /mob/living/carbon/human/proc/exit_vr //ahealing removes the prommie verbs and the VR verbs, giving it back
+		avatar.Sleeping(1)
 
 		// Prompt for username after they've enterred the body.
-		var/newname = sanitize(input(avatar, "You are entering virtual reality. Your username is currently [src.name]. Would you like to change it to something else?", "Name change") as null|text, MAX_NAME_LEN)
+		var/newname = sanitize(tgui_input_text(avatar, "You are entering virtual reality. Your username is currently [src.name]. Would you like to change it to something else?", "Name change", null, MAX_NAME_LEN), MAX_NAME_LEN)
 		if (newname)
 			avatar.real_name = newname
 

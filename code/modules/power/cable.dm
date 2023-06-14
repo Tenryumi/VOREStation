@@ -45,7 +45,8 @@ var/list/possible_cable_coil_colours = list(
 
 /obj/structure/cable
 	level = 1
-	anchored =1
+	anchored =TRUE
+	unacidable = TRUE
 	var/datum/powernet/powernet
 	name = "power cable"
 	desc = "A flexible superconducting cable for heavy-duty power transfer."
@@ -498,16 +499,18 @@ var/list/possible_cable_coil_colours = list(
 	amount = MAXCOIL
 	max_amount = MAXCOIL
 	color = COLOR_RED
+	gender = NEUTER
 	desc = "A coil of power cable."
 	throwforce = 10
 	w_class = ITEMSIZE_SMALL
 	throw_speed = 2
 	throw_range = 5
-	matter = list(DEFAULT_WALL_MATERIAL = 50, "glass" = 20)
+	matter = list(MAT_STEEL = 50, MAT_GLASS = 20)
 	slot_flags = SLOT_BELT
 	item_state = "coil"
 	attack_verb = list("whipped", "lashed", "disciplined", "flogged")
 	stacktype = /obj/item/stack/cable_coil
+	singular_name = "length"
 	drop_sound = 'sound/items/drop/accessory.ogg'
 	pickup_sound = 'sound/items/pickup/accessory.ogg'
 	tool_qualities = list(TOOL_CABLE_COIL)
@@ -520,14 +523,6 @@ var/list/possible_cable_coil_colours = list(
 	matter = null
 	uses_charge = 1
 	charge_costs = list(1)
-
-/obj/item/stack/cable_coil/suicide_act(mob/user)
-	var/datum/gender/TU = gender_datums[user.get_visible_gender()]
-	if(locate(/obj/item/weapon/stool) in user.loc)
-		user.visible_message("<span class='suicide'>[user] is making a noose with the [src.name]! It looks like [TU.he] [TU.is] trying to commit suicide.</span>")
-	else
-		user.visible_message("<span class='suicide'>[user] is strangling [TU.himself] with the [src.name]! It looks like [TU.he] [TU.is] trying to commit suicide.</span>")
-	return(OXYLOSS)
 
 /obj/item/stack/cable_coil/New(loc, length = MAXCOIL, var/param_color = null)
 	..()
@@ -606,7 +601,7 @@ var/list/possible_cable_coil_colours = list(
 
 /obj/item/stack/cable_coil/attackby(obj/item/W, mob/user)
 	if(istype(W, /obj/item/device/multitool))
-		var/selected_type = input("Pick new colour.", "Cable Colour", null, null) as null|anything in possible_cable_coil_colours
+		var/selected_type = tgui_input_list(usr, "Pick new colour.", "Cable Colour", possible_cable_coil_colours)
 		set_cable_color(selected_type, usr)
 		return
 	return ..()
@@ -632,7 +627,7 @@ var/list/possible_cable_coil_colours = list(
 	set name = "Change Colour"
 	set category = "Object"
 
-	var/selected_type = input("Pick new colour.", "Cable Colour", null, null) as null|anything in possible_cable_coil_colours
+	var/selected_type = tgui_input_list(usr, "Pick new colour.", "Cable Colour", possible_cable_coil_colours)
 	set_cable_color(selected_type, usr)
 
 // Items usable on a cable coil :
@@ -948,7 +943,7 @@ var/list/possible_cable_coil_colours = list(
 	w_class = ITEMSIZE_SMALL
 	throw_speed = 2
 	throw_range = 5
-	matter = list(DEFAULT_WALL_MATERIAL = 50, "glass" = 20)
+	matter = list(MAT_STEEL = 50, MAT_GLASS = 20)
 	slot_flags = SLOT_BELT
 	attack_verb = list("whipped", "lashed", "disciplined", "flogged")
 	stacktype = null
@@ -985,7 +980,7 @@ var/list/possible_cable_coil_colours = list(
 
 /obj/item/stack/cable_coil/alien/attack_hand(mob/user as mob)
 	if (user.get_inactive_hand() == src)
-		var/N = input("How many units of wire do you want to take from [src]?  You can only take up to [amount] at a time.", "Split stacks", 1) as num|null
+		var/N = tgui_input_number(usr, "How many units of wire do you want to take from [src]?  You can only take up to [amount] at a time.", "Split stacks", 1)
 		if(N && N <= amount)
 			var/obj/item/stack/cable_coil/CC = new/obj/item/stack/cable_coil(user.loc)
 			CC.amount = N

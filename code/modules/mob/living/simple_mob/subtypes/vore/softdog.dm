@@ -2,7 +2,7 @@
 	name = "Wildlife - Dog"
 	desc = "It's a relatively ordinary looking canine. \
 	It has an ominous aura..."
-	value = CATALOGUER_REWARD_TRIVIAL
+	value = CATALOGUER_REWARD_EASY
 
 /mob/living/simple_mob/vore/woof
 	name = "dog"
@@ -18,7 +18,7 @@
 	faction = "dog"
 	maxHealth = 600
 	health = 600
-	movement_cooldown = 1
+	movement_cooldown = -1
 
 	response_help = "pets"
 	response_disarm = "rudely paps"
@@ -27,6 +27,7 @@
 	harm_intent_damage = 5
 	melee_damage_lower = 5
 	melee_damage_upper = 1
+	catalogue_data = list(/datum/category_item/catalogue/fauna/woof)
 
 	var/knockdown_chance = 20
 
@@ -49,7 +50,7 @@
 
 	mob_size = MOB_SMALL
 
-	has_langs = list("Dog", "Canilunzt", "Galactic Common")
+	has_langs = list(LANGUAGE_ANIMAL, LANGUAGE_CANILUNZT, LANGUAGE_GALCOM)
 	say_list_type = /datum/say_list/softdog
 	swallowTime = 0.1 SECONDS
 
@@ -204,7 +205,7 @@
 
 /mob/living/simple_mob/vore/woof/hostile/melee
 
-	movement_cooldown = 0
+	movement_cooldown = -2
 
 	ai_holder_type = /datum/ai_holder/simple_mob/woof/hostile
 
@@ -252,7 +253,7 @@
 		return ..()
 	if(M.a_intent == I_HELP)
 		M.visible_message("[M] pets [src].", runemessage = "pets [src]")
-		if(do_after(M, 30 SECONDS, exclusive = 1, target = src))
+		if(do_after(M, 30 SECONDS, exclusive = TASK_USER_EXCLUSIVE, target = src))
 			faction = M.faction
 			revive()
 			sight = initial(sight)
@@ -263,3 +264,52 @@
 		else
 			M.visible_message("The petting was interrupted!!!", runemessage = "The petting was interrupted")
 	return
+
+/mob/living/simple_mob/vore/woof/hostile/aweful
+	maxHealth = 100
+	health = 100
+	var/killswitch = FALSE
+
+
+/mob/living/simple_mob/vore/woof/hostile/aweful/Initialize()
+	. = ..()
+	var/thismany = (rand(25,500)) / 100
+	resize(thismany, animate = FALSE, uncapped = TRUE, ignore_prefs = TRUE)
+
+/mob/living/simple_mob/vore/woof/hostile/aweful/death()
+	. = ..()
+	if(killswitch)
+		visible_message("<span class='notice'>\The [src] evaporates into nothing...</span>")
+		qdel(src)
+		return
+	var/thismany = rand(0,3)
+	var/list/possiblewoofs = list(/mob/living/simple_mob/vore/woof/hostile/aweful/melee, /mob/living/simple_mob/vore/woof/hostile/aweful/ranged)
+	if(thismany == 0)
+		visible_message("<span class='notice'>\The [src] evaporates into nothing...</span>")
+	if(thismany >= 1)
+		var/thiswoof = pick(possiblewoofs)
+		new thiswoof(loc, src)
+		visible_message("<span class='warning'>Another [src] appears!</span>")
+	if(thismany >= 2)
+		var/thiswoof = pick(possiblewoofs)
+		new thiswoof(loc, src)
+		visible_message("<span class='warning'>Another [src] appears!</span>")
+	if(thismany >= 3)
+		var/thiswoof = pick(possiblewoofs)
+		new thiswoof(loc, src)
+		visible_message("<span class='warning'>Another [src] appears!</span>")
+	qdel(src)
+
+/mob/living/simple_mob/vore/woof/hostile/aweful/melee
+
+	movement_cooldown = -2
+
+	ai_holder_type = /datum/ai_holder/simple_mob/woof/hostile
+
+/mob/living/simple_mob/vore/woof/hostile/aweful/ranged
+	movement_cooldown = -2
+
+	ai_holder_type = /datum/ai_holder/simple_mob/ranged/kiting/threatening/woof
+
+	projectiletype = /obj/item/projectile/awoo_missile
+	projectilesound = 'sound/voice/long_awoo.ogg'

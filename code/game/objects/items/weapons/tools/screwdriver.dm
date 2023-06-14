@@ -4,6 +4,7 @@
 /obj/item/weapon/tool/screwdriver
 	name = "screwdriver"
 	desc = "You can be totally screwwy with this."
+	description_fluff = "This could be used to engrave messages on suitable surfaces if you really put your mind to it! Alt-click a floor or wall to engrave with it." //This way it's not a completely hidden, arcane art to engrave.
 	icon = 'icons/obj/tools.dmi'
 	icon_state = "screwdriver"
 	center_of_mass = list("x" = 13,"y" = 7)
@@ -17,18 +18,12 @@
 	usesound = 'sound/items/screwdriver.ogg'
 	drop_sound = 'sound/items/drop/screwdriver.ogg'
 	pickup_sound = 'sound/items/pickup/screwdriver.ogg'
-	matter = list(DEFAULT_WALL_MATERIAL = 75)
+	matter = list(MAT_STEEL = 75)
 	attack_verb = list("stabbed")
-	sharp  = 1
+	sharp  = TRUE
 	toolspeed = 1
 	tool_qualities = list(TOOL_SCREWDRIVER)
 	var/random_color = TRUE
-
-/obj/item/weapon/tool/screwdriver/suicide_act(mob/user)
-	var/datum/gender/TU = gender_datums[user.get_visible_gender()]
-	to_chat(viewers(user), pick("<span class='danger'>\The [user] is stabbing the [src.name] into [TU.his] temple! It looks like [TU.hes] trying to commit suicide.</span>", \
-						"<span class='danger'>\The [user] is stabbing the [src.name] into [TU.his] heart! It looks like [TU.hes] trying to commit suicide.</span>"))
-	return(BRUTELOSS)
 
 /obj/item/weapon/tool/screwdriver/New()
 	if(random_color)
@@ -115,7 +110,7 @@
 	desc = "A simple powered hand drill. It's fitted with a screw bit."
 	icon_state = "drill_screw"
 	item_state = "drill"
-	matter = list(DEFAULT_WALL_MATERIAL = 150, MAT_SILVER = 50)
+	matter = list(MAT_STEEL = 150, MAT_SILVER = 50)
 	origin_tech = list(TECH_MATERIAL = 2, TECH_ENGINEERING = 2)
 	slot_flags = SLOT_BELT
 	force = 8
@@ -146,6 +141,7 @@
 	playsound(src,'sound/items/change_drill.ogg',50,1)
 	user.drop_item(src)
 	counterpart.forceMove(get_turf(src))
+	counterpart.persist_storable = persist_storable
 	src.forceMove(counterpart)
 	user.put_in_active_hand(counterpart)
 	to_chat(user, "<span class='notice'>You attach the bolt driver bit to [src].</span>")

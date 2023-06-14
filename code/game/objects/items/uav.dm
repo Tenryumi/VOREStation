@@ -12,10 +12,15 @@
 	var/obj/item/weapon/cell/cell
 	var/cell_type = null //Can put a starting cell here
 
-	density = 1 //Is dense, but not anchored, so you can swap with it
+	density = TRUE //Is dense, but not anchored, so you can swap with it
 	slowdown = 1.5 //Heevvee.
 
 	health = 100
+
+	light_system = MOVABLE_LIGHT_DIRECTIONAL
+	light_cone_y_offset = 5
+	light_range = 4
+	light_power = 4
 	var/power_per_process = 50 // About 6.5 minutes of use on a high-cell (10,000)
 	var/state = UAV_OFF
 
@@ -24,7 +29,7 @@
 	var/list/mob/living/masters
 
 	// So you know which is which
-	var/nickname = "Generic Droan"
+	var/nickname = "Unnamed UAV"
 
 	// Radial menu
 	var/static/image/radial_pickup = image(icon = 'icons/mob/radial.dmi', icon_state = "radial_pickup")
@@ -43,10 +48,10 @@
 
 /obj/item/device/uav/Initialize()
 	. = ..()
-	
+
 	if(!cell && cell_type)
 		cell = new cell_type
-	
+
 	ion_trail = new /datum/effect/effect/system/ion_trail_follow()
 	ion_trail.set_up(src)
 	ion_trail.stop()
@@ -64,7 +69,7 @@
 		. += "It has <i>'[nickname]'</i> scribbled on the side."
 	if(!cell)
 		. += "<span class='warning'>It appears to be missing a power cell.</span>"
-	
+
 	if(health <= (initial(health)/4))
 		. += "<span class='warning'>It looks like it might break at any second!</span>"
 	else if(health <= (initial(health)/2))
@@ -81,7 +86,7 @@
 		"Toggle Power" = radial_power,
 		"Pairing Mode" = radial_pair)
 	var/choice = show_radial_menu(user, src, options, require_near = !issilicon(user))
-	
+
 	switch(choice)
 		// Can pick up when off or packed
 		if("Pick Up")
@@ -92,8 +97,10 @@
 				return
 		// Can disasemble or reassemble from packed or off (and this one takes time)
 		if("(Dis)Assemble")
-			if(can_transition_to(state == UAV_PACKED ? UAV_OFF : UAV_PACKED, user) && do_after(user, 10 SECONDS, src))
-				return toggle_packed(user)
+			if(can_transition_to(state == UAV_PACKED ? UAV_OFF : UAV_PACKED, user))
+				user.visible_message("<b>[user]</b> starts [state == UAV_PACKED ? "unpacking" : "packing"] [src].", "You start [state == UAV_PACKED ? "unpacking" : "packing"] [src].")
+				if(do_after(user, 10 SECONDS, src))
+					return toggle_packed(user)
 		// Can toggle power from on and off
 		if("Toggle Power")
 			if(can_transition_to(state == UAV_ON ? UAV_OFF : UAV_ON, user))
@@ -106,11 +113,11 @@
 /obj/item/device/uav/attackby(var/obj/item/I, var/mob/user)
 	if(istype(I, /obj/item/modular_computer) && state == UAV_PAIRING)
 		var/obj/item/modular_computer/MC = I
-		LAZYDISTINCTADD(MC.paired_uavs, weakref(src))
+		LAZYDISTINCTADD(MC.paired_uavs, WEAKREF(src))
 		playsound(src, 'sound/machines/buttonbeep.ogg', 50, 1)
 		visible_message("<span class='notice'>[user] pairs [I] to [nickname]</span>")
 		toggle_pairing()
-	
+
 	else if(I.is_screwdriver() && cell)
 		if(do_after(user, 3 SECONDS, src))
 			to_chat(user, "<span class='notice'>You remove [cell] into [nickname].</span>")
@@ -118,7 +125,7 @@
 			power_down()
 			cell.forceMove(get_turf(src))
 			cell = null
-	
+
 	else if(istype(I, /obj/item/weapon/cell) && !cell)
 		if(do_after(user, 3 SECONDS, src))
 			to_chat(user, "<span class='notice'>You insert [I] into [nickname].</span>")
@@ -129,7 +136,7 @@
 			cell = I
 
 	else if(istype(I, /obj/item/weapon/pen) || istype(I, /obj/item/device/flashlight/pen))
-		var/tmp_label = sanitizeSafe(input(user, "Enter a nickname for [src]", "Nickname", nickname), MAX_NAME_LEN)
+		var/tmp_label = sanitizeSafe(tgui_input_text(user, "Enter a nickname for [src]", "Nickname", nickname, MAX_NAME_LEN), MAX_NAME_LEN)
 		if(length(tmp_label) > 50 || length(tmp_label) < 3)
 			to_chat(user, "<span class='notice'>The nickname must be between 3 and 50 characters.</span>")
 		else
@@ -178,7 +185,7 @@
 		playsound(src, 'sound/items/drop/metalboots.ogg', 75, 1)
 		power_down()
 		health -= initial(health)*0.25 //Lose 25% of your original health
-	
+
 	if(LAZYLEN(masters))
 		no_masters_time = 0
 	else if(no_masters_time++ > 50)
@@ -236,7 +243,7 @@
 	state = UAV_ON
 	update_icon()
 	start_hover()
-	set_light(4, 4, "#FFFFFF")
+	set_light_on(TRUE)
 	START_PROCESSING(SSobj, src)
 	no_masters_time = 0
 	visible_message("<span class='notice'>[nickname] buzzes and lifts into the air.</span>")
@@ -244,11 +251,11 @@
 /obj/item/device/uav/proc/power_down()
 	if(state != UAV_ON)
 		return
-	
+
 	state = UAV_OFF
 	update_icon()
 	stop_hover()
-	set_light(0)
+	set_light_on(FALSE)
 	LAZYCLEARLIST(masters)
 	STOP_PROCESSING(SSobj, src)
 	visible_message("<span class='notice'>[nickname] gracefully settles onto the ground.</span>")
@@ -258,7 +265,7 @@
 	return cell
 
 /obj/item/device/uav/relaymove(var/mob/user, direction, signal = 1)
-	if(signal && state == UAV_ON && (weakref(user) in masters))
+	if(signal && state == UAV_ON && (WEAKREF(user) in masters))
 		if(next_move <= world.time)
 			next_move = world.time + (1 SECOND/signal)
 			step(src, direction)
@@ -269,10 +276,10 @@
 	return "[nickname] - [get_x(src)],[get_y(src)],[get_z(src)] - I:[health]/[initial(health)] - C:[cell ? "[cell.charge]/[cell.maxcharge]" : "Not Installed"]"
 
 /obj/item/device/uav/proc/add_master(var/mob/living/M)
-	LAZYDISTINCTADD(masters, weakref(M))
+	LAZYDISTINCTADD(masters, WEAKREF(M))
 
 /obj/item/device/uav/proc/remove_master(var/mob/living/M)
-	LAZYREMOVE(masters, weakref(M))
+	LAZYREMOVE(masters, WEAKREF(M))
 
 /obj/item/device/uav/check_eye()
 	if(state == UAV_ON)
@@ -303,7 +310,7 @@
 /obj/item/device/uav/hear_talk(var/mob/M, list/message_pieces, verb)
 	var/name_used = M.GetVoice()
 	for(var/wr_master in masters)
-		var/weakref/wr = wr_master
+		var/datum/weakref/wr = wr_master
 		var/mob/master = wr.resolve()
 		var/list/combined = master.combine_message(message_pieces, verb, M)
 		var/message = combined["formatted"]
@@ -312,14 +319,14 @@
 
 /obj/item/device/uav/see_emote(var/mob/living/M, text)
 	for(var/wr_master in masters)
-		var/weakref/wr = wr_master
+		var/datum/weakref/wr = wr_master
 		var/mob/master = wr.resolve()
 		var/rendered = "<i><span class='game say'>UAV received, <span class='message'>[text]</span></span></i>"
 		master.show_message(rendered, 2)
 
 /obj/item/device/uav/show_message(msg, type, alt, alt_type)
 	for(var/wr_master in masters)
-		var/weakref/wr = wr_master
+		var/datum/weakref/wr = wr_master
 		var/mob/master = wr.resolve()
 		var/rendered = "<i><span class='game say'>UAV received, <span class='message'>[msg]</span></span></i>"
 		master.show_message(rendered, type)

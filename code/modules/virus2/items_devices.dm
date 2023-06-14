@@ -3,7 +3,8 @@
 /obj/item/device/antibody_scanner
 	name = "antibody scanner"
 	desc = "Scans living beings for antibodies in their blood."
-	icon_state = "health"
+	icon = 'icons/obj/device_vr.dmi'
+	icon_state = "antibody"
 	w_class = ITEMSIZE_SMALL
 	item_state = "electronic"
 
@@ -30,7 +31,7 @@
 		report("Antibodies detected: [antigens2string(C.antibodies)]", user)
 
 /obj/item/device/antibody_scanner/proc/report(var/text, mob/user as mob)
-	to_chat(user, "<font color='blue'>[bicon(src)] \The [src] beeps,</font> \"<font color='blue'>[text]</font>\"")
+	to_chat(user, "<font color='blue'>\icon[src][bicon(src)] \The [src] beeps,</font> \"<font color='blue'>[text]</font>\"")
 
 ///////////////VIRUS DISH///////////////
 

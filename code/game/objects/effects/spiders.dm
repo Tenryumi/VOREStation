@@ -3,8 +3,8 @@
 	name = "web"
 	desc = "it's stringy and sticky"
 	icon = 'icons/effects/effects.dmi'
-	anchored = 1
-	density = 0
+	anchored = TRUE
+	density = FALSE
 	var/health = 15
 
 //similar to weeds, but only barfed out by nurses manually
@@ -23,7 +23,7 @@
 /obj/effect/spider/attackby(var/obj/item/weapon/W, var/mob/user)
 	user.setClickCooldown(user.get_attack_speed(W))
 
-	if(W.attack_verb.len)
+	if(LAZYLEN(W.attack_verb))
 		visible_message("<span class='warning'>\The [src] has been [pick(W.attack_verb)] with \the [W][(user ? " by [user]." : ".")]</span>")
 	else
 		visible_message("<span class='warning'>\The [src] has been attacked with \the [W][(user ? " by [user]." : ".")]</span>")
@@ -57,9 +57,12 @@
 	health -= Proj.get_structure_damage()
 	healthcheck()
 
+/obj/effect/spider/proc/die()
+	qdel(src)
+
 /obj/effect/spider/proc/healthcheck()
 	if(health <= 0)
-		qdel(src)
+		die()
 
 /obj/effect/spider/fire_act(datum/gas_mixture/air, exposed_temperature, exposed_volume)
 	if(exposed_temperature > 300 + T0C)
@@ -93,6 +96,7 @@
 	var/spiders_min = 6
 	var/spiders_max = 24
 	var/spider_type = /obj/effect/spider/spiderling
+	var/faction = "spiders"
 
 /obj/effect/spider/eggcluster/Initialize()
 	pixel_x = rand(3,-3)
@@ -121,9 +125,10 @@
 			O = loc
 
 		for(var/i=0, i<num, i++)
-			var/spiderling = new spider_type(src.loc, src)
+			var/obj/effect/spider/spiderling/spiderling = new spider_type(src.loc, src)
 			if(O)
 				O.implants += spiderling
+			spiderling.faction = faction
 		qdel(src)
 
 /obj/effect/spider/eggcluster/small
@@ -133,30 +138,43 @@
 /obj/effect/spider/eggcluster/small/frost
 	spider_type = /obj/effect/spider/spiderling/frost
 
+/obj/effect/spider/eggcluster/royal
+	spiders_min = 2
+	spiders_max = 5
+	spider_type = /obj/effect/spider/spiderling/varied
+
 /obj/effect/spider/spiderling
 	name = "spiderling"
 	desc = "It never stays still for long."
 	icon_state = "spiderling"
-	anchored = 0
+	anchored = FALSE
 	layer = HIDING_LAYER
 	health = 3
 	var/last_itch = 0
-	var/amount_grown = -1
+	var/amount_grown = 0
 	var/obj/machinery/atmospherics/unary/vent_pump/entry_vent
 	var/travelling_in_vent = 0
 	var/list/grow_as = list(/mob/living/simple_mob/animal/giant_spider, /mob/living/simple_mob/animal/giant_spider/nurse, /mob/living/simple_mob/animal/giant_spider/hunter)
+	var/faction = "spiders"
 
 	var/stunted = FALSE
 
 /obj/effect/spider/spiderling/frost
 	grow_as = list(/mob/living/simple_mob/animal/giant_spider/frost)
 
+/obj/effect/spider/spiderling/varied
+	grow_as = list(/mob/living/simple_mob/animal/giant_spider, /mob/living/simple_mob/animal/giant_spider/nurse, /mob/living/simple_mob/animal/giant_spider/hunter,
+			/mob/living/simple_mob/animal/giant_spider/frost, /mob/living/simple_mob/animal/giant_spider/electric, /mob/living/simple_mob/animal/giant_spider/lurker,
+			/mob/living/simple_mob/animal/giant_spider/pepper, /mob/living/simple_mob/animal/giant_spider/thermic, /mob/living/simple_mob/animal/giant_spider/tunneler,
+			/mob/living/simple_mob/animal/giant_spider/webslinger, /mob/living/simple_mob/animal/giant_spider/phorogenic, /mob/living/simple_mob/animal/giant_spider/carrier,
+			/mob/living/simple_mob/animal/giant_spider/ion)
+
 /obj/effect/spider/spiderling/New(var/location, var/atom/parent)
 	pixel_x = rand(6,-6)
 	pixel_y = rand(6,-6)
 	START_PROCESSING(SSobj, src)
 	//50% chance to grow up
-	if(prob(50))
+	if(amount_grown != -1 && prob(50))
 		amount_grown = 1
 	get_light_and_color(parent)
 	..()
@@ -172,16 +190,17 @@
 	else
 		..()
 
-/obj/effect/spider/spiderling/proc/die()
+/obj/effect/spider/spiderling/die()
 	visible_message("<span class='alert'>[src] dies!</span>")
 	new /obj/effect/decal/cleanable/spiderling_remains(src.loc)
-	qdel(src)
+	..()
 
 /obj/effect/spider/spiderling/healthcheck()
 	if(health <= 0)
 		die()
 
 /obj/effect/spider/spiderling/process()
+	healthcheck()
 	if(travelling_in_vent)
 		if(istype(src.loc, /turf))
 			travelling_in_vent = 0
@@ -236,7 +255,7 @@
 				last_itch = world.time
 				to_chat(O.owner, "<span class='notice'>Your [O.name] itches...</span>")
 	else if(prob(1))
-		src.visible_message("<span class='notice'>\The [src] skitters.</span>")
+		src.visible_message("<b>\The [src]</b> skitters.")
 
 	if(amount_grown >= 0)
 		amount_grown += rand(0,2)
@@ -250,7 +269,7 @@
 				walk_to(src, target_atom, 5)
 				if(prob(25))
 					src.visible_message("<span class='notice'>\The [src] skitters[pick(" away"," around","")].</span>")
-		else if(prob(5))
+		else if(amount_grown < 75 && prob(5))
 			//vent crawl!
 			for(var/obj/machinery/atmospherics/unary/vent_pump/v in view(7,src))
 				if(!v.welded)
@@ -260,6 +279,7 @@
 		if(amount_grown >= 100)
 			var/spawn_type = pick(grow_as)
 			var/mob/living/simple_mob/animal/giant_spider/GS = new spawn_type(src.loc, src)
+			GS.faction = faction
 			if(stunted)
 				spawn(2)
 					GS.make_spiderling()
@@ -272,6 +292,15 @@
 
 /obj/effect/spider/spiderling/non_growing
 	amount_grown = -1
+
+/obj/effect/spider/spiderling/princess
+	name = "royal spiderling"
+	desc = "There's a special aura about this one."
+	grow_as = list(/mob/living/simple_mob/animal/giant_spider/nurse/queen)
+
+/obj/effect/spider/spiderling/princess/New(var/location, var/atom/parent)
+	..()
+	amount_grown = 50
 
 /obj/effect/decal/cleanable/spiderling_remains
 	name = "spiderling remains"

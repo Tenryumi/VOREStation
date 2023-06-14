@@ -75,17 +75,29 @@ GLOBAL_LIST_EMPTY(apcs)
 /obj/machinery/power/apc/alarms_hidden
 	alarms_hidden = TRUE
 
+/obj/machinery/power/apc/angled
+	icon = 'icons/obj/wall_machines_angled.dmi'
+
+/obj/machinery/power/apc/angled/hidden
+	alarms_hidden = TRUE
+
+/obj/machinery/power/apc/angled/offset_apc()
+	pixel_x = (dir & 3) ? 0 : (dir == 4 ? 24 : -24)
+	pixel_y = (dir & 3) ? (dir == 1 ? 20 : -20) : 0
+
 /obj/machinery/power/apc
 	name = "area power controller"
 	desc = "A control terminal for the area electrical systems."
 	icon = 'icons/obj/power.dmi'
 	icon_state = "apc0"
 	layer = ABOVE_WINDOW_LAYER
-	anchored = 1
+	anchored = TRUE
+	unacidable = TRUE
 	use_power = USE_POWER_OFF
 	clicksound = "switch"
 	req_access = list(access_engine_equip)
 	blocks_emissive = FALSE
+	vis_flags = VIS_HIDE // They have an emissive that looks bad in openspace due to their wall-mounted nature
 	var/area/area
 	var/areastring = null
 	var/obj/item/weapon/cell/cell
@@ -131,7 +143,7 @@ GLOBAL_LIST_EMPTY(apcs)
 	var/updating_icon = 0
 	var/global/list/status_overlays_environ
 	var/alarms_hidden = FALSE //If power alarms from this APC are visible on consoles
-	
+
 	var/nightshift_lights = FALSE
 	var/nightshift_setting = NIGHTSHIFT_AUTO
 	var/last_nightshift_switch = 0
@@ -184,8 +196,9 @@ GLOBAL_LIST_EMPTY(apcs)
 	if(building)
 		set_dir(ndir)
 
-	pixel_x = (dir & 3)? 0 : (dir == 4 ? 26 : -26) //VOREStation Edit -> 24 to 26
-	pixel_y = (dir & 3)? (dir ==1 ? 26 : -26) : 0 //VOREStation Edit -> 24 to 26
+	if(!pixel_x && !pixel_y)
+		offset_apc()
+
 	if(building)
 		area = get_area(src)
 		area.apc = src
@@ -227,11 +240,14 @@ GLOBAL_LIST_EMPTY(apcs)
 
 	return ..()
 
+/obj/machinery/power/apc/proc/offset_apc()
+	pixel_x = (dir & 3) ? 0 : (dir == 4 ? 26 : -26)
+	pixel_y = (dir & 3) ? (dir == 1 ? 26 : -26) : 0
+
 // APCs are pixel-shifted, so they need to be updated.
 /obj/machinery/power/apc/set_dir(new_dir)
 	..()
-	pixel_x = (dir & 3)? 0 : (dir == 4 ? 24 : -24)
-	pixel_y = (dir & 3)? (dir ==1 ? 24 : -24) : 0
+	offset_apc()
 	if(terminal)
 		terminal.disconnect_from_network()
 		terminal.set_dir(dir) // Terminal has same dir as master
@@ -543,7 +559,7 @@ GLOBAL_LIST_EMPTY(apcs)
 							"You start adding cables to the APC frame...")
 		playsound(src, 'sound/items/Deconstruct.ogg', 50, 1)
 		if(do_after(user, 20))
-			if(C.amount >= 10 && !terminal && opened && has_electronics != APC_HAS_ELECTRONICS_SECURED)
+			if(C.get_amount() >= 10 && !terminal && opened && has_electronics != APC_HAS_ELECTRONICS_SECURED)
 				var/obj/structure/cable/N = T.get_cable_node()
 				if(prob(50) && electrocute_mob(usr, N, N))
 					var/datum/effect/effect/system/spark_spread/s = new /datum/effect/effect/system/spark_spread
@@ -959,7 +975,7 @@ GLOBAL_LIST_EMPTY(apcs)
 			for(var/obj/machinery/light/L in area)
 				if(!initial(L.no_emergency)) //If there was an override set on creation, keep that override
 					L.no_emergency = emergency_lights
-					INVOKE_ASYNC(L, /obj/machinery/light/.proc/update, FALSE)
+					INVOKE_ASYNC(L, TYPE_PROC_REF(/obj/machinery/light, update), FALSE)
 				CHECK_TICK
 		if("overload")
 			if(locked_exception) // Reusing for simplicity!
@@ -1345,6 +1361,7 @@ GLOBAL_LIST_EMPTY(apcs)
 
 	for(var/obj/machinery/light/L in area)
 		L.nightshift_mode(new_state)
+		L.update() //For some reason it gets hung up on updating the overlay for the light fixture somewhere down the line. This fixes it.
 		CHECK_TICK
 
 #undef APC_UPDATE_ICON_COOLDOWN

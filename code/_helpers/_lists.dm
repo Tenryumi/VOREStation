@@ -53,7 +53,7 @@
 			// atoms/items/objects can be pretty and whatnot
 			var/atom/A = item
 			if(output_icons && isicon(A.icon) && !ismob(A)) // mobs tend to have unusable icons
-				item_str += "[bicon(A)]&nbsp;"
+				item_str += "\icon[A][bicon(A)]&nbsp;"
 			switch(determiners)
 				if(DET_NONE) item_str += A.name
 				if(DET_DEFINITE) item_str += "\the [A]"
@@ -127,22 +127,19 @@
 //returns a new list with only atoms that are in typecache L
 /proc/typecache_filter_list(list/atoms, list/typecache)
 	. = list()
-	for(var/thing in atoms)
-		var/atom/A = thing
+	for(var/atom/A as anything in atoms)
 		if(typecache[A.type])
 			. += A
 
 /proc/typecache_filter_list_reverse(list/atoms, list/typecache)
 	. = list()
-	for(var/thing in atoms)
-		var/atom/A = thing
+	for(var/atom/A as anything in atoms)
 		if(!typecache[A.type])
 			. += A
 
 /proc/typecache_filter_multi_list_exclusion(list/atoms, list/typecache_include, list/typecache_exclude)
 	. = list()
-	for(var/thing in atoms)
-		var/atom/A = thing
+	for(var/atom/A as anything in atoms)
 		if(typecache_include[A.type] && !typecache_exclude[A.type])
 			. += A
 
@@ -219,6 +216,17 @@ This actually tests if they have the same entries and values.
 		if(!(entry in second) || (first[entry] != second[entry]))
 			return 0
 	return 1
+
+/*
+Checks if a list has the same entries and values as an element of big.
+*/
+/proc/in_as_list(var/list/little, var/list/big)
+	if(!islist(big))
+		return 0
+	for(var/element in big)
+		if(same_entries(little, element))
+			return 1
+	return 0
 
 /*
  * Returns list containing entries that are in either list but not both.
@@ -305,12 +313,6 @@ This actually tests if they have the same entries and values.
 
 	for(var/i=1, i<L.len, ++i)
 		L.Swap(i,rand(i,L.len))
-
-//Return a list with no duplicate entries
-/proc/uniquelist(var/list/L)
-	. = list()
-	for(var/i in L)
-		. |= i
 
 //same, but returns nothing and acts on list in place (also handles associated values properly)
 /proc/uniqueList_inplace(list/L)
@@ -867,3 +869,15 @@ var/global/list/json_cache = list()
 	catch(var/exception/e)
 		log_error("Exception during JSON decoding ([json_to_decode]): [e]")
 		return list()
+
+//takes an input_key, as text, and the list of keys already used, outputting a replacement key in the format of "[input_key] ([number_of_duplicates])" if it finds a duplicate
+//use this for lists of things that might have the same name, like mobs or objects, that you plan on giving to a player as input
+/proc/avoid_assoc_duplicate_keys(input_key, list/used_key_list)
+	if(!input_key || !istype(used_key_list))
+		return
+	if(used_key_list[input_key])
+		used_key_list[input_key]++
+		input_key = "[input_key] ([used_key_list[input_key]])"
+	else
+		used_key_list[input_key] = 1
+	return input_key

@@ -5,9 +5,9 @@ GLOBAL_LIST_INIT(vchatFiles, list(
 	"code/modules/vchat/css/vchat-font-embedded.css",
 	"code/modules/vchat/css/semantic.min.css",
 	"code/modules/vchat/css/ss13styles.css",
-	"code/modules/vchat/js/polyfills.js",
+	"code/modules/vchat/js/polyfills.min.js",
 	"code/modules/vchat/js/vue.min.js",
-	"code/modules/vchat/js/vchat.js"
+	"code/modules/vchat/js/vchat.min.js"
 ))
 
 // The to_chat() macro calls this proc
@@ -77,8 +77,7 @@ GLOBAL_DATUM_INIT(iconCache, /savefile, new("data/iconCache.sav")) //Cache of ic
 		return FALSE
 
 	if(!winexists(owner, "htmloutput"))
-		spawn()
-			alert(owner, "Updated chat window does not exist. If you are using a custom skin file please allow the game to update.")
+		tgui_alert_async(owner, "Updated chat window does not exist. If you are using a custom skin file please allow the game to update.")
 		become_broken()
 		return FALSE
 
@@ -140,14 +139,15 @@ GLOBAL_DATUM_INIT(iconCache, /savefile, new("data/iconCache.sav")) //Cache of ic
 	set waitfor = FALSE
 	// Only send them the number of buffered messages, instead of the ENTIRE log
 	var/list/results = vchat_get_messages(owner.ckey, message_buffer) //If there's bad performance on reconnects, look no further
-	for(var/i in results.len to 1 step -1)
-		var/list/message = results[i]
-		var/count = 10
-		to_chat_immediate(owner, message["time"], message["message"])
-		count++
-		if(count >= 10)
-			count = 0
-			CHECK_TICK
+	if(islist(results))
+		for(var/i in results.len to 1 step -1)
+			var/list/message = results[i]
+			var/count = 10
+			to_chat_immediate(owner, message["time"], message["message"])
+			count++
+			if(count >= 10)
+				count = 0
+				CHECK_TICK
 
 //It din work
 /datum/chatOutput/proc/become_broken()
@@ -161,7 +161,8 @@ GLOBAL_DATUM_INIT(iconCache, /savefile, new("data/iconCache.sav")) //Cache of ic
 	update_vis()
 
 	spawn()
-		alert(owner,"VChat didn't load after some time. Switching to use oldchat as a fallback. Try using 'Reload VChat' verb in OOC verbs, or reconnecting to try again.")
+	if(owner.is_preference_enabled(/datum/client_preference/vchat_enable))
+		tgui_alert_async(owner,"VChat didn't load after some time. Switching to use oldchat as a fallback. Try using 'Reload VChat' verb in OOC verbs, or reconnecting to try again.")
 
 //Provide the JS with who we are
 /datum/chatOutput/proc/send_playerinfo()
@@ -309,13 +310,13 @@ GLOBAL_LIST_EMPTY(bicon_cache) // Cache of the <img> tag results, not the icons
 		base64 = icon2base64(A.examine_icon(), key)
 		GLOB.bicon_cache[key] = base64
 		if(changes_often)
-			addtimer(CALLBACK(GLOBAL_PROC, .proc/expire_bicon_cache, key), 50 SECONDS, TIMER_UNIQUE)
+			addtimer(CALLBACK(GLOBAL_PROC, PROC_REF(expire_bicon_cache), key), 50 SECONDS, TIMER_UNIQUE)
 
 	// May add a class to the img tag created by bicon
 	if(use_class)
 		class = "class='icon [A.icon_state] [custom_classes]'"
 
-	return "<img [class] src='data:image/png;base64,[base64]'>"
+	return "<IMG [class] src='data:image/png;base64,[base64]'>"
 
 //Checks if the message content is a valid to_chat message
 /proc/is_valid_tochat_message(message)

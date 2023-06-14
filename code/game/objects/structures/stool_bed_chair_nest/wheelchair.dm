@@ -3,7 +3,7 @@
 	desc = "You sit in this. Either by will or force."
 	icon = 'icons/obj/wheelchair.dmi'
 	icon_state = "wheelchair"
-	anchored = 0
+	anchored = FALSE
 	buckle_movable = 1
 
 	var/folded_type = /obj/item/wheelchair
@@ -13,8 +13,8 @@
 	var/min_mob_buckle_size = MOB_SMALL
 	var/max_mob_buckle_size = MOB_LARGE
 
-/obj/structure/bed/chair/wheelchair/Initialize()
-	. = ..()
+/obj/structure/bed/chair/wheelchair/New(var/newloc, var/new_material, var/new_padding_material)
+	..()
 	update_icon()
 
 /obj/structure/bed/chair/wheelchair/motor
@@ -51,8 +51,7 @@
 	. = ..()
 	if(.)
 		if(has_buckled_mobs())
-			for(var/A in buckled_mobs)
-				var/mob/living/L = A
+			for(var/mob/living/L as anything in buckled_mobs)
 				L.set_dir(dir)
 
 /obj/structure/bed/chair/wheelchair/attackby(obj/item/weapon/W as obj, mob/user as mob)
@@ -95,8 +94,7 @@
 	var/turf/T = null
 	//--1---Move occupant---1--//
 	if(has_buckled_mobs())
-		for(var/A in buckled_mobs)
-			var/mob/living/L = A
+		for(var/mob/living/L as anything in buckled_mobs)
 			L.buckled = null
 			step(L, direction)
 			L.buckled = src
@@ -128,8 +126,7 @@
 	. = ..()
 	playsound(src, 'sound/effects/roll.ogg', 75, 1)
 	if(has_buckled_mobs())
-		for(var/A in buckled_mobs)
-			var/mob/living/occupant = A
+		for(var/mob/living/occupant as anything in buckled_mobs)
 			if(!driving)
 				occupant.buckled = null
 				occupant.Move(src.loc)

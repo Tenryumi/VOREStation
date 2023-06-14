@@ -54,7 +54,7 @@ var/const/HOLOPAD_MODE = RANGE_BASED
 /obj/machinery/hologram/holopad/attack_hand(var/mob/living/carbon/human/user) //Carn: Hologram requests.
 	if(!istype(user))
 		return
-	if(alert(user,"Would you like to request an AI's presence?",,"Yes","No") == "Yes")
+	if(tgui_alert(user,"Would you like to request an AI's presence?","Request AI",list("Yes","No")) == "Yes")
 		if(last_request + 200 < world.time) //don't spam the AI with requests you jerk!
 			last_request = world.time
 			to_chat(user, "<span class='notice'>You request an AI's presence.</span>")
@@ -117,12 +117,22 @@ For the other part of the code, check silicon say.dm. Particularly robot talk.*/
 	var/obj/effect/overlay/aiholo/hologram = new(T)//Spawn a blank effect at the location. //VOREStation Edit to specific type for adding vars
 	hologram.master = A //VOREStation Edit: So you can reference the master AI from in the hologram procs
 	hologram.icon = A.holo_icon
+	hologram.pixel_x = 16 - round(A.holo_icon.Width() / 2) //VOREStation Edit: centers the hologram on the tile
 	//hologram.mouse_opacity = 0//So you can't click on it. //VOREStation Removal
 	hologram.layer = FLY_LAYER//Above all the other objects/mobs. Or the vast majority of them.
-	hologram.anchored = 1//So space wind cannot drag it.
+	hologram.anchored = TRUE//So space wind cannot drag it.
 	hologram.name = "[A.name] (Hologram)"//If someone decides to right click.
-	hologram.set_light(2)	//hologram lighting
-	hologram.color = color //painted holopad gives coloured holograms
+
+	if(!isnull(color))
+		hologram.color = color
+	else
+		hologram.color = A.holo_color
+
+	if(hologram.color)	//hologram lighting
+		hologram.set_light(2,1,hologram.color)
+	else
+		hologram.set_light(2)
+
 	masters[A] = hologram
 	set_light(2)			//pad lighting
 	icon_state = "holopad1"
@@ -189,7 +199,7 @@ For the other part of the code, check silicon say.dm. Particularly robot talk.*/
 
 /obj/machinery/hologram
 	icon = 'icons/obj/stationobjs_vr.dmi' //VOREStation Edit
-	anchored = 1
+	anchored = TRUE
 	use_power = USE_POWER_IDLE
 	idle_power_usage = 5
 	active_power_usage = 100
@@ -223,7 +233,7 @@ Holographic project of everything else.
 	var/icon/flat_icon = icon(getFlatIcon(src,0))//Need to make sure it's a new icon so the old one is not reused.
 	flat_icon.ColorTone(rgb(125,180,225))//Let's make it bluish.
 	flat_icon.ChangeOpacity(0.5)//Make it half transparent.
-	var/input = input("Select what icon state to use in effect.",,"")
+	var/input = input(usr, "Select what icon state to use in effect.",,"")
 	if(input)
 		var/icon/alpha_mask = new('icons/effects/effects.dmi', "[input]")
 		flat_icon.AddAlphaMask(alpha_mask)//Finally, let's mix in a distortion effect.

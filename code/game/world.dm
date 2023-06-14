@@ -1,6 +1,7 @@
-#define RECOMMENDED_VERSION 501
+#define RECOMMENDED_VERSION 513
 /world/New()
 	world_startup_time = world.timeofday
+	rollover_safety_date = world.realtime - world.timeofday // 00:00 today (ish, since floating point error with world.realtime) of today
 	to_world_log("Map Loading Complete")
 	//logs
 	//VOREStation Edit Start
@@ -38,6 +39,7 @@
 	//end-emergency fix
 
 	src.update_status()
+	setup_season()	//VOREStation Addition
 
 	. = ..()
 
@@ -112,7 +114,7 @@ var/world_topic_spam_protect_time = world.timeofday
 		s["players"] = 0
 		s["stationtime"] = stationtime2text()
 		s["roundduration"] = roundduration2text()
-		s["map"] = strip_improper(using_map.full_name) //Done to remove the non-UTF-8 text macros 
+		s["map"] = strip_improper(using_map.full_name) //Done to remove the non-UTF-8 text macros
 
 		if(input["status"] == "2") // Shiny new hip status.
 			var/active = 0
@@ -493,12 +495,9 @@ var/world_topic_spam_protect_time = world.timeofday
 				if (copytext(line, 1, 2) == ";")
 					continue
 
-				var/title = "Mentor"
-				var/rights = admin_ranks[title]
-
 				var/ckey = copytext(line, 1, length(line)+1)
-				var/datum/admins/D = new /datum/admins(title, rights, ckey)
-				D.associate(GLOB.directory[ckey])
+				var/datum/mentor/M = new /datum/mentor(ckey)
+				M.associate(GLOB.directory[ckey])
 
 /world/proc/update_status()
 	var/s = ""
@@ -528,7 +527,7 @@ var/world_topic_spam_protect_time = world.timeofday
 	features += config.abandon_allowed ? "respawn" : "no respawn"
 
 	features += config.persistence_disabled ? "persistence disabled" : "persistence enabled"
-	
+
 	features += config.persistence_ignore_mapload ? "persistence mapload disabled" : "persistence mapload enabled"
 
 	if (config && config.allow_vote_mode)
@@ -572,7 +571,6 @@ var/failed_old_db_connections = 0
 	return 1
 
 /proc/setup_database_connection()
-
 	if(failed_db_connections > FAILED_DB_CONNECTION_CUTOFF)	//If it failed to establish a connection more than 5 times in a row, don't bother attempting to conenct anymore.
 		return 0
 
@@ -650,16 +648,42 @@ var/failed_old_db_connections = 0
 	else
 		return 1
 
+// Cleans up DB connections and recreates them
+/proc/reset_database_connections()
+	var/list/results = list("-- Resetting DB connections --")
+	failed_db_connections = 0
+
+	if(dbcon?.IsConnected())
+		dbcon.Disconnect()
+		results += "dbcon was connected and asked to disconnect"
+	else
+		results += "dbcon was not connected"
+
+	if(dbcon_old?.IsConnected())
+		results += "WARNING: dbcon_old is connected, not touching it, but is this intentional?"
+
+	if(!config.sql_enabled)
+		results += "stopping because config.sql_enabled = false"
+	else
+		. = setup_database_connection()
+		if(.)
+			results += "SUCCESS: set up a connection successfully with setup_database_connection()"
+		else
+			results += "FAIL: failed to connect to the database with setup_database_connection()"
+
+	results += "-- DB Reset End --"
+	to_world_log(results.Join("\n"))
+
 // Things to do when a new z-level was just made.
 /world/proc/max_z_changed()
 	if(!istype(GLOB.players_by_zlevel, /list))
 		GLOB.players_by_zlevel = new /list(world.maxz, 0)
 		GLOB.living_players_by_zlevel = new /list(world.maxz, 0)
-	
+
 	while(GLOB.players_by_zlevel.len < world.maxz)
 		GLOB.players_by_zlevel.len++
 		GLOB.players_by_zlevel[GLOB.players_by_zlevel.len] = list()
-		
+
 		GLOB.living_players_by_zlevel.len++
 		GLOB.living_players_by_zlevel[GLOB.living_players_by_zlevel.len] = list()
 
@@ -701,10 +725,10 @@ var/global/game_id = null
 	game_id = ""
 
 	var/list/c = list(
-		"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", 
-		"n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", 
-		"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", 
-		"N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", 
+		"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+		"n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+		"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+		"N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
 		"1", "2", "3", "4", "5", "6", "7", "8", "9", "0"
 		)
 	var/l = c.len

@@ -1,7 +1,8 @@
-/**
- * tgui external
+/*!
+ * External tgui definitions, such as src_object APIs.
  *
- * Contains all external tgui declarations.
+ * Copyright (c) 2020 Aleksej Komarov
+ * SPDX-License-Identifier: MIT
  */
 
 /**
@@ -85,6 +86,17 @@
 /**
  * public
  *
+ * Called on a UI when the UI crashed.
+ *
+ * required payload list A list of the payload supposed to be set on the regular UI.
+ */
+/datum/proc/tgui_fallback(list/payload)
+	SHOULD_CALL_PARENT(TRUE)
+	SEND_SIGNAL(src, COMSIG_UI_FALLBACK, usr)
+
+/**
+ * public
+ *
  * Called on an object when a tgui object is being created, allowing you to
  * push various assets to tgui, for examples spritesheets.
  *
@@ -162,13 +174,13 @@
 	set name = "Fix TGUI"
 	set category = "OOC"
 
-	if(alert(src, "Only use this verb if you have a white TGUI window stuck on your screen.", "Fix TGUI", "Continue", "Nevermind") != "Continue")
+	if(alert(src, "Only use this verb if you have a white TGUI window stuck on your screen.", "Fix TGUI", "Continue", "Nevermind") != "Continue") // Not tgui_alert since we're fixing tgui
 		return
 
 	SStgui.close_user_uis(mob)
-	if(alert(src, "Did that fix the problem?", "Fix TGUI", "Yes", "No") == "No")
+	if(alert(src, "Did that fix the problem?", "Fix TGUI", "Yes", "No") == "No") // Not tgui_alert since we're fixing tgui
 		SStgui.force_close_all_windows(mob)
-		alert(src, "UIs should be fixed now. If not, please cry to your nearest coder.", "Fix TGUI")
+		alert(src, "UIs should be fixed now. If not, please cry to your nearest coder.", "Fix TGUI") // Not tgui_alert since we're fixing tgui
 
 /**
  * verb
@@ -224,7 +236,9 @@
 	if(window_id)
 		window = usr.client.tgui_windows[window_id]
 		if(!window)
+			// #ifdef TGUI_DEBUGGING // Always going to log these
 			log_tgui(usr, "Error: Couldn't find the window datum, force closing.")
+			// #endif
 			SStgui.force_close_window(usr, window_id)
 			return FALSE
 	// Decode payload

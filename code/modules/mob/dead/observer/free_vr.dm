@@ -2,7 +2,7 @@ var/global/list/prevent_respawns = list()
 
 /hook/death/proc/quit_notify(mob/dead)
 	if(ishuman(dead))
-		to_chat(dead,"<span class='notice'>You're dead! If you don't intend to continue playing this round as this character, please use the <b>Quit This Round</b> verb in the OOC tab to free your job slot.</span>")
+		to_chat(dead,"<span class='notice'>You're dead! If you don't intend to continue playing this round as this character, please use the <b>Quit This Round</b> verb in the OOC tab to free your job slot. Otherwise, you can use the <b>Notify Transcore</b> verb to let medical know you need resleeving, or <b>Find Auto Resleever</b> verb to be taken to an auto resleever, which you can click on to be resleeved automatically after a time.</span>")
 
 	return TRUE
 
@@ -11,14 +11,14 @@ var/global/list/prevent_respawns = list()
 	set category = "OOC"
 	set desc = "Free your job slot, remove yourself from the manifest, and prevent respawning as this character for this round."
 
-	var/confirm = alert("This will free up your job slot, remove you from the manifest, and allow you to respawn as this character. You can rejoin as another \
-	character if you like. Do this now?","Quit This Round","Quit Round","Cancel")
+	var/confirm = tgui_alert(usr, "This will free up your job slot, remove you from the manifest, and allow you to respawn as this character. You can rejoin as another \
+	character if you like. Do this now?","Quit This Round",list("Quit Round","Cancel"))
 	if(confirm != "Quit Round")
 		return
 
 	//Why are you clicking this button?
 	if(!mind || !mind.assigned_role)
-		to_chat(src,"<span class='warning'>Either you haven't played this round, or you already used this verb.</span>")
+		to_chat(src,"<span class='warning'>Either you haven't played this round, you already used this verb or you left round properly already.</span>")
 		return
 
 	//Add them to the nope list

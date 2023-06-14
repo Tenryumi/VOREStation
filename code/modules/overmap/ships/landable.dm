@@ -7,8 +7,7 @@
 	var/obj/effect/shuttle_landmark/ship/landmark       // Record our open space landmark for easy reference.
 	var/multiz = 0										// Index of multi-z levels, starts at 0
 	var/status = SHIP_STATUS_LANDED
-	icon_state = "shuttle"
-	moving_state = "shuttle_moving"
+	icon_state = "shuttle_nosprite"
 
 /obj/effect/overmap/visitable/ship/landable/Destroy()
 	GLOB.shuttle_pre_move_event.unregister(SSshuttles.shuttles[shuttle], src)
@@ -72,8 +71,8 @@
 	if(istype(shuttle_datum,/datum/shuttle/autodock/overmap))
 		var/datum/shuttle/autodock/overmap/oms = shuttle_datum
 		oms.myship = src
-	GLOB.shuttle_pre_move_event.register(shuttle_datum, src, .proc/pre_shuttle_jump)
-	GLOB.shuttle_moved_event.register(shuttle_datum, src, .proc/on_shuttle_jump)
+	GLOB.shuttle_pre_move_event.register(shuttle_datum, src, PROC_REF(pre_shuttle_jump))
+	GLOB.shuttle_moved_event.register(shuttle_datum, src, PROC_REF(on_shuttle_jump))
 	on_landing(landmark, shuttle_datum.current_location) // We "land" at round start to properly place ourselves on the overmap.
 
 
@@ -145,7 +144,7 @@
 
 /obj/effect/shuttle_landmark/visiting_shuttle/shuttle_arrived(datum/shuttle/shuttle)
 	LAZYSET(core_landmark.visitors, src, shuttle)
-	GLOB.shuttle_moved_event.register(shuttle, src, .proc/shuttle_left)
+	GLOB.shuttle_moved_event.register(shuttle, src, PROC_REF(shuttle_left))
 
 /obj/effect/shuttle_landmark/visiting_shuttle/proc/shuttle_left(datum/shuttle/shuttle, obj/effect/shuttle_landmark/old_landmark, obj/effect/shuttle_landmark/new_landmark)
 	if(old_landmark == src)
@@ -200,11 +199,10 @@
 	switch(status)
 		if(SHIP_STATUS_LANDED)
 			var/obj/effect/overmap/visitable/location = loc
-			if(istype(loc, /obj/effect/overmap/visitable/sector))
-				return "Landed on \the [location.name]. Use secondary thrust to get clear before activating primary engines."
-			if(istype(loc, /obj/effect/overmap/visitable/ship))
+			if(location.in_space)
 				return "Docked with \the [location.name]. Use secondary thrust to get clear before activating primary engines."
-			return "Docked with an unknown object."
+			else
+				return "Landed on \the [location.name]. Use secondary thrust to get clear before activating primary engines."
 		if(SHIP_STATUS_TRANSIT)
 			return "Maneuvering under secondary thrust."
 		if(SHIP_STATUS_OVERMAP)

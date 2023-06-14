@@ -3,8 +3,15 @@
 	requires_power = 0
 	dynamic_lighting = 0
 
+/area/submap/casino_event
+	name = "\improper Space Casino"
+	requires_power = 0
+	dynamic_lighting = 0
 
-
+/datum/map_template/admin_use/casino
+	name = "Lucky 7 Casino"
+	desc = "A casino to gamble your life away."
+	mappath = 'maps/submaps/admin_use_vr/lucky_7.dmm'
 
 // NEVER EVER use these on an actual included map.
 // These are for admins to use when they make quick maps and upload the .dmm files for loading
@@ -197,9 +204,8 @@
 
 // This is a stationary overmap sector, you can spawn it in any zlevel and it will pop onto the overmap to represent those zlevels. It always moves to 2,2 on the overmap and you can move it elsewhere.
 /obj/effect/overmap/visitable/admin_use
-	name = "space destination"
+	name = "REPLACE ME"
 	desc = "Some space destination!"
-	scanner_name = "REPLACE ME"
 	scanner_desc = @{"[i]Registration[/i]: REPLACE ME
 [i]Class[/i]: REPLACE ME
 [i]Transponder[/i]: REPLACE ME
@@ -213,11 +219,49 @@
 	. = ..()
 	message_admins("An uploaded sector [ADMIN_JMP(src)][ADMIN_VV(src)] has been placed on the overmap. Don't forget to rename and set cool scanner info on it!")
 
+/obj/effect/overmap/visitable/admin_use/dark
+
+	skybox_icon = 'icons/skybox/anomaly.dmi'
+	skybox_icon_state = "dark"
+	skybox_pixel_x = 0
+	skybox_pixel_y = 0
+
+/obj/effect/overmap/visitable/admin_use/dark_star
+
+	skybox_icon = 'icons/skybox/anomaly.dmi'
+	skybox_icon_state = "dark_star"
+	skybox_pixel_x = 0
+	skybox_pixel_y = 0
+
+/obj/effect/overmap/visitable/admin_use/seven
+
+	skybox_icon = 'icons/skybox/anomaly.dmi'
+	skybox_icon_state = "seven"
+	skybox_pixel_x = 0
+	skybox_pixel_y = 0
+
+
+/obj/effect/overmap/visitable/admin_use/bluespace_shimmer
+
+	name = "Bluespace Shimmer"
+	skybox_icon = 'icons/skybox/anomaly.dmi'
+	skybox_icon_state = "shimmer_b"
+	skybox_pixel_x = 0
+	skybox_pixel_y = 0
+
+/obj/effect/overmap/visitable/admin_use/redspace_shimmer
+
+	name = "Redspace Shimmer"
+	skybox_icon = 'icons/skybox/anomaly.dmi'
+	skybox_icon_state = "shimmer_r"
+	skybox_pixel_x = 0
+	skybox_pixel_y = 0
+
+
 // This is the same, but makes a whole spaceship!
 /obj/effect/overmap/visitable/ship/admin_use
-	name = "spacecraft"
+	name = "REPLACE ME"
 	desc = "Spacefaring vessel."
-	scanner_name = "REPLACE ME"
 	scanner_desc = @{"[i]Registration[/i]: REPLACE ME
 [i]Class[/i]: REPLACE ME
 [i]Transponder[/i]: REPLACE ME
@@ -233,6 +277,25 @@
 /obj/effect/overmap/visitable/ship/admin_use/Initialize()
 	. = ..()
 	message_admins("An uploaded ship [ADMIN_JMP(src)][ADMIN_VV(src)] has been placed on the overmap. Don't forget to rename and set cool scanner info on it!")
+
+/obj/effect/overmap/visitable/ship/admin_use/space_dog
+	skybox_icon = 'icons/skybox/anomaly.dmi'
+	skybox_icon_state = "space_dog"
+	skybox_pixel_x = 0
+	skybox_pixel_y = 0
+
+/obj/effect/overmap/visitable/ship/admin_use/space_dog/Crossed(var/obj/effect/overmap/visitable/ship/enterer)
+	. = ..()
+	if(istype(enterer))
+		for(var/mob/potential_mob as anything in player_list)
+			if(potential_mob.z in enterer.map_z)
+				SEND_SOUND(potential_mob, 'sound/ambience/boy.ogg')
+
+/obj/effect/overmap/visitable/ship/admin_use/space_whale
+	skybox_icon = 'icons/skybox/anomaly.dmi'
+	skybox_icon_state = "space_whale"
+	skybox_pixel_x = 0
+	skybox_pixel_y = 0
 
 // These landmarks, placed in any map that is being represented by an overmap sector, will add themselves to landable destinations in that map!
 // Note the names, pick whichever makes the most sense for your map. No need to use them in any particular order or use any/all of them.

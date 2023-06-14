@@ -47,6 +47,58 @@
 			w_class = ITEMSIZE_NORMAL
 		update_icon()
 
+// Baton chompers
+/obj/item/weapon/dogborg/jaws/ert
+	name = "ert jaws"
+	icon = 'icons/mob/dogborg_vr.dmi'
+	icon_state = "ertjaws"
+	desc = "Shockingly chompy!"
+	force = 15
+	throwforce = 0
+	hitsound = 'sound/weapons/bite.ogg'
+	attack_verb = list("chomped", "bit", "ripped", "mauled", "enforced")
+	w_class = ITEMSIZE_NORMAL
+	var/charge_cost = 15
+
+/obj/item/weapon/dogborg/jaws/ert/apply_hit_effect(mob/living/target, mob/living/user, var/hit_zone)
+	if(isrobot(target))
+		return ..()
+
+	var/agony = 60 // Copied from stun batons
+	var/stun = 0 // ... same
+
+	var/obj/item/organ/external/affecting = null
+	if(ishuman(target))
+		var/mob/living/carbon/human/H = target
+		affecting = H.get_organ(hit_zone)
+
+	if(user.a_intent == I_HURT)
+		// Parent handles messages
+		. = ..()
+		//whacking someone causes a much poorer electrical contact than deliberately prodding them.
+		agony *= 0.5
+		stun *= 0.5
+	else
+		if(affecting)
+			target.visible_message("<span class='danger'>[target] has been zap-chomped in the [affecting.name] with [src] by [user]!</span>")
+		else
+			target.visible_message("<span class='danger'>[target] has been zap-chomped with [src] by [user]!</span>")
+		playsound(src, 'sound/weapons/Egloves.ogg', 50, 1, -1)
+
+	// Try to use power
+	var/stunning = FALSE
+	if(isrobot(loc))
+		var/mob/living/silicon/robot/R = loc
+		if(R.cell?.use(charge_cost) == charge_cost)
+			stunning = TRUE
+
+	if(stunning)
+		target.stun_effect_act(stun, agony, hit_zone, src)
+		msg_admin_attack("[key_name(user)] stunned [key_name(target)] with the [src].")
+		if(ishuman(target))
+			var/mob/living/carbon/human/H = target
+			H.forcesay(hit_appends)
+
 //Boop //New and improved, now a simple reagent sniffer.
 /obj/item/device/dogborg/boop_module
 	name = "boop module"
@@ -164,6 +216,11 @@
 	desc = "An advanced chemical synthesizer and injection system utilizing carrier's reserves."
 	reagent_ids = list("tricordrazine", "inaprovaline", "bicaridine", "dexalin", "anti_toxin", "tramadol", "spaceacillin")
 
+/obj/item/weapon/reagent_containers/borghypo/hound/trauma
+	name = "Hound hypospray"
+	desc = "An advanced chemical synthesizer and injection system utilizing carrier's reserves."
+	reagent_ids = list("tricordrazine", "inaprovaline", "oxycodone", "dexalin" ,"spaceacillin")
+
 
 //Tongue stuff
 /obj/item/device/dogborg/tongue
@@ -211,15 +268,15 @@
 	if(user.client && (target in user.client.screen))
 		to_chat(user, "<span class='warning'>You need to take \the [target.name] off before cleaning it!</span>")
 	if(istype(target, /obj/structure/sink) || istype(target, /obj/structure/toilet)) //Dog vibes.
-		user.visible_message("[user] begins to lap up water from [target.name].", "<span class='notice'>You begin to lap up water from [target.name].</span>")
+		user.visible_message("<span class='filter_notice'>[user] begins to lap up water from [target.name].</span>", "<span class='notice'>You begin to lap up water from [target.name].</span>")
 		if(do_after (user, 50))
 			water.add_charge(50)
-			to_chat(src, "You refill some of your water reserves.")
+			to_chat(src, "<span class='filter_notice'>You refill some of your water reserves.</span>")
 	else if(water.energy < 5)
 		to_chat(user, "<span class='notice'>Your mouth feels dry. You should drink up some water .</span>")
 		return
 	else if(istype(target,/obj/effect/decal/cleanable))
-		user.visible_message("[user] begins to lick off \the [target.name].", "<span class='notice'>You begin to lick off \the [target.name]...</span>")
+		user.visible_message("<span class='filter_notice'>[user] begins to lick off \the [target.name].</span>", "<span class='notice'>You begin to lick off \the [target.name]...</span>")
 		if(do_after (user, 50))
 			to_chat(user, "<span class='notice'>You finish licking off \the [target.name].</span>")
 			water.use_charge(5)
@@ -228,9 +285,9 @@
 			R.cell.charge += 50
 	else if(istype(target,/obj/item))
 		if(istype(target,/obj/item/trash))
-			user.visible_message("[user] nibbles away at \the [target.name].", "<span class='notice'>You begin to nibble away at \the [target.name]...</span>")
+			user.visible_message("<span class='filter_notice'>[user] nibbles away at \the [target.name].</span>", "<span class='notice'>You begin to nibble away at \the [target.name]...</span>")
 			if(do_after (user, 50))
-				user.visible_message("[user] finishes eating \the [target.name].", "<span class='notice'>You finish eating \the [target.name].</span>")
+				user.visible_message("<span class='filter_notice'>[user] finishes eating \the [target.name].</span>", "<span class='notice'>You finish eating \the [target.name].</span>")
 				to_chat(user, "<span class='notice'>You finish off \the [target.name].</span>")
 				qdel(target)
 				var/mob/living/silicon/robot/R = user
@@ -238,9 +295,9 @@
 				water.use_charge(5)
 			return
 		if(istype(target,/obj/item/weapon/cell))
-			user.visible_message("[user] begins cramming \the [target.name] down its throat.", "<span class='notice'>You begin cramming \the [target.name] down your throat...</span>")
+			user.visible_message("<span class='filter_notice'>[user] begins cramming \the [target.name] down its throat.</span>", "<span class='notice'>You begin cramming \the [target.name] down your throat...</span>")
 			if(do_after (user, 50))
-				user.visible_message("[user] finishes gulping down \the [target.name].", "<span class='notice'>You finish swallowing \the [target.name].</span>")
+				user.visible_message("<span class='filter_notice'>[user] finishes gulping down \the [target.name].</span>", "<span class='notice'>You finish swallowing \the [target.name].</span>")
 				to_chat(user, "<span class='notice'>You finish off \the [target.name], and gain some charge!</span>")
 				var/mob/living/silicon/robot/R = user
 				var/obj/item/weapon/cell/C = target
@@ -248,7 +305,7 @@
 				water.use_charge(5)
 				qdel(target)
 			return
-		user.visible_message("[user] begins to lick \the [target.name] clean...", "<span class='notice'>You begin to lick \the [target.name] clean...</span>")
+		user.visible_message("<span class='filter_notice'>[user] begins to lick \the [target.name] clean...</span>", "<span class='notice'>You begin to lick \the [target.name] clean...</span>")
 		if(do_after (user, 50))
 			to_chat(user, "<span class='notice'>You clean \the [target.name].</span>")
 			water.use_charge(5)
@@ -269,14 +326,14 @@
 			playsound(src, 'sound/weapons/Egloves.ogg', 50, 1, -1)
 			R.cell.charge -= 666
 		else
-			user.visible_message("<span class='notice'>\the [user] affectionately licks all over \the [target]'s face!</span>", "<span class='notice'>You affectionately lick all over \the [target]'s face!</span>")
+			user.visible_message("<span class='notice'>\The [user] affectionately licks all over \the [target]'s face!</span>", "<span class='notice'>You affectionately lick all over \the [target]'s face!</span>")
 			playsound(src, 'sound/effects/attackblob.ogg', 50, 1)
 			water.use_charge(5)
 			var/mob/living/carbon/human/H = target
 			if(H.species.lightweight == 1)
 				H.Weaken(3)
 	else
-		user.visible_message("[user] begins to lick \the [target.name] clean...", "<span class='notice'>You begin to lick \the [target.name] clean...</span>")
+		user.visible_message("<span class='filter_notice'>[user] begins to lick \the [target.name] clean...</span>", "<span class='notice'>You begin to lick \the [target.name] clean...</span>")
 		if(do_after (user, 50))
 			to_chat(user, "<span class='notice'>You clean \the [target.name].</span>")
 			var/obj/effect/decal/cleanable/C = locate() in target
@@ -314,7 +371,7 @@
 	name = "disabler"
 	desc = "A small and nonlethal gun produced by NT.."
 	icon = 'icons/mob/dogborg_vr.dmi'
-	icon_state = "projgun"
+	icon_state = "ertgunstun"
 	fire_sound = 'sound/weapons/eLuger.ogg'
 	projectile_type = /obj/item/projectile/beam/disable
 	charge_cost = 240 //Normal cost of a taser. It used to be 1000, but after some testing it was found that it would sap a borg's battery to quick
@@ -327,8 +384,8 @@
 	icon_state = "swordtail"
 	desc = "A glowing pink dagger normally attached to the end of a cyborg's tail. It appears to be extremely sharp."
 	force = 20 //Takes 5 hits to 100-0
-	sharp = 1
-	edge = 1
+	sharp = TRUE
+	edge = TRUE
 	throwforce = 0 //This shouldn't be thrown in the first place.
 	hitsound = 'sound/weapons/blade1.ogg'
 	attack_verb = list("slashed", "stabbed", "jabbed", "mauled", "sliced")
@@ -343,24 +400,33 @@
 	var/datum/matter_synth/glass = null
 
 /obj/item/device/lightreplacer/dogborg/attack_self(mob/user)//Recharger refill is so last season. Now we recycle without magic!
-	if(uses >= max_uses)
-		to_chat(user, "<span class='warning'>[src.name] is full.</span>")
+
+	var/choice = tgui_alert(user, "Do you wish to check the reserves or change the color?", "Selection List", list("Reserves", "Color"))
+	if(choice == "Color")
+		var/new_color = input(usr, "Choose a color to set the light to! (Default is [LIGHT_COLOR_INCANDESCENT_TUBE])", "", selected_color) as color|null
+		if(new_color)
+			selected_color = new_color
+			to_chat(user, "<span class='filter_notice'>The light color has been changed.</span>")
 		return
-	if(uses < max_uses && cooldown == 0)
-		if(glass.energy < 125)
-			to_chat(user, "<span class='warning'>Insufficient material reserves.</span>")
-			return
-		to_chat(user, "It has [uses] lights remaining. Attempting to fabricate a replacement. Please stand still.")
-		cooldown = 1
-		if(do_after(user, 50))
-			glass.use_charge(125)
-			add_uses(1)
-			cooldown = 0
-		else
-			cooldown = 0
 	else
-		to_chat(user, "It has [uses] lights remaining.")
-		return
+		if(uses >= max_uses)
+			to_chat(user, "<span class='warning'>[src.name] is full.</span>")
+			return
+		if(uses < max_uses && cooldown == 0)
+			if(glass.energy < 125)
+				to_chat(user, "<span class='warning'>Insufficient material reserves.</span>")
+				return
+			to_chat(user, "<span class='filter_notice'>It has [uses] lights remaining. Attempting to fabricate a replacement. Please stand still.</span>")
+			cooldown = 1
+			if(do_after(user, 50))
+				glass.use_charge(125)
+				add_uses(1)
+				cooldown = 0
+			else
+				cooldown = 0
+		else
+			to_chat(user, "<span class='filter_notice'>It has [uses] lights remaining.</span>")
+			return
 
 //Pounce stuff for K-9
 /obj/item/weapon/dogborg/pounce
@@ -381,15 +447,15 @@
 
 /mob/living/silicon/robot/proc/leap()
 	if(last_special > world.time)
-		to_chat(src, "Your leap actuators are still recharging.")
+		to_chat(src, "<span class='filter_notice'>Your leap actuators are still recharging.</span>")
 		return
 
 	if(cell.charge < 1000)
-		to_chat(src, "Cell charge too low to continue.")
+		to_chat(src, "<span class='filter_notice'>Cell charge too low to continue.</span>")
 		return
 
 	if(usr.incapacitated(INCAPACITATION_DISABLED))
-		to_chat(src, "You cannot leap in your current state.")
+		to_chat(src, "<span class='filter_notice'>You cannot leap in your current state.</span>")
 		return
 
 	var/list/choices = list()
@@ -398,7 +464,7 @@
 			choices += M
 	choices -= src
 
-	var/mob/living/T = input(src,"Who do you wish to leap at?") as null|anything in choices
+	var/mob/living/T = tgui_input_list(src,"Who do you wish to leap at?","Target Choice", choices)
 
 	if(!T || !src || src.stat) return
 
@@ -408,7 +474,7 @@
 		return
 
 	if(usr.incapacitated(INCAPACITATION_DISABLED))
-		to_chat(src, "You cannot leap in your current state.")
+		to_chat(src, "<span class='filter_notice'>You cannot leap in your current state.</span>")
 		return
 
 	last_special = world.time + 10
@@ -455,11 +521,11 @@
 	options["Whiskey Soda"] = "Liqour Licker"
 	options["Grape Soda"] = "The Grapist"
 	options["Demon's Blood"] = "Vampire's Aid"
-	var/choice = input(M,"Choose your drink!") in options
+	var/choice = tgui_input_list(M, "Choose your drink!", "Drink Choice", options)
 	if(src && choice && !M.stat && in_range(M,src))
 		icontype = options[choice]
 		var/active_sound = 'sound/effects/bubbles.ogg'
 		playsound(src.loc, "[active_sound]", 100, 0, 4)
-		M << "Your Tank now displays [choice]. Drink up and enjoy!"
+		to_chat(M, "<span class='filter_notice'>Your Tank now displays [choice]. Drink up and enjoy!</span>")
 		updateicon()
 		return 1

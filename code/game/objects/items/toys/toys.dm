@@ -3,8 +3,6 @@
  *		Balloons
  *		Fake telebeacon
  *		Fake singularity
- *		Toy gun
- *		Toy crossbow
  *		Toy swords
  *		Toy bosun's whistle
  *		Snap pops
@@ -146,127 +144,6 @@
 	icon_state = "singularity_s1"
 
 /*
- * Toy crossbow
- */
-
-/obj/item/toy/crossbow
-	name = "foam dart crossbow"
-	desc = "A weapon favored by many overactive children. Ages 8 and up."
-	icon = 'icons/obj/gun.dmi'
-	icon_state = "crossbow"
-	item_icons = list(
-		icon_l_hand = 'icons/mob/items/lefthand_guns.dmi',
-		icon_r_hand = 'icons/mob/items/righthand_guns.dmi',
-		)
-	slot_flags = SLOT_HOLSTER
-	w_class = ITEMSIZE_SMALL
-	attack_verb = list("attacked", "struck", "hit")
-	var/bullets = 5
-	drop_sound = 'sound/items/drop/gun.ogg'
-
-/obj/item/toy/crossbow/examine(mob/user)
-	. = ..()
-	if(bullets && get_dist(user, src) <= 2)
-		. += "<span class='notice'>It is loaded with [bullets] foam darts!</span>"
-
-/obj/item/toy/crossbow/attackby(obj/item/I as obj, mob/user as mob)
-	if(istype(I, /obj/item/toy/ammo/crossbow))
-		if(bullets <= 4)
-			user.drop_item()
-			qdel(I)
-			bullets++
-			to_chat(user, "<span class='notice'>You load the foam dart into the crossbow.</span>")
-		else
-			to_chat(usr, "<span class='warning'>It's already fully loaded.</span>")
-
-
-/obj/item/toy/crossbow/afterattack(atom/target as mob|obj|turf|area, mob/user as mob, flag)
-	if(!isturf(target.loc) || target == user) return
-	if(flag) return
-
-	if (locate (/obj/structure/table, src.loc))
-		return
-	else if (bullets)
-		var/turf/trg = get_turf(target)
-		var/obj/effect/foam_dart_dummy/D = new/obj/effect/foam_dart_dummy(get_turf(src))
-		bullets--
-		D.icon_state = "foamdart"
-		D.name = "foam dart"
-		playsound(src, 'sound/items/syringeproj.ogg', 50, 1)
-
-		for(var/i=0, i<6, i++)
-			if (D)
-				if(D.loc == trg) break
-				step_towards(D,trg)
-
-				for(var/mob/living/M in D.loc)
-					if(!istype(M,/mob/living)) continue
-					if(M == user) continue
-					for(var/mob/O in viewers(world.view, D))
-						O.show_message(text("<span class='warning'>\The [] was hit by the foam dart!</span>", M), 1)
-					new /obj/item/toy/ammo/crossbow(M.loc)
-					qdel(D)
-					return
-
-				for(var/atom/A in D.loc)
-					if(A == user) continue
-					if(A.density)
-						new /obj/item/toy/ammo/crossbow(A.loc)
-						qdel(D)
-
-			sleep(1)
-
-		spawn(10)
-			if(D)
-				new /obj/item/toy/ammo/crossbow(D.loc)
-				qdel(D)
-
-		return
-	else if (bullets == 0)
-		user.Weaken(5)
-		for(var/mob/O in viewers(world.view, user))
-			O.show_message(text("<span class='warning'>\The [] realized they were out of ammo and starting scrounging for some!</span>", user), 1)
-
-
-/obj/item/toy/crossbow/attack(mob/M as mob, mob/user as mob)
-	src.add_fingerprint(user)
-
-// ******* Check
-
-	if (src.bullets > 0 && M.lying)
-
-		for(var/mob/O in viewers(M, null))
-			if(O.client)
-				O.show_message(text("<span class='danger'>\The [] casually lines up a shot with []'s head and pulls the trigger!</span>", user, M), 1, "<span class='warning'>You hear the sound of foam against skull</span>", 2)
-				O.show_message(text("<span class='warning'>\The [] was hit in the head by the foam dart!</span>", M), 1)
-
-		playsound(src, 'sound/items/syringeproj.ogg', 50, 1)
-		new /obj/item/toy/ammo/crossbow(M.loc)
-		src.bullets--
-	else if (M.lying && src.bullets == 0)
-		for(var/mob/O in viewers(M, null))
-			if (O.client)	O.show_message(text("<span class='danger'>\The [] casually lines up a shot with []'s head, pulls the trigger, then realizes they are out of ammo and drops to the floor in search of some!</span>", user, M), 1, "<span class='warning'>You hear someone fall</span>", 2)
-		user.Weaken(5)
-	return
-
-/obj/item/toy/ammo/crossbow
-	name = "foam dart"
-	desc = "It's nerf or nothing! Ages 8 and up."
-	icon = 'icons/obj/toy.dmi'
-	icon_state = "foamdart"
-	w_class = ITEMSIZE_TINY
-	slot_flags = SLOT_EARS
-	drop_sound = 'sound/items/drop/food.ogg'
-
-/obj/effect/foam_dart_dummy
-	name = ""
-	desc = ""
-	icon = 'icons/obj/toy.dmi'
-	icon_state = "null"
-	anchored = 1
-	density = 0
-
-/*
  * Toy swords
  */
 /obj/item/toy/sword
@@ -320,7 +197,7 @@
 		to_chat(user, "<span class='warning'>You can't do that right now!</span>")
 		return
 
-	if(alert("Are you sure you want to recolor your blade?", "Confirm Recolor", "Yes", "No") == "Yes")
+	if(tgui_alert(usr, "Are you sure you want to recolor your blade?", "Confirm Recolor", list("Yes", "No")) == "Yes")
 		var/energy_color_input = input(usr,"","Choose Energy Color",lcolor) as color|null
 		if(energy_color_input)
 			lcolor = sanitize_hexcolor(energy_color_input)
@@ -394,7 +271,6 @@
 /*
  * Bosun's whistle
  */
-
 /obj/item/toy/bosunwhistle
 	name = "bosun's whistle"
 	desc = "A genuine Admiral Krush Bosun's Whistle, for the aspiring ship's captain! Suitable for ages 8 and up, do not swallow."
@@ -668,6 +544,76 @@
 	icon_state = "ert"
 	toysay = "We're probably the good guys!"
 
+// Eris
+/obj/item/toy/figure/excelsior
+	name = "\"Excelsior\" figurine"
+	desc = "A curiously unbranded figurine of a Space Soviet, adorned in their iconic armor. There is still a price tag on the back of the base, six-hundred credits, people collect these things? \
+	\"Ever Upward!\""
+	icon_state = "excelsior"
+
+/obj/item/toy/figure/serbian
+	name = "mercenary figurine"
+	desc = "A curiously unbranded figurine, the olive drab a popular pick for many independent Serbian mercenary outfits. Rocket launcher not included."
+	icon_state = "serbian"
+
+/obj/item/toy/figure/acolyte
+	name = "acolyte figurine"
+	desc = "Church of NeoTheology \"New Faith Life\" brand figurine of an acolyte, hooded both physically and spiritually from that which would lead them astray."
+	icon_state = "acolyte"
+
+/obj/item/toy/figure/carrion
+	name = "carrion figurine"
+	desc = "A curiously unbranded figurine depicting a grotesque head of flesh, the Human features seem almost underdeveloped, its skull bulging outwards, mouth agape with torn flesh. \
+	Whoever made this certainly knew how to thin their paints."
+	icon_state = "carrion"
+
+/obj/item/toy/figure/roach
+	name = "roach figurine"
+	desc = "Upon the base is an erected \"Roachman\", its arms outstretched, with more additional roach hands besides them. This is likely the one thing most universally recognized in popular media. \
+	The plaque is covered in hundreds of scratch marks, eliminating any further knowledge of it or its brand."
+	icon_state = "roach"
+
+/obj/item/toy/figure/vagabond
+	name = "vagabond figurine"
+	desc = "An Aster's \"Space Life\" brand figurine showcasing the form of a random deplorable, wearing one of the ship's uniforms, and an orange bandana. \
+	Must of been custom-made to commemorate the Eris' doomed voyage."
+	icon_state = "vagabond"
+
+/obj/item/toy/figure/rooster
+	name = "rooster figurine"
+	desc = "\"Space Vice\" brand figurine, there is no further manufacturer information. It's a man wearing a rooster mask, and a varsity jacket with the letter \"B\" emblazoned on the front. \
+	\"Do you like hurting other people?\""
+	icon_state = "rooster"
+
+/obj/item/toy/figure/barking_dog
+	name = "barking dog figurine"
+	desc = "A metal soldier with the mask of a hound stands upon the base, the plaque seems smeared with caked grime, but despite this you make out a rare double-quote. \
+	\"A dog barks on its master's orders, lest its pack runs astray.\" \"Whatever the task, the grim dog mask would tell you that your life was done.\""
+	icon_state = "barking_dog"
+
+/obj/item/toy/figure/red_soldier
+	name = "red soldier figurine"
+	desc = "A curiously unbranded figurine of a red soldier fighting in the tides of war, their humanity hidden by a gas mask. \"Why do we fight? To win the war, of course.\""
+	icon_state = "red_soldier"
+
+/obj/item/toy/figure/metacat
+	name = "meta-cat figurine"
+	desc = "A curiously unbranded figurine depicting an anthropomorphic cat in a voidsuit, the small plaque claims this to be one of two. \"Always in silent pair, through distance or unlikelihood.\""
+	icon_state = "metacat"
+
+/obj/item/toy/figure/shitcurity
+	name = "shitcurity officer figurine"
+	desc = "An Aster's \"Space Life\" brand figurine of a classic redshirt of \"Nanotrasen's finest\". Their belly distends out into an obvious beer gut, revealing no form of manufacturer bias what-so-ever. \
+	\"I joined just to kill people.\""
+	icon_state = "shitcurity"
+
+/obj/item/toy/figure/metro_patrolman
+	name = "metro patrolman figurine"
+	desc = "The plaque seems flaked with rust residue, \"London Metro\" brand it reads. The man wears some kind of enforcer's uniform, with the acronym \"VPP\" on their left shoulder and cap. \
+	\"Abandoned for Escalation, the patrolman grumbles.\""
+	icon_state = "metro_patrolman"
+
+
 /*
  * Plushies
  */
@@ -750,8 +696,8 @@
 	desc = "A very generic plushie. It seems to not want to exist."
 	icon = 'icons/obj/toy.dmi'
 	icon_state = "ianplushie"
-	anchored = 0
-	density = 1
+	anchored = FALSE
+	density = TRUE
 	var/phrase = "I don't want to exist anymore!"
 	var/searching = FALSE
 	var/opened = FALSE	// has this been slit open? this will allow you to store an object in a plushie.
@@ -875,7 +821,7 @@
 		else
 			searching = FALSE
 
-	if(world.time - last_message <= 1 SECOND)
+	if(world.time - last_message <= 15 SECONDS)
 		return
 	if(user.a_intent == I_HELP)
 		user.visible_message("<span class='notice'><b>\The [user]</b> hugs [src]!</span>","<span class='notice'>You hug [src]!</span>")
@@ -897,7 +843,7 @@
 	if(!M.mind)
 		return 0
 
-	var/input = sanitizeSafe(input("What do you want to name the plushie?", ,""), MAX_NAME_LEN)
+	var/input = sanitizeSafe(tgui_input_text(usr, "What do you want to name the plushie?", ,""), MAX_NAME_LEN)
 
 	if(src && input && !M.stat && in_range(M,src))
 		name = input
@@ -1181,6 +1127,11 @@
 	icon_state = "therapygreen"
 	item_state = "egg3" // It's the green egg in items_left/righthand
 
+/obj/item/toy/plushie/fumo
+	name = "Fumo"
+	desc = "A plushie of a....?"
+	icon_state = "fumoplushie"
+	pokephrase = "I just don't think about losing."
 
 //Toy cult sword
 /obj/item/toy/cultsword
@@ -1365,7 +1316,7 @@
 	name = "inflatable duck"
 	desc = "No bother to sink or swim when you can just float!"
 	icon_state = "inflatable"
-	icon = 'icons/obj/clothing/belts.dmi'
+	icon = 'icons/inventory/belt/item.dmi'
 	slot_flags = SLOT_BELT
 	drop_sound = 'sound/items/drop/rubber.ogg'
 
@@ -1451,7 +1402,7 @@
 	name = "black king"
 	desc = "A black king chess piece."
 	description_info = "The King can move exactly one square horizontally, vertically, or diagonally. If your opponent captures this piece, you lose."
-	icon_state = "black_king" 
+	icon_state = "black_king"
 
 /// Balloon structures
 
@@ -1460,8 +1411,8 @@
 	desc = "A generic balloon. How boring."
 	icon = 'icons/obj/toy.dmi'
 	icon_state = "ghostballoon"
-	anchored = 0
-	density = 0
+	anchored = FALSE
+	density = FALSE
 
 /obj/structure/balloon/attack_hand(mob/user)
 	user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)

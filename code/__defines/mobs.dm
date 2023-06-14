@@ -112,24 +112,23 @@
 #define MAX_SUPPLIED_LAW_NUMBER 50
 
 //default item on-mob icons
-#define INV_HEAD_DEF_ICON 'icons/mob/head.dmi'
-#define INV_BACK_DEF_ICON 'icons/mob/back.dmi'
 #define INV_L_HAND_DEF_ICON 'icons/mob/items/lefthand.dmi'
 #define INV_R_HAND_DEF_ICON 'icons/mob/items/righthand.dmi'
-#define INV_W_UNIFORM_DEF_ICON "icons/mob/uniform"
-#define INV_ACCESSORIES_DEF_ICON 'icons/mob/ties.dmi'
-#define INV_TIE_DEF_ICON 'icons/mob/ties.dmi'
-#define INV_SUIT_DEF_ICON "icons/mob/suit"
-#define INV_SPACESUIT_DEF_ICON 'icons/mob/spacesuit.dmi'
 #define INV_WEAR_ID_DEF_ICON 'icons/mob/mob.dmi'
-#define INV_GLOVES_DEF_ICON 'icons/mob/hands.dmi'
-#define INV_EYES_DEF_ICON 'icons/mob/eyes.dmi'
-#define INV_EARS_DEF_ICON 'icons/mob/ears.dmi'
-#define INV_FEET_DEF_ICON 'icons/mob/feet.dmi'
-#define INV_BELT_DEF_ICON 'icons/mob/belt.dmi'
-#define INV_MASK_DEF_ICON 'icons/mob/mask.dmi'
 #define INV_HCUFF_DEF_ICON 'icons/mob/mob.dmi'
 #define INV_LCUFF_DEF_ICON 'icons/mob/mob.dmi'
+
+#define INV_HEAD_DEF_ICON 'icons/inventory/head/mob.dmi'
+#define INV_BACK_DEF_ICON 'icons/inventory/back/mob.dmi'
+#define INV_W_UNIFORM_DEF_ICON 'icons/inventory/uniform/mob.dmi'
+#define INV_ACCESSORIES_DEF_ICON 'icons/inventory/accessory/mob.dmi'
+#define INV_SUIT_DEF_ICON 'icons/inventory/suit/mob.dmi'
+#define INV_GLOVES_DEF_ICON 'icons/inventory/hands/mob.dmi'
+#define INV_EYES_DEF_ICON 'icons/inventory/eyes/mob.dmi'
+#define INV_EARS_DEF_ICON 'icons/inventory/ears/mob.dmi'
+#define INV_FEET_DEF_ICON 'icons/inventory/feet/mob.dmi'
+#define INV_BELT_DEF_ICON 'icons/inventory/belt/mob.dmi'
+#define INV_MASK_DEF_ICON 'icons/inventory/face/mob.dmi'
 
 // Character's economic class
 #define CLASS_UPPER 		"Wealthy"
@@ -137,8 +136,9 @@
 #define CLASS_MIDDLE 		"Average"
 #define CLASS_LOWMID		"Underpaid"
 #define CLASS_LOWER			"Poor"
+#define CLASS_BROKE			"Broke"	//VOREStation Add
 
-#define ECONOMIC_CLASS		list(CLASS_UPPER,CLASS_UPMID,CLASS_MIDDLE,CLASS_LOWMID,CLASS_LOWER)
+#define ECONOMIC_CLASS		list(CLASS_UPPER,CLASS_UPMID,CLASS_MIDDLE,CLASS_LOWMID,CLASS_LOWER,CLASS_BROKE)
 
 
 // Defines mob sizes, used by lockers and to determine what is considered a small sized mob, etc.
@@ -250,7 +250,7 @@
 #define BP_HEAD   "head"
 #define BP_TORSO  "torso"
 #define BP_GROIN  "groin"
-#define BP_ALL list(BP_GROIN, BP_TORSO, BP_HEAD, BP_L_ARM, BP_R_ARM, BP_L_HAND, BP_R_HAND, BP_L_FOOT, BP_R_FOOT, BP_L_LEG, BP_R_LEG)
+#define BP_ALL list(BP_TORSO, BP_HEAD, BP_GROIN, BP_L_ARM, BP_R_ARM, BP_L_HAND, BP_R_HAND, BP_L_LEG, BP_R_LEG, BP_L_FOOT, BP_R_FOOT) //keep so that parent comes before child
 
 #define SYNTH_BLOOD_COLOUR "#030303"
 #define SYNTH_FLESH_COLOUR "#575757"
@@ -379,38 +379,39 @@
 #define VIS_LIGHTING		2
 #define VIS_O_LIGHT         3
 #define VIS_EMISSIVE        4
+#define VIS_OPENSPACE       5
 
-#define VIS_GHOSTS			5
-#define VIS_AI_EYE			6
+#define VIS_GHOSTS			6
+#define VIS_AI_EYE			7
 
-#define VIS_CH_STATUS		7
-#define VIS_CH_HEALTH		8
-#define VIS_CH_LIFE			9
-#define VIS_CH_ID			10
-#define VIS_CH_WANTED		11
-#define VIS_CH_IMPLOYAL		12
-#define VIS_CH_IMPTRACK		13
-#define VIS_CH_IMPCHEM		14
-#define VIS_CH_SPECIAL		15
-#define VIS_CH_STATUS_OOC	16
+#define VIS_CH_STATUS		8
+#define VIS_CH_HEALTH		9
+#define VIS_CH_LIFE			10
+#define VIS_CH_ID			11
+#define VIS_CH_WANTED		12
+#define VIS_CH_IMPLOYAL		13
+#define VIS_CH_IMPTRACK		14
+#define VIS_CH_IMPCHEM		15
+#define VIS_CH_SPECIAL		16
+#define VIS_CH_STATUS_OOC	17
 
-#define VIS_ADMIN1			17
-#define VIS_ADMIN2			18
-#define VIS_ADMIN3			19
+#define VIS_ADMIN1			18
+#define VIS_ADMIN2			19
+#define VIS_ADMIN3			20
 
-#define VIS_MESONS			20
+#define VIS_MESONS			21
 
-#define VIS_TURFS			21
-#define VIS_OBJS			22
-#define VIS_MOBS		    23
+#define VIS_TURFS			22
+#define VIS_OBJS			23
+#define VIS_MOBS		    24
 
-#define VIS_BUILDMODE		24
+#define VIS_BUILDMODE		25
 
-#define VIS_CLOAKED			25
+#define VIS_CLOAKED			26
 
-#define VIS_STATUS			26
+#define VIS_STATUS			27
 
-#define VIS_COUNT			26 //Must be highest number from above.
+#define VIS_COUNT			27 //Must be highest number from above.
 
 //Some mob icon layering defines
 #define BODY_LAYER		-100
@@ -447,3 +448,7 @@
 #define DEATHGASP_NO_MESSAGE "no message"
 
 #define RESIST_COOLDOWN		2 SECONDS
+
+#define VISIBLE_GENDER_FORCE_PLURAL 1		// Used by get_visible_gender to return PLURAL
+#define VISIBLE_GENDER_FORCE_IDENTIFYING 2	// Used by get_visible_gender to return the mob's identifying gender
+#define VISIBLE_GENDER_FORCE_BIOLOGICAL 3	// Used by get_visible_gender to return the mob's biological gender

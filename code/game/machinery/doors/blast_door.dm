@@ -86,7 +86,7 @@
 	src.operating = 1
 	playsound(src, open_sound, 100, 1)
 	flick(icon_state_opening, src)
-	src.density = 0
+	src.density = FALSE
 	update_nearby_tiles()
 	src.update_icon()
 	src.set_opacity(0)
@@ -106,7 +106,7 @@
 	playsound(src, close_sound, 100, 1)
 	src.layer = closed_layer
 	flick(icon_state_closing, src)
-	src.density = 1
+	src.density = TRUE
 	update_nearby_tiles()
 	src.update_icon()
 	if(src.istransparent)
@@ -189,7 +189,7 @@
 			to_chat(user, "<span class='notice'>\The [src] is already fully repaired.</span>")
 			return
 		var/obj/item/stack/P = C
-		if(P.amount < amt)
+		if(P.get_amount() < amt)
 			to_chat(user, "<span class='warning'>You don't have enough sheets to repair this! You need at least [amt] sheets.</span>")
 			return
 		to_chat(user, "<span class='notice'>You begin repairing [src]...</span>")
@@ -273,7 +273,7 @@
 		force_open()
 
 	if(autoclose && src.operating && !(stat & BROKEN || stat & NOPOWER))
-		addtimer(CALLBACK(src, .proc/close, 15 SECONDS))
+		addtimer(CALLBACK(src, PROC_REF(close), 15 SECONDS))
 	return 1
 
 // Proc: close()
@@ -316,7 +316,24 @@
 
 /obj/machinery/door/blast/regular/open
 	icon_state = "pdoor0"
-	density = 0
+	density = FALSE
+	opacity = 0
+
+
+// SUBTYPE: Shuttle
+// Slightly weaker, intergrated shutters - open state is hidden from view. Found on fancy_shuttles
+/obj/machinery/door/blast/shuttle
+	name = "shuttle blast doors"
+	icon_state_open = "spdoor0"
+	icon_state_opening = "spdoorc0"
+	icon_state_closed = "spdoor1"
+	icon_state_closing = "spdoorc1"
+	icon_state = "spdoor1"
+	maxhealth = 400
+
+/obj/machinery/door/blast/shuttle/open
+	icon_state = "spdoor0"
+	density = FALSE
 	opacity = 0
 
 // SUBTYPE: Shutters
@@ -346,7 +363,7 @@
 
 /obj/machinery/door/blast/gate/open
 	icon_state = "tshutter0"
-	density = 0
+	density = FALSE
 
 /obj/machinery/door/blast/gate/thin
 	name = "thin gate"
@@ -360,7 +377,7 @@
 
 /obj/machinery/door/blast/gate/thin/open
 	icon_state = "shutter2_1"
-	density = 0
+	density = FALSE
 
 /obj/machinery/door/blast/gate/bars
 	name = "prison bars"
@@ -374,7 +391,7 @@
 
 /obj/machinery/door/blast/gate/bars/open
 	icon_state = "bars_1"
-	density = 0
+	density = FALSE
 
 // SUBTYPE: Multi-tile
 // Pod doors ported from Paradise
@@ -404,6 +421,13 @@
 	icon_state_closing = "closing"
 	icon_state = "closed"
 
+/obj/machinery/door/blast/multi_tile/four_tile_ver_sec
+	icon = 'icons/obj/doors/1x4blast_vert_sec.dmi'
+	bound_height = 128
+	width = 4
+	dir = NORTH
+	autoclose = TRUE
+
 /obj/machinery/door/blast/multi_tile/four_tile_ver
 	icon = 'icons/obj/doors/1x4blast_vert.dmi'
 	bound_height = 128
@@ -421,6 +445,13 @@
 	bound_height = 64
 	width = 2
 	dir = NORTH
+
+/obj/machinery/door/blast/multi_tile/four_tile_hor_sec
+	icon = 'icons/obj/doors/1x4blast_hor_sec.dmi'
+	bound_width = 128
+	width = 4
+	dir = EAST
+	autoclose = TRUE
 
 /obj/machinery/door/blast/multi_tile/four_tile_hor
 	icon = 'icons/obj/doors/1x4blast_hor.dmi'

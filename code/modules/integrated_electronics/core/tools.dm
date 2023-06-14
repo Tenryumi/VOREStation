@@ -114,7 +114,7 @@
 	var/accepting_refs = 0
 
 /obj/item/device/integrated_electronics/debugger/attack_self(mob/user)
-	var/type_to_use = input("Please choose a type to use.","[src] type setting") as null|anything in list("string","number","ref", "null")
+	var/type_to_use = tgui_input_list(usr, "Please choose a type to use.","[src] type setting", list("string","number","ref", "null"))
 	if(!CanInteract(user, GLOB.tgui_physical_state))
 		return
 
@@ -122,14 +122,14 @@
 	switch(type_to_use)
 		if("string")
 			accepting_refs = 0
-			new_data = input("Now type in a string.","[src] string writing") as null|text
+			new_data = tgui_input_text(usr, "Now type in a string.","[src] string writing", null, MAX_MESSAGE_LEN)
 			new_data = sanitizeSafe(new_data, MAX_MESSAGE_LEN, 0, 0)
 			if(istext(new_data) && CanInteract(user, GLOB.tgui_physical_state))
 				data_to_write = new_data
 				to_chat(user, "<span class='notice'>You set \the [src]'s memory to \"[new_data]\".</span>")
 		if("number")
 			accepting_refs = 0
-			new_data = input("Now type in a number.","[src] number writing") as null|num
+			new_data = tgui_input_number(usr, "Now type in a number.","[src] number writing")
 			if(isnum(new_data) && CanInteract(user, GLOB.tgui_physical_state))
 				data_to_write = new_data
 				to_chat(user, "<span class='notice'>You set \the [src]'s memory to [new_data].</span>")
@@ -143,7 +143,7 @@
 
 /obj/item/device/integrated_electronics/debugger/afterattack(atom/target, mob/living/user, proximity)
 	if(accepting_refs && proximity)
-		data_to_write = weakref(target)
+		data_to_write = WEAKREF(target)
 		visible_message("<span class='notice'>[user] slides \a [src]'s over \the [target].</span>")
 		to_chat(user, "<span class='notice'>You set \the [src]'s memory to a reference to [target.name] \[Ref\].  The ref scanner is \
 		now off.</span>")
@@ -154,7 +154,7 @@
 		io.write_data_to_pin(data_to_write)
 		var/data_to_show = data_to_write
 		if(isweakref(data_to_write))
-			var/weakref/w = data_to_write
+			var/datum/weakref/w = data_to_write
 			var/atom/A = w.resolve()
 			data_to_show = A.name
 		to_chat(user, "<span class='notice'>You write '[data_to_write ? data_to_show : "NULL"]' to the '[io]' pin of \the [io.holder].</span>")
@@ -244,7 +244,7 @@
 
 /obj/item/device/multitool/afterattack(atom/target, mob/living/user, proximity)
 	if(accepting_refs && toolmode == MULTITOOL_MODE_INTCIRCUITS && proximity)
-		weakref_wiring = weakref(target)
+		weakref_wiring = WEAKREF(target)
 		visible_message("<span class='notice'>[user] slides \a [src]'s over \the [target].</span>")
 		to_chat(user, "<span class='notice'>You set \the [src]'s memory to a reference to [target.name] \[Ref\].  The ref scanner is \
 		now off.</span>")

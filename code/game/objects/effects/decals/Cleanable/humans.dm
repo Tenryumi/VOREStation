@@ -8,9 +8,10 @@ var/global/list/image/splatter_cache=list()
 	desc = "It's thick and gooey. Perhaps it's the chef's cooking?"
 	var/drydesc = "It's dry and crusty. Someone is not doing their job."
 	gender = PLURAL
-	density = 0
-	anchored = 1
+	density = FALSE
+	anchored = TRUE
 	plane = BLOOD_PLANE
+	layer = BLOOD_DECAL_LAYER
 	icon = 'icons/effects/blood.dmi'
 	icon_state = "mfloor1"
 	random_icon_states = list("mfloor1", "mfloor2", "mfloor3", "mfloor4", "mfloor5", "mfloor6", "mfloor7")
@@ -48,10 +49,10 @@ var/global/list/image/splatter_cache=list()
 					if (B.blood_DNA)
 						blood_DNA |= B.blood_DNA.Copy()
 					qdel(B)
-	addtimer(CALLBACK(src, .proc/dry), DRYING_TIME * (amount+1))
+	addtimer(CALLBACK(src, PROC_REF(dry)), DRYING_TIME * (amount+1))
 
 /obj/effect/decal/cleanable/blood/update_icon()
-	if(basecolor == "rainbow") basecolor = "#[get_random_colour(1)]"
+	if(basecolor == "rainbow") basecolor = get_random_colour(1)
 	color = basecolor
 
 	if(basecolor == SYNTH_BLOOD_COLOUR)
@@ -172,8 +173,8 @@ var/global/list/image/splatter_cache=list()
 	name = "gibs"
 	desc = "They look bloody and gruesome."
 	gender = PLURAL
-	density = 0
-	anchored = 1
+	density = FALSE
+	anchored = TRUE
 	icon = 'icons/effects/blood.dmi'
 	icon_state = "gibbl5"
 	random_icon_states = list("gib1", "gib2", "gib3", "gib5", "gib6")
@@ -183,11 +184,11 @@ var/global/list/image/splatter_cache=list()
 
 	var/image/giblets = new(base_icon, "[icon_state]_flesh", dir)
 	if(!fleshcolor || fleshcolor == "rainbow")
-		fleshcolor = "#[get_random_colour(1)]"
+		fleshcolor = get_random_colour(1)
 	giblets.color = fleshcolor
 
 	var/icon/blood = new(base_icon,"[icon_state]",dir)
-	if(basecolor == "rainbow") basecolor = "#[get_random_colour(1)]"
+	if(basecolor == "rainbow") basecolor = get_random_colour(1)
 	blood.Blend(basecolor,ICON_MULTIPLY)
 
 	icon = blood
@@ -228,8 +229,8 @@ var/global/list/image/splatter_cache=list()
 	name = "mucus"
 	desc = "Disgusting mucus."
 	gender = PLURAL
-	density = 0
-	anchored = 1
+	density = FALSE
+	anchored = TRUE
 	icon = 'icons/effects/blood.dmi'
 	icon_state = "mucus"
 	random_icon_states = list("mucus")

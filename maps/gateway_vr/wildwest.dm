@@ -45,7 +45,7 @@
 	else
 		chargesa--
 		insistinga = 0
-		var/wish = input("You want...","Wish") as null|anything in list("Power","Wealth","Immortality","To Kill","Peace")
+		var/wish = tgui_input_list(usr, "You want...","Wish", list("Power","Wealth","Immortality","To Kill","Peace"))
 		switch(wish)
 			if("Power")
 				to_chat(user, "<B>Your wish is granted, but at a terrible cost...</B>")
@@ -125,7 +125,7 @@
 
 	if(istype(M, /mob/living/carbon/human) || istype(M, /mob/living/carbon/monkey))
 		for(var/mob/O in viewers(world.view, src.loc))
-			to_chat(O, "<font color='red'>[M] triggered the [bicon(src)] [src]</font>")
+			to_chat(O, "<font color='red'>[M] triggered the \icon[src][bicon(src)] [src]</font>")
 		triggered = 1
 		call(src,triggerproc)(M)
 
@@ -177,7 +177,7 @@
 	return 1
 */
 
-/obj/effect/overmap/visitable/sector/tether_gateway/wildwest
+/obj/effect/overmap/visitable/sector/common_gateway/wildwest
 	name = "redspace shimmer"
 	desc = "The shimmering reflection of some sort of redspace phenomena."
 	scanner_desc = @{"It is difficult to tell just what is beyond this strange shimmering shape. The air beyond seems breathable."}
@@ -185,3 +185,52 @@
 	icon_state = "shimmer"
 	color = "#8b0b0b" //red
 	in_space = 1
+	unknown_state = "field"
+	known = FALSE
+
+	skybox_icon = 'icons/skybox/anomaly.dmi'
+	skybox_icon_state = "shimmer_r"
+	skybox_pixel_x = 0
+	skybox_pixel_y = 0
+
+/obj/random/mob/semirandom_mob_spawner/wildwest
+	name = "Wild west mob spawner"
+	desc = "Spawns groups of mobs that are all of the same theme type/theme."
+	icon = 'icons/mob/randomlandmarks.dmi'
+	icon_state = "monster"
+	mob_faction = "wildwest"
+	mob_returns_home = 0
+	overwrite_hostility = 1
+	mob_hostile = 1
+
+	possible_mob_types = list(
+		list(
+			/mob/living/simple_mob/humanoid/merc/melee = 100,
+			/mob/living/simple_mob/humanoid/merc/ranged = 50,
+			/mob/living/simple_mob/humanoid/merc/ranged/space = 5,
+			/mob/living/simple_mob/otie/feral = 10,
+			/mob/living/simple_mob/otie/feral/chubby = 5
+			),
+
+		list(
+			/mob/living/simple_mob/animal/space/alien = 1000,
+			/mob/living/simple_mob/animal/space/alien/drone = 500,
+			/mob/living/simple_mob/animal/space/alien/sentinel = 100,
+			/mob/living/simple_mob/animal/space/alien/sentinel/praetorian = 50,
+			/mob/living/simple_mob/animal/space/alien/queen = 50,
+			/mob/living/simple_mob/animal/space/alien/queen/empress = 1,
+			/mob/living/simple_mob/animal/space/alien/queen/empress/mother = 1
+			),
+		list(
+			/mob/living/simple_mob/humanoid/pirate = 100,
+			/mob/living/simple_mob/humanoid/pirate/ranged = 50,
+			/mob/living/simple_mob/animal/wolf = 10,
+			/mob/living/simple_mob/animal/wolf/direwolf = 5
+			)
+
+	)
+
+/obj/random/mob/semirandom_mob_spawner/wildwest/spawn_item()
+	if(prob(25))
+		return
+	. = ..()

@@ -16,13 +16,13 @@
 /obj/item/device/assembly_holder/proc/attach(var/obj/item/device/assembly/D, var/obj/item/device/assembly/D2, var/mob/user)
 	if(!D || !D2)
 		return FALSE
-	
+
 	if(!istype(D) || !istype(D2))
 		return FALSE
 
 	if(D.secured || D2.secured)
 		return FALSE
-	
+
 	if(user)
 		user.remove_from_mob(D)
 		user.remove_from_mob(D2)
@@ -126,7 +126,7 @@
 			to_chat(user, "<span class='warning'> BUG:Assembly part missing, please report this!</span>")
 			return
 		if(istype(a_left,a_right.type))//If they are the same type it causes issues due to window code
-			switch(alert("Which side would you like to use?",,"Left","Right"))
+			switch(tgui_alert(usr, "Which side would you like to use?","Side",list("Left","Right")))
 				if("Left")	a_left.attack_self(user)
 				if("Right")	a_right.attack_self(user)
 			return
@@ -151,7 +151,7 @@
 	if(!D)
 		return 0
 	if(!secured)
-		visible_message("[bicon(src)] *beep* *beep*", "*beep* *beep*")
+		visible_message("\icon[src][bicon(src)] *beep* *beep*", "*beep* *beep*")
 	if((normal) && (a_right) && (a_left))
 		if(a_right != D)
 			a_right.pulsed(0)
@@ -214,7 +214,7 @@
 		if(tmr.timing)
 			to_chat(usr, "<span class='notice'>Clock is ticking already.</span>")
 		else
-			var/ntime = input("Enter desired time in seconds", "Time", "5") as num
+			var/ntime = tgui_input_number(usr, "Enter desired time in seconds", "Time", "5", 1000, 0)
 			if (ntime>0 && ntime<1000)
 				tmr.time = ntime
 				name = initial(name) + "([tmr.time] secs)"

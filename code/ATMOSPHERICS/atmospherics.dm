@@ -10,13 +10,14 @@ Pipelines + Other Objects -> Pipe network
 
 */
 /obj/machinery/atmospherics
-	anchored = 1
+	anchored = TRUE
 	idle_power_usage = 0
 	active_power_usage = 0
 	power_channel = ENVIRON
 	var/nodealert = 0
 	var/power_rating //the maximum amount of power the machine can use to do work, affects how powerful the machine is, in Watts
-
+	
+	unacidable = TRUE
 	layer = ATMOS_LAYER
 	plane = PLATING_PLANE
 

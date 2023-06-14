@@ -41,6 +41,9 @@
 	melee_damage_lower = 5
 	melee_damage_upper = 30
 
+	meat_amount = 8
+	meat_type = /obj/item/weapon/reagent_containers/food/snacks/meat
+
 	old_x = -16
 	old_y = 0
 	default_pixel_x = -16
@@ -71,7 +74,7 @@
 		riding_datum = new /datum/riding/simple_mob(src)
 	verbs |= /mob/living/simple_mob/proc/animal_mount
 	verbs |= /mob/living/proc/toggle_rider_reins
-	movement_cooldown = 3
+	movement_cooldown = 0
 
 /mob/living/simple_mob/vore/aggressive/deathclaw/MouseDrop_T(mob/living/M, mob/living/user)
 	return

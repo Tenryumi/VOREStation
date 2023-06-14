@@ -4,8 +4,8 @@
 	desc = "A high tech machine that is designed to read DNA samples properly."
 	icon = 'icons/obj/forensics.dmi'
 	icon_state = "dnaopen"
-	anchored = 1
-	density = 1
+	anchored = TRUE
+	density = TRUE
 	circuit = /obj/item/weapon/circuitboard/dna_analyzer
 
 	var/obj/item/weapon/forensics/swab/bloodsamp = null
@@ -105,7 +105,7 @@
 	last_process_worldtime = world.time
 
 /obj/machinery/dnaforensics/proc/complete_scan()
-	visible_message("<span class='notice'>[bicon(src)] makes an insistent chime.</span>", 2)
+	visible_message("<span class='notice'>\icon[src][bicon(src)] makes an insistent chime.</span>", 2)
 	update_icon()
 	if(bloodsamp)
 		var/obj/item/weapon/paper/P = new(src)

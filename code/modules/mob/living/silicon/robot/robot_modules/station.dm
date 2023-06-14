@@ -1,15 +1,20 @@
 var/global/list/robot_modules = list(
 	"Standard"		= /obj/item/weapon/robot_module/robot/standard,
-	"Service" 		= /obj/item/weapon/robot_module/robot/clerical/butler,
+	"Service" 		= /obj/item/weapon/robot_module/robot/clerical/butler/general,
 	"Clerical" 		= /obj/item/weapon/robot_module/robot/clerical/general,
-	"Research" 		= /obj/item/weapon/robot_module/robot/research,
-	"Miner" 		= /obj/item/weapon/robot_module/robot/miner,
+	"Research" 		= /obj/item/weapon/robot_module/robot/research/general,
+	"Miner" 		= /obj/item/weapon/robot_module/robot/miner/general,
 	"Crisis" 		= /obj/item/weapon/robot_module/robot/medical/crisis,
 	"Surgeon" 		= /obj/item/weapon/robot_module/robot/medical/surgeon,
 	"Security" 		= /obj/item/weapon/robot_module/robot/security/general,
 	"Combat" 		= /obj/item/weapon/robot_module/robot/security/combat,
 	"Engineering"	= /obj/item/weapon/robot_module/robot/engineering/general,
-	"Janitor" 		= /obj/item/weapon/robot_module/robot/janitor
+	"Janitor" 		= /obj/item/weapon/robot_module/robot/janitor/general,
+	"Gravekeeper"	= /obj/item/weapon/robot_module/robot/gravekeeper,
+	"Lost"			= /obj/item/weapon/robot_module/robot/lost,
+	"Protector" 	= /obj/item/weapon/robot_module/robot/syndicate/protector,
+	"Mechanist" 	= /obj/item/weapon/robot_module/robot/syndicate/mechanist,
+	"Combat Medic"	= /obj/item/weapon/robot_module/robot/syndicate/combat_medic
 	)
 
 /obj/item/weapon/robot_module
@@ -61,7 +66,7 @@ var/global/list/robot_modules = list(
 	R.choose_icon(R.module_sprites.len + 1, R.module_sprites)
 
 	for(var/obj/item/I in modules)
-		I.canremove = 0
+		I.canremove = FALSE
 
 /obj/item/weapon/robot_module/proc/Reset(var/mob/living/silicon/robot/R)
 	remove_camera_networks(R)
@@ -166,7 +171,7 @@ var/global/list/robot_modules = list(
 			"Supply" = 1,
 			"Science" = 1,
 			"Command" = 1,
-			"Explorer" = 1
+			"Away Team" = 1
 			)
 
 // Cyborgs (non-drones), default loadout. This will be given to every module.
@@ -196,7 +201,9 @@ var/global/list/robot_modules = list(
 					"Insekt" = "insekt-Default",
 					"Usagi-II" = "tall2standard",
 					"Pyralis" = "Glitterfly-Standard",
-					"Decapod" = "decapod-Standard"
+					"Decapod" = "decapod-Standard",
+					"Pneuma" = "pneuma-Standard",
+					"Tower" = "drider-Standard"
 					)
 
 
@@ -233,7 +240,9 @@ var/global/list/robot_modules = list(
 					"Insekt" = "insekt-Med",
 					"Usagi-II" = "tall2medical",
 					"Pyralis" = "Glitterfly-Surgeon",
-					"Decapod" = "decapod-Surgeon"
+					"Decapod" = "decapod-Surgeon",
+					"Pneuma" = "pneuma-Surgeon",
+					"Tower" = "drider-Surgeon"
 					)
 
 /obj/item/weapon/robot_module/robot/medical/surgeon/New()
@@ -250,6 +259,7 @@ var/global/list/robot_modules = list(
 	src.modules += new /obj/item/weapon/surgical/bonesetter/cyborg(src)
 	src.modules += new /obj/item/weapon/surgical/circular_saw/cyborg(src)
 	src.modules += new /obj/item/weapon/surgical/surgicaldrill/cyborg(src)
+	src.modules += new /obj/item/weapon/surgical/bioregen/cyborg(src) //VoreStation Edit: LET ME SUCC
 	src.modules += new /obj/item/weapon/gripper/no_use/organ(src)
 	src.modules += new /obj/item/weapon/gripper/medical(src)
 	src.modules += new /obj/item/weapon/shockpaddles/robot(src)
@@ -264,14 +274,19 @@ var/global/list/robot_modules = list(
 
 	var/obj/item/stack/nanopaste/N = new /obj/item/stack/nanopaste(src)
 	var/obj/item/stack/medical/advanced/bruise_pack/B = new /obj/item/stack/medical/advanced/bruise_pack(src)
+	var/obj/item/stack/medical/advanced/ointment/O = new /obj/item/stack/medical/advanced/ointment(src) //VoreStation edit: we have burn surgeries so they should be able to do them
 	N.uses_charge = 1
 	N.charge_costs = list(1000)
 	N.synths = list(medicine)
 	B.uses_charge = 1
 	B.charge_costs = list(1000)
 	B.synths = list(medicine)
+	O.uses_charge = 1
+	O.charge_costs = list(1000)
+	O.synths = list(medicine)
 	src.modules += N
 	src.modules += B
+	src.modules += O
 
 /obj/item/weapon/robot_module/robot/medical/surgeon/respawn_consumable(var/mob/living/silicon/robot/R, var/amount)
 
@@ -307,7 +322,9 @@ var/global/list/robot_modules = list(
 					"Insekt" = "insekt-Med",
 					"Usagi-II" = "tall2medical",
 					"Pyralis" = "Glitterfly-Crisis",
-					"Decapod" = "decapod-Crisis"
+					"Decapod" = "decapod-Crisis",
+					"Pneuma" = "pneuma-Crisis",
+					"Tower" = "drider-Crisis"
 					)
 
 /obj/item/weapon/robot_module/robot/medical/crisis/New()
@@ -322,6 +339,7 @@ var/global/list/robot_modules = list(
 	src.modules += new /obj/item/weapon/gripper/no_use/organ(src)
 	src.modules += new /obj/item/weapon/gripper/medical(src)
 	src.modules += new /obj/item/weapon/shockpaddles/robot(src)
+	src.modules += new /obj/item/weapon/inflatable_dispenser/robot(src) //VOREStation Add - This is kinda important for rescuing people without making it worse for everyone
 	src.emag = new /obj/item/weapon/reagent_containers/spray(src)
 	src.emag.reagents.add_reagent("pacid", 250)
 	src.emag.name = "Polyacid spray"
@@ -384,7 +402,9 @@ var/global/list/robot_modules = list(
 					"Handy" = "handy-engineer",
 					"Usagi-II" = "tall2engineer",
 					"Pyralis" = "Glitterfly-Engineering",
-					"Decapod" = "decapod-Engineering"
+					"Decapod" = "decapod-Engineering",
+					"Pneuma" = "pneuma-Engineering",
+					"Tower" = "drider-Engineering"
 					)
 
 /obj/item/weapon/robot_module/robot/engineering/general/New()
@@ -401,13 +421,15 @@ var/global/list/robot_modules = list(
 	src.modules += new /obj/item/weapon/gripper(src)
 	src.modules += new /obj/item/weapon/gripper/circuit(src)
 	src.modules += new /obj/item/device/lightreplacer(src)
-	src.modules += new /obj/item/device/pipe_painter(src)
+	// RPDs do this already
+	//src.modules += new /obj/item/device/pipe_painter(src)
+	src.modules += new /obj/item/weapon/pipe_dispenser(src)
 	src.modules += new /obj/item/device/floor_painter(src)
 	src.modules += new /obj/item/weapon/inflatable_dispenser/robot(src)
 	src.emag = new /obj/item/weapon/melee/baton/robot/arm(src)
 	src.modules += new /obj/item/device/geiger(src)
 	src.modules += new /obj/item/weapon/rcd/electric/mounted/borg(src)
-	src.modules += new /obj/item/weapon/pickaxe/plasmacutter(src)
+	src.modules += new /obj/item/weapon/pickaxe/plasmacutter/borg(src)
 	src.modules += new /obj/item/weapon/gripper/no_use/loader(src)
 
 	var/datum/matter_synth/metal = new /datum/matter_synth/metal(40000)
@@ -499,7 +521,9 @@ var/global/list/robot_modules = list(
 					"Insekt" = "insekt-Sec",
 					"Usagi-II" = "tall2security",
 					"Pyralis" = "Glitterfly-Security",
-					"Decapod" = "decapod-Security"
+					"Decapod" = "decapod-Security",
+					"Pneuma" = "pneuma-Security",
+					"Tower" = "drider-Security"
 					)
 
 /obj/item/weapon/robot_module/robot/security/general/New()
@@ -511,6 +535,7 @@ var/global/list/robot_modules = list(
 	src.modules += new /obj/item/taperoll/police(src)
 	src.modules += new /obj/item/weapon/reagent_containers/spray/pepper(src)
 	src.modules += new /obj/item/weapon/gripper/security(src)
+	src.modules += new /obj/item/device/ticket_printer(src)	//VOREStation Add
 	src.emag = new /obj/item/weapon/gun/energy/laser/mounted(src)
 
 /obj/item/weapon/robot_module/robot/security/respawn_consumable(var/mob/living/silicon/robot/R, var/amount)
@@ -545,20 +570,23 @@ var/global/list/robot_modules = list(
 					"Drone" = "drone-janitor",
 					"Usagi-II" = "tall2janitor",
 					"Pyralis" = "Glitterfly-Janitor",
-					"Decapod" = "decapod-Janitor"
+					"Decapod" = "decapod-Janitor",
+					"Pneuma" = "pneuma-Janitor",
+					"Tower" = "drider-Janitor"
 					)
 
-/obj/item/weapon/robot_module/robot/janitor/New()
+/obj/item/weapon/robot_module/robot/janitor/general/New()
 	..()
 	src.modules += new /obj/item/weapon/soap/nanotrasen(src)
 	src.modules += new /obj/item/weapon/storage/bag/trash(src)
 	src.modules += new /obj/item/weapon/mop(src)
+	src.modules += new /obj/item/pupscrubber(src)
 	src.modules += new /obj/item/device/lightreplacer(src)
 	src.emag = new /obj/item/weapon/reagent_containers/spray(src)
 	src.emag.reagents.add_reagent("lube", 250)
 	src.emag.name = "Lube spray"
 
-/obj/item/weapon/robot_module/robot/janitor/respawn_consumable(var/mob/living/silicon/robot/R, var/amount)
+/obj/item/weapon/robot_module/robot/janitor/general/respawn_consumable(var/mob/living/silicon/robot/R, var/amount)
 	var/obj/item/device/lightreplacer/LR = locate() in src.modules
 	LR.Charge(R, amount)
 	if(src.emag)
@@ -577,7 +605,6 @@ var/global/list/robot_modules = list(
 					LANGUAGE_SIIK		= 1,
 					LANGUAGE_AKHANI		= 1,
 					LANGUAGE_SKRELLIAN	= 1,
-					LANGUAGE_SKRELLIANFAR = 0,
 					LANGUAGE_ROOTLOCAL	= 0,
 					LANGUAGE_TRADEBAND	= 1,
 					LANGUAGE_GUTTER		= 1,
@@ -589,6 +616,9 @@ var/global/list/robot_modules = list(
 					)
 
 /obj/item/weapon/robot_module/robot/clerical/butler
+	channels = list("Service" = 1)
+
+/obj/item/weapon/robot_module/robot/clerical/butler/general
 	sprites = list(
 					"M-USE NanoTrasen" = "robotServ",
 					"Cabeiri" = "eyebot-standard",
@@ -608,10 +638,12 @@ var/global/list/robot_modules = list(
 					"Drone - Hydro" = "drone-hydro",
 					"Usagi-II" = "tall2service",
 					"Pyralis" = "Glitterfly-Service",
-					"Decapod" = "decapod-Service"
+					"Decapod" = "decapod-Service",
+					"Pneuma" = "pneuma-Service",
+					"Tower" = "drider-Service"
 				  	)
 
-/obj/item/weapon/robot_module/robot/clerical/butler/New()
+/obj/item/weapon/robot_module/robot/clerical/butler/general/New()
 	..()
 	src.modules += new /obj/item/weapon/gripper/service(src)
 	src.modules += new /obj/item/weapon/reagent_containers/glass/bucket(src)
@@ -642,7 +674,8 @@ var/global/list/robot_modules = list(
 	src.emag.reagents = R
 	R.my_atom = src.emag
 	R.add_reagent("beer2", 50)
-	src.emag.name = "Mickey Finn's Special Brew"
+	src.emag.name = "Auntie Hong's Final Sip"
+	src.emag.desc = "A bottle of very special mix of alcohol and poison. Some may argue that there's alcohol to die for, but Auntie Hong took it to next level."
 
 /obj/item/weapon/robot_module/robot/clerical/general
 	name = "clerical robot module"
@@ -663,7 +696,9 @@ var/global/list/robot_modules = list(
 					"Drone" = "drone-blu",
 					"Usagi-II" = "tall2service",
 					"Pyralis" = "Glitterfly-Clerical",
-					"Decapod" = "decapod-Clerical"
+					"Decapod" = "decapod-Clerical",
+					"Pneuma" = "pneuma-Clerical",
+					"Tower" = "drider-Clerical"
 					)
 
 /obj/item/weapon/robot_module/robot/clerical/general/New()
@@ -702,10 +737,13 @@ var/global/list/robot_modules = list(
 					"Drone" = "drone-miner",
 					"Usagi-II" = "tall2miner",
 					"Pyralis" = "Glitterfly-Miner",
-					"Decapod" = "decapod-Miner"
+					"Decapod" = "decapod-Miner",
+					"Pneuma" = "pneuma-Miner",
+					"Tower" = "drider-Miner"
 				)
+	supported_upgrades = list(/obj/item/borg/upgrade/pka, /obj/item/borg/upgrade/diamonddrill)
 
-/obj/item/weapon/robot_module/robot/miner/New()
+/obj/item/weapon/robot_module/robot/miner/general/New()
 	..()
 	src.modules += new /obj/item/borg/sight/material(src)
 	src.modules += new /obj/item/weapon/tool/wrench/cyborg(src)
@@ -715,8 +753,12 @@ var/global/list/robot_modules = list(
 	src.modules += new /obj/item/weapon/storage/bag/sheetsnatcher/borg(src)
 	src.modules += new /obj/item/weapon/gripper/miner(src)
 	src.modules += new /obj/item/weapon/mining_scanner(src)
-	src.emag = new /obj/item/weapon/pickaxe/plasmacutter(src)
-	src.emag = new /obj/item/weapon/pickaxe/diamonddrill(src)
+	// New Emag gear for the minebots!
+	src.emag = new /obj/item/weapon/kinetic_crusher/machete/dagger(src)
+
+	// No reason for these, upgrade modules replace them.
+	//src.emag = new /obj/item/weapon/pickaxe/plasmacutter/borg(src)
+	//src.emag = new /obj/item/weapon/pickaxe/diamonddrill(src)
 
 /obj/item/weapon/robot_module/robot/research
 	name = "research module"
@@ -733,10 +775,13 @@ var/global/list/robot_modules = list(
 					"Insekt" = "insekt-Sci",
 					"Usagi-II" = "tall2peace",
 					"Pyralis" = "Glitterfly-Research",
-					"Decapod" = "decapod-Research"
+					"Decapod" = "decapod-Research",
+					"Pneuma" = "pneuma-Research",
+					"Tower" = "drider-Research"
 					)
+	supported_upgrades = list(/obj/item/borg/upgrade/advrped)
 
-/obj/item/weapon/robot_module/robot/research/New()
+/obj/item/weapon/robot_module/robot/research/general/New()
 	..()
 	src.modules += new /obj/item/weapon/portable_destructive_analyzer(src)
 	src.modules += new /obj/item/weapon/gripper/research(src)
@@ -780,7 +825,7 @@ var/global/list/robot_modules = list(
 	C.synths = list(wire)
 	src.modules += C
 
-/obj/item/weapon/robot_module/robot/research/respawn_consumable(var/mob/living/silicon/robot/R, var/amount)
+/obj/item/weapon/robot_module/robot/research/general/respawn_consumable(var/mob/living/silicon/robot/R, var/amount)
 
 	var/obj/item/weapon/reagent_containers/syringe/S = locate() in src.modules
 	if(S.mode == 2)
@@ -807,9 +852,10 @@ var/global/list/robot_modules = list(
 	src.modules += new /obj/item/device/flash(src)
 	//src.modules += new /obj/item/borg/sight/thermal(src) // VOREStation Edit
 	src.modules += new /obj/item/weapon/gun/energy/laser/mounted(src)
-	src.modules += new /obj/item/weapon/pickaxe/plasmacutter(src)
+	src.modules += new /obj/item/weapon/pickaxe/plasmacutter/borg(src)
 	src.modules += new /obj/item/borg/combat/shield(src)
 	src.modules += new /obj/item/borg/combat/mobility(src)
+	src.modules += new /obj/item/device/ticket_printer(src)	//VOREStation Add
 	src.emag = new /obj/item/weapon/gun/energy/lasercannon/mounted(src)
 
 
@@ -838,11 +884,12 @@ var/global/list/robot_modules = list(
 	src.modules += new /obj/item/weapon/extinguisher(src)
 	src.modules += new /obj/item/device/pipe_painter(src)
 	src.modules += new /obj/item/device/floor_painter(src)
+	src.modules += new /obj/item/weapon/pipe_dispenser(src)
 
 	robot.internals = new/obj/item/weapon/tank/jetpack/carbondioxide(src)
 	src.modules += robot.internals
 
-	src.emag = new /obj/item/weapon/pickaxe/plasmacutter(src)
+	src.emag = new /obj/item/weapon/pickaxe/plasmacutter/borg(src)
 	src.emag.name = "Plasma Cutter"
 
 	var/datum/matter_synth/metal = new /datum/matter_synth/metal(25000)

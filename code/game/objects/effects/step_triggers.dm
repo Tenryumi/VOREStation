@@ -5,7 +5,7 @@
 	var/stopper = 1 // stops throwers
 	invisibility = 99 // nope cant see this shit
 	plane = ABOVE_PLANE
-	anchored = 1
+	anchored = TRUE
 	icon = 'icons/mob/screen1.dmi' //VS Edit
 	icon_state = "centermarker" //VS Edit
 
@@ -105,6 +105,8 @@
 
 
 /obj/effect/step_trigger/teleporter/proc/move_object(atom/movable/AM, turf/T)
+	if(!T)
+		return
 	if(AM.anchored && !istype(AM, /obj/mecha))
 		return
 
@@ -160,7 +162,8 @@
 	if(teleport_x && teleport_y && teleport_z)
 		if(teleport_x_offset && teleport_y_offset && teleport_z_offset)
 			var/turf/T = locate(rand(teleport_x, teleport_x_offset), rand(teleport_y, teleport_y_offset), rand(teleport_z, teleport_z_offset))
-			A.forceMove(T)
+			if(T)
+				A.forceMove(T)
 
 /* Teleporter that sends objects stepping on it to a specific landmark. */
 
@@ -217,7 +220,7 @@ var/global/list/tele_landmarks = list() // Terrible, but the alternative is loop
 			if(!istype(candidate) || istype(candidate, /turf/simulated/sky))
 				safety--
 				continue
-			else if(candidate && !candidate.outdoors)
+			else if(candidate && !candidate.is_outdoors())
 				safety--
 				continue
 			else

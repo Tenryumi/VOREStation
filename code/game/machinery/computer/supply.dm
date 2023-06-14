@@ -169,7 +169,7 @@
 				"cost" = P.cost,
 				"group" = P.group,
 				"contraband" = P.contraband,
-				"manifest" = uniquelist(P.manifest),
+				"manifest" = uniqueList(P.manifest),
 				"random" = P.num_contained,
 				"ref" = "\ref[P]"
 			)
@@ -201,7 +201,7 @@
 			var/list/payload = list(
 				"name" = P.name,
 				"cost" = P.cost,
-				"manifest" = uniquelist(P.manifest),
+				"manifest" = uniqueList(P.manifest),
 				"ref" = "\ref[P]",
 				"random" = P.num_contained,
 			)
@@ -221,12 +221,12 @@
 				visible_message("<span class='warning'>[src]'s monitor flashes, \"[reqtime - world.time] seconds remaining until another requisition form may be printed.\"</span>")
 				return FALSE
 
-			var/amount = clamp(input(usr, "How many crates? (0 to 20)") as num|null, 0, 20)
+			var/amount = clamp(tgui_input_number(usr, "How many crates? (0 to 20)", null, null, 20, 0), 0, 20)
 			if(!amount)
 				return FALSE
 
 			var/timeout = world.time + 600
-			var/reason = sanitize(input(usr, "Reason:","Why do you require this item?","") as null|text)
+			var/reason = sanitize(tgui_input_text(usr, "Reason:","Why do you require this item?",""))
 			if(world.time > timeout)
 				to_chat(usr, "<span class='warning'>Error. Request timed out.</span>")
 				return FALSE
@@ -280,7 +280,7 @@
 				return FALSE
 
 			var/timeout = world.time + 600
-			var/reason = sanitize(input(usr, "Reason:","Why do you require this item?","") as null|text)
+			var/reason = sanitize(tgui_input_text(usr, "Reason:","Why do you require this item?",""))
 			if(world.time > timeout)
 				to_chat(usr, "<span class='warning'>Error. Request timed out.</span>")
 				return FALSE
@@ -323,7 +323,7 @@
 				return FALSE
 			if(!(authorization & SUP_ACCEPT_ORDERS))
 				return FALSE
-			var/new_val = sanitize(input(usr, params["edit"], "Enter the new value for this field:", params["default"]) as null|text)
+			var/new_val = sanitize(tgui_input_text(usr, params["edit"], "Enter the new value for this field:", params["default"]))
 			if(!new_val)
 				return FALSE
 
@@ -394,9 +394,9 @@
 			if(!(authorization & SUP_ACCEPT_ORDERS))
 				return FALSE
 			var/list/L = E.contents[params["index"]]
-			var/field = alert(usr, "Select which field to edit", , "Name", "Quantity", "Value")
+			var/field = tgui_alert(usr, "Select which field to edit", "Field Choice", list("Name", "Quantity", "Value"))
 
-			var/new_val = sanitize(input(usr, field, "Enter the new value for this field:", L[lowertext(field)]) as null|text)
+			var/new_val = sanitize(tgui_input_text(usr, field, "Enter the new value for this field:", L[lowertext(field)]))
 			if(!new_val)
 				return
 
@@ -439,7 +439,7 @@
 				return FALSE
 			if(!(authorization & SUP_ACCEPT_ORDERS))
 				return FALSE
-			var/new_val = sanitize(input(usr, params["edit"], "Enter the new value for this field:", params["default"]) as null|text)
+			var/new_val = sanitize(tgui_input_text(usr, params["edit"], "Enter the new value for this field:", params["default"]))
 			if(!new_val)
 				return
 

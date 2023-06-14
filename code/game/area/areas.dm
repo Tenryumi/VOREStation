@@ -43,12 +43,15 @@
 	var/no_air = null
 //	var/list/lights				// list of all lights on this area
 	var/list/all_doors = null		//Added by Strumpetplaya - Alarm Change - Contains a list of doors adjacent to this area
+	var/list/all_arfgs = null		//Similar, but a list of all arfgs adjacent to this area
 	var/firedoors_closed = 0
+	var/arfgs_active = 0
 	var/list/ambience = list()
 	var/list/forced_ambience = null
 	var/sound_env = STANDARD_STATION
 	var/turf/base_turf //The base turf type of the area, which can be used to override the z-level's base turf
 	var/forbid_events = FALSE // If true, random events will not start inside this area.
+	var/forbid_singulo = FALSE // If true singulo will not move in.
 	var/no_spoilers = FALSE // If true, makes it much more difficult to see what is inside an area with things like mesons.
 	var/soundproofed = FALSE // If true, blocks sounds from other areas and prevents hearers on other areas from hearing the sounds within.
 
@@ -128,10 +131,11 @@
 		return 1
 	return 0
 
-// Either close or open firedoors depending on current alert statuses
+// Either close or open firedoors and arfgs depending on current alert statuses
 /area/proc/firedoors_update()
 	if(fire || party || atmosalm)
 		firedoors_close()
+		arfgs_activate()
 		// VOREStation Edit - Make the lights colored!
 		if(fire)
 			for(var/obj/machinery/light/L in src)
@@ -142,6 +146,7 @@
 		// VOREStation Edit End
 	else
 		firedoors_open()
+		arfgs_deactivate()
 		// VOREStation Edit - Put the lights back!
 		for(var/obj/machinery/light/L in src)
 			L.reset_alert()
@@ -175,6 +180,25 @@
 					spawn(0)
 						E.open()
 
+// Activate all retention fields!
+/area/proc/arfgs_activate()
+	if(!arfgs_active)
+		arfgs_active = TRUE
+		if(!all_arfgs)
+			return
+		for(var/obj/machinery/atmospheric_field_generator/E in all_arfgs)
+			E.generate_field() //don't need to check powered state like doors, the arfgs handles it on its end
+			E.wasactive = TRUE
+
+// Deactivate retention fields!
+/area/proc/arfgs_deactivate()
+	if(arfgs_active)
+		arfgs_active = FALSE
+		if(!all_arfgs)
+			return
+		for(var/obj/machinery/atmospheric_field_generator/E in all_arfgs)
+			E.disable_field()
+			E.wasactive = FALSE
 
 /area/proc/fire_alert()
 	if(!fire)
@@ -356,7 +380,7 @@ var/list/mob/living/forced_ambiance_list = new
 /area/Entered(mob/M)
 	if(!istype(M) || !M.ckey)
 		return
-	
+
 	if(!isliving(M))
 		M.lastarea = src
 		return
@@ -399,7 +423,7 @@ var/list/mob/living/forced_ambiance_list = new
 			L << chosen_ambiance
 		else
 			L << sound(null, channel = CHANNEL_AMBIENCE_FORCED)
-	else if(src.ambience.len)
+	else if(src.ambience && src.ambience.len)
 		var/ambience_odds = L?.client.prefs.ambience_chance
 		if(prob(ambience_odds) && (world.time >= L.client.time_last_ambience_played + 1 MINUTE))
 			var/sound = pick(ambience)
@@ -425,6 +449,10 @@ var/list/mob/living/forced_ambiance_list = new
 			return // Being buckled to something solid keeps you in place.
 		if(istype(H.shoes, /obj/item/clothing/shoes/magboots) && (H.shoes.item_flags & NOSLIP))
 			return
+		if(H.incorporeal_move) // VOREstation edit - Phaseshifted beings should not be affected by gravity
+			return
+		if(H.species.can_zero_g_move || H.species.can_space_freemove)
+			return
 
 		if(H.m_intent == "run")
 			H.AdjustStunned(6)
@@ -437,7 +465,7 @@ var/list/mob/living/forced_ambiance_list = new
 
 /area/proc/prison_break(break_lights = TRUE, open_doors = TRUE, open_blast_doors = TRUE)
 	var/obj/machinery/power/apc/theAPC = get_apc()
-	if(theAPC.operating)
+	if(theAPC && theAPC.operating)
 		if(break_lights)
 			for(var/obj/machinery/power/apc/temp_apc in src)
 				temp_apc.overload_lighting(70)

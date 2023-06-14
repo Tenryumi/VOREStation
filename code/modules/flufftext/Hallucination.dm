@@ -222,8 +222,8 @@ Gunshots/explosions/opening doors/less rare audio (done)
 	icon_state = null
 	name = ""
 	desc = ""
-	density = 0
-	anchored = 1
+	density = FALSE
+	anchored = TRUE
 	opacity = 0
 	var/mob/living/carbon/human/my_target = null
 	var/weapon_name = null
@@ -347,7 +347,7 @@ var/list/non_fakeattack_weapons = list(/obj/item/weapon/gun/projectile, /obj/ite
 	/obj/item/toy/syndicateballoon, /obj/item/weapon/gun/energy/captain,\
 	/obj/item/weapon/hand_tele, /obj/item/weapon/rcd, /obj/item/weapon/tank/jetpack,\
 	/obj/item/clothing/under/rank/captain, /obj/item/device/aicard,\
-	/obj/item/clothing/shoes/magboots, /obj/item/blueprints, /obj/item/weapon/disk/nuclear,\
+	/obj/item/clothing/shoes/magboots, /obj/item/areaeditor/blueprints, /obj/item/weapon/disk/nuclear,\
 	/obj/item/clothing/suit/space/void, /obj/item/weapon/tank)
 
 /proc/fake_attack(var/mob/living/target)

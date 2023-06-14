@@ -40,6 +40,7 @@
 	else
 		living_mob_list += src
 	lastarea = get_area(src)
+	set_focus(src) // VOREStation Add - Key Handling
 	hook_vr("mob_new",list(src)) //VOREStation Code
 	update_transform() // Some mobs may start bigger or smaller than normal.
 	return ..()
@@ -65,11 +66,11 @@
 					return
 	// Added voice muffling for Issue 41.
 	if(stat == UNCONSCIOUS || sleeping > 0)
-		to_chat(src, "<I>... You can almost hear someone talking ...</I>")
+		to_chat(src, "<span class='filter_notice'><I>... You can almost hear someone talking ...</I></span>")
 	else
 		to_chat(src,msg)
 		if(teleop)
-			to_chat(teleop, create_text_tag("body", "BODY:", teleop) + "[msg]")
+			to_chat(teleop, create_text_tag("body", "BODY:", teleop.client) + "[msg]")
 	return
 
 // Show a message to all mobs and objects in sight of this one
@@ -84,9 +85,6 @@
 		else
 			exclude_mobs = list(src)
 		src.show_message(self_message, 1, blind_message, 2)
-	// Transfer messages about what we are doing to upstairs
-	if(shadow)
-		shadow.visible_message(message, self_message, blind_message, exclude_mobs, range)
 	if(isnull(runemessage))
 		runemessage = -1
 	. = ..(message, blind_message, exclude_mobs, range, runemessage) // Really not ideal that atom/visible_message has different arg numbering :(
@@ -116,16 +114,13 @@
 		runemessage = -1 // Symmetry with mob/audible_message, despite the fact this one doesn't call parent. Maybe it should!
 
 	if(radio_message)
-		for(var/obj in hearing_objs)
-			var/obj/O = obj
+		for(var/obj/O as anything in hearing_objs)
 			O.hear_talk(src, list(new /datum/multilingual_say_piece(GLOB.all_languages["Noise"], radio_message)), null)
 	else
-		for(var/obj in hearing_objs)
-			var/obj/O = obj
+		for(var/obj/O as anything in hearing_objs)
 			O.show_message(message, AUDIBLE_MESSAGE, deaf_message, VISIBLE_MESSAGE)
 
-	for(var/mob in hearing_mobs)
-		var/mob/M = mob
+	for(var/mob/M as anything in hearing_mobs)
 		var/msg = message
 		if(self_message && M==src)
 			msg = self_message
@@ -298,15 +293,15 @@
 	set src in usr
 	if(usr != src)
 		to_chat(usr, "No.")
-	var/msg = sanitize(input(usr,"Set the flavor text in your 'examine' verb.","Flavor Text",html_decode(flavor_text)) as message|null, extra = 0)	//VOREStation Edit: separating out OOC notes
+	var/msg = sanitize(tgui_input_text(usr,"Set the flavor text in your 'examine' verb.","Flavor Text",html_decode(flavor_text), multiline = TRUE, prevent_enter = TRUE), extra = 0)	//VOREStation Edit: separating out OOC notes
 
 	if(msg != null)
 		flavor_text = msg
 
 /mob/proc/warn_flavor_changed()
 	if(flavor_text && flavor_text != "") // don't spam people that don't use it!
-		to_chat(src, "<h2 class='alert'>OOC Warning:</h2>")
-		to_chat(src, "<span class='alert'>Your flavor text is likely out of date! <a href='byond://?src=\ref[src];flavor_change=1'>Change</a></span>")
+		to_chat(src, "<span class='filter_notice'><h2 class='alert'>OOC Warning:</h2></span>")
+		to_chat(src, "<span class='filter_notice'><span class='alert'>Your flavor text is likely out of date! <a href='byond://?src=\ref[src];flavor_change=1'>Change</a></span></span>")
 
 /mob/proc/print_flavor_text()
 	if (flavor_text && flavor_text != "")
@@ -367,9 +362,48 @@
 
 	// Final chance to abort "respawning"
 	if(mind && timeofdeath) // They had spawned before
-		var/choice = alert(usr, "Returning to the menu will prevent your character from being revived in-round. Are you sure?", "Confirmation", "No, wait", "Yes, leave")
+		var/choice = tgui_alert(usr, "Returning to the menu will prevent your character from being revived in-round. Are you sure?", "Confirmation", list("No, wait", "Yes, leave"))
 		if(choice == "No, wait")
 			return
+		else if(mind.assigned_role)
+			var/extra_check = tgui_alert(usr, "Do you want to Quit This Round before you return to lobby? This will properly remove you from manifest, as well as prevent resleeving.","Quit This Round",list("Quit Round","Cancel"))
+			if(extra_check == "Quit Round")
+				//Update any existing objectives involving this mob.
+				for(var/datum/objective/O in all_objectives)
+					if(O.target == src.mind)
+						if(O.owner && O.owner.current)
+							to_chat(O.owner.current,"<span class='warning'>You get the feeling your target is no longer within your reach...</span>")
+						qdel(O)
+
+				//Resleeving cleanup
+				if(mind)
+					SStranscore.leave_round(src)
+
+				//Job slot cleanup
+				var/job = src.mind.assigned_role
+				job_master.FreeRole(job)
+
+				//Their objectives cleanup
+				if(src.mind.objectives.len)
+					qdel(src.mind.objectives)
+					src.mind.special_role = null
+
+				//Cut the PDA manifest (ugh)
+				if(PDA_Manifest.len)
+					PDA_Manifest.Cut()
+				for(var/datum/data/record/R in data_core.medical)
+					if((R.fields["name"] == src.real_name))
+						qdel(R)
+				for(var/datum/data/record/T in data_core.security)
+					if((T.fields["name"] == src.real_name))
+						qdel(T)
+				for(var/datum/data/record/G in data_core.general)
+					if((G.fields["name"] == src.real_name))
+						qdel(G)
+
+				//This removes them from being 'active' list on join screen
+				src.mind.assigned_role = null
+				to_chat(src,"<span class='notice'>Your job has been free'd up, and you can rejoin as another character or quit. Thanks for properly quitting round, it helps the server!</span>")
 
 	// Beyond this point, you're going to respawn
 	to_chat(usr, config.respawn_message)
@@ -399,11 +433,14 @@
 /client/verb/changes()
 	set name = "Changelog"
 	set category = "OOC"
-	src << browse('html/changelog.html', "window=changes;size=675x650")
+	src << link("https://wiki.vore-station.net/Changelog")
+
+	/*
 	if(prefs.lastchangelog != changelog_hash)
 		prefs.lastchangelog = changelog_hash
 		SScharacter_setup.queue_preferences_save(prefs)
 		winset(src, "rpane.changelog", "background-color=none;font-style=;")
+	*/
 
 /mob/verb/observe()
 	set name = "Observe"
@@ -413,7 +450,7 @@
 	if(client.holder && (client.holder.rights & R_ADMIN|R_EVENT))
 		is_admin = 1
 	else if(stat != DEAD || istype(src, /mob/new_player))
-		to_chat(usr, "<font color='blue'>You must be observing to use this!</font>")
+		to_chat(usr, "<span class='filter_notice'><font color='blue'>You must be observing to use this!</font></span>")
 		return
 
 	if(is_admin && stat == DEAD)
@@ -433,7 +470,7 @@
 	var/eye_name = null
 
 	var/ok = "[is_admin ? "Admin Observe" : "Observe"]"
-	eye_name = input("Please, select a player!", ok, null, null) as null|anything in targets
+	eye_name = tgui_input_list(usr, "Select something to [ok]:", "Select Target", targets)
 
 	if (!eye_name)
 		return
@@ -564,7 +601,7 @@
 		playsound(src.loc, 'sound/weapons/thudswoosh.ogg', 25) //Quieter than hugging/grabbing but we still want some audio feedback
 
 		if(H.pull_damage())
-			to_chat(src, "<font color='red'><B>Pulling \the [H] in their current condition would probably be a bad idea.</B></font>")
+			to_chat(src, "<span class='filter_notice'><font color='red'><B>Pulling \the [H] in their current condition would probably be a bad idea.</B></font></span>")
 
 	//Attempted fix for people flying away through space when cuffed and dragged.
 	if(ismob(AM))
@@ -591,6 +628,9 @@
 /mob/proc/get_gender()
 	return gender
 
+/mob/proc/name_gender()
+	return gender
+
 /mob/proc/see(message)
 	if(!is_active())
 		return 0
@@ -610,7 +650,8 @@
 			stat(null, "Time Dilation: [round(SStime_track.time_dilation_current,1)]% AVG:([round(SStime_track.time_dilation_avg_fast,1)]%, [round(SStime_track.time_dilation_avg,1)]%, [round(SStime_track.time_dilation_avg_slow,1)]%)")
 			if(ticker && ticker.current_state != GAME_STATE_PREGAME)
 				stat("Station Time", stationtime2text())
-				stat("Station Date", stationdate2text())
+				var/date = "[stationdate2text()], [capitalize(world_time_season)]"
+				stat("Station Date", date)
 				stat("Round Duration", roundduration2text())
 
 		if(client.holder)
@@ -619,6 +660,9 @@
 				stat("CPU:","[world.cpu]")
 				stat("Instances:","[world.contents.len]")
 				stat(null, "Time Dilation: [round(SStime_track.time_dilation_current,1)]% AVG:([round(SStime_track.time_dilation_avg_fast,1)]%, [round(SStime_track.time_dilation_avg,1)]%, [round(SStime_track.time_dilation_avg_slow,1)]%)")
+				stat("Keys Held", keys2text(client.move_keys_held | client.mod_keys_held))
+				stat("Next Move ADD", dirs2text(client.next_move_dir_add))
+				stat("Next Move SUB", dirs2text(client.next_move_dir_sub))
 
 			if(statpanel("MC"))
 				stat("Location:", "([x], [y], [z]) [loc]")
@@ -651,9 +695,12 @@
 			if(length(GLOB.sdql2_queries))
 				if(statpanel("SDQL2"))
 					stat("Access Global SDQL2 List", GLOB.sdql2_vv_statobj)
-					for(var/i in GLOB.sdql2_queries)
-						var/datum/SDQL2_query/Q = i
+					for(var/datum/SDQL2_query/Q as anything in GLOB.sdql2_queries)
 						Q.generate_stat()
+
+		if(has_mentor_powers(client))
+			if(statpanel("Tickets"))
+				GLOB.mhelp_tickets.stat_entry()
 
 		if(listed_turf && client)
 			if(!TurfAdjacent(listed_turf))
@@ -692,6 +739,7 @@
 
 /mob/proc/facedir(var/ndir)
 	if(!canface() || (client && (client.moving || !checkMoveCooldown())))
+		DEBUG_INPUT("Denying Facedir for [src] (moving=[client?.moving])")
 		return 0
 	set_dir(ndir)
 	if(buckled && buckled.buckle_movable)
@@ -864,11 +912,11 @@
 	usr.setClickCooldown(20)
 
 	if(usr.stat == 1)
-		to_chat(usr, "You are unconcious and cannot do that!")
+		to_chat(usr, "<span class='filter_notice'>You are unconcious and cannot do that!</span>")
 		return
 
 	if(usr.restrained())
-		to_chat(usr, "You are restrained and cannot do that!")
+		to_chat(usr, "<span class='filter_notice'>You are restrained and cannot do that!</span>")
 		return
 
 	var/mob/S = src
@@ -882,12 +930,12 @@
 	valid_objects = get_visible_implants(0)
 	if(!valid_objects.len)
 		if(self)
-			to_chat(src, "You have nothing stuck in your body that is large enough to remove.")
+			to_chat(src, "<span class='filter_notice'>You have nothing stuck in your body that is large enough to remove.</span>")
 		else
-			to_chat(U, "[src] has nothing stuck in their wounds that is large enough to remove.")
+			to_chat(U, "<span class='filter_notice'>[src] has nothing stuck in their wounds that is large enough to remove.</span>")
 		return
 
-	var/obj/item/weapon/selection = input("What do you want to yank out?", "Embedded objects") in valid_objects
+	var/obj/item/weapon/selection = tgui_input_list(usr, "What do you want to yank out?", "Embedded objects", valid_objects)
 
 	if(self)
 		to_chat(src, "<span class='warning'>You attempt to get a good grip on [selection] in your body.</span>")
@@ -943,7 +991,7 @@
 		if(O == selection)
 			pinned -= O
 		if(!pinned.len)
-			anchored = 0
+			anchored = FALSE
 	return 1
 
 //Check for brain worms in head.
@@ -972,9 +1020,9 @@
 	set_face_dir()
 
 	if(!facing_dir)
-		to_chat(usr, "You are now not facing anything.")
+		to_chat(usr, "<span class='filter_notice'>You are now not facing anything.</span>")
 	else
-		to_chat(usr, "You are now facing [dir2text(facing_dir)].")
+		to_chat(usr, "<span class='filter_notice'>You are now facing [dir2text(facing_dir)].</span>")
 
 /mob/proc/set_face_dir(var/newdir)
 	if(newdir == facing_dir)
@@ -1149,7 +1197,7 @@
 
 //Throwing stuff
 /mob/proc/throw_item(atom/target)
-	return
+	return FALSE
 
 /mob/proc/will_show_tooltip()
 	if(alpha <= EFFECTIVE_INVIS)

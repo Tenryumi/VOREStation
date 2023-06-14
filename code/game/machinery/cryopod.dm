@@ -14,7 +14,7 @@
 	icon = 'icons/obj/Cryogenic2_vr.dmi' //VOREStation Edit - New Icon
 	icon_state = "cellconsole"
 	circuit = /obj/item/weapon/circuitboard/cryopodcontrol
-	density = 0
+	density = FALSE
 	interact_offline = 1
 	var/mode = null
 
@@ -95,7 +95,7 @@
 	data["real_name"] = user.real_name
 	data["allow_items"] = allow_items
 	data["crew"] = frozen_crew
-	
+
 	var/list/items = list()
 	if(allow_items)
 		for(var/F in frozen_items)
@@ -183,8 +183,9 @@
 	desc = "A bewildering tangle of machinery and pipes."
 	icon = 'icons/obj/Cryogenic2_vr.dmi' //VOREStation Edit - New Icon
 	icon_state = "cryo_rear"
-	anchored = 1
+	anchored = TRUE
 	dir = WEST
+	density = TRUE
 
 //Cryopods themselves.
 /obj/machinery/cryopod
@@ -192,8 +193,9 @@
 	desc = "A man-sized pod for entering suspended animation."
 	icon = 'icons/obj/Cryogenic2_vr.dmi' //VOREStation Edit - New Icon
 	icon_state = "cryopod_0" //VOREStation Edit - New Icon
-	density = 1
-	anchored = 1
+	density = TRUE
+	anchored = TRUE
+	unacidable = TRUE
 	dir = WEST
 
 	var/base_icon_state = "cryopod_0" //VOREStation Edit - New Icon
@@ -249,6 +251,10 @@
 /obj/machinery/cryopod/robot/door/dorms
 	name = "Residential District Elevator"
 	desc = "A small elevator that goes down to the deeper section of the colony."
+	icon = 'icons/obj/Cryogenic2_vr.dmi'
+	icon_state = "lift_closed"
+	base_icon_state = "lift_open"
+	occupied_icon_state = "lift_closed"
 	on_store_message = "has departed for the residential district."
 	on_store_name = "Residential Oversight"
 	on_enter_occupant_message = "The elevator door closes slowly, ready to bring you down to the residential district."
@@ -258,6 +264,10 @@
 /obj/machinery/cryopod/robot/door/travel
 	name = "Passenger Elevator"
 	desc = "A small elevator that goes down to the passenger section of the vessel."
+	icon = 'icons/obj/Cryogenic2_vr.dmi'
+	icon_state = "lift_closed"
+	base_icon_state = "lift_open"
+	occupied_icon_state = "lift_closed"
 	on_store_message = "is slated to depart from the colony."
 	on_store_name = "Travel Oversight"
 	on_enter_occupant_message = "The elevator door closes slowly, ready to bring you down to the hell that is economy class travel."
@@ -373,8 +383,7 @@
 	hook_vr("despawn", list(to_despawn, src))
 	if(isliving(to_despawn))
 		var/mob/living/L = to_despawn
-		for(var/belly in L.vore_organs)
-			var/obj/belly/B = belly
+		for(var/obj/belly/B as anything in L.vore_organs)
 			for(var/mob/living/sub_L in B)
 				despawn_occupant(sub_L)
 			for(var/obj/item/W in B)
@@ -466,8 +475,8 @@
 
 	//Handle job slot/tater cleanup.
 	var/job = to_despawn.mind.assigned_role
-
 	job_master.FreeRole(job)
+	to_despawn.mind.assigned_role = null
 
 	if(to_despawn.mind.objectives.len)
 		qdel(to_despawn.mind.objectives)
@@ -492,6 +501,19 @@
 		if((G.fields["name"] == to_despawn.real_name))
 			qdel(G)
 
+	// Also check the hidden version of each datacore, if they're an offmap role.
+	var/datum/job/J = SSjob.get_job(job)
+	if(J?.offmap_spawn)
+		for(var/datum/data/record/R in data_core.hidden_general)
+			if((R.fields["name"] == to_despawn.real_name))
+				qdel(R)
+		for(var/datum/data/record/T in data_core.hidden_security)
+			if((T.fields["name"] == to_despawn.real_name))
+				qdel(T)
+		for(var/datum/data/record/G in data_core.hidden_medical)
+			if((G.fields["name"] == to_despawn.real_name))
+				qdel(G)
+
 	icon_state = base_icon_state
 
 	//TODO: Check objectives/mode, update new targets if this mob is the target, spawn new antags?
@@ -502,8 +524,19 @@
 	control_computer._admin_logs += "[key_name(to_despawn)] ([to_despawn.mind.role_alt_title]) at [stationtime2text()]"
 	log_and_message_admins("[key_name(to_despawn)] ([to_despawn.mind.role_alt_title]) entered cryostorage.")
 
-	announce.autosay("[to_despawn.real_name], [to_despawn.mind.role_alt_title], [on_store_message]", "[on_store_name]", announce_channel, using_map.get_map_levels(z, TRUE, om_range = DEFAULT_OVERMAP_RANGE))
-	visible_message("<span class='notice'>\The [initial(name)] [on_store_visible_message_1] [to_despawn.real_name] [on_store_visible_message_2]</span>", 3)
+	//VOREStation Edit Start
+	var/depart_announce = TRUE
+	var/departing_job = to_despawn.mind.role_alt_title
+
+
+	if(istype(to_despawn, /mob/living/dominated_brain))
+		depart_announce = FALSE
+
+	if(depart_announce)
+		announce.autosay("[to_despawn.real_name][departing_job ? ", [departing_job], " : " "][on_store_message]", "[on_store_name]", announce_channel, using_map.get_map_levels(z, TRUE, om_range = DEFAULT_OVERMAP_RANGE))
+		visible_message("<span class='notice'>\The [initial(name)] [on_store_visible_message_1] [to_despawn.real_name] [on_store_visible_message_2]</span>", 3)
+
+	//VOREStation Edit End
 
 	//VOREStation Edit begin: Dont delete mobs-in-mobs
 	if(to_despawn.client && to_despawn.stat<2)
@@ -664,7 +697,7 @@
 	var/willing = null //We don't want to allow people to be forced into despawning.
 
 	if(M.client)
-		if(alert(M,"Would you like to enter long-term storage?",,"Yes","No") == "Yes")
+		if(tgui_alert(M,"Would you like to enter long-term storage?","Cryopod",list("Yes","No")) == "Yes")
 			if(!M) return
 			willing = 1
 	else
@@ -701,7 +734,7 @@
 
 		// Book keeping!
 		var/turf/location = get_turf(src)
-		log_admin("[key_name_admin(M)] has entered a stasis pod. (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[location.x];Y=[location.y];Z=[location.z]'>JMP</a>)")
+		log_admin("[key_name_admin(M)] has entered a stasis pod. (<A HREF='?_src_=holder;[HrefToken()];adminplayerobservecoodjump=1;X=[location.x];Y=[location.y];Z=[location.z]'>JMP</a>)")
 		message_admins("<span class='notice'>[key_name_admin(M)] has entered a stasis pod.</span>")
 
 		//Despawning occurs when process() is called with an occupant without a client.

@@ -5,8 +5,7 @@ var/list/_client_preferences_by_type
 /proc/get_client_preferences()
 	if(!_client_preferences)
 		_client_preferences = list()
-		for(var/ct in subtypesof(/datum/client_preference))
-			var/datum/client_preference/client_type = ct
+		for(var/datum/client_preference/client_type as anything in subtypesof(/datum/client_preference))
 			if(initial(client_type.description))
 				_client_preferences += new client_type()
 	return _client_preferences
@@ -21,16 +20,14 @@ var/list/_client_preferences_by_type
 /proc/get_client_preference_by_key(var/preference)
 	if(!_client_preferences_by_key)
 		_client_preferences_by_key = list()
-		for(var/ct in get_client_preferences())
-			var/datum/client_preference/client_pref = ct
+		for(var/datum/client_preference/client_pref as anything in get_client_preferences())
 			_client_preferences_by_key[client_pref.key] = client_pref
 	return _client_preferences_by_key[preference]
 
 /proc/get_client_preference_by_type(var/preference)
 	if(!_client_preferences_by_type)
 		_client_preferences_by_type = list()
-		for(var/ct in get_client_preferences())
-			var/datum/client_preference/client_pref = ct
+		for(var/datum/client_preference/client_pref as anything in get_client_preferences())
 			_client_preferences_by_type[client_pref.type] = client_pref
 	return _client_preferences_by_type[preference]
 
@@ -99,13 +96,19 @@ var/list/_client_preferences_by_type
 	enabled_description = "Noisy"
 	disabled_description = "Silent"
 
+/datum/client_preference/belch_noises // Belching noises - pref toggle for 'em
+	description = "Burping"
+	key = "BELCH_NOISES"
+	enabled_description = "Noisy"
+	disabled_description = "Silent"
+
 /datum/client_preference/emote_noises
 	description = "Emote Noises" //MERP
 	key = "EMOTE_NOISES"
 	enabled_description = "Noisy"
 	disabled_description = "Silent"
 /datum/client_preference/whisubtle_vis
-	description = "Whi/Subtles Ghost Visible" 
+	description = "Whi/Subtles Ghost Visible"
 	key = "WHISUBTLE_VIS"
 	enabled_description = "Visible"
 	disabled_description = "Hidden"
@@ -152,7 +155,7 @@ var/list/_client_preferences_by_type
 	key = "SOUND_AIRPUMP"
 	enabled_description = "Audible"
 	disabled_description = "Silent"
-	
+
 /datum/client_preference/old_door_sounds
 	description ="Old Door Sounds"
 	key = "SOUND_OLDDOORS"
@@ -290,6 +293,36 @@ var/list/_client_preferences_by_type
 	enabled_description = "Show"
 	disabled_description = "Hide"
 
+/datum/client_preference/radio_sounds
+	description = "Radio Sounds"
+	key = "RADIO_SOUNDS"
+	enabled_description = "On"
+	disabled_description = "Off"
+
+/datum/client_preference/say_sounds
+	description = "Say Sounds"
+	key = "SAY_SOUNDS"
+	enabled_description = "On"
+	disabled_description = "Off"
+
+/datum/client_preference/emote_sounds
+	description = "Me Sounds"
+	key = "EMOTE_SOUNDS"
+	enabled_description = "On"
+	disabled_description = "Off"
+
+/datum/client_preference/whisper_sounds
+	description = "Whisper Sounds"
+	key = "WHISPER_SOUNDS"
+	enabled_description = "On"
+	disabled_description = "Off"
+
+/datum/client_preference/subtle_sounds
+	description = "Subtle Sounds"
+	key = "SUBTLE_SOUNDS"
+	enabled_description = "On"
+	disabled_description = "Off"
+
 /datum/client_preference/runechat_mob
 	description = "Runechat (Mobs)"
 	key = "RUNECHAT_MOB"
@@ -307,13 +340,13 @@ var/list/_client_preferences_by_type
 	key = "RUNECHAT_BORDER"
 	enabled_description = "Show"
 	disabled_description = "Hide"
-	enabled_by_default = FALSE
+	enabled_by_default = TRUE
 
 /datum/client_preference/runechat_long_messages
 	description = "Runechat Message Length"
 	key = "RUNECHAT_LONG"
-	enabled_description = "ERP KING"
-	disabled_description = "Normie"
+	enabled_description = "Long"
+	disabled_description = "Short"
 	enabled_by_default = FALSE
 
 /datum/client_preference/status_indicators/toggled(mob/preference_mob, enabled)
@@ -321,6 +354,33 @@ var/list/_client_preferences_by_type
 	if(preference_mob && preference_mob.plane_holder)
 		var/datum/plane_holder/PH = preference_mob.plane_holder
 		PH.set_vis(VIS_STATUS, enabled)
+
+/datum/client_preference/show_lore_news
+	description = "Lore News Popup"
+	key = "NEWS_POPUP"
+	enabled_by_default = TRUE
+	enabled_description = "Popup New On Login"
+	disabled_description = "Do Nothing"
+
+/datum/client_preference/play_mentorhelp_ping
+	description = "Mentorhelps"
+	key = "SOUND_MENTORHELP"
+	enabled_description = "Hear"
+	disabled_description = "Silent"
+
+/datum/client_preference/player_tips
+	description = "Receive Tips Periodically"
+	key = "RECEIVE_TIPS"
+	enabled_description = "Enabled"
+	disabled_description = "Disabled"
+ 
+/datum/client_preference/pain_frequency
+	description = "Pain Messages Cooldown"
+	key = "PAIN_FREQUENCY"
+	enabled_by_default = FALSE
+	enabled_description = "Extended"
+	disabled_description = "Default"
+
 
 /********************
 * Staff Preferences *
@@ -372,5 +432,11 @@ var/list/_client_preferences_by_type
 /datum/client_preference/holder/show_rlooc
 	description ="Remote LOOC chat"
 	key = "CHAT_RLOOC"
+	enabled_description = "Show"
+	disabled_description = "Hide"
+
+/datum/client_preference/holder/show_staff_dsay
+	description ="Staff Deadchat"
+	key = "CHAT_ADSAY"
 	enabled_description = "Show"
 	disabled_description = "Hide"

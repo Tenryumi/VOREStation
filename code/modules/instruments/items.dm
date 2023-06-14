@@ -9,7 +9,7 @@
 		slot_l_hand_str = 'icons/mob/items/lefthand_instruments.dmi',
 		slot_r_hand_str = 'icons/mob/items/righthand_instruments.dmi',
 	)
-	
+
 	/// Our song datum.
 	var/datum/song/handheld/song
 	/// Our allowed list of instrument ids. This is nulled on initialize.
@@ -28,11 +28,6 @@
 
 /obj/item/instrument/proc/should_stop_playing(mob/user)
 	return user.incapacitated() || !((loc == user) || (isturf(loc) && Adjacent(user))) // sorry, no more TK playing.
-
-/obj/item/instrument/suicide_act(mob/user)
-	var/datum/gender/T = gender_datums[user.get_visible_gender()]
-	user.visible_message("<span class='suicide'>[user] begins to play 'Gloomy Sunday'! It looks like [T.hes] trying to commit suicide!</span>")
-	return (BRUTELOSS)
 
 /obj/item/instrument/attack_self(mob/user)
 	if(!user.IsAdvancedToolUser())
@@ -59,6 +54,12 @@
 	desc = "A golden musical instrument with four strings and a bow. \"The devil went down to space, he was looking for an assistant to grief.\""
 	icon_state = "golden_violin"
 
+/obj/item/instrument/xylophone
+	name = "xylophone"
+	desc = "A percussion instrument consisting of a series of wooden bars graduated in length."
+	icon_state = "xylophone"
+	allowed_instrument_ids = "xylophone"
+
 /obj/item/instrument/piano_synth
 	name = "synthesizer"
 	desc = "An advanced electronic synthesizer that can be used as various instruments."
@@ -80,8 +81,8 @@
 
 /obj/item/instrument/piano_synth/headphones/Initialize()
 	. = ..()
-	RegisterSignal(src, COMSIG_SONG_START, .proc/start_playing)
-	RegisterSignal(src, COMSIG_SONG_END, .proc/stop_playing)
+	RegisterSignal(src, COMSIG_SONG_START, PROC_REF(start_playing))
+	RegisterSignal(src, COMSIG_SONG_END, PROC_REF(stop_playing))
 
 /**
  * Called by a component signal when our song starts playing.
@@ -251,7 +252,7 @@
 
 /obj/item/instrument/harmonica/equipped(mob/M, slot)
 	. = ..()
-	RegisterSignal(M, COMSIG_MOB_SAY, .proc/handle_speech)
+	RegisterSignal(M, COMSIG_MOB_SAY, PROC_REF(handle_speech))
 
 /obj/item/instrument/harmonica/dropped(mob/M)
 	. = ..()
@@ -296,8 +297,7 @@
 							/obj/item/instrument/harmonica,
 							/obj/item/instrument/piano_synth/headphones
 							)
-		for(var/V in templist)
-			var/atom/A = V
+		for(var/atom/A as anything in templist)
 			instruments[initial(A.name)] = A
 	return instruments
 */

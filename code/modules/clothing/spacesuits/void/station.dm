@@ -204,16 +204,16 @@
 
 /obj/item/clothing/head/helmet/space/void/medical/alt
 	sprite_sheets = list(
-		SPECIES_HUMAN			= 'icons/mob/head.dmi',
-		SPECIES_TAJ 			= 'icons/mob/species/tajaran/helmet.dmi',
-		SPECIES_SKRELL 			= 'icons/mob/species/skrell/helmet.dmi',
-		SPECIES_UNATHI 			= 'icons/mob/species/unathi/helmet.dmi'
-		)
+		SPECIES_HUMAN			= 'icons/inventory/head/mob.dmi',
+		SPECIES_TAJ 			= 'icons/inventory/head/mob_tajaran.dmi',
+		SPECIES_SKRELL 			= 'icons/inventory/head/mob_skrell.dmi',
+		SPECIES_UNATHI 			= 'icons/inventory/head/mob_unathi.dmi'
+	)
 	sprite_sheets_obj = list(
-		SPECIES_TAJ 			= 'icons/obj/clothing/hats.dmi',
-		SPECIES_SKRELL			= 'icons/obj/clothing/hats.dmi',
-		SPECIES_UNATHI			= 'icons/obj/clothing/hats.dmi'
-		)
+		SPECIES_TAJ 			= 'icons/inventory/head/item.dmi',
+		SPECIES_SKRELL			= 'icons/inventory/head/item.dmi',
+		SPECIES_UNATHI			= 'icons/inventory/head/item.dmi'
+	)
 
 /obj/item/clothing/head/helmet/space/void/medical/alt/tesh
 	name = "streamlined teshari medical voidsuit helmet"
@@ -223,10 +223,10 @@
 
 /obj/item/clothing/head/helmet/space/void/medical/alt/tesh
 	sprite_sheets = list(
-		SPECIES_TESHARI			= 'icons/mob/species/teshari/head.dmi'
+		SPECIES_TESHARI			= 'icons/inventory/head/mob_teshari.dmi'
 		)
 	sprite_sheets_obj = list(
-		SPECIES_TESHARI			= 'icons/obj/clothing/hats.dmi'
+		SPECIES_TESHARI			= 'icons/inventory/head/item.dmi'
 		)
 
 /obj/item/clothing/suit/space/void/medical/alt
@@ -240,15 +240,15 @@
 
 /obj/item/clothing/suit/space/void/medical/alt
 	sprite_sheets = list(
-		SPECIES_HUMAN			= 'icons/mob/spacesuit.dmi',
-		SPECIES_TAJ 			= 'icons/mob/species/tajaran/suit.dmi',
-		SPECIES_SKRELL 			= 'icons/mob/species/skrell/suit.dmi',
-		SPECIES_UNATHI 			= 'icons/mob/species/unathi/suit.dmi'
+		SPECIES_HUMAN			= 'icons/inventory/suit/mob.dmi',
+		SPECIES_TAJ 			= 'icons/inventory/suit/mob_tajaran.dmi',
+		SPECIES_SKRELL 			= 'icons/inventory/suit/mob_skrell.dmi',
+		SPECIES_UNATHI 			= 'icons/inventory/suit/mob_unathi.dmi'
 		)
 	sprite_sheets_obj = list(
-		SPECIES_TAJ			= 'icons/obj/clothing/spacesuits.dmi',
-		SPECIES_SKRELL			= 'icons/obj/clothing/spacesuits.dmi',
-		SPECIES_UNATHI			= 'icons/obj/clothing/spacesuits.dmi'
+		SPECIES_TAJ			= 'icons/inventory/suit/item.dmi',
+		SPECIES_SKRELL			= 'icons/inventory/suit/item.dmi',
+		SPECIES_UNATHI			= 'icons/inventory/suit/item.dmi'
 		)
 
 /obj/item/clothing/suit/space/void/medical/alt/tesh
@@ -259,10 +259,10 @@
 
 /obj/item/clothing/suit/space/void/medical/alt/tesh
 	sprite_sheets = list(
-		SPECIES_TESHARI			= 'icons/mob/species/teshari/suit.dmi'
+		SPECIES_TESHARI			= 'icons/inventory/suit/mob_teshari.dmi'
 		)
 	sprite_sheets_obj = list(
-		SPECIES_TESHARI			= 'icons/obj/clothing/spacesuits.dmi'
+		SPECIES_TESHARI			= 'icons/inventory/suit/item.dmi'
 		)
 
 //Security
@@ -329,7 +329,7 @@
 	icon_state = "rig0-atmos"
 	item_state_slots = list(slot_r_hand_str = "atmos_helm", slot_l_hand_str = "atmos_helm")
 	armor = list(melee = 40, bullet = 5, laser = 20, energy = 5, bomb = 35, bio = 100, rad = 50)
-	max_heat_protection_temperature = FIRE_HELMET_MAX_HEAT_PROTECTION_TEMPERATURE
+	max_heat_protection_temperature = FIRE_HELMET_MAX_HEAT_PROTECTION_TEMPERATURE+15000
 	light_overlay = "helmet_light_dual"
 	min_pressure_protection = 0 * ONE_ATMOSPHERE
 	max_pressure_protection = 20* ONE_ATMOSPHERE
@@ -340,7 +340,7 @@
 	icon_state = "rig-atmos"
 	item_state_slots = list(slot_r_hand_str = "atmos_voidsuit", slot_l_hand_str = "atmos_voidsuit")
 	armor = list(melee = 40, bullet = 5, laser = 20, energy = 5, bomb = 35, bio = 100, rad = 50)
-	max_heat_protection_temperature = FIRESUIT_MAX_HEAT_PROTECTION_TEMPERATURE
+	max_heat_protection_temperature = FIRESUIT_MAX_HEAT_PROTECTION_TEMPERATURE+15000
 	min_pressure_protection = 0 * ONE_ATMOSPHERE
 	max_pressure_protection = 20* ONE_ATMOSPHERE
 	breach_threshold = 16 //Extra Thicc

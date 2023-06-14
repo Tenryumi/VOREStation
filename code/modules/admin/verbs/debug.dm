@@ -98,7 +98,7 @@
 	set name = "Make Robot"
 
 	if(!ticker)
-		alert("Wait until the game starts")
+		tgui_alert_async(usr, "Wait until the game starts")
 		return
 	if(istype(M, /mob/living/carbon/human))
 		log_admin("[key_name(src)] has robotized [M.key].")
@@ -106,22 +106,22 @@
 			M:Robotize()
 
 	else
-		alert("Invalid mob")
+		tgui_alert_async(usr, "Invalid mob")
 
 /client/proc/cmd_admin_animalize(var/mob/M in mob_list)
 	set category = "Fun"
 	set name = "Make Simple Animal"
 
 	if(!ticker)
-		alert("Wait until the game starts")
+		tgui_alert_async(usr, "Wait until the game starts")
 		return
 
 	if(!M)
-		alert("That mob doesn't seem to exist, close the panel and try again.")
+		tgui_alert_async(usr, "That mob doesn't seem to exist, close the panel and try again.")
 		return
 
 	if(istype(M, /mob/new_player))
-		alert("The mob must not be a new_player.")
+		tgui_alert_async(usr, "The mob must not be a new_player.")
 		return
 
 	log_admin("[key_name(src)] has animalized [M.key].")
@@ -129,31 +129,35 @@
 		M.Animalize()
 
 
-/client/proc/makepAI(var/turf/T in mob_list)
+/client/proc/makepAI()
 	set category = "Fun"
 	set name = "Make pAI"
-	set desc = "Specify a location to spawn a pAI device, then specify a key to play that pAI"
+	set desc = "Spawn someone in as a pAI!"
+	if(!check_rights(R_ADMIN|R_EVENT|R_DEBUG))
+		return
+	var/turf/T = get_turf(mob)
 
 	var/list/available = list()
 	for(var/mob/C in mob_list)
-		if(C.key)
+		if(C.key && isobserver(C))
 			available.Add(C)
-	var/mob/choice = input("Choose a player to play the pAI", "Spawn pAI") in available
+	var/mob/choice = tgui_input_list(usr, "Choose a player to play the pAI", "Spawn pAI", available)
 	if(!choice)
 		return 0
-	if(!istype(choice, /mob/observer/dead))
-		var/confirm = input("[choice.key] isn't ghosting right now. Are you sure you want to yank them out of them out of their body and place them in this pAI?", "Spawn pAI Confirmation", "No") in list("Yes", "No")
-		if(confirm != "Yes")
-			return 0
-	var/obj/item/device/paicard/card = new(T)
+	var/obj/item/device/paicard/typeb/card = new(T)
 	var/mob/living/silicon/pai/pai = new(card)
-	pai.name = sanitizeSafe(input(choice, "Enter your pAI name:", "pAI Name", "Personal AI") as text)
 	pai.real_name = pai.name
 	pai.key = choice.key
 	card.setPersonality(pai)
+	if(tgui_alert(pai, "Do you want to load your pAI data?", "Load", list("Yes", "No")) == "Yes")
+		pai.savefile_load(pai)
+	else
+		pai.name = sanitizeSafe(tgui_input_text(pai, "Enter your pAI name:", "pAI Name", "Personal AI"))
+		card.setPersonality(pai)
 	for(var/datum/paiCandidate/candidate in paiController.pai_candidates)
 		if(candidate.key == choice.key)
 			paiController.pai_candidates.Remove(candidate)
+	log_admin("made a pAI with key=[pai.key] at ([T.x],[T.y],[T.z])")
 	feedback_add_details("admin_verb","MPAI") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
 
 /client/proc/cmd_admin_alienize(var/mob/M in mob_list)
@@ -161,7 +165,7 @@
 	set name = "Make Alien"
 
 	if(!ticker)
-		alert("Wait until the game starts")
+		tgui_alert_async(usr, "Wait until the game starts")
 		return
 	if(ishuman(M))
 		log_admin("[key_name(src)] has alienized [M.key].")
@@ -171,7 +175,7 @@
 		log_admin("[key_name(usr)] made [key_name(M)] into an alien.")
 		message_admins("<span class='notice'>[key_name_admin(usr)] made [key_name(M)] into an alien.</span>", 1)
 	else
-		alert("Invalid mob")
+		tgui_alert_async(usr, "Invalid mob")
 
 
 //TODO: merge the vievars version into this or something maybe mayhaps
@@ -181,7 +185,7 @@
 
 	// to prevent REALLY stupid deletions
 	var/blocked = list(/obj, /mob, /mob/living, /mob/living/carbon, /mob/living/carbon/human, /mob/observer/dead, /mob/living/silicon, /mob/living/silicon/robot, /mob/living/silicon/ai)
-	var/hsbitem = input(usr, "Choose an object to delete.", "Delete:") as null|anything in typesof(/obj) + typesof(/mob) - blocked
+	var/hsbitem = tgui_input_list(usr, "Choose an object to delete.", "Delete:", typesof(/obj) + typesof(/mob) - blocked)
 	if(hsbitem)
 		for(var/atom/O in world)
 			if(istype(O, hsbitem))
@@ -245,6 +249,7 @@
 	if(!check_rights(R_DEBUG))	return
 	src << browse(replacetext(SSatoms.InitLog(), "\n", "<br>"), "window=initlog")
 
+/*
 /client/proc/cmd_display_overlay_log()
 	set category = "Debug"
 	set name = "Display overlay Log"
@@ -252,7 +257,7 @@
 
 	if(!check_rights(R_DEBUG))	return
 	render_stats(SSoverlays.stats, src)
-
+*/
 // Render stats list for round-end statistics.
 /proc/render_stats(list/stats, user, sort = /proc/cmp_generic_stat_item_time)
 	sortTim(stats, sort, TRUE)
@@ -272,7 +277,7 @@
 	set name = "Grant Full Access"
 
 	if (!ticker)
-		alert("Wait until the game starts")
+		tgui_alert_async(usr, "Wait until the game starts")
 		return
 	if (istype(M, /mob/living/carbon/human))
 		var/mob/living/carbon/human/H = M
@@ -293,7 +298,7 @@
 			H.equip_to_slot_or_del(id, slot_wear_id)
 			H.update_inv_wear_id()
 	else
-		alert("Invalid mob")
+		tgui_alert_async(usr, "Invalid mob")
 	feedback_add_details("admin_verb","GFA") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
 	log_admin("[key_name(src)] has granted [M.key] full access.")
 	message_admins("<font color='blue'>[key_name_admin(usr)] has granted [M.key] full access.</font>", 1)
@@ -305,7 +310,7 @@
 
 	if(!check_rights(R_DEBUG|R_ADMIN|R_EVENT))	return
 	if(M.ckey)
-		if(alert("This mob is being controlled by [M.ckey]. Are you sure you wish to assume control of it? [M.ckey] will be made a ghost.",,"Yes","No") != "Yes")
+		if(tgui_alert(usr, "This mob is being controlled by [M.ckey]. Are you sure you wish to assume control of it? [M.ckey] will be made a ghost.","Confirmation",list("Yes","No")) != "Yes")
 			return
 		else
 			var/mob/observer/dead/ghost = new/mob/observer/dead(M,1)
@@ -432,7 +437,7 @@
 
 	var/mob/living/carbon/human/H = target
 
-	var/decl/hierarchy/outfit/outfit = input("Select outfit.", "Select equipment.") as null|anything in outfits()
+	var/decl/hierarchy/outfit/outfit = tgui_input_list(usr, "Select outfit.", "Select equipment.", outfits())
 	if(!outfit)
 		return
 
@@ -453,7 +458,7 @@
 	set name = "Start Singularity"
 	set desc = "Sets up the singularity and all machines to get power flowing through the station"
 
-	if(alert("Are you sure? This will start up the engine. Should only be used during debug!",,"Yes","No") != "Yes")
+	if(tgui_alert(usr, "Are you sure? This will start up the engine. Should only be used during debug!","Start Singularity",list("Yes","No")) != "Yes")
 		return
 
 	for(var/obj/machinery/power/emitter/E in machines)
@@ -499,7 +504,7 @@
 
 	if(!check_rights(R_DEBUG|R_ADMIN))      return
 
-	var/response = alert("Are you sure? This will start up the engine. Should only be used during debug!",,"Setup Completely","Setup except coolant","No")
+	var/response = tgui_alert(usr, "Are you sure? This will start up the engine. Should only be used during debug!","Setup Supermatter",list("Setup Completely","Setup except coolant","No"))
 
 	if(response == "No")
 		return
@@ -518,7 +523,7 @@
 		if(istype(M.loc.loc,/area/engineering/engine_room))
 			if(istype(M,/obj/machinery/power/rad_collector))
 				var/obj/machinery/power/rad_collector/Rad = M
-				Rad.anchored = 1
+				Rad.anchored = TRUE
 				Rad.connect_to_network()
 
 				var/obj/item/weapon/tank/phoron/Phoron = new/obj/item/weapon/tank/phoron(Rad)
@@ -580,7 +585,7 @@
 	set name = "Debug Mob Lists"
 	set desc = "For when you just gotta know"
 
-	switch(input("Which list?") in list("Players","Admins","Mobs","Living Mobs","Dead Mobs", "Clients"))
+	switch(tgui_input_list(usr, "Which list?", "List Choice", list("Players","Admins","Mobs","Living Mobs","Dead Mobs", "Clients")))
 		if("Players")
 			to_chat(usr, span("filter_debuglogs", jointext(player_list,",")))
 		if("Admins")
@@ -606,7 +611,7 @@
 // DNA2 - Admin Hax
 /client/proc/cmd_admin_toggle_block(var/mob/M,var/block)
 	if(!ticker)
-		alert("Wait until the game starts")
+		tgui_alert_async(usr, "Wait until the game starts")
 		return
 	if(istype(M, /mob/living/carbon))
 		M.dna.SetSEState(block,!M.dna.GetSEState(block))
@@ -617,7 +622,7 @@
 		message_admins("[key_name_admin(src)] has toggled [M.key]'s [blockname] block [state]!")
 		log_admin("[key_name(src)] has toggled [M.key]'s [blockname] block [state]!")
 	else
-		alert("Invalid mob")
+		tgui_alert_async(usr, "Invalid mob")
 
 /datum/admins/proc/view_runtimes()
 	set category = "Debug"
@@ -637,15 +642,30 @@
 	if(!check_rights(R_DEBUG))
 		return
 
-	var/datum/planet/planet = input(usr, "Which planet do you want to modify the weather on?", "Change Weather") in SSplanets.planets
+	var/datum/planet/planet = tgui_input_list(usr, "Which planet do you want to modify the weather on?", "Change Weather", SSplanets.planets)
 	if(istype(planet))
-		var/datum/weather/new_weather = input(usr, "What weather do you want to change to?", "Change Weather") as null|anything in planet.weather_holder.allowed_weather_types
+		var/datum/weather/new_weather = tgui_input_list(usr, "What weather do you want to change to?", "Change Weather", planet.weather_holder.allowed_weather_types)
 		if(new_weather)
 			planet.weather_holder.change_weather(new_weather)
 			planet.weather_holder.rebuild_forecast()
 			var/log = "[key_name(src)] changed [planet.name]'s weather to [new_weather]."
 			message_admins(log)
 			log_admin(log)
+
+/datum/admins/proc/toggle_firework_override()
+	set category = "Fun"
+	set name = "Toggle Weather Firework Override"
+	set desc = "Toggles ability for weather fireworks to affect weather on planet of choice."
+
+	if(!check_rights(R_DEBUG))
+		return
+
+	var/datum/planet/planet = tgui_input_list(usr, "Which planet do you want to toggle firework effects on?", "Change Weather", SSplanets.planets)
+	if(istype(planet) && planet.weather_holder)
+		planet.weather_holder.firework_override = !(planet.weather_holder.firework_override)
+		var/log = "[key_name(src)] toggled [planet.name]'s firework override to [planet.weather_holder.firework_override ? "on" : "off"]."
+		message_admins(log)
+		log_admin(log)
 
 /datum/admins/proc/change_time()
 	set category = "Debug"
@@ -655,12 +675,12 @@
 	if(!check_rights(R_DEBUG))
 		return
 
-	var/datum/planet/planet = input(usr, "Which planet do you want to modify time on?", "Change Time") in SSplanets.planets
+	var/datum/planet/planet = tgui_input_list(usr, "Which planet do you want to modify time on?", "Change Time", SSplanets.planets)
 	if(istype(planet))
 		var/datum/time/current_time_datum = planet.current_time
-		var/new_hour = input(usr, "What hour do you want to change to?", "Change Time", text2num(current_time_datum.show_time("hh"))) as null|num
+		var/new_hour = tgui_input_number(usr, "What hour do you want to change to?", "Change Time", text2num(current_time_datum.show_time("hh")))
 		if(!isnull(new_hour))
-			var/new_minute = input(usr, "What minute do you want to change to?", "Change Time", text2num(current_time_datum.show_time("mm")) ) as null|num
+			var/new_minute = tgui_input_number(usr, "What minute do you want to change to?", "Change Time", text2num(current_time_datum.show_time("mm")) )
 			if(!isnull(new_minute))
 				var/type_needed = current_time_datum.type
 				var/datum/time/new_time = new type_needed()

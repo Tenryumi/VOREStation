@@ -1,48 +1,111 @@
 /mob/living/simple_mob //makes it so that any simplemob can potentially be revived by players and joined by ghosts
-	var/ghostjoin = 0
-	var/ic_revivable = 0
+	var/ghostjoin = FALSE
+	var/ic_revivable = FALSE
 	var/revivedby = "no one"
+
+/mob/living/simple_mob/vv_edit_var(var_name, var_value)
+	switch(var_name)
+		if(NAMEOF(src, ghostjoin))
+			if(ghostjoin == var_value)
+				return
+
+			if(var_value)
+				ghostjoin = TRUE
+				active_ghost_pods |= src
+			else
+				ghostjoin = FALSE
+				active_ghost_pods -= src
+
+			ghostjoin_icon()
+			. =  TRUE
+
+	if(!isnull(.))
+		datum_flags |= DF_VAR_EDITED
+		return
+
+	. = ..()
+
 
 //The stuff we want to be revivable normally
 /mob/living/simple_mob/animal
-	ic_revivable = 1
+	ic_revivable = TRUE
 /mob/living/simple_mob/otie
-	ic_revivable = 1
+	ic_revivable = TRUE
 /mob/living/simple_mob/vore
-	ic_revivable = 1
+	ic_revivable = TRUE
 //The stuff that would be revivable but that we don't want to be revivable
 /mob/living/simple_mob/animal/giant_spider/nurse //no you can't revive the ones who can lay eggs and get webs everywhere
-	ic_revivable = 0
+	ic_revivable = FALSE
 /mob/living/simple_mob/animal/giant_spider/carrier //or the ones who fart babies when they die
-	ic_revivable = 0
+	ic_revivable = FALSE
 
-//WHEN GHOSTS ATTACK!!!!!
+/// A ghost has clicked us
 /mob/living/simple_mob/attack_ghost(mob/observer/dead/user as mob)
 	if(!ghostjoin)
 		return ..()
-
-	var/reply = alert("Would you like to become [src]? It is bound to [revivedby].",,"Yes","No")
-	if(reply == "No")
+	if(jobban_isbanned(user, "GhostRoles"))
+		to_chat(user, "<span class='warning'>You cannot inhabit this creature because you are banned from playing ghost roles.</span>")
 		return
+	if(!evaluate_ghost_join(user))
+		return ..()
 
-	if(ckey) //FIRST ONE TO CLICK YES GETS IT!!!!!! Channel your inner youtube commenter.
-		to_chat(src, "<span class='notice'>Sorry, someone else has already inhabited [src].</span>")
-		return
-	
-	log_and_message_admins("[key_name_admin(user)] joined [src] as a ghost [ADMIN_FLW(src)]")
+	tgui_alert_async(usr, "Would you like to become [src]? It is bound to [revivedby].", "Become Mob", list("Yes","No"), CALLBACK(src, PROC_REF(reply_ghost_join)), 20 SECONDS)
+
+/// A reply to an async alert request was received
+/mob/living/simple_mob/proc/reply_ghost_join(response)
+	if(response != "Yes")
+		return // ok
+
+	var/mob/observer/dead/D = usr
+	if(evaluate_ghost_join(D))
+		ghost_join(D)
+
+/// Inject a ghost into this mob. Assumes you've done all sanity before this point.
+/mob/living/simple_mob/proc/ghost_join(mob/observer/dead/D)
+	log_and_message_admins("[key_name_admin(D)] joined [src] as a ghost [ADMIN_FLW(src)]")
 	active_ghost_pods -= src
-	if(user.mind)
-		user.mind.active = TRUE
-		user.mind.transfer_to(src)
+
+	// Move the ghost in
+	if(D.mind)
+		D.mind.active = TRUE
+		D.mind.transfer_to(src)
 	else
-		src.ckey = user.ckey
-	qdel(user)
-	ghostjoin = 0
+		src.ckey = D.ckey
+	qdel(D)
+
+	// Clean up the simplemob
+	ghostjoin = FALSE
 	ghostjoin_icon()
+	if(capture_caught)
+		to_chat(src, "<span class='notice'>You are bound to [revivedby], follow their commands within reason and to the best of your abilities, and avoid betraying or abandoning them.</span><span class= warning> You are allied with [revivedby]. Do not attack anyone for no reason. Of course, you may do scenes as you like, but you must still respect preferences.</span>")
+		visible_message("[src]'s eyes flicker with a curious intelligence.", runemessage = "looks around")
+		return
 	if(revivedby != "no one")
 		to_chat(src, "<span class='notice'>Where once your life had been rough and scary, you have been assisted by [revivedby]. They seem to be the reason you are on your feet again... so perhaps you should help them out.</span> <span class= warning> Being as you were revived, you are allied with the station. Do not attack anyone unless they are threatening the one who revived you. And try to listen to the one who revived you within reason. Of course, you may do scenes as you like, but you must still respect preferences.</span>")
-		visible_message("[src]'s eyes flicker with a curious intelligence.")
+		visible_message("[src]'s eyes flicker with a curious intelligence.", runemessage = "looks around")
 
+/// Evaluate someone for being allowed to join as this mob from being a ghost
+/mob/living/simple_mob/proc/evaluate_ghost_join(mob/observer/dead/D)
+	if(!istype(D) || !D.client)
+		stack_trace("A non-ghost mob was evaluated for joining into a simplemob...")
+		return FALSE
+
+	// At this point we can at least send them messages as to why they can't join, since they are a mob with a client
+	if(!ghostjoin)
+		to_chat(D, "<span class='notice'>Sorry, [src] is no longer ghost-joinable.</span>")
+		return FALSE
+
+	if(ckey)
+		to_chat(D, "<span class='notice'>Sorry, someone else has already inhabited [src].</span>")
+		return FALSE
+
+	if(capture_caught && !D.client.prefs.capture_crystal)
+		to_chat(D, "<span class='notice'>Sorry, [src] is participating in capture mechanics, and your preferences do not allow for that.</span>")
+		return FALSE
+
+	// Insert whatever ban checks you want here if we ever add simplemob bans
+
+	return TRUE
 
 /obj/item/device/denecrotizer //Away map reward. FOR TRAINED NECROMANCERS ONLY. >:C
 	name = "experimental denecrotizer"
@@ -65,7 +128,7 @@
 		else
 			. += "<span class='notice'>The screen indicates that this device can be used again in [cooldowntime] seconds, and that it has enough energy for [charges] uses.</span>"
 
-/obj/item/device/denecrotizer/proc/check_target(mob/living/simple_mob/target, mob/living/user) 
+/obj/item/device/denecrotizer/proc/check_target(mob/living/simple_mob/target, mob/living/user)
 	if(!target.Adjacent(user))
 		return FALSE
 	if(user.a_intent != I_HELP) //be gentle
@@ -87,12 +150,12 @@
 		if(!advanced)
 			to_chat(user, "<span class='notice'>[src] doesn't seem to work on that.</span>")
 			return FALSE
-		if(target.ai_holder.retaliate || target.ai_holder.hostile) // You can be friends with still living mobs if they are passive I GUESS 
+		if(target.ai_holder.retaliate || target.ai_holder.hostile) // You can be friends with still living mobs if they are passive I GUESS
 			to_chat(user, "<span class='notice'>[src] doesn't seem to work on that.</span>")
 			return FALSE
-		if(!target.mind) 
+		if(!target.mind)
 			user.visible_message("[user] gently presses [src] to [target]...", runemessage = "presses [src] to [target]")
-			if(do_after(user, revive_time, exclusive = 1, target = target))
+			if(do_after(user, revive_time, exclusive = TASK_USER_EXCLUSIVE, target = target))
 				target.faction = user.faction
 				target.revivedby = user.name
 				target.ghostjoin = 1
@@ -113,7 +176,7 @@
 
 /obj/item/device/denecrotizer/proc/ghostjoin_rez(mob/living/simple_mob/target, mob/living/user)
 	user.visible_message("[user] gently presses [src] to [target]...", runemessage = "presses [src] to [target]")
-	if(do_after(user, revive_time, exclusive = 1, target = target))
+	if(do_after(user, revive_time, exclusive = TASK_ALL_EXCLUSIVE, target = target))
 		target.faction = user.faction
 		target.revivedby = user.name
 		target.ai_holder.returns_home = FALSE
@@ -126,7 +189,7 @@
 		log_and_message_admins("[key_name_admin(user)] used a denecrotizer to revive a simple mob: [target]. [ADMIN_FLW(src)]")
 		if(!target.mind) //if it doesn't have a mind then no one has been playing as it, and it is safe to offer to ghosts.
 			target.ghostjoin = 1
-			active_ghost_pods += target
+			active_ghost_pods |= target
 			target.ghostjoin_icon()
 		last_used = world.time
 		charges--
@@ -134,10 +197,10 @@
 			icon_state = "[initial(icon_state)]-o"
 			update_icon()
 		return
-		
+
 /obj/item/device/denecrotizer/proc/basic_rez(mob/living/simple_mob/target, mob/living/user) //so medical can have a way to bring back people's pets or whatever, does not change any settings about the mob or offer it to ghosts.
 	user.visible_message("[user] presses [src] to [target]...", runemessage = "presses [src] to [target]")
-	if(do_after(user, revive_time, exclusive = 1, target = target))
+	if(do_after(user, revive_time, exclusive = TASK_ALL_EXCLUSIVE, target = target))
 		target.revive()
 		target.sight = initial(target.sight)
 		target.see_in_dark = initial(target.see_in_dark)
@@ -173,10 +236,10 @@
 		I.plane = PLANE_GHOSTS
 		I.appearance_flags = KEEP_APART|RESET_TRANSFORM
 
+	cut_overlay(I)
+
 	if(ghostjoin)
 		add_overlay(I)
-	else
-		cut_overlay(I)
 
 /obj/item/device/denecrotizer/medical //Can revive more things, but without the special ghost and faction stuff. For medical use.
 	name = "commercial denecrotizer"

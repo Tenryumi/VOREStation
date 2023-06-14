@@ -216,6 +216,9 @@
 /datum/reagent/ethanol/cuba_libre
 	price_tag = 4
 
+/datum/reagent/ethanol/rum_and_cola
+	price_tag = 4
+
 /datum/reagent/ethanol/demonsblood
 	price_tag = 4
 
@@ -612,7 +615,7 @@
 
 // Cookies and Candies //
 
-/obj/item/weapon/reagent_containers/food/snacks/cookiesnack
+/obj/item/weapon/reagent_containers/food/snacks/cookie
 	price_tag = 1
 
 /obj/item/weapon/reagent_containers/food/snacks/chocolatebar

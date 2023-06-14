@@ -30,7 +30,7 @@
 	if(istype(O, /obj/item/weapon/card/id))
 		var/obj/item/weapon/card/id/I = O
 		src.access |= I.access
-		if(player_is_antag(user.mind))
+		if(player_is_antag(user.mind) || registered_user == user)
 			to_chat(user, "<span class='notice'>The microscanner activates as you pass it over the ID, copying its access.</span>")
 
 /obj/item/weapon/card/id/syndicate/attack_self(mob/user as mob)
@@ -38,7 +38,7 @@
 	if(!registered_user && register_user(user))
 		to_chat(user, "<span class='notice'>The microscanner marks you as its owner, preventing others from accessing its internals.</span>")
 	if(registered_user == user)
-		switch(alert("Would you like edit the ID, or show it?","Show or Edit?", "Edit","Show"))
+		switch(tgui_alert(usr, "Would you like edit the ID, or show it?","Show or Edit?", list("Edit","Show")))
 			if("Edit")
 				agentcard_module.tgui_interact(user)
 			if("Show")
@@ -88,9 +88,9 @@
 	return name
 
 /obj/item/weapon/card/id/syndicate_command
-	name = "syndicate ID card"
-	desc = "An ID straight from the Syndicate."
-	registered_name = "Syndicate"
-	assignment = "Syndicate Commander"
+	name = "operative ID card"
+	desc = "An ID straight from a mercenary organisation."
+	registered_name = "Operative"
+	assignment = "Operative Commander"
 	icon_state = "syndicate-id"
 	access = list(access_syndicate, access_external_airlocks)

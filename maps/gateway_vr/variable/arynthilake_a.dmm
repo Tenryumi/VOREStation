@@ -3,7 +3,7 @@
 /turf/unsimulated/mineral,
 /area/gateway/arynthilake)
 "ac" = (
-/turf/simulated/mineral/ignore_cavegen,
+/turf/simulated/mineral/ignore_cavegen/cave,
 /area/gateway/arynthilake)
 "ae" = (
 /obj/effect/floor_decal/techfloor{
@@ -18,7 +18,7 @@
 /turf/simulated/floor/tiled/techfloor,
 /area/gateway/arynthilake/gateway)
 "af" = (
-/turf/simulated/mineral/floor/ignore_cavegen,
+/turf/simulated/mineral/floor/ignore_cavegen/cave,
 /area/gateway/arynthilake)
 "ag" = (
 /turf/simulated/wall/r_wall,
@@ -147,7 +147,7 @@
 /area/gateway/arynthilake/oldcabin)
 "aV" = (
 /obj/item/weapon/lampshade,
-/turf/simulated/mineral/floor/ignore_cavegen,
+/turf/simulated/mineral/floor/ignore_cavegen/cave,
 /area/gateway/arynthilake/caves)
 "aX" = (
 /turf/simulated/floor/carpet/bcarpet,
@@ -227,13 +227,13 @@
 /area/gateway/arynthilake)
 "bn" = (
 /obj/structure/table/steel,
-/turf/simulated/mineral/floor/ignore_cavegen{
+/turf/simulated/mineral/floor/ignore_cavegen/cave{
 	outdoors = 1
 	},
 /area/gateway/arynthilake)
 "bo" = (
 /obj/structure/table,
-/turf/simulated/mineral/floor/ignore_cavegen{
+/turf/simulated/mineral/floor/ignore_cavegen/cave{
 	outdoors = 1
 	},
 /area/gateway/arynthilake)
@@ -345,7 +345,7 @@
 /obj/item/stack/material/steel{
 	amount = 50
 	},
-/turf/simulated/mineral/floor/ignore_cavegen{
+/turf/simulated/mineral/floor/ignore_cavegen/cave{
 	outdoors = 1
 	},
 /area/gateway/arynthilake)
@@ -540,7 +540,7 @@
 /area/gateway/arynthilake/dome)
 "eV" = (
 /obj/effect/landmark/mcguffin_spawner,
-/turf/simulated/mineral/floor/ignore_cavegen,
+/turf/simulated/mineral/floor/ignore_cavegen/cave,
 /area/gateway/arynthilake/caves)
 "eW" = (
 /obj/item/device/analyzer/plant_analyzer,
@@ -641,7 +641,7 @@
 /obj/item/clothing/under/dress/dress_saloon,
 /obj/item/clothing/under/dress/lilacdress,
 /obj/item/clothing/under/dress/littleblackdress,
-/obj/item/clothing/under/dress/qipao/red,
+/obj/item/clothing/under/qipao/red,
 /obj/item/clothing/under/dress/red_swept_dress,
 /obj/item/clothing/under/dress/redeveninggown,
 /obj/item/clothing/under/dress/sailordress,
@@ -727,7 +727,7 @@
 	},
 /area/gateway/arynthilake/dome)
 "jI" = (
-/turf/simulated/mineral/floor/ignore_cavegen,
+/turf/simulated/mineral/floor/ignore_cavegen/cave,
 /area/gateway/arynthilake/caves)
 "jK" = (
 /obj/structure/table/rack/shelf/steel,
@@ -919,7 +919,7 @@
 /area/gateway/arynthilake)
 "nc" = (
 /obj/random/awayloot,
-/turf/simulated/mineral/floor/ignore_cavegen,
+/turf/simulated/mineral/floor/ignore_cavegen/cave,
 /area/gateway/arynthilake/caves)
 "np" = (
 /obj/random/mob/semirandom_mob_spawner/animal/e,
@@ -927,7 +927,7 @@
 /area/gateway/arynthilake)
 "nr" = (
 /obj/effect/fake_sun,
-/turf/simulated/mineral/ignore_cavegen,
+/turf/simulated/mineral/ignore_cavegen/cave,
 /area/gateway/arynthilake/caves)
 "nx" = (
 /obj/machinery/door/airlock/engineering,
@@ -1006,7 +1006,7 @@
 /area/gateway/arynthilake/engine)
 "pa" = (
 /obj/random/mob/semirandom_mob_spawner/monster,
-/turf/simulated/floor/tiled/eris/white/brown_platform{
+/turf/simulated/floor/tiled/eris/dark/brown_platform{
 	outdoors = 1
 	},
 /area/gateway/arynthilake/dome)
@@ -1143,16 +1143,16 @@
 /obj/random/meat,
 /obj/random/meat,
 /obj/random/meat,
-/obj/item/weapon/reagent_containers/food/condiment/flour,
-/obj/item/weapon/reagent_containers/food/condiment/flour,
-/obj/item/weapon/reagent_containers/food/condiment/flour,
-/obj/item/weapon/reagent_containers/food/condiment/flour,
-/obj/item/weapon/reagent_containers/food/condiment/flour,
-/obj/item/weapon/reagent_containers/food/condiment/sugar,
-/obj/item/weapon/reagent_containers/food/condiment/sugar,
-/obj/item/weapon/reagent_containers/food/condiment/sugar,
-/obj/item/weapon/reagent_containers/food/condiment/sugar,
-/obj/item/weapon/reagent_containers/food/condiment/sugar,
+/obj/item/weapon/reagent_containers/food/condiment/carton/flour,
+/obj/item/weapon/reagent_containers/food/condiment/carton/flour,
+/obj/item/weapon/reagent_containers/food/condiment/carton/flour,
+/obj/item/weapon/reagent_containers/food/condiment/carton/flour,
+/obj/item/weapon/reagent_containers/food/condiment/carton/flour,
+/obj/item/weapon/reagent_containers/food/condiment/carton/sugar,
+/obj/item/weapon/reagent_containers/food/condiment/carton/sugar,
+/obj/item/weapon/reagent_containers/food/condiment/carton/sugar,
+/obj/item/weapon/reagent_containers/food/condiment/carton/sugar,
+/obj/item/weapon/reagent_containers/food/condiment/carton/sugar,
 /obj/item/weapon/reagent_containers/food/condiment/spacespice,
 /obj/item/weapon/reagent_containers/food/condiment/spacespice,
 /obj/item/weapon/reagent_containers/food/condiment/spacespice,
@@ -1174,10 +1174,6 @@
 /obj/random/maintenance/engineering,
 /turf/simulated/floor/tiled/eris,
 /area/gateway/arynthilake/engine)
-"sl" = (
-/obj/effect/overmap/visitable/sector/tether_gateway/arynthilake,
-/turf/simulated/mineral/ignore_cavegen,
-/area/gateway/arynthilake/caves)
 "sA" = (
 /obj/structure/table/rack/steel,
 /obj/item/clothing/shoes/flats/blue,
@@ -1238,6 +1234,11 @@
 "tN" = (
 /turf/simulated/floor/outdoors/grass,
 /area/gateway/arynthilake/caves)
+"tS" = (
+/turf/simulated/floor/tiled/eris/dark/brown_platform{
+	outdoors = 1
+	},
+/area/gateway/arynthilake/dome)
 "tU" = (
 /obj/structure/table/steel_reinforced,
 /obj/machinery/reagentgrinder,
@@ -1253,7 +1254,7 @@
 	},
 /area/gateway/arynthilake/dome)
 "ug" = (
-/obj/machinery/telecomms/relay/preset/tether,
+/obj/machinery/telecomms/relay,
 /turf/simulated/floor/tiled/eris,
 /area/gateway/arynthilake/engine)
 "uo" = (
@@ -1338,9 +1339,11 @@
 /turf/simulated/floor/tiled/eris/techmaint_cargo,
 /area/gateway/arynthilake/dome)
 "wm" = (
-/obj/random/mob/semirandom_mob_spawner/monster,
-/turf/simulated/floor/tiled/eris/dark/brown_platform,
-/area/gateway/arynthilake/dome)
+/obj/random/mob/semirandom_mob_spawner/monster/c,
+/turf/simulated/floor/outdoors/newdirt{
+	outdoors = 0
+	},
+/area/gateway/arynthilake/caves)
 "wq" = (
 /obj/random/mob/semirandom_mob_spawner/animal/c,
 /turf/simulated/floor/outdoors/grass,
@@ -1409,7 +1412,7 @@
 	},
 /area/gateway/arynthilake/dome)
 "yl" = (
-/obj/structure/bed/chair/sofa/brown/right{
+/obj/structure/bed/chair/sofa/right/brown{
 	dir = 4
 	},
 /turf/simulated/floor/carpet,
@@ -1523,7 +1526,7 @@
 /turf/simulated/floor/carpet/purcarpet,
 /area/gateway/arynthilake/dome)
 "BX" = (
-/obj/structure/bed/chair/sofa/brown/corner,
+/obj/structure/bed/chair/sofa/corner/brown,
 /turf/simulated/floor/carpet,
 /area/gateway/arynthilake/dome)
 "Cl" = (
@@ -1665,6 +1668,13 @@
 /obj/structure/table/bench/marble,
 /turf/simulated/floor/tiled/eris/white/techfloor,
 /area/gateway/arynthilake/dome)
+"FJ" = (
+/obj/move_trader_landmark{
+	dir = 4;
+	trader_type = /obj/trader/general
+	},
+/turf/simulated/floor/outdoors/grass,
+/area/gateway/arynthilake)
 "FR" = (
 /obj/structure/ladder,
 /turf/simulated/floor/tiled/eris/dark/monofloor,
@@ -1675,6 +1685,13 @@
 "FZ" = (
 /obj/machinery/light/small,
 /turf/simulated/floor/wood,
+/area/gateway/arynthilake/dome)
+"Ga" = (
+/obj/move_trader_landmark{
+	dir = 8;
+	trader_type = /obj/trader/general
+	},
+/turf/simulated/floor/lino,
 /area/gateway/arynthilake/dome)
 "Gc" = (
 /obj/structure/table/steel_reinforced,
@@ -1714,7 +1731,7 @@
 /turf/simulated/floor/carpet/sblucarpet,
 /area/gateway/arynthilake/dome)
 "Hp" = (
-/obj/structure/bed/chair/sofa/brown/corner{
+/obj/structure/bed/chair/sofa/corner/brown{
 	dir = 1
 	},
 /obj/effect/landmark/mcguffin_spawner,
@@ -1731,7 +1748,7 @@
 /turf/simulated/floor/outdoors/newdirt,
 /area/gateway/arynthilake)
 "HR" = (
-/obj/structure/bed/chair/sofa/brown/left{
+/obj/structure/bed/chair/sofa/left/brown{
 	dir = 8
 	},
 /turf/simulated/floor/carpet,
@@ -1749,7 +1766,7 @@
 /area/gateway/arynthilake/engine)
 "Iq" = (
 /obj/random/mob/semirandom_mob_spawner/humanoid/retaliate,
-/turf/simulated/mineral/floor/ignore_cavegen{
+/turf/simulated/mineral/floor/ignore_cavegen/cave{
 	outdoors = 1
 	},
 /area/gateway/arynthilake)
@@ -1808,7 +1825,7 @@
 /turf/simulated/floor/tiled/eris/techmaint_cargo,
 /area/gateway/arynthilake/dome)
 "JK" = (
-/turf/simulated/mineral/floor/ignore_cavegen{
+/turf/simulated/mineral/floor/ignore_cavegen/cave{
 	outdoors = 1
 	},
 /area/gateway/arynthilake)
@@ -1931,7 +1948,7 @@
 /turf/simulated/floor/carpet/purcarpet,
 /area/gateway/arynthilake/dome)
 "MD" = (
-/turf/simulated/mineral/floor/ignore_cavegen{
+/turf/simulated/mineral/floor/ignore_cavegen/cave{
 	outdoors = 1
 	},
 /area/gateway/arynthilake/caves)
@@ -2011,6 +2028,13 @@
 /obj/structure/flora/tree/bigtree,
 /turf/simulated/floor/outdoors/grass/forest,
 /area/gateway/arynthilake/dome)
+"NF" = (
+/obj/move_trader_landmark{
+	dir = 4;
+	trader_type = /obj/trader/general
+	},
+/turf/simulated/floor/lino,
+/area/gateway/arynthilake/dome)
 "NG" = (
 /obj/effect/floor_decal/industrial/warning/dust{
 	dir = 6
@@ -2024,8 +2048,8 @@
 /turf/simulated/floor/tiled/eris,
 /area/gateway/arynthilake/engine)
 "NK" = (
-/obj/random/mob/semirandom_mob_spawner/monster/e,
-/turf/simulated/floor/beach/sand/desert,
+/obj/random/mob/semirandom_mob_spawner/monster/d,
+/turf/simulated/mineral/floor/ignore_cavegen/cave,
 /area/gateway/arynthilake/caves)
 "Oc" = (
 /obj/structure/table/marble,
@@ -2063,6 +2087,10 @@
 	},
 /turf/simulated/floor/tiled/eris/white/brown_platform,
 /area/gateway/arynthilake/dome)
+"Or" = (
+/obj/effect/landmark/hidden_level,
+/turf/simulated/mineral/ignore_cavegen/cave,
+/area/gateway/arynthilake/caves)
 "OC" = (
 /turf/simulated/floor/carpet/blucarpet{
 	outdoors = 1
@@ -2089,7 +2117,7 @@
 	check_arrest = 0;
 	check_down = 0;
 	check_records = 0;
-	control_area = /area/gateway/grasslands/underground/maintenance;
+	control_area = /area/gateway/arynthilake/underground/maintenance;
 	desc = "A firewall prevents AIs from interacting with this device.";
 	lethal = 1;
 	locked = 0;
@@ -2141,7 +2169,7 @@
 /turf/simulated/floor/tiled/steel_ridged,
 /area/gateway/arynthilake/engine)
 "Qr" = (
-/turf/simulated/mineral/ignore_cavegen,
+/turf/simulated/mineral/ignore_cavegen/cave,
 /area/gateway/arynthilake/caves)
 "Qx" = (
 /obj/random/mob/semirandom_mob_spawner/robot/retaliate,
@@ -2215,6 +2243,16 @@
 	outdoors = 1
 	},
 /area/gateway/arynthilake)
+"Sj" = (
+/obj/move_trader_landmark{
+	dir = 8;
+	trader_type = /obj/trader/general
+	},
+/turf/simulated/floor/plating{
+	edge_blending_priority = 1;
+	outdoors = 1
+	},
+/area/gateway/arynthilake/gateway)
 "Ss" = (
 /obj/effect/floor_decal/industrial/warning/dust{
 	dir = 9
@@ -2255,10 +2293,6 @@
 	plane = -34
 	},
 /turf/simulated/floor/tiled/eris/cafe,
-/area/gateway/arynthilake/dome)
-"TI" = (
-/obj/random/mob/semirandom_mob_spawner/monster,
-/turf/simulated/floor/tiled/eris/dark/monofloor,
 /area/gateway/arynthilake/dome)
 "TR" = (
 /turf/unsimulated/wall/planetary/normal{
@@ -2303,7 +2337,7 @@
 /turf/simulated/floor/wood,
 /area/gateway/arynthilake/dome)
 "UZ" = (
-/turf/simulated/mineral/ignore_cavegen,
+/turf/simulated/mineral/ignore_cavegen/cave,
 /area/gateway/arynthilake/caveruins)
 "Vf" = (
 /obj/structure/closet,
@@ -2319,7 +2353,7 @@
 /obj/item/clothing/under/dress/wench,
 /obj/item/clothing/under/dress/white,
 /obj/item/clothing/under/haltertop,
-/obj/item/clothing/under/hephaestus,
+/obj/item/clothing/under/corp/hephaestus,
 /obj/item/clothing/under/lawyer/blue,
 /obj/item/clothing/under/lawyer/bluesuit,
 /obj/item/clothing/under/lawyer/bluesuit/skirt,
@@ -2350,7 +2384,7 @@
 /area/gateway/arynthilake/caveruins)
 "We" = (
 /obj/random/mob/semirandom_mob_spawner/monster/e,
-/turf/simulated/mineral/floor/ignore_cavegen,
+/turf/simulated/mineral/floor/ignore_cavegen/cave,
 /area/gateway/arynthilake/caves)
 "Wj" = (
 /obj/machinery/light{
@@ -2909,7 +2943,7 @@ Qr
 Qr
 Qr
 Qr
-sl
+Qr
 aa
 "}
 (4,1,1) = {"
@@ -3051,7 +3085,7 @@ Qr
 Qr
 Qr
 Qr
-Qr
+Or
 aa
 "}
 (5,1,1) = {"
@@ -3286,7 +3320,7 @@ jI
 jI
 jI
 jI
-We
+jI
 jI
 jI
 jI
@@ -4174,7 +4208,7 @@ au
 al
 al
 al
-al
+FJ
 al
 al
 au
@@ -5020,7 +5054,7 @@ aG
 ap
 aI
 ap
-NK
+aG
 aG
 Qr
 Qr
@@ -5157,7 +5191,7 @@ jI
 jI
 jI
 Qr
-We
+jI
 aG
 ap
 ap
@@ -5623,7 +5657,7 @@ qM
 bc
 bc
 bc
-pb
+tS
 yY
 hw
 fo
@@ -5763,9 +5797,9 @@ an
 an
 aZ
 bc
-wm
 bc
-pb
+bc
+tS
 yY
 hw
 fo
@@ -6333,7 +6367,7 @@ qM
 At
 Rm
 Er
-pb
+tS
 yY
 Nm
 Nm
@@ -6353,7 +6387,7 @@ Nm
 fo
 hw
 hw
-Sw
+NF
 Sw
 ba
 DP
@@ -6475,7 +6509,7 @@ qM
 zQ
 zQ
 Er
-pb
+tS
 yY
 Nm
 Nm
@@ -6611,7 +6645,7 @@ Qr
 Qr
 qM
 vG
-TI
+aY
 Vo
 qM
 AQ
@@ -7205,7 +7239,7 @@ fo
 hw
 Nm
 hw
-Sw
+Ga
 Sw
 ba
 qK
@@ -10941,7 +10975,7 @@ bD
 bD
 Fm
 bH
-rs
+Sj
 Zr
 au
 au
@@ -15435,7 +15469,7 @@ Qr
 jI
 jI
 gu
-gu
+wm
 gu
 gu
 jI
@@ -17444,7 +17478,7 @@ Qr
 Qr
 jI
 jI
-jI
+NK
 jI
 jI
 jI
@@ -17835,7 +17869,7 @@ au
 al
 al
 al
-al
+FJ
 au
 Zr
 au
@@ -19440,7 +19474,7 @@ jI
 au
 jI
 jI
-jI
+NK
 Qr
 Qr
 Qr
@@ -20255,7 +20289,7 @@ QI
 yb
 nx
 FW
-FW
+ek
 jz
 ag
 al
@@ -20391,7 +20425,7 @@ se
 jK
 ag
 FW
-ek
+FW
 WV
 FW
 FW

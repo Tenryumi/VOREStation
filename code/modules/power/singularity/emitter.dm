@@ -5,8 +5,9 @@
 	desc = "It is a heavy duty industrial laser."
 	icon = 'icons/obj/singularity.dmi'
 	icon_state = "emitter"
-	anchored = 0
-	density = 1
+	anchored = FALSE
+	density = TRUE
+	unacidable = TRUE
 	req_access = list(access_engine_equip)
 	var/id = null
 
@@ -47,7 +48,7 @@
 		connect_to_network()
 
 /obj/machinery/power/emitter/Destroy()
-	message_admins("Emitter deleted at ([x],[y],[z] - <A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[x];Y=[y];Z=[z]'>JMP</a>)",0,1)
+	message_admins("Emitter deleted at ([x],[y],[z] - <A HREF='?_src_=holder;[HrefToken()];adminplayerobservecoodjump=1;X=[x];Y=[y];Z=[z]'>JMP</a>)",0,1)
 	log_game("EMITTER([x],[y],[z]) Destroyed/deleted.")
 	investigate_log("<font color='red'>deleted</font> at ([x],[y],[z])","singulo")
 	..()
@@ -71,7 +72,7 @@
 			if(src.active==1)
 				src.active = 0
 				to_chat(user, "You turn off [src].")
-				message_admins("Emitter turned off by [key_name(user, user.client)](<A HREF='?_src_=holder;adminmoreinfo=\ref[user]'>?</A>) in ([x],[y],[z] - <A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[x];Y=[y];Z=[z]'>JMP</a>)",0,1)
+				message_admins("Emitter turned off by [key_name(user, user.client)](<A HREF='?_src_=holder;[HrefToken()];adminmoreinfo=\ref[user]'>?</A>) in ([x],[y],[z] - <A HREF='?_src_=holder;[HrefToken()];adminplayerobservecoodjump=1;X=[x];Y=[y];Z=[z]'>JMP</a>)",0,1)
 				log_game("EMITTER([x],[y],[z]) OFF by [key_name(user)]")
 				investigate_log("turned <font color='red'>off</font> by [user.key]","singulo")
 			else
@@ -79,7 +80,7 @@
 				to_chat(user, "You turn on [src].")
 				src.shot_number = 0
 				src.fire_delay = get_initial_fire_delay()
-				message_admins("Emitter turned on by [key_name(user, user.client)](<A HREF='?_src_=holder;adminmoreinfo=\ref[user]'>?</A>) in ([x],[y],[z] - <A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[x];Y=[y];Z=[z]'>JMP</a>)",0,1)
+				message_admins("Emitter turned on by [key_name(user, user.client)](<A HREF='?_src_=holder;[HrefToken()];adminmoreinfo=\ref[user]'>?</A>) in ([x],[y],[z] - <A HREF='?_src_=holder;[HrefToken()];adminplayerobservecoodjump=1;X=[x];Y=[y];Z=[z]'>JMP</a>)",0,1)
 				log_game("EMITTER([x],[y],[z]) ON by [key_name(user)]")
 				investigate_log("turned <font color='green'>on</font> by [user.key]","singulo")
 			update_icon()
@@ -158,14 +159,14 @@
 				user.visible_message("[user.name] secures [src] to the floor.", \
 					"You secure the external reinforcing bolts to the floor.", \
 					"You hear a ratchet.")
-				src.anchored = 1
+				src.anchored = TRUE
 			if(1)
 				state = 0
 				playsound(src, W.usesound, 75, 1)
 				user.visible_message("[user.name] unsecures [src] reinforcing bolts from the floor.", \
 					"You undo the external reinforcing bolts.", \
 					"You hear a ratchet.")
-				src.anchored = 0
+				src.anchored = FALSE
 				disconnect_from_network()
 			if(2)
 				to_chat(user, "<span class='warning'>\The [src] needs to be unwelded from the floor.</span>")
@@ -209,13 +210,13 @@
 		update_icon() // VOREStation Add
 		return
 
-	if(istype(W, /obj/item/stack/material) && W.get_material_name() == DEFAULT_WALL_MATERIAL)
+	if(istype(W, /obj/item/stack/material) && W.get_material_name() == MAT_STEEL)
 		var/amt = CEILING(( initial(integrity) - integrity)/10, 1)
 		if(!amt)
 			to_chat(user, "<span class='notice'>\The [src] is already fully repaired.</span>")
 			return
 		var/obj/item/stack/P = W
-		if(P.amount < amt)
+		if(!P.can_use(amt))
 			to_chat(user, "<span class='warning'>You don't have enough sheets to repair this! You need at least [amt] sheets.</span>")
 			return
 		to_chat(user, "<span class='notice'>You begin repairing \the [src]...</span>")
@@ -271,6 +272,13 @@
 
 /obj/machinery/power/emitter/examine(mob/user)
 	. = ..()
+	switch(state)
+		if(0)
+			. += "<span class='warning'>It is not secured in place at all!</span>"
+		if(1)
+			. += "<span class='warning'>It has been bolted down securely, but not welded into place.</span>"
+		if(2)
+			. += "<span class='notice'>It has been bolted down securely and welded down into place.</span>"
 	var/integrity_percentage = round((integrity / initial(integrity)) * 100)
 	switch(integrity_percentage)
 		if(0 to 30)
@@ -278,7 +286,7 @@
 		if(31 to 70)
 			. += "<span class='danger'>It is damaged.</span>"
 		if(77 to 99)
-			. += "<span class='warning'It is slightly damaged.</span>"
+			. += "<span class='warning'>It is slightly damaged.</span>"
 
 //R-UST port
 /obj/machinery/power/emitter/proc/get_initial_fire_delay()

@@ -5,7 +5,7 @@
 	desc = "Shoots things into space."
 	icon = 'icons/obj/stationobjs.dmi'
 	icon_state = "mass_driver"
-	anchored = 1.0
+	anchored = TRUE
 	use_power = USE_POWER_IDLE
 	idle_power_usage = 2
 	active_power_usage = 50
@@ -28,7 +28,7 @@
 
 	if(istype(I, /obj/item/device/multitool))
 		if(panel_open)
-			var/input = sanitize(input(usr, "What id would you like to give this conveyor?", "Multitool-Conveyor interface", id))
+			var/input = sanitize(tgui_input_text(usr, "What id would you like to give this conveyor?", "Multitool-Conveyor interface", id))
 			if(!input)
 				to_chat(usr, "No input found please hang up and try your call again.")
 				return

@@ -6,7 +6,7 @@
 /datum/species/custom
 	name = SPECIES_CUSTOM
 	name_plural = "Custom"
-	selects_bodytype = TRUE
+	selects_bodytype = SELECTS_BODYTYPE_CUSTOM
 	base_species = SPECIES_HUMAN
 
 	unarmed_types = list(/datum/unarmed_attack/stomp, /datum/unarmed_attack/kick, /datum/unarmed_attack/punch, /datum/unarmed_attack/bite)
@@ -21,7 +21,9 @@
 	max_age = 200
 	health_hud_intensity = 2
 	num_alternate_languages = 3
+	species_language = null
 	assisted_langs = list(LANGUAGE_EAL, LANGUAGE_ROOTLOCAL, LANGUAGE_ROOTGLOBAL, LANGUAGE_VOX)
+	inherent_verbs = list(/mob/living/carbon/human/proc/tie_hair)
 
 	genders = list(MALE, FEMALE, PLURAL, NEUTER)
 
@@ -42,6 +44,11 @@
 		BP_R_FOOT = list("path" = /obj/item/organ/external/foot/right, "descriptor" = "right foot")
 		)
 
+	trait_points = 2
+
+/datum/species/custom/update_sort_hint()
+	sort_hint = SPECIES_SORT_CUSTOM
+
 /datum/species/custom/get_race_key()
 	var/datum/species/real = GLOB.all_species[base_species]
 	return real.race_key
@@ -52,12 +59,6 @@
 	H.hunger_rate = H.species.hunger_factor
 
 // Stub species overrides for shoving trait abilities into
-
-//Called when face-down in the water or otherwise over their head.
-// Return: TRUE for able to breathe fine in water.
-/datum/species/custom/can_breathe_water()
-	return /datum/trait/positive/water_breather in traits
-
 
 //Called during handle_environment in Life() ticks.
 // Return: Not used.

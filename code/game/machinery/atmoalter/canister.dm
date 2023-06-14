@@ -2,7 +2,7 @@
 	name = "canister"
 	icon = 'icons/obj/atmos.dmi'
 	icon_state = "yellow"
-	density = 1
+	density = TRUE
 	var/health = 100.0
 	w_class = ITEMSIZE_HUGE
 
@@ -172,7 +172,7 @@ update_flag
 
 		src.destroyed = 1
 		playsound(src, 'sound/effects/spray.ogg', 10, 1, -3)
-		src.density = 0
+		src.density = FALSE
 		update_icon()
 
 		if (src.holding)
@@ -239,6 +239,22 @@ update_flag
 	..()
 
 /obj/machinery/portable_atmospherics/canister/attackby(var/obj/item/weapon/W as obj, var/mob/user as mob)
+	if(istype(W, /obj/item/weapon/weldingtool)) //Vorestart: Deconstructable Canisters
+		var/obj/item/weapon/weldingtool/WT = W
+		if(!WT.remove_fuel(0, user))
+			to_chat(user, "The welding tool must be on to complete this task.")
+			return
+		if(air_contents.return_pressure() > 1 && !destroyed) // Empty or broken cans are able to be deconstructed
+			to_chat(user, "<span class ='warning'>\The [src]'s internal pressure is too high! Empty the canister before attempting to weld it apart.</span>")
+			return
+		playsound(src, WT.usesound, 50, 1)
+		if(do_after(user, 20 * WT.toolspeed))
+			if(!src || !WT.isOn()) return
+			to_chat(user, "<span class='notice'>You deconstruct the [src].</span>")
+			new /obj/item/stack/material/steel( src.loc, 10)
+			qdel(src)
+			return
+	//Voreend
 	if(!W.is_wrench() && !istype(W, /obj/item/weapon/tank) && !istype(W, /obj/item/device/analyzer) && !istype(W, /obj/item/device/pda))
 		visible_message("<span class='warning'>\The [user] hits \the [src] with \a [W]!</span>")
 		src.health -= W.force
@@ -315,7 +331,7 @@ update_flag
 					"\[Air\]" = "grey", \
 					"\[CAUTION\]" = "yellow", \
 				)
-				var/label = input("Choose canister label", "Gas canister") as null|anything in colors
+				var/label = tgui_input_list(usr, "Choose canister label", "Gas canister", colors)
 				if(label)
 					canister_color = colors[label]
 					icon_state = colors[label]
@@ -332,7 +348,7 @@ update_flag
 				pressure = 10*ONE_ATMOSPHERE
 				. = TRUE
 			else if(pressure == "input")
-				pressure = input("New release pressure ([ONE_ATMOSPHERE/10]-[10*ONE_ATMOSPHERE] kPa):", name, release_pressure) as num|null
+				pressure = tgui_input_number(usr, "New release pressure ([ONE_ATMOSPHERE/10]-[10*ONE_ATMOSPHERE] kPa):", name, release_pressure, 10*ONE_ATMOSPHERE, ONE_ATMOSPHERE/10)
 				if(!isnull(pressure) && !..())
 					. = TRUE
 			else if(text2num(pressure) != null)

@@ -2,7 +2,8 @@
 	name = SPECIES_ALRAUNE
 	name_plural = "Alraunes"
 	unarmed_types = list(/datum/unarmed_attack/stomp, /datum/unarmed_attack/kick, /datum/unarmed_attack/punch, /datum/unarmed_attack/bite)
-	num_alternate_languages = 2
+	species_language = LANGUAGE_ENOCHIAN
+	num_alternate_languages = 3
 	slowdown = 1 //slow, they're plants. Not as slow as full diona.
 	total_health = 100 //standard
 	brute_mod = 1 //nothing special
@@ -14,12 +15,13 @@
 	max_age = 250
 	health_hud_intensity = 1.5
 	base_species = SPECIES_ALRAUNE
-	selects_bodytype = TRUE
+	selects_bodytype = SELECTS_BODYTYPE_CUSTOM //VOREStation edit
 
 	body_temperature = T20C
 	breath_type = "oxygen"
 	poison_type = "phoron"
 	exhale_type = "oxygen"
+	water_breather = TRUE  //eh, why not? Aquatic plants are a thing.
 
 	// Heat and cold resistances are 20 degrees broader on the level 1 range, level 2 is default, level 3 is much weaker, halfway between L2 and normal L3.
 	// Essentially, they can tolerate a broader range of comfortable temperatures, but suffer more at extremes.
@@ -45,8 +47,8 @@
 	flags = NO_SCAN | IS_PLANT | NO_MINOR_CUT
 	appearance_flags = HAS_HAIR_COLOR | HAS_LIPS | HAS_UNDERWEAR | HAS_SKIN_COLOR | HAS_EYE_COLOR
 
-	inherent_verbs = list(
-		/mob/living/carbon/human/proc/alraune_fruit_select) //Give them the voremodes related to wrapping people in vines and sapping their fluids
+	inherent_verbs = list(/mob/living/carbon/human/proc/alraune_fruit_select, //Give them the voremodes related to wrapping people in vines and sapping their fluids
+		/mob/living/carbon/human/proc/tie_hair)
 
 	color_mult = 1
 	icobase = 'icons/mob/human_races/r_human_vr.dmi'
@@ -89,9 +91,6 @@
 		O_EYES =     /obj/item/organ/internal/eyes/alraune,
 		A_FRUIT =    /obj/item/organ/internal/fruitgland,
 		)
-
-/datum/species/alraune/can_breathe_water()
-	return TRUE //eh, why not? Aquatic plants are a thing.
 
 
 /datum/species/alraune/handle_environment_special(var/mob/living/carbon/human/H)
@@ -391,7 +390,7 @@
 			break
 
 	if(fruit_gland)
-		var/selection = input(src, "Choose your character's fruit type. Choosing nothing will result in a default of apples.", "Fruit Type", fruit_gland.fruit_type) as null|anything in acceptable_fruit_types
+		var/selection = tgui_input_list(src, "Choose your character's fruit type. Choosing nothing will result in a default of apples.", "Fruit Type", acceptable_fruit_types)
 		if(selection)
 			fruit_gland.fruit_type = selection
 		verbs |= /mob/living/carbon/human/proc/alraune_fruit_pick

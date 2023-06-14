@@ -125,7 +125,7 @@
 	desc = "A soup both spicy and sour from ancient Earth cooking traditions. This one is made with tofu."
 	icon = 'icons/obj/food_vr.dmi'
 	icon_state = "hotandsoursoup"
-	trash = /obj/item/trash/snack_bowl
+	trash = /obj/item/trash/asian_bowl
 	nutriment_amt = 6
 	nutriment_desc = list("spicyness" = 4, "sourness" = 4, "tofu" = 1)
 
@@ -139,7 +139,7 @@
 	desc = "A purported favorite of kitsunes in ancient japanese myth: udon noodles, fried egg, and tofu."
 	icon = 'icons/obj/food_vr.dmi'
 	icon_state = "kitsuneudon"
-	trash = /obj/item/trash/snack_bowl
+	trash = /obj/item/trash/asian_bowl
 	nutriment_amt = 6
 	nutriment_desc = list("fried egg" = 2, "egg noodles" = 4)
 
@@ -152,7 +152,7 @@
 	desc = "Sweet, spicy, and fried. General's Chicken has been around for more than five-hundred years now, and still tastes good."
 	icon = 'icons/obj/food_vr.dmi'
 	icon_state = "generaltso"
-	trash = /obj/item/trash/plate
+	trash = /obj/item/trash/asian_bowl
 	nutriment_amt = 6
 	nutriment_desc = list("sweet and spicy sauce" = 5, "chicken" = 3)
 
@@ -160,19 +160,6 @@
 	. = ..()
 	reagents.add_reagent("protein", 4)
 	bitesize = 2
-
-/obj/item/weapon/reagent_containers/food/snacks/meat/grubmeat
-	name = "grubmeat"
-	desc = "A slab of grub meat, it gives a gentle shock if you touch it"
-	icon = 'icons/obj/food_vr.dmi'
-	icon_state = "grubmeat"
-	center_of_mass = list("x"=16, "y"=10)
-
-/obj/item/weapon/reagent_containers/food/snacks/meat/grubmeat/Initialize()
-	. = ..()
-	reagents.add_reagent("protein", 1)
-	reagents.add_reagent("shockchem", 6)
-	bitesize = 6
 
 /obj/item/weapon/reagent_containers/food/snacks/bugball
 	name = "bugball"
@@ -388,6 +375,7 @@
 	desc = "Finally, some food for real men."
 	icon = 'icons/obj/food_vr.dmi'
 	icon_state = "sharkmeat_cooked"
+	trash = /obj/item/trash/small_bowl
 	nutriment_amt = 5
 	trash = /obj/item/trash/plate
 	nutriment_desc = list("manliness" = 1, "fish oil" = 2, "shark" = 2)
@@ -476,7 +464,7 @@
 	. = ..()
 
 /obj/item/weapon/reagent_containers/food/snacks/cube/proc/Expand()
-	src.visible_message("<span class='notice'>\The [src] expands!</span>")
+	src.visible_message("<b>\The [src]</b> expands!")
 	new food_type(get_turf(src))
 	qdel(src)
 
@@ -586,6 +574,20 @@
 	reagents.add_reagent("protein", 2)
 	bitesize = 2
 
+/obj/item/weapon/reagent_containers/food/snacks/milosoup
+	name = "Miso soup"
+	desc = "The universes best soup! Yum!!!"
+	icon_state = "milosoup"
+	trash = /obj/item/trash/snack_bowl
+	center_of_mass = list("x"=16, "y"=7)
+	nutriment_amt = 8
+	nutriment_desc = list("soy" = 8)
+	bitesize = 4
+
+/obj/item/weapon/reagent_containers/food/snacks/milosoup/Initialize()
+	. = ..()
+	reagents.add_reagent("water", 5)
+
 /obj/item/weapon/reagent_containers/food/snacks/onionsoup
 	name = "Onion Soup"
 	desc = "A soup with layers."
@@ -629,11 +631,11 @@
 
 /obj/item/weapon/reagent_containers/food/snacks/grub_pink
 	name = "pink candy grub"
-	desc = "A thoroughly candied grub, it smells of raspberry."
+	desc = "A thoroughly candied grub, it smells of cherry."
 	icon = 'icons/obj/food_vr.dmi'
 	icon_state = "grub_pink"
 	nutriment_amt = 5
-	nutriment_desc = list("raspberry" = 4, "goo" = 1)
+	nutriment_desc = list("cherry" = 4, "goo" = 1)
 
 /obj/item/weapon/reagent_containers/food/snacks/grub_pink/Initialize()
 	. = ..()
@@ -758,3 +760,156 @@
 	. = ..()
 	reagents.add_reagent("protein", 3)
 	bitesize = 2
+
+/obj/item/weapon/reagent_containers/food/snacks/donkpocket/ascended
+	name = "Donk-pocket EX"
+	desc = "This donk-pocket has seen things beyond comprehension of mortals. It survived because the fire inside it burned brighter than fire around it."
+	icon = 'icons/obj/food_vr.dmi'
+	icon_state = "donkpocket_ascended"
+	nutriment_amt = 5
+	nutriment_desc = list("burning fires of radioactive hell" = 20)
+	heated_reagents = list("supermatter" = 1)
+
+/obj/item/weapon/reagent_containers/food/snacks/donkpocket/ascended/Initialize()
+	. = ..()
+	reagents.add_reagent("uranium", 3)
+	reagents.add_reagent("thermite_v", 3)
+
+// Altevian Foobs
+
+/obj/item/weapon/reagent_containers/food/snacks/ratprotein
+	name = "AN Flavor Unit C"
+	desc = "A snack made from a group of space-faring rodents that is packed with the maximized potential of caloric intake to cubic inch. This one seems to be flavored of smoked cheddar and salami."
+	icon = 'icons/obj/food_vr.dmi'
+	icon_state = "altevian_cheese_block"
+	package_open_state = "altevian_cheese_block-open"
+	package = TRUE
+	trash = /obj/item/trash/ratcheese
+	nutriment_amt = 5
+	nutriment_desc = list("smoked cheese" = 4)
+
+/obj/item/weapon/reagent_containers/food/snacks/ratveggies
+	name = "Premium Ration Packet - VEG"
+	desc = "A package of a mixture of somehow still fresh from day 1 greens with a light hint of vinegar dressing to add extra kick."
+	icon = 'icons/obj/food_vr.dmi'
+	icon_state = "altevian_veggies"
+	package_open_state = "altevian_veggies-open"
+	package = TRUE
+	trash = /obj/item/trash/ratveg
+	nutriment_amt = 3
+	nutriment_desc = list("fresh mixed veggies" = 3, "vinegar" = 1)
+
+/obj/item/weapon/reagent_containers/food/snacks/ratliquid
+	name = "Admiral's Choice Space-Safe Meal"
+	desc = "A vacuum sealed pouch of a liquid meal. This one seems to be flavored with the accent of steak."
+	icon = 'icons/obj/food_vr.dmi'
+	icon_state = "altevian_juice"
+	package_open_state = "altevian_juice-open"
+	package = TRUE
+	trash = /obj/item/trash/ratjuice
+	nutriment_amt = 2
+	nutriment_desc = list("essence of steak" = 6)
+
+/obj/item/weapon/reagent_containers/food/snacks/ratliquid/Initialize()
+	. = ..()
+	reagents.add_reagent("protein", 4)
+
+/obj/item/weapon/reagent_containers/food/snacks/ratsteak
+	name = "altevian traditional steak"
+	desc = "This abomination of processed foods resembles a steak plate. Probably contains nothing a normal steak does, but mimics its flavor and nutrition well-enough."
+	icon = 'icons/obj/food_vr.dmi'
+	icon_state = "altevian_steak"
+	trash = /obj/item/trash/plate
+	nutriment_amt = 8
+	nutriment_desc = list("steak" = 5, "smoked cheese" = 2, "veggies" = 1)
+
+/obj/item/weapon/reagent_containers/food/snacks/ratsteak/Initialize()
+	. = ..()
+	reagents.add_reagent("protein", 3)
+
+/obj/item/weapon/reagent_containers/food/snacks/ratfruitcake
+	name = "Premade Fruit Block"
+	desc = "A block of processed material that is infused with a mix of fruits and matter of such."
+	icon = 'icons/obj/food_vr.dmi'
+	icon_state = "altevian_fruitcake"
+	package_open_state = "altevian_fruitcake-open"
+	package = TRUE
+	trash = /obj/item/trash/ratfruitcake
+	nutriment_amt = 2
+	nutriment_desc = list("fruitiness" = 4)
+
+/obj/item/weapon/reagent_containers/food/snacks/ratpackburger
+	name = "Altevian Prepackaged Meal - Burger"
+	desc = "A unique twist on what most know as MREs. This seems to be made with using bluespace tech and other methods of preserving an items freshness that it's like someone just ordered this from a restaurant just minutes ago. This one seems to be of burger and fries!"
+	icon = 'icons/obj/food_vr.dmi'
+	icon_state = "altevian_pack_burger"
+	package_open_state = "altevian_pack_burger-open"
+	package_opening_state = "altevian_pack_burger-opening"
+	package = TRUE
+	trash = /obj/item/trash/ratpackburger
+	nutriment_amt = 2
+	nutriment_desc = list("fresh buns" = 2, "burger patty" = 4, "pickles" = 1)
+
+/obj/item/weapon/reagent_containers/food/snacks/ratpackcheese
+	name = "Generations Novelty Packaged Wedge"
+	desc = "Using the popular method of packaging that altevians use, they seemed to also use it for other methods. This one appears to have no real markings on it, save for its different coloring, and an image of the altevian emblem."
+	icon = 'icons/obj/food_vr.dmi'
+	icon_state = "altevian_pack_cheese"
+	package_open_state = "altevian_pack_cheese-open"
+	package_opening_state = "altevian_pack_cheese-opening"
+	package = TRUE
+	trash = /obj/item/trash/ratpackcheese
+	nutriment_amt = 2
+	nutriment_desc = list("gourmand cheese" = 4)
+
+/obj/item/weapon/reagent_containers/food/snacks/ratpackturkey
+	name = "Compact Holiday Special Bird"
+	desc = "A great gift for holidays for assorted species. This contains a full freshly cooked turkey. Open and enjoy. Courtesy of altevian packaging."
+	icon = 'icons/obj/food_vr.dmi'
+	icon_state = "altevian_pack_turkey"
+	package_open_state = "altevian_pack_turkey-open"
+	package_opening_state = "altevian_pack_turkey-opening"
+	package = TRUE
+	trash = /obj/item/trash/ratpackturkey
+	nutriment_amt = 18
+	nutriment_desc = list("high-quality poultry" = 4)
+
+/obj/item/weapon/reagent_containers/food/snacks/ratpackramen
+	name = "Big Noodle Package"
+	desc = "A pack containing fully cooked ramen meal, alongside some seafood-and-rice based sides. Utensils included. For those who prefer more traditional meals."
+	icon = 'icons/obj/food_vr.dmi'
+	icon_state = "altevian_pack_ramen"
+	package_open_state = "altevian_pack_ramen_standard-open"
+	package_opening_state = "altevian_pack_ramen_standard-opening"
+	package = TRUE
+	trash = /obj/item/trash/ratpackramen/standard
+	nutriment_amt = 2
+	nutriment_desc = list("savory noodles" = 4)
+	var/list/bowl_color_options = list("standard" = 6,
+										"lacquer1" = 2,
+										"lacquer2" = 2,
+										"lacquer3" = 2,
+										"fleet" = 6,
+										"trans" = 3,
+										"ace" = 3)
+	var/randomize_bowl_color = TRUE
+
+/obj/item/weapon/reagent_containers/food/snacks/ratpackramen/Initialize()
+	. = ..()
+	if(randomize_bowl_color)
+		var/bowl_color = pickweight(bowl_color_options)
+		package_open_state = "altevian_pack_ramen_[bowl_color]-open"
+		package_opening_state = "altevian_pack_ramen_[bowl_color]-opening"
+		trash = text2path("/obj/item/trash/ratpackramen/[bowl_color]")
+
+/obj/item/weapon/reagent_containers/food/snacks/ratpacktaco
+	name = "Triple Taco Tuck"
+	desc = "Three mini-tacos, minituarized further via altevian mad science into a convenient container. It comes with a salsa sauce!"
+	icon = 'icons/obj/food_vr.dmi'
+	icon_state = "altevian_pack_taco"
+	package_open_state = "altevian_pack_taco-open"
+	package_opening_state = "altevian_pack_taco-opening"
+	package = TRUE
+	trash = /obj/item/trash/ratpacktaco
+	nutriment_amt = 2
+	nutriment_desc = list("salsa sauce" = 2, "meat chunks" = 4, "cheese" = 3)

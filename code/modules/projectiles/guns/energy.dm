@@ -14,6 +14,8 @@
 	var/modifystate
 	var/charge_meter = 1	//if set, the icon state will be chosen based on the current charge
 
+	reload_time = 5		//Energy weapons are slower to reload than ballistics by default, but this is no change from current values
+
 	//self-recharging
 	var/self_recharge = 0	//if set, the weapon will recharge itself
 	var/use_external_power = 0 //if set, the weapon will look for an external power source to draw from, otherwise it recharges magically
@@ -21,6 +23,7 @@
 	var/recharge_time = 4
 	var/charge_tick = 0
 	var/charge_delay = 75	//delay between firing and charging
+	var/shot_counter = TRUE // does this gun tell you how many shots it has?
 
 	var/battery_lock = 0	//If set, weapon cannot switch batteries
 
@@ -90,6 +93,9 @@
 
 			power_supply.give(rechargeamt) //... to recharge 1/5th the battery
 			update_icon()
+			var/mob/living/M = loc // TGMC Ammo HUD
+			if(istype(M)) // TGMC Ammo HUD
+				M?.hud_used.update_ammo_hud(M, src) // TGMC Ammo HUD
 		else
 			charge_tick = 0
 	return 1
@@ -109,6 +115,9 @@
 	if(!power_supply) return null
 	if(!ispath(projectile_type)) return null
 	if(!power_supply.checked_use(charge_cost)) return null
+	var/mob/living/M = loc // TGMC Ammo HUD
+	if(istype(M)) // TGMC Ammo HUD
+		M?.hud_used.update_ammo_hud(M, src)
 	return new projectile_type(src)
 
 /obj/item/weapon/gun/energy/proc/load_ammo(var/obj/item/C, mob/user)
@@ -122,7 +131,7 @@
 				to_chat(user, "<span class='notice'>[src] already has a power cell.</span>")
 			else
 				user.visible_message("[user] is reloading [src].", "<span class='notice'>You start to insert [P] into [src].</span>")
-				if(do_after(user, 5 * P.w_class))
+				if(do_after(user, reload_time * P.w_class))
 					user.remove_from_mob(P)
 					power_supply = P
 					P.loc = src
@@ -130,6 +139,7 @@
 					playsound(src, 'sound/weapons/flipblade.ogg', 50, 1)
 					update_icon()
 					update_held_icon()
+					user.hud_used.update_ammo_hud(user, src) // TGMC Ammo HUD
 		else
 			to_chat(user, "<span class='notice'>This cell is not fitted for [src].</span>")
 	return
@@ -146,6 +156,7 @@
 		playsound(src, 'sound/weapons/empty.ogg', 50, 1)
 		update_icon()
 		update_held_icon()
+		user.hud_used.update_ammo_hud(user, src) // TGMC Ammo HUD
 	else
 		to_chat(user, "<span class='notice'>[src] does not have a power cell.</span>")
 
@@ -175,14 +186,15 @@
 
 /obj/item/weapon/gun/energy/examine(mob/user)
 	. = ..()
-	if(power_supply)
-		if(charge_cost)
-			var/shots_remaining = round(power_supply.charge / max(1, charge_cost))	// Paranoia
-			. += "Has [shots_remaining] shot\s remaining."
+	if(shot_counter)
+		if(power_supply)
+			if(charge_cost)
+				var/shots_remaining = round(power_supply.charge / max(1, charge_cost))	// Paranoia
+				. += "Has [shots_remaining] shot\s remaining."
+			else
+				. += "Has infinite shots remaining."
 		else
-			. += "Has infinite shots remaining."
-	else
-		. += "Does not have a power cell."
+			. += "Does not have a power cell."
 
 /obj/item/weapon/gun/energy/update_icon(var/ignore_inhands)
 	if(power_supply == null)
@@ -232,3 +244,20 @@
 	results += ..()
 
 	return results
+
+// TGMC AMMO HUD
+/obj/item/weapon/gun/energy/has_ammo_counter()
+	return TRUE
+
+/obj/item/weapon/gun/energy/get_ammo_type()
+	if(!projectile_type)
+		return list("unknown", "unknown")
+	else
+		var/obj/item/projectile/P = projectile_type
+		return list(initial(P.hud_state), initial(P.hud_state_empty))
+
+/obj/item/weapon/gun/energy/get_ammo_count()
+	if(!power_supply)
+		return 0
+	else
+		return FLOOR(power_supply.charge / max(charge_cost, 1), 1)

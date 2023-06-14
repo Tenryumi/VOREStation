@@ -1,7 +1,7 @@
 /obj/item/weapon/material/harpoon
 	name = "harpoon"
-	sharp = 1
-	edge = 0
+	sharp = TRUE
+	edge = FALSE
 	desc = "Tharr she blows!"
 	icon_state = "harpoon"
 	item_state = "harpoon"
@@ -16,14 +16,27 @@
 	force_divisor = 0.2 // 12 with hardness 60 (steel)
 	thrown_force_divisor = 0.75 // 15 with weight 20 (steel)
 	w_class = ITEMSIZE_SMALL
-	sharp = 1
-	edge = 1
+	sharp = TRUE
+	edge = TRUE
 	origin_tech = list(TECH_MATERIAL = 2, TECH_COMBAT = 1)
 	attack_verb = list("chopped", "torn", "cut")
 	applies_material_colour = 0
 	drop_sound = 'sound/items/drop/axe.ogg'
 	pickup_sound = 'sound/items/pickup/axe.ogg'
+/* VOREStation Removal - We have one already
+/obj/item/weapon/material/knife/machete/hatchet/stone
+	name = "sharp rock"
+	desc = "The secret is to bang the rocks together, guys."
+	force_divisor = 0.2
+	icon_state = "rock"
+	item_state = "rock"
+	attack_verb = list("chopped", "torn", "cut")
 
+/obj/item/weapon/material/knife/machete/hatchet/stone/set_material(var/new_material)
+	var/old_name = name
+	. = ..()
+	name = old_name
+*/
 /obj/item/weapon/material/knife/machete/hatchet/unathiknife
 	name = "duelling knife"
 	desc = "A length of leather-bound wood studded with razor-sharp teeth. How crude."
@@ -198,11 +211,18 @@
 						playsound(src, 'sound/weapons/thudswoosh.ogg', 50, 1, -1)
 						return
 
-/obj/item/weapon/material/whip/suicide_act(mob/user)
-	var/datum/gender/T = gender_datums[user.get_visible_gender()]
-	user.visible_message(span("danger", "\The [user] [T.is] strangling [T.himself] with \the [src]! It looks like [T.he] [T.is] trying to commit suicide."), span("danger", "You start to strangle yourself with \the [src]!"), span("danger", "You hear the sound of someone choking!"))
-	return (OXYLOSS)
-
 /obj/item/weapon/material/whip/attack_self(mob/user)
 	user.visible_message("<span class='warning'>\The [user] cracks \the [src]!</span>")
 	playsound(src, 'sound/effects/snap.ogg', 50, 1)
+
+/obj/item/weapon/material/knife/machete/hatchet/stone
+	name = "hatchet"
+	desc = "A very sharp axe blade upon a short fibremetal handle. It has a long history of chopping things, but now it is used for chopping wood."
+	icon = 'icons/obj/weapons_vr.dmi'
+	icon_state = "stone_wood_axe"
+	default_material = MAT_FLINT
+	origin_tech = list()
+	applies_material_colour = FALSE
+
+/obj/item/weapon/material/knife/machete/hatchet/stone/bone
+	icon_state = "stone_bone_axe"

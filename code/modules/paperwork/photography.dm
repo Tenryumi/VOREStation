@@ -47,7 +47,7 @@ var/global/photo_count = 0
 
 /obj/item/weapon/photo/attackby(obj/item/weapon/P as obj, mob/user as mob)
 	if(istype(P, /obj/item/weapon/pen))
-		var/txt = sanitize(input(user, "What would you like to write on the back?", "Photo Writing", null)  as text, 128)
+		var/txt = sanitize(tgui_input_text(user, "What would you like to write on the back?", "Photo Writing", null, 128), 128)
 		if(loc == user && user.stat == 0)
 			scribble = txt
 	..()
@@ -75,7 +75,7 @@ var/global/photo_count = 0
 	set category = "Object"
 	set src in usr
 
-	var/n_name = sanitizeSafe(input(usr, "What would you like to label the photo?", "Photo Labelling", null)  as text, MAX_NAME_LEN)
+	var/n_name = sanitizeSafe(tgui_input_text(usr, "What would you like to label the photo?", "Photo Labelling", null, MAX_NAME_LEN), MAX_NAME_LEN)
 	//loc.loc check is for making possible renaming photos in clipboards
 	if(( (loc == usr || (loc.loc && loc.loc == usr)) && usr.stat == 0))
 		name = "[(n_name ? text("[n_name]") : "photo")]"
@@ -128,7 +128,7 @@ var/global/photo_count = 0
 	item_state = "camera"
 	w_class = ITEMSIZE_SMALL
 	slot_flags = SLOT_BELT
-	matter = list(DEFAULT_WALL_MATERIAL = 2000)
+	matter = list(MAT_STEEL = 2000)
 	var/pictures_max = 10
 	var/pictures_left = 10
 	var/on = 1
@@ -140,7 +140,7 @@ var/global/photo_count = 0
 /obj/item/device/camera/verb/change_size()
 	set name = "Set Photo Focus"
 	set category = "Object"
-	var/nsize = input("Photo Size","Pick a size of resulting photo.") as null|anything in list(1,3,5,7)
+	var/nsize = tgui_input_list(usr, "Photo Size","Pick a size of resulting photo.", list(1,3,5,7))
 	if(nsize)
 		size = nsize
 		to_chat(usr, "<span class='notice'>Camera will now take [size]x[size] photos.</span>")
@@ -207,8 +207,8 @@ var/global/photo_count = 0
 				var/xoff = (A.x - center.x) * 32 + center_offset
 				var/yoff = (A.y - center.y) * 32 + center_offset
 				if (istype(A,/atom/movable))
-					xoff+=A:step_x
-					yoff+=A:step_y
+					xoff+=A:pixel_x
+					yoff+=A:pixel_y
 				res.Blend(img, blendMode2iconMode(A.blend_mode),  A.pixel_x + xoff, A.pixel_y + yoff)
 
 	// Lastly, render any contained effects on top.

@@ -118,11 +118,14 @@ var/global/list/datum/dna/gene/dna_genes[0]
 	var/custom_ask
 	var/custom_whisper
 	var/custom_exclaim
+	var/list/custom_heat = list()
+	var/list/custom_cold = list()
 	// VOREStation
 
 	// New stuff
 	var/species = SPECIES_HUMAN
 	var/list/body_markings = list()
+	var/list/body_markings_genetic = list()
 	var/list/body_descriptors = null
 	var/list/genetic_modifiers = list() // Modifiers with the MODIFIER_GENETIC flag are saved.  Note that only the type is saved, not an instance.
 
@@ -143,6 +146,10 @@ var/global/list/datum/dna/gene/dna_genes[0]
 	new_dna.custom_ask=custom_ask //VOREStaton Edit
 	new_dna.custom_whisper=custom_whisper //VOREStaton Edit
 	new_dna.custom_exclaim=custom_exclaim //VOREStaton Edit
+	new_dna.custom_heat=custom_heat //VOREStation Edit
+	new_dna.custom_cold=custom_cold //VOREStation Edit
+	var/list/body_markings_genetic = (body_markings - body_marking_nopersist_list)
+	new_dna.body_markings=body_markings_genetic.Copy()
 	for(var/b=1;b<=DNA_SE_LENGTH;b++)
 		new_dna.SE[b]=SE[b]
 		if(b<=DNA_UI_LENGTH)
@@ -213,6 +220,8 @@ var/global/list/datum/dna/gene/dna_genes[0]
 	src.custom_ask = character.custom_ask
 	src.custom_whisper = character.custom_whisper
 	src.custom_exclaim = character.custom_exclaim
+	src.custom_heat = character.custom_heat
+	src.custom_cold = character.custom_cold
 
 	// +1 to account for the none-of-the-above possibility
 	SetUIValueRange(DNA_UI_EAR_STYLE,	ear_style + 1,     ear_styles_list.len  + 1,  1)
