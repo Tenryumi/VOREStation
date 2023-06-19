@@ -89,7 +89,7 @@
 #define AMITA_PER_PHORON	0.00
 
 //Math only beyond this point
-#define AMITA_MOL_PER_TURF	(AMITA_ONE_ATMOSPHERE*CELL_VOLUME/(AMITA_AVG_TEMP*R_IDEAL_GAS_EQUATION))
+#define AMITA_MOL_PER_TURF		(AMITA_ONE_ATMOSPHERE*CELL_VOLUME/(AMITA_AVG_TEMP*R_IDEAL_GAS_EQUATION))
 #define AMITA_MOL_N2			(AMITA_MOL_PER_TURF * AMITA_PER_N2)
 #define AMITA_MOL_O2			(AMITA_MOL_PER_TURF * AMITA_PER_O2)
 #define AMITA_MOL_N2O			(AMITA_MOL_PER_TURF * AMITA_PER_N2O)
@@ -98,8 +98,8 @@
 
 //Turfmakers
 #define AMITA_SET_ATMOS	nitrogen=AMITA_MOL_N2;oxygen=AMITA_MOL_O2;carbon_dioxide=AMITA_MOL_CO2;phoron=AMITA_MOL_PHORON;temperature=AMITA_AVG_TEMP
-#define AMITA_TURF_CREATE(x)	x/virgo3b/nitrogen=AMITA_MOL_N2;x/virgo3b/oxygen=AMITA_MOL_O2;x/virgo3b/carbon_dioxide=AMITA_MOL_CO2;x/virgo3b/phoron=AMITA_MOL_PHORON;x/virgo3b/temperature=AMITA_AVG_TEMP;x/virgo3b/outdoors=TRUE;x/virgo3b/update_graphic(list/graphic_add = null, list/graphic_remove = null) return 0
-#define AMITA_TURF_CREATE_UN(x)	x/virgo3b/nitrogen=AMITA_MOL_N2;x/virgo3b/oxygen=AMITA_MOL_O2;x/virgo3b/carbon_dioxide=AMITA_MOL_CO2;x/virgo3b/phoron=AMITA_MOL_PHORON;x/virgo3b/temperature=AMITA_AVG_TEMP
+#define AMITA_TURF_CREATE(x)	x/amita/nitrogen=AMITA_MOL_N2;x/amita/oxygen=AMITA_MOL_O2;x/amita/carbon_dioxide=AMITA_MOL_CO2;x/amita/phoron=AMITA_MOL_PHORON;x/amita/temperature=AMITA_AVG_TEMP;x/amita/outdoors=TRUE;x/amita/update_graphic(list/graphic_add = null, list/graphic_remove = null) return 0
+#define AMITA_TURF_CREATE_UN(x)	x/amita/nitrogen=AMITA_MOL_N2;x/amita/oxygen=AMITA_MOL_O2;x/amita/carbon_dioxide=AMITA_MOL_CO2;x/amita/phoron=AMITA_MOL_PHORON;x/amita/temperature=AMITA_AVG_TEMP
 
 // This is a wall you surround the area of your "planet" with, that makes the atmosphere inside stay within bounds, even if canisters
 // are opened or other strange things occur.
