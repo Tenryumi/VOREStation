@@ -409,6 +409,32 @@ var/datum/planet/amita/planet_amita = null
 			if(show_message)
 				to_chat(H, effect_message)
 
+/datum/weather/amita/fog
+	name = "fog"
+	icon_state = "fog"
+	wind_high = 1
+	wind_low = 0
+	light_modifier = 0.7
+
+	temp_high = 235.15
+	temp_low = 	225.15
+
+	transition_chances = list(
+		WEATHER_FOG = 70,
+		WEATHER_OVERCAST = 15,
+		WEATHER_LIGHT_SNOW = 10,
+		WEATHER_RAIN = 5
+		)
+	observed_message = "A fogbank has rolled over the region."
+	transition_messages = list(
+		"Fog rolls in.",
+		"Visibility falls as the air becomes dense.",
+		"The clouds drift lower, as if to smother the forests."
+	)
+	imminent_transition_message = "Clouds are drifting down as the area is getting foggy."
+	outdoor_sounds_type = /datum/looping_sound/weather/wind
+	indoor_sounds_type = /datum/looping_sound/weather/wind/indoors
+
 /datum/weather/amita/blood_moon
 	name = "blood moon"
 	light_modifier = 0.5
@@ -476,6 +502,28 @@ var/datum/planet/amita/planet_amita = null
 
 			L.inflict_heat_damage(rand(1, 3))
 
+/datum/weather/amita/ash_storm_safe
+	name = "light ash storm"
+	icon_state = "ashfall_moderate"
+	light_modifier = 0.1
+	light_color = "#FF0000"
+	temp_high = 323.15	// 50c
+	temp_low = 313.15	// 40c
+	wind_high = 6
+	wind_low = 3
+	flight_failure_modifier = 50
+	transition_chances = list(
+		WEATHER_ASH_STORM_SAFE = 100
+		)
+	observed_message = "All that can be seen is black smoldering ash."
+	transition_messages = list(
+		"Smoldering clouds of scorching ash billow down around you!"
+	)
+	imminent_transition_message = "Dark smoke is filling the sky, as ash and embers fill the air and wind is picking up too."
+	// Lets recycle.
+	outdoor_sounds_type = /datum/looping_sound/weather/outside_blizzard
+	indoor_sounds_type = /datum/looping_sound/weather/inside_blizzard
+
 
 // Totally radical.
 /datum/weather/amita/fallout
@@ -525,3 +573,15 @@ var/datum/planet/amita/planet_amita = null
 		return
 	if(T.outdoors)
 		SSradiation.radiate(T, rand(fallout_rad_low, fallout_rad_high))
+
+/datum/weather/amita/fallout/temp
+	name = "short-term fallout"
+	timer_low_bound = 1
+	timer_high_bound = 3
+	transition_chances = list(
+		WEATHER_FALLOUT = 10,
+		WEATHER_RAIN = 50,
+		WEATHER_FOG = 35,
+		WEATHER_STORM = 20,
+		WEATHER_OVERCAST = 5
+		)
