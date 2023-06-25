@@ -98,40 +98,40 @@ var/datum/planet/amita/planet_amita = null
 /datum/weather_holder/amita
 	temperature = T0C
 	allowed_weather_types = list(
-		WEATHER_CLEAR		= new /datum/weather/amita/clear(),
-		WEATHER_OVERCAST	= new /datum/weather/amita/overcast(),
-		WEATHER_LIGHT_SNOW	= new /datum/weather/amita/light_snow(),
-		WEATHER_SNOW		= new /datum/weather/amita/snow(),
-		WEATHER_BLIZZARD	= new /datum/weather/amita/blizzard(),
-		WEATHER_RAIN		= new /datum/weather/amita/rain(),
-		WEATHER_STORM		= new /datum/weather/amita/storm(),
-		WEATHER_HAIL		= new /datum/weather/amita/hail(),
-		WEATHER_BLOOD_MOON	= new /datum/weather/amita/blood_moon(),
-		WEATHER_EMBERFALL	= new /datum/weather/amita/emberfall(),
-		WEATHER_ASH_STORM	= new /datum/weather/amita/ash_storm(),
-		WEATHER_FALLOUT		= new /datum/weather/amita/fallout()
+		WEATHER_CLEAR			= new /datum/weather/amita/clear(),
+		WEATHER_OVERCAST		= new /datum/weather/amita/overcast(),
+		WEATHER_LIGHT_SNOW		= new /datum/weather/amita/light_snow(),
+		WEATHER_SNOW			= new /datum/weather/amita/snow(),
+		WEATHER_BLIZZARD		= new /datum/weather/amita/blizzard(),
+		WEATHER_RAIN			= new /datum/weather/amita/rain(),
+		WEATHER_STORM			= new /datum/weather/amita/storm(),
+		WEATHER_HAIL			= new /datum/weather/amita/hail(),
+		WEATHER_FOG				= new /datum/weather/amita/fog(),
+		WEATHER_BLOOD_MOON		= new /datum/weather/amita/blood_moon(),
+		WEATHER_EMBERFALL		= new /datum/weather/amita/emberfall(),
+		WEATHER_ASH_STORM		= new /datum/weather/amita/ash_storm(),
+		WEATHER_ASH_STORM_SAFE	= new /datum/weather/amita/ash_storm_safe(),
+		WEATHER_FALLOUT			= new /datum/weather/amita/fallout(),
+		WEATHER_FALLOUT_TEMP	= new /datum/weather/amita/fallout/temp(),
+		WEATHER_CONFETTI		= new /datum/weather/amita/confetti()
 		)
 	roundstart_weather_chances = list(
-		WEATHER_CLEAR		= 30,
-		WEATHER_OVERCAST	= 30,
-		WEATHER_LIGHT_SNOW	= 20,
-		WEATHER_SNOW		= 5,
-		WEATHER_BLIZZARD	= 5,
-		WEATHER_RAIN		= 5,
-		WEATHER_STORM		= 2.5,
-		WEATHER_HAIL		= 2.5
+		WEATHER_CLEAR		= 20,
+		WEATHER_OVERCAST	= 35,
+		WEATHER_RAIN		= 40,
+		WEATHER_STORM		= 5,
 		)
 
 /datum/weather/amita
 	name = "amita base"
-	temp_high = 243.15 // -20c
-	temp_low = 233.15  // -30c
+	temp_high = 303.15 // 30c
+	temp_low = 298.15  // 25c
 
 /datum/weather/amita/clear
 	name = "clear"
 	transition_chances = list(
-		WEATHER_CLEAR = 60,
-		WEATHER_OVERCAST = 40
+		WEATHER_CLEAR = 40,
+		WEATHER_OVERCAST = 60
 		)
 	transition_messages = list(
 		"The sky clears up.",
@@ -145,14 +145,12 @@ var/datum/planet/amita/planet_amita = null
 	name = "overcast"
 	light_modifier = 0.8
 	transition_chances = list(
-		WEATHER_CLEAR = 25,
-		WEATHER_OVERCAST = 50,
-		WEATHER_LIGHT_SNOW = 10,
-		WEATHER_SNOW = 5,
-		WEATHER_RAIN = 5,
-		WEATHER_HAIL = 5
+		WEATHER_CLEAR = 20,
+		WEATHER_OVERCAST = 40,
+		WEATHER_RAIN = 35,
+		WEATHER_STORM = 5,
 		)
-	observed_message = "It is overcast, all you can see are clouds."
+	observed_message = "Clouds barely conceal the sky with a thick blanket of light grey that stretches across the horizons."
 	transition_messages = list(
 		"All you can see above are clouds.",
 		"Clouds cut off your view of the sky.",
@@ -201,6 +199,7 @@ var/datum/planet/amita/planet_amita = null
 	outdoor_sounds_type = /datum/looping_sound/weather/outside_snow
 	indoor_sounds_type = /datum/looping_sound/weather/inside_snow
 
+/*
 /datum/weather/amita/snow/process_effects()
 	..()
 	for(var/turf/simulated/floor/outdoors/snow/S in SSplanets.new_outdoor_turfs) //This didn't make any sense before SSplanets, either
@@ -210,6 +209,7 @@ var/datum/planet/amita/planet_amita = null
 				if(istype(T))
 					if(istype(T, /turf/simulated/floor/outdoors) && prob(33))
 						T.chill()
+*/
 
 /datum/weather/amita/blizzard
 	name = "blizzard"
@@ -234,6 +234,7 @@ var/datum/planet/amita/planet_amita = null
 	outdoor_sounds_type = /datum/looping_sound/weather/outside_blizzard
 	indoor_sounds_type = /datum/looping_sound/weather/inside_blizzard
 
+/*
 /datum/weather/amita/blizzard/process_effects()
 	..()
 	for(var/turf/simulated/floor/outdoors/snow/S in SSplanets.new_outdoor_turfs) //This didn't make any sense before SSplanets, either
@@ -243,50 +244,45 @@ var/datum/planet/amita/planet_amita = null
 				if(istype(T))
 					if(istype(T, /turf/simulated/floor/outdoors) && prob(50))
 						T.chill()
+*/
 
 /datum/weather/amita/rain
 	name = "rain"
 	icon_state = "rain"
 	wind_high = 2
 	wind_low = 1
-	light_modifier = 0.5
-	effect_message = "<span class='warning'>Rain falls on you.</span>"
+	light_modifier = 0.6
+	effect_message = "<span class='warning'>Rain falls down on you.</span>"
 
 	transition_chances = list(
-		WEATHER_OVERCAST = 25,
-		WEATHER_LIGHT_SNOW = 10,
-		WEATHER_RAIN = 50,
+		WEATHER_OVERCAST = 30,
+		WEATHER_RAIN = 60,
 		WEATHER_STORM = 10,
-		WEATHER_HAIL = 5
 		)
-	observed_message = "It is raining."
+	observed_message = "A common rainstorm coats the region with gentle showers."
 	transition_messages = list(
-		"The sky is dark, and rain falls down upon you."
+		"The sky turns a light grey and brings with it gentle showers of rain."
 	)
 	outdoor_sounds_type = /datum/looping_sound/weather/rain
 	indoor_sounds_type = /datum/looping_sound/weather/rain/indoors
 
 /datum/weather/amita/rain/process_effects()
 	..()
-	for(var/mob/living/L in living_mob_list)
+	for(var/mob/living/L as anything in living_mob_list)
 		if(L.z in holder.our_planet.expected_z_levels)
 			var/turf/T = get_turf(L)
-			if(!T.outdoors)
+			if(!T.is_outdoors())
 				continue // They're indoors, so no need to rain on them.
 
 			// If they have an open umbrella, it'll guard from rain
-			if(istype(L.get_active_hand(), /obj/item/weapon/melee/umbrella))
-				var/obj/item/weapon/melee/umbrella/U = L.get_active_hand()
-				if(U.open)
-					if(show_message)
-						to_chat(L, "<span class='notice'>Rain patters softly onto your umbrella.</span>")
-					continue
-			else if(istype(L.get_inactive_hand(), /obj/item/weapon/melee/umbrella))
-				var/obj/item/weapon/melee/umbrella/U = L.get_inactive_hand()
-				if(U.open)
-					if(show_message)
-						to_chat(L, "<span class='notice'>Rain patters softly onto your umbrella.</span>")
-					continue
+			var/obj/item/weapon/melee/umbrella/U = L.get_active_hand()
+			if(!istype(U) || !U.open)
+				U = L.get_inactive_hand()
+
+			if(istype(U) && U.open)
+				if(show_message)
+					to_chat(L, "<span class='notice'>Hundreds of droplets of rain patter gently against your umbrella.</span>")
+				continue
 
 			L.water_act(1)
 			if(show_message)
@@ -299,49 +295,44 @@ var/datum/planet/amita/planet_amita = null
 	wind_low = 2
 	light_modifier = 0.3
 	flight_failure_modifier = 10
-	effect_message = "<span class='warning'>Rain falls on you, drenching you in water.</span>"
+	effect_message = "<span class='warning'>Torrential rain pours down on you, drenching you completely.</span>"
 
 	var/next_lightning_strike = 0 // world.time when lightning will strike.
 	var/min_lightning_cooldown = 5 SECONDS
 	var/max_lightning_cooldown = 1 MINUTE
-	observed_message = "An intense storm pours down over the region."
+	observed_message = "A billowing storm rolls across the skies, coating the region with a relentless downpour."
 	transition_messages = list(
-		"You feel intense winds hit you as the weather takes a turn for the worst.",
-		"Loud thunder is heard in the distance.",
-		"A bright flash heralds the approach of a storm."
+		"Sudden strong bursts of wind push and pull on you as the showers of rain grow denser.",
+		"The familiar distant rumble of thunder heralds an approaching storm moments before it arrives.",
+		"The clouds grow denser and darker, blotting out the skies as the forces of nature turn the rain into a full-blown storm."
 	)
-	outdoor_sounds_type = /datum/looping_sound/weather/rain
+	outdoor_sounds_type = /datum/looping_sound/weather/rain/heavy
 	indoor_sounds_type = /datum/looping_sound/weather/rain/indoors
 
 
 	transition_chances = list(
-		WEATHER_RAIN = 45,
+		WEATHER_RAIN = 55,
 		WEATHER_STORM = 40,
-		WEATHER_HAIL = 10,
 		WEATHER_OVERCAST = 5
 		)
 
 /datum/weather/amita/storm/process_effects()
 	..()
-	for(var/mob/living/L in living_mob_list)
+	for(var/mob/living/L as anything in living_mob_list)
 		if(L.z in holder.our_planet.expected_z_levels)
 			var/turf/T = get_turf(L)
-			if(!T.outdoors)
+			if(!T.is_outdoors())
 				continue // They're indoors, so no need to rain on them.
 
 			// If they have an open umbrella, it'll guard from rain
-			if(istype(L.get_active_hand(), /obj/item/weapon/melee/umbrella))
-				var/obj/item/weapon/melee/umbrella/U = L.get_active_hand()
-				if(U.open)
-					if(show_message)
-						to_chat(L, "<span class='notice'>Rain showers loudly onto your umbrella!</span>")
-					continue
-			else if(istype(L.get_inactive_hand(), /obj/item/weapon/melee/umbrella))
-				var/obj/item/weapon/melee/umbrella/U = L.get_inactive_hand()
-				if(U.open)
-					if(show_message)
-						to_chat(L, "<span class='notice'>Rain showers loudly onto your umbrella!</span>")
-					continue
+			var/obj/item/weapon/melee/umbrella/U = L.get_active_hand()
+			if(!istype(U) || !U.open)
+				U = L.get_inactive_hand()
+
+			if(istype(U) && U.open)
+				if(show_message)
+					to_chat(L, "<span class='notice'>Your umbrella protects you from the deluge of harsh rainfall!</span>")
+				continue
 
 
 			L.water_act(2)
@@ -400,7 +391,7 @@ var/datum/planet/amita/planet_amita = null
 				if(show_message)
 					to_chat(H, "<span class='notice'>Hail patters onto your umbrella.</span>")
 				continue
-		
+
 			var/target_zone = pick(BP_ALL)
 			var/amount_blocked = H.run_armor_check(target_zone, "melee")
 			var/amount_soaked = H.get_armor_soak(target_zone, "melee")
@@ -534,4 +525,3 @@ var/datum/planet/amita/planet_amita = null
 		return
 	if(T.outdoors)
 		SSradiation.radiate(T, rand(fallout_rad_low, fallout_rad_high))
-
