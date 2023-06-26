@@ -230,8 +230,6 @@
 /area/amita/underground/depth1
 	name = "Underground - Depth 1"
 	icon = 'icons/turf/areas_vr_amita.dmi'
-	flags = RAD_SHIELDED
-	sound_env = SOUND_ENVIRONMENT_CAVE
 
 /area/amita/underground/depth1/north
 	name = "\improper Caves North - Depth 1"
@@ -269,11 +267,13 @@
 	name = "\improper Caves Central - Depth 1"
 	icon_state = "caves_g1_c"
 
+//
+// Depth 2 (2 z-levels beneath the surface)
+//
+
 /area/amita/underground/depth2
 	name = "Underground - Depth 2"
 	icon = 'icons/turf/areas_vr_amita.dmi'
-	flags = RAD_SHIELDED
-	sound_env = SOUND_ENVIRONMENT_CAVE
 
 /area/amita/underground/depth2/north
 	name = "\improper Caves North - Depth 2"
@@ -310,22 +310,3 @@
 /area/amita/underground/depth2/center
 	name = "\improper Caves Central - Depth 2"
 	icon_state = "caves_g2_c"
-
-//
-// Underground (Depth 1)
-//
-
-/area/maintenance/amita/underground/depth1
-	name = "Maintenance - Underground (Depth 1)"
-	ambience = SOUND_ENVIRONMENT_CAVE
-
-//
-// Underground (Depth 2)
-//
-
-/area/maintenance/amita/underground/depth1
-	name = "Maintenance - Underground (Depth 2)"
-	ambience = SOUND_ENVIRONMENT_CAVE
-
-/area/amita/underground/depth2
-	name = "Underground - Depth 2"
