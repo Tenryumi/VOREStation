@@ -4704,6 +4704,7 @@
 #include "interface\fonts\pixellari.dm"
 #include "interface\fonts\tiny_unicode.dm"
 #include "interface\fonts\vcr_osd_mono.dm"
+#include "maps\aoi\aoi_areas.dm"
 #include "maps\common\common_areas.dm"
 #include "maps\common\common_defines.dm"
 #include "maps\common\common_shuttles.dm"

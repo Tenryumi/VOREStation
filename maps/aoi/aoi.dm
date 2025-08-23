@@ -11,7 +11,6 @@
 	#ifndef AWAY_MISSION_TEST //Don't include these for just testing away missions
 		#include "aoi1.dmm"
 		#include "aoi2.dmm"
-		#include "aoi3.dmm"
 	#endif
 
 	#define USING_MAP_DATUM /datum/map/aoi

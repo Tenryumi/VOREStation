@@ -6,8 +6,9 @@
 /*********************/
 
 //#define USE_MAP_TETHER
-#define USE_MAP_STELLARDELIGHT
+//#define USE_MAP_STELLARDELIGHT
 //#define USE_MAP_GROUNDBASE
+#define USE_MAP_AOI
 
 // Debug
 //#define USE_MAP_MINITEST
@@ -16,6 +17,11 @@
 /* End Map Selection */
 /*********************/
 
+#endif
+
+// Aoi
+#ifdef USE_MAP_AOI
+#include "../aoi/aoi.dm"
 #endif
 
 // Tether

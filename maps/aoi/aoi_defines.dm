@@ -8,7 +8,7 @@
 
 /datum/map/aoi
 	name = "AoiWhale"
-	full_name = "NRV Aoi"
+	full_name = "Aoi"
 	path = "aoi"
 
 	use_overmap = TRUE
@@ -29,9 +29,9 @@
 		Z_LEVEL_SHIP_HIGH,
 		))
 
-	station_name  = "NRV Stellar Delight"
-	station_short = "Stellar Delight"
-	facility_type = "ship"
+	station_name  = "Aoi"
+	station_short = "Aoi"
+	facility_type = "whale"
 	dock_name     = "Virgo-3B Colony"
 	dock_type     = "surface"
 	boss_name     = "Central Command"
@@ -99,7 +99,6 @@
 		/area/aoi/deck2/exterior,
 		/area/aoi/deck2/portescape,
 		/area/aoi/deck2/starboardescape,
-		/area/aoi/deck3/exterior,
 
 		/area/medical/cryo,
 		/area/holodeck_control,
@@ -141,7 +140,7 @@
 		)
 
 	lateload_redgate = list(
-		list(Z_NAME_REDGATE_TEPPI_RANCH),
+//		list(Z_NAME_REDGATE_TEPPI_RANCH),
 		list(Z_NAME_REDGATE_INNLAND),
 //		list(Z_NAME_REDGATE_ABANDONED_ISLAND),	//This will come back later
 		list(Z_NAME_REDGATE_DARK_ADVENTURE),
@@ -152,9 +151,9 @@
 		list(Z_NAME_REDGATE_ISLANDS_UNDERWATER, Z_NAME_REDGATE_ISLANDS),
 		list(Z_NAME_REDGATE_MOVING_TRAIN, Z_NAME_REDGATE_MOVING_TRAIN_UPPER),
 		list(Z_NAME_REDGATE_FANTASY_DUNGEON, Z_NAME_REDGATE_FANTASY_TOWN),
-		list(Z_NAME_REDGATE_LASERDOME),
+//		list(Z_NAME_REDGATE_LASERDOME),
 		list(Z_NAME_REDGATE_CASCADING_FALLS),
-		list(Z_NAME_REDGATE_JUNGLE_CAVE, Z_NAME_REDGATE_JUNGLE),
+//		list(Z_NAME_REDGATE_JUNGLE_CAVE, Z_NAME_REDGATE_JUNGLE),
 		list(Z_NAME_REDGATE_FACILITY),
 		)
 
@@ -182,23 +181,21 @@
 		/datum/planet/virgo4,
 		)
 
-/datum/map/stellar_delight/get_map_info()
+/datum/map/aoi/get_map_info()
 	. = list()
-	. +=  "The [full_name] is a recently commissioned multi-role starship assigned to patrol the Virgo-Erigone system. Its mission is flexible, being a response vessel, the [station_short] is assigned to respond to emergencies in the system, and to investigate anomalous activities where a more specialized vessel is unavailable.<br>"
-	. +=  "Humanity has spread across the stars and has met many species on similar or even more advanced terms than them - it's a brave new world and many try to find their place in it . <br>"
-	. +=  "Though Virgo-Erigone is not important for the great movers and shakers, it sees itself in the midst of the interests of a reviving alien species of the Zorren, corporate and subversive interests and other exciting dangers the Periphery has to face.<br>"
-	. +=  "As an employee or contractor of NanoTrasen, operators of the Adephagia and one of the galaxy's largest corporations, you're probably just here to do a job."
+	. +=  "The anatomy of a space whale is vast, branching, complex, and poorly understood by many a xenobiologist. The opportunity to get to study one up close is considered a rare and fleeting opportunity, as their bodies prove difficult to scan, and their movement patterns unpredictable.<br>"
+	. +=  "And now you get to spend some time on one yourself, as one of the few who this one trusts enough with not only knowing the truth, but getting to spend time very. Very close to her."
 	return jointext(., "<br>")
 
 
-/datum/map/stellar_delight/perform_map_generation()
+/datum/map/aoi/perform_map_generation()
 
 	new /datum/random_map/automata/cave_system/no_cracks(null, 1, 1, Z_NAME_SPACE_ROCKS, world.maxx, world.maxy) // Create the mining Z-level.
 	new /datum/random_map/noise/ore(null, 1, 1, Z_NAME_SPACE_ROCKS, 64, 64)         // Create the mining ore distribution map.
 	return 1
 
 
-/datum/skybox_settings/stellar_delight
+/datum/skybox_settings/aoi
 	icon_state = "space5"
 	use_stars = FALSE
 
@@ -208,12 +205,6 @@
 	expected_z_levels = list(
 		Z_NAME_BEACH
 	)
-
-/obj/effect/overmap/visitable/ship/stellar_delight/build_skybox_representation()
-	..()
-	if(!cached_skybox_image)
-		return
-	cached_skybox_image.add_overlay("glow")
 
 // For making the 6-in-1 holomap, we calculate some offsets
 #define SHIP_MAP_SIZE 140 // Width and height of compiled in tether z levels.
@@ -228,27 +219,19 @@
 	holomap_legend_y = 160
 
 /datum/map_z_level/aoi/deck_one
-	z = Z_LEVEL_SHIP_LOW
-	name = "Deck 1"
+	z = Z_AOI_LOW
+	name = "The Belly"
 	base_turf = /turf/space
 	transit_chance = 33
 	holomap_offset_x = SHIP_HOLOMAP_MARGIN_X
 	holomap_offset_y = SHIP_HOLOMAP_MARGIN_Y
 
 /datum/map_z_level/aoi/deck_two
-	z = Z_LEVEL_SHIP_MID
-	name = "Deck 2"
+	z = Z_AOI_HIGH
+	name = "The Back"
 	base_turf = /turf/simulated/open
 	transit_chance = 33
 	holomap_offset_x = SHIP_HOLOMAP_MARGIN_X
-	holomap_offset_y = SHIP_HOLOMAP_MARGIN_Y + SHIP_MAP_SIZE
-
-/datum/map_z_level/aoi/deck_three
-	z = Z_LEVEL_SHIP_HIGH
-	name = "Deck 3"
-	base_turf = /turf/simulated/open
-	transit_chance = 33
-	holomap_offset_x = HOLOMAP_ICON_SIZE - SHIP_HOLOMAP_MARGIN_X - SHIP_MAP_SIZE
 	holomap_offset_y = SHIP_HOLOMAP_MARGIN_Y + SHIP_MAP_SIZE
 
 /datum/map_template/ship_lateload

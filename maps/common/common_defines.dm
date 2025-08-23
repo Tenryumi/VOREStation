@@ -19,6 +19,10 @@
 #define Z_NAME_TETHER_ROGUEMINE_1			"Asteroid Belt 1"
 #define Z_NAME_TETHER_ROGUEMINE_2			"Asteroid Belt 2"
 
+// Aoi
+#define Z_AOI_LOW							1
+#define Z_AOI_HIGH							2
+
 // Stellar Delight
 #define Z_LEVEL_SHIP_LOW					1
 #define Z_LEVEL_SHIP_MID					2
