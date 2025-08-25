@@ -24,8 +24,8 @@
 
 
 	holomap_smoosh = list(list(
-		Z_AOI_LOW,
-		Z_AOI_HIGH,
+		Z_LEVEL_AOI_LOW,
+		Z_LEVEL_AOI_HIGH,
 		))
 
 	station_name  = "Aoi"
@@ -96,8 +96,8 @@
 	unit_test_exempt_from_atmos = list() //it maint
 
 	unit_test_z_levels = list(
-		Z_AOI_LOW,
-		Z_AOI_HIGH,
+		Z_LEVEL_AOI_LOW,
+		Z_LEVEL_AOI_HIGH,
 		)
 
 	lateload_z_levels = list(
@@ -204,7 +204,7 @@
 	holomap_legend_y = 160
 
 /datum/map_z_level/aoi/deck_one
-	z = Z_AOI_LOW
+	z = Z_LEVEL_AOI_LOW
 	name = "The Belly"
 	base_turf = /turf/simulated/floor/flesh/aoi
 	transit_chance = 33
@@ -212,7 +212,7 @@
 	holomap_offset_y = SHIP_HOLOMAP_MARGIN_Y
 
 /datum/map_z_level/aoi/deck_two
-	z = Z_AOI_HIGH
+	z = Z_LEVEL_AOI_HIGH
 	name = "The Back"
 	base_turf = /turf/simulated/floor/flesh/aoi
 	transit_chance = 33
