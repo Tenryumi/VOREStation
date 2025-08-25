@@ -1,4 +1,4 @@
-/datum/map/stellar_delight/New()
+/datum/map/aoi/New()
 	..()
 	var/choice = pickweight(list(
 		'html/lobby/gateway.png' = 5,
@@ -24,9 +24,8 @@
 
 
 	holomap_smoosh = list(list(
-		Z_LEVEL_SHIP_LOW,
-		Z_LEVEL_SHIP_MID,
-		Z_LEVEL_SHIP_HIGH,
+		Z_AOI_LOW,
+		Z_AOI_HIGH,
 		))
 
 	station_name  = "Aoi"
@@ -81,36 +80,24 @@
 
 	bot_patrolling = FALSE
 
-	allowed_spawns = list("Gateway","Cryogenic Storage","Cyborg Storage","ITV Talon Cryo")
-	spawnpoint_died = /datum/spawnpoint/cryo
+	allowed_spawns = list("Gateway")
+	spawnpoint_died = /datum/spawnpoint/gateway
 	spawnpoint_left = /datum/spawnpoint/gateway
-	spawnpoint_stayed = /datum/spawnpoint/cryo
+	spawnpoint_stayed = /datum/spawnpoint/gateway
 
 	/*
 	meteor_strike_areas = list(/area/tether/surfacebase/outside/outside3)
 	*/
 
-	default_skybox = /datum/skybox_settings/stellar_delight
+	default_skybox = /datum/skybox_settings/aoi
 
-	unit_test_exempt_areas = list(
-		/area/aoi/deck1/exterior,
-		/area/aoi/deck1/exploshuttle,
-		/area/aoi/deck1/miningshuttle,
-		/area/aoi/deck2/exterior,
-		/area/aoi/deck2/portescape,
-		/area/aoi/deck2/starboardescape,
-
-		/area/medical/cryo,
-		/area/holodeck_control,
-		/area/tcommsat/chamber,
-		)
+	unit_test_exempt_areas = list()
 
 	unit_test_exempt_from_atmos = list() //it maint
 
 	unit_test_z_levels = list(
-		Z_LEVEL_SHIP_LOW,
-		Z_LEVEL_SHIP_MID,
-		Z_LEVEL_SHIP_HIGH,
+		Z_AOI_LOW,
+		Z_AOI_HIGH,
 		)
 
 	lateload_z_levels = list(
@@ -190,8 +177,6 @@
 
 /datum/map/aoi/perform_map_generation()
 
-	new /datum/random_map/automata/cave_system/no_cracks(null, 1, 1, Z_NAME_SPACE_ROCKS, world.maxx, world.maxy) // Create the mining Z-level.
-	new /datum/random_map/noise/ore(null, 1, 1, Z_NAME_SPACE_ROCKS, 64, 64)         // Create the mining ore distribution map.
 	return 1
 
 
@@ -221,7 +206,7 @@
 /datum/map_z_level/aoi/deck_one
 	z = Z_AOI_LOW
 	name = "The Belly"
-	base_turf = /turf/space
+	base_turf = /turf/simulated/floor/flesh/aoi
 	transit_chance = 33
 	holomap_offset_x = SHIP_HOLOMAP_MARGIN_X
 	holomap_offset_y = SHIP_HOLOMAP_MARGIN_Y
@@ -229,7 +214,7 @@
 /datum/map_z_level/aoi/deck_two
 	z = Z_AOI_HIGH
 	name = "The Back"
-	base_turf = /turf/simulated/open
+	base_turf = /turf/simulated/floor/flesh/aoi
 	transit_chance = 33
 	holomap_offset_x = SHIP_HOLOMAP_MARGIN_X
 	holomap_offset_y = SHIP_HOLOMAP_MARGIN_Y + SHIP_MAP_SIZE
