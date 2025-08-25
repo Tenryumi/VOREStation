@@ -1,4 +1,16 @@
 //MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE
+"ak" = (
+/obj/machinery/light/floortube{
+	dir = 4;
+	pixel_x = 2
+	},
+/turf/simulated/floor/bluegrid{
+	name = "Mainframe Base";
+	nitrogen = 100;
+	oxygen = 0;
+	temperature = 80
+	},
+/area/aoi/indoors/tech)
 "aY" = (
 /turf/simulated/floor,
 /area/aoi/outdoors/central)
@@ -31,17 +43,101 @@
 /obj/structure/railing{
 	dir = 8
 	},
-/turf/simulated/floor/flesh/aoi/outdoors,
+/turf/simulated/open/aoi,
 /area/aoi/outdoors/north)
-"bU" = (
+"bY" = (
+/obj/structure/cable/yellow{
+	icon_state = "4-8"
+	},
 /turf/simulated/floor/outdoors/sidewalk/slab,
 /area/aoi/outdoors/east)
-"bY" = (
-/turf/simulated/floor/outdoors/sidewalk/side,
-/area/aoi/outdoors/east)
+"cc" = (
+/obj/structure/cable/yellow{
+	icon_state = "1-2"
+	},
+/turf/simulated/floor/outdoors/sidewalk/slab,
+/area/aoi/outdoors/central)
+"ck" = (
+/obj/machinery/door/airlock/angled_tgmc,
+/obj/structure/cable/yellow{
+	icon_state = "1-2"
+	},
+/turf/simulated/floor/tiled/techfloor,
+/area/aoi/indoors/research)
+"dd" = (
+/obj/machinery/computer/transhuman/resleeving{
+	dir = 8
+	},
+/turf/simulated/floor/tiled/eris/white/bluecorner,
+/area/aoi/indoors/sleeve_facility)
+"dg" = (
+/obj/effect/floor_decal/techfloor,
+/obj/structure/table/steel_reinforced,
+/obj/machinery/recharger,
+/turf/simulated/floor/tiled/techfloor,
+/area/aoi/indoors/research)
+"dn" = (
+/obj/machinery/exonet_node{
+	anchored = 1
+	},
+/turf/simulated/floor/tiled/dark{
+	nitrogen = 100;
+	oxygen = 0;
+	temperature = 80
+	},
+/area/aoi/indoors/tech)
 "ds" = (
 /turf/simulated/wall/tgmc/window/darkwall,
 /area/aoi/indoors/teleporter)
+"dD" = (
+/obj/machinery/light{
+	dir = 8
+	},
+/turf/simulated/floor/tiled/eris/white/bluecorner,
+/area/aoi/indoors/sleeve_facility)
+"dS" = (
+/obj/machinery/power/apc/angled{
+	dir = 4
+	},
+/obj/structure/cable/yellow{
+	icon_state = "0-8"
+	},
+/turf/simulated/floor,
+/area/aoi/outdoors)
+"dU" = (
+/turf/simulated/wall/tgmc/durawall/deco2,
+/area/aoi/indoors/tech)
+"dX" = (
+/turf/simulated/floor/outdoors/newdirt,
+/area/aoi/outdoors/central)
+"eh" = (
+/obj/effect/floor_decal/techfloor{
+	dir = 4
+	},
+/obj/machinery/telecomms/server,
+/turf/simulated/floor/tiled/dark{
+	nitrogen = 100;
+	oxygen = 0;
+	temperature = 80
+	},
+/area/aoi/indoors/tech)
+"ez" = (
+/obj/effect/floor_decal/techfloor{
+	dir = 8
+	},
+/obj/machinery/telecomms/processor/preset_two,
+/turf/simulated/floor/tiled/dark{
+	nitrogen = 100;
+	oxygen = 0;
+	temperature = 80
+	},
+/area/aoi/indoors/tech)
+"eH" = (
+/obj/structure/cable/yellow{
+	icon_state = "4-8"
+	},
+/turf/simulated/floor/outdoors/sidewalk/side,
+/area/aoi/outdoors/east)
 "eT" = (
 /turf/simulated/floor,
 /area/aoi/outdoors/north)
@@ -64,6 +160,17 @@
 	},
 /turf/simulated/floor/tiled/steel_dirty/aoi,
 /area/aoi/outdoors/solars)
+"fZ" = (
+/obj/effect/floor_decal/techfloor{
+	dir = 9
+	},
+/obj/machinery/pda_multicaster/prebuilt,
+/turf/simulated/floor/tiled/dark{
+	nitrogen = 100;
+	oxygen = 0;
+	temperature = 80
+	},
+/area/aoi/indoors/tech)
 "gb" = (
 /obj/structure/cable/yellow{
 	icon_state = "0-8"
@@ -85,6 +192,22 @@
 	},
 /turf/simulated/floor,
 /area/aoi/outdoors/north)
+"ge" = (
+/obj/machinery/door/airlock/angled_tgmc/engineering{
+	dir = 4;
+	name = "APC Room"
+	},
+/obj/structure/cable/yellow{
+	icon_state = "4-8"
+	},
+/turf/simulated/floor,
+/area/aoi/outdoors)
+"gj" = (
+/obj/structure/cable/yellow{
+	icon_state = "2-8"
+	},
+/turf/simulated/floor/tiled/eris/white/bluecorner,
+/area/aoi/indoors/sleeve_facility)
 "gp" = (
 /turf/simulated/wall/tgmc/gray,
 /area/aoi/outdoors/central)
@@ -101,11 +224,16 @@
 /turf/simulated/floor/aoi,
 /area/aoi/outdoors/solars)
 "hf" = (
-/obj/machinery/door/airlock/angled_tgmc/wide/dropship2{
-	name = "Blowhole"
-	},
-/turf/simulated/floor/aoi,
+/turf/simulated/open/aoi,
 /area/aoi/outdoors/north)
+"hl" = (
+/obj/machinery/clonepod/transhuman{
+	icon_scale_x = 6;
+	icon_scale_y = 6;
+	pixel_y = 64
+	},
+/turf/simulated/floor/tiled/eris/white/cargo,
+/area/aoi/indoors/sleeve_facility)
 "ht" = (
 /obj/structure/cable/yellow{
 	icon_state = "1-2"
@@ -115,6 +243,15 @@
 	},
 /turf/simulated/floor/outdoors/sidewalk,
 /area/aoi/outdoors/north)
+"hB" = (
+/obj/structure/cable/yellow{
+	icon_state = "1-2"
+	},
+/obj/structure/cable/yellow{
+	icon_state = "1-4"
+	},
+/turf/simulated/floor/tiled/techfloor,
+/area/aoi/indoors/research)
 "hC" = (
 /obj/machinery/door/airlock/angled_tgmc,
 /obj/structure/cable/yellow{
@@ -122,6 +259,29 @@
 	},
 /turf/simulated/floor/tiled/techfloor,
 /area/aoi/indoors/teleporter)
+"hM" = (
+/obj/effect/floor_decal/techfloor{
+	dir = 1
+	},
+/obj/structure/cable/yellow{
+	icon_state = "1-2"
+	},
+/turf/simulated/floor/tiled/techfloor,
+/area/aoi/indoors/research)
+"id" = (
+/obj/effect/floor_decal/techfloor{
+	dir = 4
+	},
+/turf/simulated/floor/bluegrid{
+	name = "Mainframe Base";
+	nitrogen = 100;
+	oxygen = 0;
+	temperature = 80
+	},
+/area/aoi/indoors/tech)
+"ik" = (
+/turf/simulated/wall/tgmc/durawall,
+/area/aoi/indoors/tech)
 "im" = (
 /obj/effect/landmark/start,
 /turf/simulated/floor/tiled/techfloor,
@@ -139,14 +299,50 @@
 	},
 /turf/simulated/floor/outdoors/sidewalk/slab,
 /area/aoi/outdoors/central)
+"ji" = (
+/obj/effect/landmark/map_data/aoi,
+/obj/effect/fake_sun,
+/turf/unsimulated/wall/dark,
+/area/aoi/outdoors)
+"jx" = (
+/obj/effect/floor_decal/techfloor{
+	dir = 10
+	},
+/obj/structure/table/steel_reinforced,
+/obj/item/integrated_electronics/debugger{
+	pixel_x = -1;
+	pixel_y = 7
+	},
+/obj/item/integrated_electronics/wirer{
+	pixel_y = 3;
+	pixel_x = 6
+	},
+/turf/simulated/floor/tiled/techfloor,
+/area/aoi/indoors/research)
 "jz" = (
 /obj/effect/floor_decal/techfloor/orange{
 	dir = 9
 	},
 /turf/simulated/floor/tiled/techfloor,
 /area/aoi/indoors/teleporter)
+"jO" = (
+/obj/effect/floor_decal/techfloor{
+	dir = 9
+	},
+/obj/machinery/light{
+	dir = 8
+	},
+/obj/structure/flora/pottedplant/stoutbush,
+/turf/simulated/floor/tiled/techfloor,
+/area/aoi/indoors/research)
 "jW" = (
 /turf/simulated/floor/outdoors/sidewalk,
+/area/aoi/outdoors/west)
+"kj" = (
+/obj/structure/cable/yellow{
+	icon_state = "4-8"
+	},
+/turf/simulated/floor/outdoors/sidewalk/slab,
 /area/aoi/outdoors/west)
 "ko" = (
 /obj/machinery/door/airlock/angled_tgmc/engineering{
@@ -161,46 +357,136 @@
 /turf/simulated/floor,
 /area/aoi/outdoors/north)
 "kz" = (
-/obj/effect/fake_sun,
-/turf/unsimulated/wall/dark,
-/area/aoi/outdoors)
-"lE" = (
-/obj/structure/cable/yellow{
-	icon_state = "1-2"
+/obj/effect/floor_decal/techfloor,
+/turf/simulated/floor/bluegrid{
+	name = "Mainframe Base";
+	nitrogen = 100;
+	oxygen = 0;
+	temperature = 80
 	},
-/turf/simulated/floor/outdoors/sidewalk/slab,
-/area/aoi/outdoors/central)
-"lP" = (
-/turf/simulated/wall/tgmc/sanitary,
-/area/aoi/outdoors/north)
-"lW" = (
-/obj/machinery/light/bigfloorlamp,
+/area/aoi/indoors/tech)
+"kG" = (
+/obj/machinery/light/lamppost{
+	dir = 1
+	},
 /turf/simulated/floor/outdoors/grass/seasonal/notrees_nomobs_lowsnow,
 /area/aoi/outdoors/central)
+"lb" = (
+/obj/effect/floor_decal/techfloor{
+	dir = 4
+	},
+/obj/machinery/ntnet_relay,
+/turf/simulated/floor/tiled/dark{
+	nitrogen = 100;
+	oxygen = 0;
+	temperature = 80
+	},
+/area/aoi/indoors/tech)
+"ld" = (
+/obj/effect/floor_decal/techfloor{
+	dir = 8
+	},
+/obj/machinery/power/apc/angled{
+	dir = 8
+	},
+/obj/structure/cable/yellow,
+/turf/simulated/floor/bluegrid{
+	name = "Mainframe Base";
+	nitrogen = 100;
+	oxygen = 0;
+	temperature = 80
+	},
+/area/aoi/indoors/tech)
+"lP" = (
+/turf/simulated/wall/tgmc/redstripe_r,
+/area/aoi/outdoors/north)
+"lW" = (
+/obj/effect/floor_decal/techfloor{
+	dir = 6
+	},
+/obj/machinery/telecomms/bus,
+/turf/simulated/floor/tiled/dark{
+	nitrogen = 100;
+	oxygen = 0;
+	temperature = 80
+	},
+/area/aoi/indoors/tech)
+"mj" = (
+/obj/structure/cable/yellow{
+	icon_state = "1-8"
+	},
+/obj/structure/cable/yellow{
+	icon_state = "4-8"
+	},
+/turf/simulated/floor/outdoors/sidewalk/slab,
+/area/aoi/outdoors/east)
 "mu" = (
 /turf/simulated/floor/water/seasonal,
 /area/aoi/outdoors/west)
-"mE" = (
-/obj/structure/cable/yellow{
-	icon_state = "0-2"
-	},
-/obj/machinery/power/apc/angled{
-	dir = 1
-	},
-/turf/simulated/floor/outdoors/sidewalk,
-/area/aoi/outdoors/east)
 "mJ" = (
 /obj/structure/cable/yellow{
 	icon_state = "1-8"
 	},
 /turf/simulated/floor/aoi,
 /area/aoi/outdoors/solars)
+"mN" = (
+/obj/machinery/light/small{
+	dir = 4
+	},
+/turf/simulated/floor/outdoors/newdirt,
+/area/aoi/outdoors/east)
+"nh" = (
+/turf/simulated/wall/tgmc/window/white,
+/area/aoi/indoors/sleeve_facility)
+"nv" = (
+/obj/effect/floor_decal/techfloor{
+	dir = 1
+	},
+/obj/machinery/light/floortube,
+/turf/simulated/floor/bluegrid{
+	name = "Mainframe Base";
+	nitrogen = 100;
+	oxygen = 0;
+	temperature = 80
+	},
+/area/aoi/indoors/tech)
+"nI" = (
+/obj/effect/floor_decal/techfloor{
+	dir = 1
+	},
+/obj/structure/closet/walllocker_double/science/north{
+	name = "material sheets"
+	},
+/obj/fiftyspawner/steel,
+/turf/simulated/floor/tiled/techfloor,
+/area/aoi/indoors/research)
 "nU" = (
 /obj/structure/cable/yellow{
 	icon_state = "2-8"
 	},
 /turf/simulated/floor/outdoors/sidewalk/slab,
 /area/aoi/outdoors/north)
+"od" = (
+/obj/effect/floor_decal/techfloor{
+	dir = 5
+	},
+/obj/structure/prop/machine/bsb_off{
+	name = "tracking beacon";
+	desc = "An industrial-grade GPS tracking device. It appears to be disabled"
+	},
+/turf/simulated/floor/tiled/techfloor,
+/area/aoi/indoors/research)
+"og" = (
+/obj/effect/floor_decal/techfloor{
+	dir = 10
+	},
+/obj/machinery/telecomms/bus/preset_one,
+/turf/simulated/floor/tiled/dark{
+	nitrogen = 100;
+	oxygen = 0;
+	temperature = 80
+	},
+/area/aoi/indoors/tech)
 "oJ" = (
 /obj/structure/cable/yellow{
 	icon_state = "1-2"
@@ -209,6 +495,9 @@
 	icon_state = "2-4"
 	},
 /turf/simulated/floor/aoi,
+/area/aoi/outdoors/solars)
+"pj" = (
+/turf/simulated/floor/outdoors/newdirt,
 /area/aoi/outdoors/solars)
 "pv" = (
 /obj/structure/cable/yellow{
@@ -222,12 +511,9 @@
 	},
 /turf/simulated/floor/outdoors/sidewalk,
 /area/aoi/outdoors/central)
-"pM" = (
-/turf/simulated/floor/tiled/eris/white/bluecorner,
-/area/aoi/outdoors/east)
 "pQ" = (
-/turf/simulated/wall/tgmc/sanitary,
-/area/aoi/outdoors/east)
+/turf/simulated/floor/tiled/eris/white/bluecorner,
+/area/aoi/indoors/sleeve_facility)
 "pW" = (
 /obj/structure/cable/yellow{
 	icon_state = "0-2"
@@ -241,6 +527,9 @@
 	},
 /turf/simulated/floor/aoi,
 /area/aoi/outdoors/solars)
+"pX" = (
+/turf/simulated/wall/tgmc/durawall/deco2,
+/area/aoi/indoors/research)
 "qb" = (
 /turf/simulated/mineral/cave,
 /area/aoi/outdoors)
@@ -251,13 +540,6 @@
 /obj/machinery/light/small,
 /turf/simulated/floor,
 /area/aoi/outdoors/north)
-"qB" = (
-/obj/machinery/transhuman/resleever{
-	icon_scale_x = 3;
-	icon_scale_y = 3
-	},
-/turf/simulated/floor/tiled/eris/white/bluecorner,
-/area/aoi/outdoors/east)
 "qZ" = (
 /obj/structure/cable/yellow{
 	icon_state = "0-2"
@@ -267,6 +549,14 @@
 	},
 /turf/simulated/floor,
 /area/aoi/indoors/power)
+"rf" = (
+/obj/machinery/transhuman/resleever{
+	icon_scale_x = 6;
+	icon_scale_y = 6;
+	pixel_y = 64
+	},
+/turf/simulated/floor/tiled/eris/white/cargo,
+/area/aoi/indoors/sleeve_facility)
 "rt" = (
 /obj/machinery/light{
 	dir = 4
@@ -275,7 +565,7 @@
 /turf/simulated/floor/tiled/techfloor,
 /area/aoi/indoors/teleporter)
 "so" = (
-/turf/simulated/wall/tgmc/gray,
+/turf/simulated/wall/tgmc/durawall,
 /area/aoi/indoors/power)
 "sw" = (
 /obj/effect/floor_decal/techfloor/orange{
@@ -287,6 +577,19 @@
 "tl" = (
 /turf/simulated/floor/outdoors/grass/seasonal/notrees_nomobs_lowsnow,
 /area/aoi/outdoors/east)
+"ub" = (
+/turf/simulated/wall/tgmc/durawall/deco3,
+/area/aoi/indoors/power)
+"ue" = (
+/obj/machinery/light/lamppost{
+	dir = 4
+	},
+/turf/simulated/floor/outdoors/grass/seasonal/notrees_nomobs_lowsnow,
+/area/aoi/outdoors/central)
+"uC" = (
+/obj/machinery/light/small,
+/turf/simulated/floor/outdoors/grass/seasonal/notrees_nomobs_lowsnow,
+/area/aoi/outdoors/west)
 "uG" = (
 /obj/structure/cable/yellow{
 	icon_state = "1-2"
@@ -294,14 +597,14 @@
 /turf/simulated/floor/outdoors/sidewalk,
 /area/aoi/outdoors/west)
 "uL" = (
-/obj/machinery/floodlight,
+/obj/machinery/light/bigfloorlamp,
 /turf/simulated/floor/outdoors/newdirt_nograss/aoi,
 /area/aoi/outdoors/north)
 "ve" = (
 /obj/structure/cable/yellow{
 	icon_state = "4-8"
 	},
-/turf/simulated/wall/tgmc/window/gray,
+/turf/simulated/wall/tgmc/window/darkwall/reinf,
 /area/aoi/indoors/power)
 "vn" = (
 /obj/structure/cable/yellow{
@@ -330,33 +633,56 @@
 	},
 /turf/simulated/floor,
 /area/aoi/outdoors/central)
-"wQ" = (
-/obj/structure/bed/chair/office/light{
-	dir = 4;
-	icon_scale_x = 3;
-	icon_scale_y = 3
+"wR" = (
+/obj/effect/floor_decal/techfloor,
+/obj/machinery/telecomms/processor/preset_one,
+/turf/simulated/floor/tiled/dark{
+	nitrogen = 100;
+	oxygen = 0;
+	temperature = 80
 	},
-/turf/simulated/floor/tiled/eris/white/bluecorner,
-/area/aoi/outdoors/east)
+/area/aoi/indoors/tech)
 "wY" = (
 /obj/machinery/light/small{
 	dir = 1
 	},
 /turf/simulated/floor/outdoors/newdirt/aoi,
 /area/aoi/outdoors/north)
-"xU" = (
+"xp" = (
 /obj/structure/cable/yellow{
-	icon_state = "0-4"
+	icon_state = "4-8"
 	},
-/obj/structure/cable/yellow{
-	icon_state = "0-8"
+/turf/simulated/floor/tiled/eris/white/bluecorner,
+/area/aoi/indoors/sleeve_facility)
+"xD" = (
+/obj/structure/bed/chair{
+	dir = 1
 	},
-/obj/structure/cable/yellow,
-/turf/simulated/floor/outdoors/sidewalk/slab,
+/turf/simulated/floor/tiled/eris/white/bluecorner,
+/area/aoi/indoors/sleeve_facility)
+"yb" = (
+/turf/simulated/wall/tgmc/darkwall/deco2,
+/area/aoi/indoors/teleporter)
+"ym" = (
+/obj/effect/floor_decal/techfloor{
+	dir = 5
+	},
+/obj/machinery/telecomms/receiver/preset_right/aoi,
+/turf/simulated/floor/tiled/dark{
+	nitrogen = 100;
+	oxygen = 0;
+	temperature = 80
+	},
+/area/aoi/indoors/tech)
+"yu" = (
+/turf/simulated/floor/outdoors/newdirt,
 /area/aoi/outdoors/east)
+"yE" = (
+/turf/simulated/wall/tgmc/durawall,
+/area/aoi/indoors/research)
 "yN" = (
 /obj/structure/railing,
-/turf/simulated/floor/flesh/aoi/outdoors,
+/turf/simulated/open/aoi,
 /area/aoi/outdoors/north)
 "yU" = (
 /obj/machinery/light/small{
@@ -380,18 +706,24 @@
 	},
 /turf/simulated/floor,
 /area/aoi/outdoors/north)
-"zS" = (
-/obj/structure/cable/yellow{
-	icon_state = "4-8"
+"As" = (
+/obj/machinery/light/lamppost{
+	dir = 4
 	},
-/turf/simulated/floor/outdoors/sidewalk/slab,
-/area/aoi/outdoors/east)
+/turf/simulated/floor/outdoors/grass/seasonal/notrees_nomobs_lowsnow,
+/area/aoi/outdoors/west)
 "AI" = (
 /obj/machinery/light/small{
 	dir = 1
 	},
 /turf/simulated/floor/aoi,
 /area/aoi/outdoors/solars)
+"Bd" = (
+/obj/machinery/light/small{
+	dir = 4
+	},
+/turf/simulated/floor,
+/area/aoi/outdoors)
 "Bl" = (
 /obj/machinery/door/airlock/angled_tgmc/wide/generic_steel{
 	dir = 4
@@ -404,25 +736,84 @@
 	},
 /turf/simulated/floor/outdoors/sidewalk/side,
 /area/aoi/outdoors/central)
-"Ck" = (
+"Cc" = (
+/obj/effect/floor_decal/techfloor/corner{
+	dir = 5
+	},
+/turf/simulated/floor/bluegrid{
+	name = "Mainframe Base";
+	nitrogen = 100;
+	oxygen = 0;
+	temperature = 80
+	},
+/area/aoi/indoors/tech)
+"CN" = (
 /obj/structure/cable/yellow{
 	icon_state = "4-8"
 	},
-/turf/simulated/floor/outdoors/sidewalk/slab,
-/area/aoi/outdoors/west)
-"De" = (
-/obj/machinery/light{
-	dir = 4
-	},
-/turf/simulated/floor/tiled/eris/white/bluecorner,
-/area/aoi/outdoors/east)
+/turf/simulated/floor,
+/area/aoi/outdoors)
+"Dc" = (
+/turf/simulated/floor/tiled/techfloor,
+/area/aoi/indoors/research)
 "Dl" = (
 /obj/structure/sign/warning/biohazard,
-/turf/simulated/wall/tgmc/sanitary,
+/turf/simulated/wall/tgmc/redstripe_r,
 /area/aoi/outdoors/north)
+"Dv" = (
+/turf/simulated/wall/tgmc/durawall/deco0,
+/area/aoi/indoors/tech)
+"DX" = (
+/obj/effect/floor_decal/techfloor{
+	dir = 1
+	},
+/obj/machinery/telecomms/relay/preset/aoi,
+/turf/simulated/floor/bluegrid{
+	name = "Mainframe Base";
+	nitrogen = 100;
+	oxygen = 0;
+	temperature = 80
+	},
+/area/aoi/indoors/tech)
 "Eb" = (
 /turf/simulated/floor,
 /area/aoi/indoors/power)
+"Et" = (
+/obj/structure/table/glass,
+/obj/item/reagent_containers/glass/bottle/biomass{
+	icon_state = "bottle-1";
+	pixel_y = 3;
+	pixel_x = -5
+	},
+/obj/item/reagent_containers/glass/bottle/biomass{
+	icon_state = "bottle-1";
+	pixel_y = 11;
+	pixel_x = 8
+	},
+/obj/item/reagent_containers/glass/bottle/biomass{
+	icon_state = "bottle-1";
+	pixel_y = 4;
+	pixel_x = 4
+	},
+/turf/simulated/floor/tiled/eris/white/bluecorner,
+/area/aoi/indoors/sleeve_facility)
+"Ez" = (
+/obj/effect/floor_decal/techfloor{
+	dir = 5
+	},
+/obj/machinery/telecomms/hub/preset/aoi,
+/turf/simulated/floor/tiled/dark{
+	nitrogen = 100;
+	oxygen = 0;
+	temperature = 80
+	},
+/area/aoi/indoors/tech)
+"Fk" = (
+/obj/structure/bed/chair/office/light{
+	dir = 4
+	},
+/turf/simulated/floor/tiled/eris/white/bluecorner,
+/area/aoi/indoors/sleeve_facility)
 "Fw" = (
 /obj/structure/cable/heavyduty{
 	icon_state = "0-8"
@@ -433,8 +824,12 @@
 /turf/simulated/floor/aoi,
 /area/aoi/outdoors/west)
 "FA" = (
-/turf/simulated/floor/outdoors/grass/forest,
+/turf/simulated/floor/outdoors/newdirt,
 /area/aoi/outdoors)
+"FJ" = (
+/obj/structure/bed/chair/office/light,
+/turf/simulated/floor/tiled/techfloor,
+/area/aoi/indoors/research)
 "FU" = (
 /obj/structure/cable/yellow{
 	icon_state = "0-2"
@@ -454,6 +849,13 @@
 	},
 /turf/simulated/floor/aoi,
 /area/aoi/outdoors/solars)
+"FX" = (
+/obj/effect/floor_decal/techfloor,
+/obj/structure/cable/yellow{
+	icon_state = "1-4"
+	},
+/turf/simulated/floor/tiled/techfloor,
+/area/aoi/indoors/research)
 "Gc" = (
 /obj/effect/floor_decal/techfloor/orange{
 	dir = 1
@@ -476,21 +878,65 @@
 "Gt" = (
 /turf/simulated/floor/outdoors/grass/seasonal/notrees_nomobs_lowsnow,
 /area/aoi/outdoors/west)
+"GE" = (
+/turf/simulated/floor/bluegrid{
+	name = "Mainframe Base";
+	nitrogen = 100;
+	oxygen = 0;
+	temperature = 80
+	},
+/area/aoi/indoors/tech)
 "GI" = (
 /obj/effect/floor_decal/techfloor/orange{
 	dir = 8
 	},
 /turf/simulated/floor/tiled/techfloor,
 /area/aoi/indoors/teleporter)
+"GS" = (
+/obj/effect/floor_decal/techfloor{
+	dir = 1
+	},
+/obj/machinery/telecomms/broadcaster/preset_right/aoi,
+/turf/simulated/floor/tiled/dark{
+	nitrogen = 100;
+	oxygen = 0;
+	temperature = 80
+	},
+/area/aoi/indoors/tech)
+"Hk" = (
+/obj/effect/floor_decal/techfloor,
+/obj/machinery/light/floortube{
+	dir = 1;
+	pixel_x = 2
+	},
+/turf/simulated/floor/bluegrid{
+	name = "Mainframe Base";
+	nitrogen = 100;
+	oxygen = 0;
+	temperature = 80
+	},
+/area/aoi/indoors/tech)
 "Hq" = (
 /obj/structure/railing{
 	dir = 4
 	},
-/turf/simulated/floor/flesh/aoi/outdoors,
+/turf/simulated/open/aoi,
 /area/aoi/outdoors/north)
+"Hs" = (
+/obj/effect/floor_decal/techfloor{
+	dir = 4
+	},
+/obj/machinery/power/apc/angled{
+	dir = 4
+	},
+/obj/structure/cable/yellow{
+	icon_state = "0-8"
+	},
+/turf/simulated/floor/tiled/techfloor,
+/area/aoi/indoors/research)
 "Ht" = (
-/turf/simulated/floor/outdoors/grass/seasonal/notrees_nomobs_lowsnow,
-/area/aoi/outdoors)
+/turf/simulated/floor/outdoors/grass/seasonal/dark/notrees_nomobs_nosnow,
+/area/aoi/outdoors/east)
 "HA" = (
 /obj/machinery/power/solar,
 /obj/structure/cable/yellow{
@@ -498,16 +944,37 @@
 	},
 /turf/simulated/floor/tiled/steel_dirty/aoi,
 /area/aoi/outdoors/solars)
+"HC" = (
+/obj/machinery/door/airlock/angled_tgmc/wide/medical{
+	dir = 4
+	},
+/obj/structure/cable/yellow{
+	icon_state = "1-2"
+	},
+/turf/simulated/floor/tiled/eris/white/bluecorner,
+/area/aoi/indoors/sleeve_facility)
+"HD" = (
+/obj/structure/cable/yellow{
+	icon_state = "1-2"
+	},
+/turf/simulated/floor/outdoors/sidewalk/slab,
+/area/aoi/outdoors/east)
 "HT" = (
 /obj/structure/cable/yellow{
 	icon_state = "4-8"
 	},
 /turf/simulated/floor/tiled/steel_dirty/aoi,
 /area/aoi/outdoors/solars)
+"Id" = (
+/turf/simulated/wall/tgmc/durawall/deco3,
+/area/aoi/indoors/tech)
 "In" = (
 /obj/structure/cable/yellow{
 	icon_state = "4-8"
 	},
+/turf/simulated/floor/outdoors/sidewalk/slab,
+/area/aoi/outdoors/central)
+"IF" = (
 /turf/simulated/floor/outdoors/sidewalk/slab,
 /area/aoi/outdoors/central)
 "IW" = (
@@ -515,6 +982,18 @@
 /area/aoi/outdoors/north)
 "Jh" = (
 /turf/unsimulated/wall/dark,
+/area/aoi/outdoors)
+"Jq" = (
+/obj/machinery/power/apc/angled{
+	dir = 1
+	},
+/obj/structure/cable/yellow{
+	icon_state = "0-2"
+	},
+/turf/simulated/floor/tiled/eris/white/bluecorner,
+/area/aoi/indoors/sleeve_facility)
+"JC" = (
+/turf/simulated/floor,
 /area/aoi/outdoors)
 "JJ" = (
 /turf/simulated/floor/tiled/steel_dirty/aoi,
@@ -544,39 +1023,76 @@
 	},
 /turf/simulated/floor/outdoors/sidewalk/slab,
 /area/aoi/outdoors/central)
+"Kc" = (
+/obj/effect/floor_decal/techfloor{
+	dir = 6
+	},
+/obj/structure/cable/yellow{
+	icon_state = "4-8"
+	},
+/obj/machinery/light,
+/turf/simulated/floor/tiled/techfloor,
+/area/aoi/indoors/research)
+"KD" = (
+/turf/simulated/wall/tgmc/whitewall,
+/area/aoi/indoors/sleeve_facility)
 "KI" = (
 /turf/simulated/wall/tgmc/darkwall,
 /area/aoi/indoors/teleporter)
-"KR" = (
-/obj/machinery/door/airlock/angled_tgmc/wide/medical{
-	dir = 4
-	},
-/turf/simulated/floor/tiled/eris/white/bluecorner,
-/area/aoi/outdoors/east)
 "Lf" = (
 /obj/structure/cable/yellow{
 	icon_state = "2-8"
 	},
 /turf/simulated/floor/tiled/steel_dirty/aoi,
 /area/aoi/outdoors/solars)
+"Lh" = (
+/obj/machinery/telecomms/bus/preset_two/sd,
+/turf/simulated/floor/tiled/dark{
+	nitrogen = 100;
+	oxygen = 0;
+	temperature = 80
+	},
+/area/aoi/indoors/tech)
+"Lj" = (
+/obj/structure/flora/pottedplant/minitree,
+/turf/simulated/floor/tiled/eris/white/bluecorner,
+/area/aoi/indoors/sleeve_facility)
 "Lk" = (
 /obj/structure/cable/yellow{
 	icon_state = "4-8"
 	},
 /turf/simulated/floor/outdoors/sidewalk/side,
 /area/aoi/outdoors/north)
-"LU" = (
-/obj/machinery/light{
-	dir = 8
-	},
-/turf/simulated/floor/tiled/eris/white/bluecorner,
-/area/aoi/outdoors/east)
+"LL" = (
+/turf/simulated/floor/outdoors/newdirt,
+/area/aoi/outdoors/west)
 "LY" = (
 /turf/simulated/wall/tgmc/gray,
 /area/aoi/outdoors/north)
 "Mo" = (
 /turf/simulated/floor/outdoors/sidewalk/slab,
 /area/aoi/outdoors/west)
+"MC" = (
+/obj/structure/cable/yellow{
+	icon_state = "1-2"
+	},
+/turf/simulated/floor/tiled/eris/white/bluecorner,
+/area/aoi/indoors/sleeve_facility)
+"MG" = (
+/obj/machinery/light{
+	dir = 4
+	},
+/obj/effect/floor_decal/corner_steel_grid{
+	dir = 10
+	},
+/turf/simulated/floor/tiled/eris/white/cargo,
+/area/aoi/indoors/sleeve_facility)
+"MH" = (
+/obj/machinery/light/small{
+	dir = 4
+	},
+/turf/simulated/floor/outdoors/grass/seasonal/notrees_nomobs_lowsnow,
+/area/aoi/outdoors/east)
 "MJ" = (
 /turf/simulated/floor/outdoors/sidewalk/side,
 /area/aoi/outdoors/west)
@@ -593,12 +1109,9 @@
 /obj/effect/landmark/start,
 /turf/simulated/floor/tiled/techfloor,
 /area/aoi/indoors/teleporter)
-"Nq" = (
-/obj/machinery/light/small{
-	dir = 1
-	},
-/turf/simulated/floor/outdoors/grass/seasonal/notrees_nomobs_lowsnow,
-/area/aoi/outdoors/east)
+"Ot" = (
+/turf/simulated/floor/tiled/eris/white/cargo,
+/area/aoi/indoors/sleeve_facility)
 "OT" = (
 /obj/structure/cable/yellow{
 	icon_state = "1-2"
@@ -620,12 +1133,37 @@
 	},
 /turf/simulated/floor/outdoors/sidewalk/slab,
 /area/aoi/outdoors/central)
+"Po" = (
+/obj/machinery/door/airlock/angled_tgmc{
+	dir = 4
+	},
+/obj/structure/cable/yellow{
+	icon_state = "4-8"
+	},
+/obj/structure/fans/hardlight,
+/turf/simulated/floor/tiled/techfloor,
+/area/aoi/indoors/tech)
 "Pp" = (
 /obj/structure/cable/yellow{
 	icon_state = "1-2"
 	},
 /turf/simulated/floor/outdoors/sidewalk/slab,
 /area/aoi/outdoors/north)
+"PP" = (
+/obj/effect/floor_decal/techfloor{
+	dir = 8
+	},
+/obj/machinery/light/floortube{
+	dir = 4;
+	pixel_x = 2
+	},
+/turf/simulated/floor/bluegrid{
+	name = "Mainframe Base";
+	nitrogen = 100;
+	oxygen = 0;
+	temperature = 80
+	},
+/area/aoi/indoors/tech)
 "Qm" = (
 /obj/structure/cable/yellow{
 	icon_state = "0-8"
@@ -635,10 +1173,26 @@
 	},
 /turf/simulated/floor/outdoors/sidewalk/side,
 /area/aoi/outdoors/west)
+"Qt" = (
+/obj/structure/cable/yellow{
+	icon_state = "1-4"
+	},
+/turf/simulated/floor/tiled/eris/white/bluecorner,
+/area/aoi/indoors/sleeve_facility)
+"Qy" = (
+/obj/machinery/light/small{
+	dir = 1
+	},
+/turf/simulated/floor/outdoors/grass/seasonal/notrees_nomobs_lowsnow,
+/area/aoi/outdoors/east)
 "QA" = (
 /obj/effect/floor_decal/techfloor/orange{
 	dir = 4
 	},
+/turf/simulated/floor/tiled/techfloor,
+/area/aoi/indoors/teleporter)
+"QD" = (
+/obj/structure/flora/pottedplant/orientaltree,
 /turf/simulated/floor/tiled/techfloor,
 /area/aoi/indoors/teleporter)
 "Ra" = (
@@ -646,7 +1200,7 @@
 /area/aoi/indoors/teleporter)
 "Rc" = (
 /obj/structure/sign/warning/acid,
-/turf/simulated/wall/tgmc/sanitary,
+/turf/simulated/wall/tgmc/redstripe_r,
 /area/aoi/outdoors/north)
 "Rd" = (
 /obj/structure/cable/yellow{
@@ -668,9 +1222,12 @@
 /turf/simulated/floor/outdoors/sidewalk/side,
 /area/aoi/outdoors/north)
 "Rx" = (
-/obj/machinery/light/bigfloorlamp,
+/obj/machinery/light/lamppost,
 /turf/simulated/floor/outdoors/grass/seasonal/notrees_nomobs_lowsnow,
 /area/aoi/outdoors/west)
+"RF" = (
+/turf/simulated/wall/tgmc/gray,
+/area/aoi/outdoors)
 "RH" = (
 /obj/structure/cable/yellow{
 	icon_state = "0-4"
@@ -707,17 +1264,21 @@
 "Sw" = (
 /turf/simulated/floor/outdoors/grass/seasonal/dark/notrees_nomobs_nosnow,
 /area/aoi/outdoors/north)
-"SN" = (
-/obj/machinery/clonepod/transhuman{
-	icon_scale_x = 3;
-	icon_scale_y = 3
-	},
-/turf/simulated/floor/tiled/eris/white/bluecorner,
-/area/aoi/outdoors/east)
 "SP" = (
 /obj/machinery/light/small,
 /turf/simulated/floor/outdoors/newdirt/aoi,
 /area/aoi/outdoors/north)
+"SZ" = (
+/obj/effect/floor_decal/techfloor{
+	dir = 8
+	},
+/obj/structure/table/steel_reinforced,
+/obj/item/integrated_electronics/detailer{
+	pixel_x = -4;
+	pixel_y = 3
+	},
+/turf/simulated/floor/tiled/techfloor,
+/area/aoi/indoors/research)
 "Tx" = (
 /obj/structure/table/standard,
 /obj/item/stack/cable_coil/yellow,
@@ -738,6 +1299,12 @@
 	},
 /turf/simulated/floor/outdoors/sidewalk,
 /area/aoi/outdoors/north)
+"TA" = (
+/obj/effect/floor_decal/corner_steel_grid{
+	dir = 10
+	},
+/turf/simulated/floor/tiled/eris/white/cargo,
+/area/aoi/indoors/sleeve_facility)
 "TN" = (
 /obj/machinery/light/small{
 	dir = 4
@@ -763,24 +1330,12 @@
 	},
 /turf/simulated/floor/tiled/techfloor,
 /area/aoi/indoors/teleporter)
-"Uz" = (
-/obj/machinery/computer/transhuman/resleeving{
-	dir = 8;
-	icon_scale_x = 3;
-	icon_scale_y = 3
-	},
-/turf/simulated/floor/tiled/eris/white/bluecorner,
-/area/aoi/outdoors/east)
 "UD" = (
 /obj/machinery/light/small{
 	dir = 4
 	},
 /turf/simulated/floor/outdoors/newdirt,
 /area/aoi/outdoors/central)
-"UT" = (
-/obj/structure/table/glass,
-/turf/simulated/floor/tiled/eris/white/bluecorner,
-/area/aoi/outdoors/east)
 "Vl" = (
 /obj/structure/cable/yellow{
 	icon_state = "0-2"
@@ -791,12 +1346,25 @@
 	},
 /turf/simulated/floor/outdoors/sidewalk/slab,
 /area/aoi/outdoors/west)
-"VV" = (
-/obj/structure/cable/yellow{
-	icon_state = "1-2"
+"VE" = (
+/obj/effect/floor_decal/techfloor{
+	dir = 1
 	},
-/turf/simulated/floor/outdoors/sidewalk,
-/area/aoi/outdoors/east)
+/turf/simulated/floor/tiled/techfloor,
+/area/aoi/indoors/research)
+"VI" = (
+/obj/effect/floor_decal/techfloor,
+/obj/structure/table/steel_reinforced,
+/obj/item/integrated_circuit_printer{
+	pixel_x = 13;
+	pixel_y = 1
+	},
+/obj/item/electronic_assembly/large/default{
+	pixel_y = 3;
+	pixel_x = -11
+	},
+/turf/simulated/floor/tiled/techfloor,
+/area/aoi/indoors/research)
 "VX" = (
 /obj/structure/cable/yellow{
 	icon_state = "1-4"
@@ -816,20 +1384,20 @@
 	},
 /turf/simulated/floor,
 /area/aoi/outdoors/central)
+"WD" = (
+/turf/simulated/wall/tgmc/durawall/deco0,
+/area/aoi/indoors/research)
 "WH" = (
 /turf/simulated/floor/outdoors/newdirt/aoi,
 /area/aoi/outdoors/north)
-"WS" = (
-/obj/structure/bed/chair{
-	dir = 1
+"WM" = (
+/obj/machinery/light/lamppost{
+	dir = 8
 	},
-/turf/simulated/floor/tiled/eris/white/bluecorner,
-/area/aoi/outdoors/east)
-"Xc" = (
-/turf/simulated/floor/outdoors/sidewalk/slab,
-/area/aoi/outdoors/central)
+/turf/simulated/floor/outdoors/grass/seasonal/notrees_nomobs_lowsnow,
+/area/aoi/outdoors/west)
 "Xx" = (
-/turf/simulated/wall/tgmc/window/gray,
+/turf/simulated/wall/tgmc/window/darkwall/reinf,
 /area/aoi/indoors/power)
 "XJ" = (
 /obj/machinery/light/small{
@@ -868,8 +1436,25 @@
 /turf/simulated/floor,
 /area/aoi/indoors/power)
 "YE" = (
+/obj/machinery/door/airlock/angled_tgmc/secure{
+	name = "Blowhole"
+	},
 /turf/simulated/floor/aoi,
 /area/aoi/outdoors/north)
+"YO" = (
+/obj/effect/floor_decal/techfloor{
+	dir = 8
+	},
+/obj/structure/cable/yellow{
+	icon_state = "2-8"
+	},
+/turf/simulated/floor/bluegrid{
+	name = "Mainframe Base";
+	nitrogen = 100;
+	oxygen = 0;
+	temperature = 80
+	},
+/area/aoi/indoors/tech)
 "Za" = (
 /turf/simulated/mineral/cave,
 /area/aoi/outdoors/central)
@@ -882,6 +1467,21 @@
 	},
 /turf/simulated/floor/tiled/steel_dirty/aoi,
 /area/aoi/outdoors/solars)
+"Zx" = (
+/obj/effect/floor_decal/techfloor,
+/obj/machinery/telecomms/server/presets/common,
+/turf/simulated/floor/tiled/dark{
+	nitrogen = 100;
+	oxygen = 0;
+	temperature = 80
+	},
+/area/aoi/indoors/tech)
+"ZF" = (
+/turf/simulated/wall/tgmc/darkwall/deco0,
+/area/aoi/indoors/teleporter)
+"ZW" = (
+/turf/simulated/floor/outdoors/sidewalk/slab,
+/area/aoi/outdoors/east)
 
 (1,1,1) = {"
 Jh
@@ -1022,8 +1622,8 @@ Jh
 Jh
 Jh
 Jh
-kz
 Jh
+ji
 "}
 (2,1,1) = {"
 Jh
@@ -7341,9 +7941,9 @@ oJ
 gK
 pW
 mJ
-RZ
-RZ
-RZ
+pj
+pj
+pj
 qb
 qb
 qb
@@ -7484,7 +8084,7 @@ so
 so
 qx
 RZ
-RZ
+pj
 qb
 qb
 qb
@@ -7623,7 +8223,7 @@ YA
 Tx
 gb
 bA
-so
+ub
 AI
 RZ
 RZ
@@ -8053,7 +8653,7 @@ so
 bD
 RZ
 RZ
-RZ
+pj
 qb
 qb
 qb
@@ -8468,8 +9068,8 @@ qb
 qb
 Gt
 Gt
-Gt
-Gt
+LL
+LL
 Gt
 Gt
 Gt
@@ -8621,8 +9221,8 @@ Gt
 Yi
 Gt
 Gt
-Gt
-Gt
+LL
+LL
 Gt
 Gt
 Gt
@@ -8750,7 +9350,7 @@ qb
 qb
 qb
 Gt
-Rx
+As
 Gt
 Gt
 Gt
@@ -8764,10 +9364,10 @@ Yi
 Gt
 Gt
 Gt
+LL
 Gt
 Gt
-Gt
-Gt
+LL
 Gt
 Gt
 Gt
@@ -8906,15 +9506,15 @@ Yi
 Gt
 Gt
 Gt
+LL
 Gt
 Gt
 Gt
 Gt
+LL
 Gt
 Gt
-Gt
-Gt
-Gt
+LL
 Gt
 Gt
 Gt
@@ -9048,15 +9648,15 @@ Yi
 Gt
 Gt
 Gt
+LL
+LL
 Gt
 Gt
 Gt
 Gt
 Gt
 Gt
-Gt
-Gt
-Gt
+LL
 Gt
 Gt
 Gt
@@ -9151,7 +9751,7 @@ iF
 iF
 iF
 iF
-IW
+uL
 WH
 WH
 lP
@@ -9173,7 +9773,7 @@ qb
 qb
 qb
 qb
-Gt
+LL
 Gt
 Gt
 MJ
@@ -9288,11 +9888,11 @@ qb
 qb
 qb
 iF
-iF
-iF
-iF
-iF
-iF
+hf
+hf
+hf
+hf
+hf
 iF
 IW
 SP
@@ -9430,15 +10030,15 @@ qb
 qb
 IW
 iF
-iF
-iF
-iF
-iF
+hf
+hf
+hf
+hf
 Hq
 iF
 IW
 WH
-hf
+lP
 WH
 WH
 WH
@@ -9470,7 +10070,7 @@ Gt
 Gt
 Gt
 Mo
-Ck
+kj
 Uo
 Uo
 Uo
@@ -9482,11 +10082,11 @@ Uo
 Gt
 Gt
 Gt
-Gt
-Gt
-Gt
-Gt
-Gt
+yE
+yE
+yE
+yE
+yE
 Gt
 Gt
 Gt
@@ -9572,9 +10172,9 @@ qb
 qb
 IW
 iF
-iF
-iF
-iF
+hf
+hf
+hf
 yN
 Ne
 iF
@@ -9624,11 +10224,11 @@ Uo
 Uo
 Gt
 Gt
-Gt
-Gt
-qb
-qb
-qb
+yE
+jO
+SZ
+jx
+yE
 qb
 qb
 qb
@@ -9714,15 +10314,15 @@ qb
 qb
 IW
 iF
-iF
-iF
-iF
-iF
+hf
+hf
+hf
+hf
 bP
 iF
 IW
 WH
-YE
+lP
 WH
 WH
 Lk
@@ -9741,7 +10341,7 @@ qb
 qb
 qb
 qb
-Gt
+LL
 Gt
 Gt
 Mo
@@ -9766,11 +10366,11 @@ Uo
 Uo
 Uo
 Gt
-Gt
-Gt
-Gt
-Gt
-Gt
+WD
+VE
+FJ
+VI
+yE
 qb
 qb
 qb
@@ -9856,11 +10456,11 @@ qb
 qb
 IW
 iF
-iF
-iF
-iF
-iF
-iF
+hf
+hf
+hf
+hf
+hf
 iF
 IW
 SP
@@ -9886,7 +10486,7 @@ qb
 qb
 Gt
 Gt
-Rx
+WM
 Gt
 Gt
 Gt
@@ -9897,6 +10497,7 @@ Uo
 Gt
 Gt
 Yi
+As
 Gt
 Gt
 Gt
@@ -9906,13 +10507,12 @@ Gt
 Gt
 Gt
 Gt
-Gt
-Gt
-Gt
-Gt
-Gt
-Gt
-Gt
+uC
+yE
+nI
+Dc
+dg
+yE
 Gt
 Gt
 Gt
@@ -10003,7 +10603,7 @@ iF
 iF
 iF
 iF
-IW
+uL
 WH
 Sw
 lP
@@ -10037,24 +10637,24 @@ Gt
 Gt
 Gt
 Gt
-Rx
+Gt
 RH
 uG
 uG
 Vl
-jW
-jW
-jW
-jW
-jW
-jW
-jW
-Gt
-Gt
-Gt
-Gt
-Gt
-Gt
+uG
+uG
+uG
+uG
+uG
+uG
+uG
+uG
+ck
+hM
+hB
+FX
+pX
 Gt
 Gt
 Gt
@@ -10171,8 +10771,8 @@ qb
 qb
 qb
 qb
-Gt
-Gt
+LL
+LL
 Gt
 Gt
 Gt
@@ -10191,12 +10791,12 @@ Gt
 Gt
 Gt
 Gt
-Gt
-Gt
-Gt
-Gt
-Gt
-Gt
+uC
+yE
+od
+Hs
+Kc
+yE
 Gt
 Gt
 Gt
@@ -10334,15 +10934,15 @@ Gt
 Gt
 Gt
 Gt
-Gt
-Gt
-Gt
-Gt
-Gt
-Gt
-Gt
-Gt
-Gt
+yE
+ik
+ik
+Po
+ik
+ik
+ik
+ik
+ik
 Gt
 Gt
 qb
@@ -10477,14 +11077,14 @@ Gt
 Gt
 Gt
 Gt
-Gt
-Gt
-Gt
-Gt
-Gt
-Gt
-Gt
-Gt
+ik
+fZ
+YO
+ld
+PP
+ez
+og
+ik
 Gt
 Gt
 qb
@@ -10609,7 +11209,7 @@ MP
 Bt
 MP
 ds
-im
+QD
 jz
 GI
 Sb
@@ -10619,14 +11219,14 @@ qb
 Gt
 Gt
 Gt
-Gt
-Gt
-Gt
-Gt
-Gt
-Gt
-Gt
-Gt
+ik
+DX
+GE
+GE
+GE
+Lh
+wR
+Id
 Gt
 qb
 qb
@@ -10741,16 +11341,16 @@ MP
 MP
 MP
 MP
-lW
+ue
 MP
 MP
 MP
 MP
 MP
-Xc
+IF
 In
 zp
-KI
+ZF
 Ra
 sw
 im
@@ -10761,14 +11361,14 @@ qb
 Gt
 Gt
 Gt
-Gt
-Gt
-Gt
-Gt
-Gt
-Gt
-Gt
-qb
+Dv
+nv
+GE
+GE
+GE
+GE
+Hk
+ik
 qb
 qb
 qb
@@ -10889,7 +11489,7 @@ pG
 pG
 pG
 pG
-lE
+cc
 JZ
 pG
 hC
@@ -10903,14 +11503,14 @@ qb
 qb
 qb
 Gt
-Gt
-Gt
-Gt
-Gt
-Gt
-qb
-qb
-qb
+ik
+Ez
+eh
+Cc
+GE
+GE
+kz
+dU
 qb
 qb
 qb
@@ -11031,7 +11631,7 @@ MP
 MP
 MP
 MP
-Xc
+IF
 In
 zp
 KI
@@ -11039,20 +11639,20 @@ Ra
 sw
 im
 Np
-KI
+yb
 qb
 qb
 qb
 qb
 qb
-qb
-qb
-qb
-Gt
-qb
-qb
-qb
-qb
+ik
+ik
+ik
+GS
+ak
+dn
+Zx
+ik
 qb
 qb
 qb
@@ -11168,7 +11768,7 @@ Bt
 MP
 MP
 MP
-MP
+dX
 qb
 MP
 MP
@@ -11189,12 +11789,12 @@ qb
 qb
 qb
 qb
-qb
-qb
-qb
-qb
-qb
-qb
+ik
+ym
+id
+lb
+lW
+ik
 qb
 qb
 qb
@@ -11309,8 +11909,8 @@ pG
 iX
 MP
 MP
-MP
-qb
+dX
+FA
 qb
 MP
 MP
@@ -11331,12 +11931,12 @@ bE
 bE
 qb
 qb
-qb
-qb
-qb
-qb
-qb
-qb
+ik
+ik
+ik
+ik
+ik
+ik
 qb
 qb
 qb
@@ -11453,7 +12053,7 @@ UD
 MP
 qb
 qb
-MP
+dX
 MP
 bF
 bF
@@ -11464,7 +12064,7 @@ MP
 MP
 MP
 MP
-MP
+dX
 qb
 qb
 bE
@@ -11605,7 +12205,7 @@ MP
 MP
 bF
 bF
-bF
+MP
 MP
 qb
 bE
@@ -11616,9 +12216,9 @@ qb
 qb
 qb
 qb
-Ht
-Ht
-FA
+tl
+tl
+tl
 qb
 qb
 qb
@@ -11736,7 +12336,7 @@ wP
 gp
 qb
 qb
-MP
+dX
 bF
 MP
 MP
@@ -11748,7 +12348,7 @@ MP
 MP
 MP
 MP
-MP
+dX
 qb
 qb
 qb
@@ -11757,14 +12357,14 @@ qb
 qb
 qb
 qb
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
 qb
 qb
 qb
@@ -11885,7 +12485,7 @@ MP
 MP
 MP
 In
-MP
+kG
 MP
 MP
 bF
@@ -11898,17 +12498,17 @@ qb
 qb
 qb
 qb
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
 qb
 qb
 qb
@@ -12019,7 +12619,7 @@ gp
 gp
 gp
 qb
-MP
+dX
 MP
 MP
 MP
@@ -12038,20 +12638,20 @@ qb
 qb
 qb
 qb
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
 qb
 qb
 qb
@@ -12173,27 +12773,27 @@ MP
 MP
 MP
 MP
-MP
+dX
 qb
 qb
 qb
 qb
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
 Ht
 Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
+tl
+tl
+tl
+tl
 qb
 qb
 qb
@@ -12310,13 +12910,14 @@ tl
 tl
 tl
 tl
-zS
+bY
 tl
 tl
 tl
 tl
 qb
 qb
+yu
 tl
 tl
 tl
@@ -12324,18 +12925,17 @@ tl
 tl
 tl
 tl
+tl
+tl
+tl
 Ht
+tl
+tl
+tl
+tl
 Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
 qb
 qb
 qb
@@ -12446,13 +13046,13 @@ qb
 qb
 qb
 tl
-pQ
-pQ
-pQ
-pQ
+KD
+KD
+KD
+KD
 tl
 tl
-zS
+bY
 tl
 tl
 tl
@@ -12466,18 +13066,18 @@ tl
 tl
 tl
 tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
 Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
 qb
 qb
 qb
@@ -12587,16 +13187,16 @@ qb
 tl
 tl
 tl
-pQ
-pQ
-pM
-LU
-pQ
-mE
-VV
-xU
+KD
+KD
+Lj
+dD
+nh
 tl
 tl
+bY
+yu
+yu
 tl
 tl
 qb
@@ -12608,18 +13208,18 @@ tl
 tl
 tl
 tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
 Ht
 Ht
 Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
 qb
 qb
 qb
@@ -12728,20 +13328,21 @@ qb
 tl
 tl
 tl
-pQ
-pQ
-pM
-pM
-WS
-pQ
+KD
+KD
+Jq
+Qt
+xD
+nh
+yu
 tl
+eH
 tl
-bY
-tl
-tl
+yu
 tl
 tl
 qb
+yu
 tl
 tl
 tl
@@ -12750,18 +13351,17 @@ tl
 tl
 tl
 tl
+tl
 Ht
+tl
+tl
+tl
+tl
+tl
 Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
+tl
 qb
 qb
 qb
@@ -12870,19 +13470,15 @@ tl
 tl
 tl
 tl
-pQ
-pM
-pM
-pM
-WS
-pQ
-Nq
+KD
+Ot
+TA
+xp
+xD
+KD
+Qy
 tl
-bY
-tl
-tl
-tl
-tl
+eH
 tl
 tl
 tl
@@ -12893,17 +13489,21 @@ tl
 tl
 tl
 Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
 qb
 qb
 qb
@@ -13012,40 +13612,40 @@ tl
 tl
 tl
 tl
-pQ
-qB
-pM
-pM
-pM
-KR
-bU
-bU
-bU
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
+KD
+rf
+TA
+gj
+MC
+HC
+HD
+HD
+mj
 tl
 tl
 tl
 tl
 Ht
 Ht
+tl
+tl
+tl
 Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
 qb
 qb
 qb
@@ -13154,15 +13754,15 @@ tl
 tl
 tl
 tl
+KD
+Ot
+TA
 pQ
-pM
-pM
-pM
-pM
-pM
-bU
-bU
-bU
+pQ
+pQ
+ZW
+ZW
+bY
 tl
 tl
 tl
@@ -13178,16 +13778,16 @@ tl
 tl
 qb
 qb
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
 qb
 qb
 qb
@@ -13296,15 +13896,15 @@ tl
 tl
 tl
 tl
+KD
+Ot
+Ot
 pQ
-SN
-pM
-wQ
-pM
 pQ
-Nq
+KD
+Qy
 tl
-tl
+eH
 tl
 tl
 tl
@@ -13321,14 +13921,14 @@ tl
 qb
 qb
 qb
+tl
+tl
+tl
 Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
+tl
+tl
 qb
 qb
 qb
@@ -13438,17 +14038,17 @@ tl
 tl
 tl
 tl
+KD
+Ot
+Ot
 pQ
-pM
-De
-Uz
-UT
 pQ
+KD
 tl
 tl
-tl
-tl
-tl
+eH
+Ht
+Ht
 tl
 tl
 tl
@@ -13463,14 +14063,14 @@ tl
 tl
 qb
 qb
+tl
+tl
+tl
 Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
+tl
+tl
 qb
 qb
 qb
@@ -13580,16 +14180,16 @@ tl
 tl
 tl
 tl
+KD
+Ot
+TA
 pQ
 pQ
-pQ
-pQ
-pQ
-pQ
+nh
 tl
-tl
-tl
-tl
+Ht
+eH
+Ht
 tl
 tl
 tl
@@ -13606,13 +14206,13 @@ tl
 qb
 qb
 qb
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
+tl
+tl
+tl
+tl
+tl
 qb
 qb
 qb
@@ -13722,24 +14322,24 @@ tl
 tl
 tl
 tl
+KD
+hl
+TA
+Fk
+pQ
+nh
+tl
+Ht
+eH
+Ht
 tl
 tl
 tl
+yu
+yu
 tl
 tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
+Ht
 tl
 tl
 tl
@@ -13748,12 +14348,12 @@ tl
 qb
 qb
 qb
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
+tl
+tl
+tl
+tl
 qb
 qb
 qb
@@ -13862,23 +14462,23 @@ qb
 qb
 qb
 qb
-Ht
+tl
+tl
+KD
+Ot
+MG
+dd
+Et
+KD
+tl
+tl
+eH
 tl
 tl
 tl
 tl
 tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
+yu
 tl
 tl
 tl
@@ -13890,12 +14490,12 @@ tl
 tl
 qb
 qb
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
+tl
+tl
+tl
+tl
 qb
 qb
 qb
@@ -14005,38 +14605,38 @@ qb
 qb
 qb
 qb
+tl
+KD
+KD
+KD
+KD
+KD
+KD
+tl
+MH
+eH
+mN
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
 qb
 qb
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
 qb
-qb
-qb
-Ht
-Ht
-Ht
-Ht
+tl
+tl
+tl
+tl
 qb
 qb
 qb
@@ -14154,10 +14754,10 @@ qb
 qb
 qb
 qb
-qb
-qb
-qb
-qb
+RF
+RF
+ge
+RF
 qb
 qb
 qb
@@ -14296,10 +14896,10 @@ qb
 qb
 qb
 qb
-qb
-qb
-qb
-qb
+RF
+JC
+CN
+RF
 qb
 qb
 qb
@@ -14438,10 +15038,10 @@ qb
 qb
 qb
 qb
-qb
-qb
-qb
-qb
+RF
+Bd
+dS
+RF
 qb
 qb
 qb
@@ -14580,10 +15180,10 @@ qb
 qb
 qb
 qb
-qb
-qb
-qb
-qb
+RF
+RF
+RF
+RF
 qb
 qb
 qb

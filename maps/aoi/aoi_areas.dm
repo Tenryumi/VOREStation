@@ -25,6 +25,14 @@
 	name = "\improper Power Banks"
 	icon_state = "yelwhitri"
 
+/area/aoi/indoors/sleeve_facility
+	name = "\improper Sleeve Facility"
+	icon_state = "cyawhitri"
+
+/area/aoi/indoors/tech
+	name = "\improper Data Processing"
+	icon_state = "magwhicir"
+
 
 // OUTDOORS AREAS
 /area/aoi/outdoors/

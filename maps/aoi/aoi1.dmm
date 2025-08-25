@@ -29,6 +29,10 @@
 "zY" = (
 /turf/unsimulated/floor/dark,
 /area/aoi/flesh)
+"Ds" = (
+/obj/effect/fake_sun,
+/turf/simulated/flesh,
+/area/aoi/flesh)
 "Jq" = (
 /turf/simulated/floor/flesh/mover{
 	dir = 10
@@ -47,7 +51,6 @@
 /turf/simulated/floor/water/digestive_enzymes,
 /area/aoi/flesh)
 "YF" = (
-/obj/structure/auto_flesh_door,
 /turf/simulated/floor/flesh/mover{
 	dir = 4
 	},
@@ -201,7 +204,7 @@ uq
 uq
 uq
 uq
-uq
+Ds
 "}
 (2,1,1) = {"
 uq

@@ -165,10 +165,42 @@
 
 	return 1
 
+/obj/effect/landmark/map_data/aoi
+	height = 2
 
 /datum/skybox_settings/aoi
 	icon_state = "space5"
 	use_stars = FALSE
+
+// #### Hub ####
+/obj/machinery/telecomms/hub/preset/aoi
+	id = "Hub"
+	network = "tcommsat"
+	autolinkers = list("hub",
+		"aoi", "c_relay", "m_relay", "r_relay",
+		"science", "medical", "supply", "service", "common", "command", "engineering", "security", "Away Team", "unused",
+		"hb_relay", "receiverA", "broadcasterA"
+	)
+
+/obj/machinery/telecomms/receiver/preset_right/aoi
+	id = "aoi_rx"
+	freq_listening = list(AI_FREQ, SCI_FREQ, MED_FREQ, SUP_FREQ, SRV_FREQ, COMM_FREQ, ENG_FREQ, SEC_FREQ, ENT_FREQ, EXP_FREQ)
+
+/obj/machinery/telecomms/broadcaster/preset_right/aoi
+	id = "aoi_tx"
+
+/obj/machinery/telecomms/bus/preset_two/aoi
+	freq_listening = list(SUP_FREQ, SRV_FREQ, EXP_FREQ)
+
+/obj/machinery/telecomms/server/presets/service/aoi
+	freq_listening = list(SRV_FREQ, EXP_FREQ)
+	autolinkers = list("service", "Away Team")
+
+// #### Relays ####
+// Telecomms doesn't know about connected z-levels, so we need relays even for the other surface levels.
+/obj/machinery/telecomms/relay/preset/aoi
+	id = "Aoi Relay"
+	autolinkers = list("aoi")
 
 /datum/planet/virgo3b
 	expected_z_levels = list(Z_NAME_ALIAS_CENTCOM)
