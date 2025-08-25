@@ -12,6 +12,6 @@
 
 #elif !defined(MAP_OVERRIDE)
 
-	#warn A map has already been included, ignoring Stellar Delight
+	#warn A map has already been included, ignoring Aoi
 
 #endif

@@ -50,20 +50,7 @@
 	emergency_shuttle_recall_message = "The evacuation shuttle has been recalled."
 
 	station_networks = list(
-							NETWORK_CARGO,
-							NETWORK_CIRCUITS,
-							NETWORK_CIVILIAN,
-							NETWORK_COMMAND,
-							NETWORK_ENGINE,
-							NETWORK_ENGINEERING,
 							NETWORK_EXPLORATION,
-							NETWORK_MEDICAL,
-							NETWORK_MINE,
-							NETWORK_RESEARCH,
-							NETWORK_RESEARCH_OUTPOST,
-							NETWORK_ROBOTS,
-							NETWORK_SECURITY,
-							NETWORK_TELECOM,
 							NETWORK_HALLS,
 							)
 	secondary_networks = list(
@@ -146,9 +133,8 @@
 
 	ai_shell_restricted = TRUE
 	ai_shell_allowed_levels = list(
-		Z_LEVEL_SHIP_LOW,
-		Z_LEVEL_SHIP_MID,
-		Z_LEVEL_SHIP_HIGH,
+		Z_LEVEL_AOI_LOW,
+		Z_LEVEL_AOI_HIGH,
 		Z_NAME_ALIAS_MISC,
 		Z_NAME_BEACH,
 		Z_NAME_AEROSTAT,
@@ -199,25 +185,19 @@
 
 // We have a bunch of stuff common to the station z levels
 /datum/map_z_level/aoi
-	flags = MAP_LEVEL_STATION|MAP_LEVEL_CONTACT|MAP_LEVEL_PLAYER|MAP_LEVEL_CONSOLES|MAP_LEVEL_XENOARCH_EXEMPT|MAP_LEVEL_PERSIST|MAP_LEVEL_VORESPAWN
-	holomap_legend_x = 220
-	holomap_legend_y = 160
+	flags = MAP_LEVEL_STATION|MAP_LEVEL_CONTACT|MAP_LEVEL_PLAYER|MAP_LEVEL_CONSOLES|MAP_LEVEL_XENOARCH_EXEMPT|MAP_LEVEL_PERSIST|MAP_LEVEL_VORESPAWN|MAP_LEVEL_SEALED
+	holomap_legend_x = 35
+	holomap_legend_y = 47
 
-/datum/map_z_level/aoi/deck_one
+/datum/map_z_level/aoi/aoi_belly
 	z = Z_LEVEL_AOI_LOW
-	name = "The Belly"
+	name = "\improper Aoi's Belly"
 	base_turf = /turf/simulated/floor/flesh/aoi
-	transit_chance = 33
-	holomap_offset_x = SHIP_HOLOMAP_MARGIN_X
-	holomap_offset_y = SHIP_HOLOMAP_MARGIN_Y
 
-/datum/map_z_level/aoi/deck_two
+/datum/map_z_level/aoi/aoi_back
 	z = Z_LEVEL_AOI_HIGH
-	name = "The Back"
-	base_turf = /turf/simulated/floor/flesh/aoi
-	transit_chance = 33
-	holomap_offset_x = SHIP_HOLOMAP_MARGIN_X
-	holomap_offset_y = SHIP_HOLOMAP_MARGIN_Y + SHIP_MAP_SIZE
+	name = "\improper Aoi's Back"
+	base_turf = /turf/simulated/floor/outdoors/newdirt/aoi
 
 /datum/map_template/ship_lateload
 	allow_duplicates = FALSE

@@ -31,8 +31,11 @@
 /obj/structure/railing{
 	dir = 8
 	},
-/turf/simulated/open/aoi,
+/turf/simulated/floor/flesh/aoi/outdoors,
 /area/aoi/outdoors/north)
+"bU" = (
+/turf/simulated/floor/outdoors/sidewalk/slab,
+/area/aoi/outdoors/east)
 "bY" = (
 /turf/simulated/floor/outdoors/sidewalk/side,
 /area/aoi/outdoors/east)
@@ -41,14 +44,11 @@
 /area/aoi/indoors/teleporter)
 "eT" = (
 /turf/simulated/floor,
-/area/aoi/outdoors)
+/area/aoi/outdoors/north)
 "eV" = (
 /obj/machinery/cryopod/robot/door/gateway,
 /obj/structure/cable/yellow{
 	icon_state = "1-2"
-	},
-/obj/effect/landmark{
-	name = "Observer-Start"
 	},
 /turf/simulated/floor/tiled/techfloor,
 /area/aoi/indoors/teleporter)
@@ -84,7 +84,7 @@
 	icon_state = "0-2"
 	},
 /turf/simulated/floor,
-/area/aoi/outdoors)
+/area/aoi/outdoors/north)
 "gp" = (
 /turf/simulated/wall/tgmc/gray,
 /area/aoi/outdoors/central)
@@ -159,17 +159,36 @@
 	icon_state = "1-2"
 	},
 /turf/simulated/floor,
-/area/aoi/outdoors)
+/area/aoi/outdoors/north)
 "kz" = (
 /obj/effect/fake_sun,
 /turf/unsimulated/wall/dark,
 /area/aoi/outdoors)
+"lE" = (
+/obj/structure/cable/yellow{
+	icon_state = "1-2"
+	},
+/turf/simulated/floor/outdoors/sidewalk/slab,
+/area/aoi/outdoors/central)
 "lP" = (
 /turf/simulated/wall/tgmc/sanitary,
 /area/aoi/outdoors/north)
+"lW" = (
+/obj/machinery/light/bigfloorlamp,
+/turf/simulated/floor/outdoors/grass/seasonal/notrees_nomobs_lowsnow,
+/area/aoi/outdoors/central)
 "mu" = (
 /turf/simulated/floor/water/seasonal,
 /area/aoi/outdoors/west)
+"mE" = (
+/obj/structure/cable/yellow{
+	icon_state = "0-2"
+	},
+/obj/machinery/power/apc/angled{
+	dir = 1
+	},
+/turf/simulated/floor/outdoors/sidewalk,
+/area/aoi/outdoors/east)
 "mJ" = (
 /obj/structure/cable/yellow{
 	icon_state = "1-8"
@@ -203,9 +222,12 @@
 	},
 /turf/simulated/floor/outdoors/sidewalk,
 /area/aoi/outdoors/central)
+"pM" = (
+/turf/simulated/floor/tiled/eris/white/bluecorner,
+/area/aoi/outdoors/east)
 "pQ" = (
-/turf/simulated/open/aoi,
-/area/aoi/outdoors/north)
+/turf/simulated/wall/tgmc/sanitary,
+/area/aoi/outdoors/east)
 "pW" = (
 /obj/structure/cable/yellow{
 	icon_state = "0-2"
@@ -228,7 +250,14 @@
 "qy" = (
 /obj/machinery/light/small,
 /turf/simulated/floor,
-/area/aoi/outdoors)
+/area/aoi/outdoors/north)
+"qB" = (
+/obj/machinery/transhuman/resleever{
+	icon_scale_x = 3;
+	icon_scale_y = 3
+	},
+/turf/simulated/floor/tiled/eris/white/bluecorner,
+/area/aoi/outdoors/east)
 "qZ" = (
 /obj/structure/cable/yellow{
 	icon_state = "0-2"
@@ -301,15 +330,33 @@
 	},
 /turf/simulated/floor,
 /area/aoi/outdoors/central)
+"wQ" = (
+/obj/structure/bed/chair/office/light{
+	dir = 4;
+	icon_scale_x = 3;
+	icon_scale_y = 3
+	},
+/turf/simulated/floor/tiled/eris/white/bluecorner,
+/area/aoi/outdoors/east)
 "wY" = (
 /obj/machinery/light/small{
 	dir = 1
 	},
 /turf/simulated/floor/outdoors/newdirt/aoi,
 /area/aoi/outdoors/north)
+"xU" = (
+/obj/structure/cable/yellow{
+	icon_state = "0-4"
+	},
+/obj/structure/cable/yellow{
+	icon_state = "0-8"
+	},
+/obj/structure/cable/yellow,
+/turf/simulated/floor/outdoors/sidewalk/slab,
+/area/aoi/outdoors/east)
 "yN" = (
 /obj/structure/railing,
-/turf/simulated/open/aoi,
+/turf/simulated/floor/flesh/aoi/outdoors,
 /area/aoi/outdoors/north)
 "yU" = (
 /obj/machinery/light/small{
@@ -332,7 +379,13 @@
 	icon_state = "1-2"
 	},
 /turf/simulated/floor,
-/area/aoi/outdoors)
+/area/aoi/outdoors/north)
+"zS" = (
+/obj/structure/cable/yellow{
+	icon_state = "4-8"
+	},
+/turf/simulated/floor/outdoors/sidewalk/slab,
+/area/aoi/outdoors/east)
 "AI" = (
 /obj/machinery/light/small{
 	dir = 1
@@ -351,6 +404,18 @@
 	},
 /turf/simulated/floor/outdoors/sidewalk/side,
 /area/aoi/outdoors/central)
+"Ck" = (
+/obj/structure/cable/yellow{
+	icon_state = "4-8"
+	},
+/turf/simulated/floor/outdoors/sidewalk/slab,
+/area/aoi/outdoors/west)
+"De" = (
+/obj/machinery/light{
+	dir = 4
+	},
+/turf/simulated/floor/tiled/eris/white/bluecorner,
+/area/aoi/outdoors/east)
 "Dl" = (
 /obj/structure/sign/warning/biohazard,
 /turf/simulated/wall/tgmc/sanitary,
@@ -421,7 +486,7 @@
 /obj/structure/railing{
 	dir = 4
 	},
-/turf/simulated/open/aoi,
+/turf/simulated/floor/flesh/aoi/outdoors,
 /area/aoi/outdoors/north)
 "Ht" = (
 /turf/simulated/floor/outdoors/grass/seasonal/notrees_nomobs_lowsnow,
@@ -440,7 +505,10 @@
 /turf/simulated/floor/tiled/steel_dirty/aoi,
 /area/aoi/outdoors/solars)
 "In" = (
-/turf/simulated/floor/outdoors/sidewalk/side,
+/obj/structure/cable/yellow{
+	icon_state = "4-8"
+	},
+/turf/simulated/floor/outdoors/sidewalk/slab,
 /area/aoi/outdoors/central)
 "IW" = (
 /turf/simulated/floor/outdoors/newdirt_nograss/aoi,
@@ -471,11 +539,20 @@
 /obj/structure/cable/yellow{
 	icon_state = "0-8"
 	},
+/obj/effect/landmark{
+	name = "Observer-Start"
+	},
 /turf/simulated/floor/outdoors/sidewalk/slab,
 /area/aoi/outdoors/central)
 "KI" = (
 /turf/simulated/wall/tgmc/darkwall,
 /area/aoi/indoors/teleporter)
+"KR" = (
+/obj/machinery/door/airlock/angled_tgmc/wide/medical{
+	dir = 4
+	},
+/turf/simulated/floor/tiled/eris/white/bluecorner,
+/area/aoi/outdoors/east)
 "Lf" = (
 /obj/structure/cable/yellow{
 	icon_state = "2-8"
@@ -488,9 +565,15 @@
 	},
 /turf/simulated/floor/outdoors/sidewalk/side,
 /area/aoi/outdoors/north)
+"LU" = (
+/obj/machinery/light{
+	dir = 8
+	},
+/turf/simulated/floor/tiled/eris/white/bluecorner,
+/area/aoi/outdoors/east)
 "LY" = (
 /turf/simulated/wall/tgmc/gray,
-/area/aoi/outdoors)
+/area/aoi/outdoors/north)
 "Mo" = (
 /turf/simulated/floor/outdoors/sidewalk/slab,
 /area/aoi/outdoors/west)
@@ -510,6 +593,12 @@
 /obj/effect/landmark/start,
 /turf/simulated/floor/tiled/techfloor,
 /area/aoi/indoors/teleporter)
+"Nq" = (
+/obj/machinery/light/small{
+	dir = 1
+	},
+/turf/simulated/floor/outdoors/grass/seasonal/notrees_nomobs_lowsnow,
+/area/aoi/outdoors/east)
 "OT" = (
 /obj/structure/cable/yellow{
 	icon_state = "1-2"
@@ -618,6 +707,13 @@
 "Sw" = (
 /turf/simulated/floor/outdoors/grass/seasonal/dark/notrees_nomobs_nosnow,
 /area/aoi/outdoors/north)
+"SN" = (
+/obj/machinery/clonepod/transhuman{
+	icon_scale_x = 3;
+	icon_scale_y = 3
+	},
+/turf/simulated/floor/tiled/eris/white/bluecorner,
+/area/aoi/outdoors/east)
 "SP" = (
 /obj/machinery/light/small,
 /turf/simulated/floor/outdoors/newdirt/aoi,
@@ -627,6 +723,9 @@
 /obj/item/stack/cable_coil/yellow,
 /obj/item/clothing/gloves/yellow{
 	pixel_y = 5
+	},
+/obj/structure/cable/yellow{
+	icon_state = "1-2"
 	},
 /turf/simulated/floor,
 /area/aoi/indoors/power)
@@ -649,7 +748,7 @@
 /turf/simulated/floor,
 /area/aoi/indoors/power)
 "Uj" = (
-/obj/machinery/power/smes/buildable/offmap_spawn/empty,
+/obj/machinery/power/smes/buildable/offmap_spawn,
 /obj/structure/cable/heavyduty{
 	icon_state = "0-2"
 	},
@@ -664,12 +763,24 @@
 	},
 /turf/simulated/floor/tiled/techfloor,
 /area/aoi/indoors/teleporter)
+"Uz" = (
+/obj/machinery/computer/transhuman/resleeving{
+	dir = 8;
+	icon_scale_x = 3;
+	icon_scale_y = 3
+	},
+/turf/simulated/floor/tiled/eris/white/bluecorner,
+/area/aoi/outdoors/east)
 "UD" = (
 /obj/machinery/light/small{
 	dir = 4
 	},
 /turf/simulated/floor/outdoors/newdirt,
 /area/aoi/outdoors/central)
+"UT" = (
+/obj/structure/table/glass,
+/turf/simulated/floor/tiled/eris/white/bluecorner,
+/area/aoi/outdoors/east)
 "Vl" = (
 /obj/structure/cable/yellow{
 	icon_state = "0-2"
@@ -680,6 +791,12 @@
 	},
 /turf/simulated/floor/outdoors/sidewalk/slab,
 /area/aoi/outdoors/west)
+"VV" = (
+/obj/structure/cable/yellow{
+	icon_state = "1-2"
+	},
+/turf/simulated/floor/outdoors/sidewalk,
+/area/aoi/outdoors/east)
 "VX" = (
 /obj/structure/cable/yellow{
 	icon_state = "1-4"
@@ -702,6 +819,15 @@
 "WH" = (
 /turf/simulated/floor/outdoors/newdirt/aoi,
 /area/aoi/outdoors/north)
+"WS" = (
+/obj/structure/bed/chair{
+	dir = 1
+	},
+/turf/simulated/floor/tiled/eris/white/bluecorner,
+/area/aoi/outdoors/east)
+"Xc" = (
+/turf/simulated/floor/outdoors/sidewalk/slab,
+/area/aoi/outdoors/central)
 "Xx" = (
 /turf/simulated/wall/tgmc/window/gray,
 /area/aoi/indoors/power)
@@ -8624,7 +8750,7 @@ qb
 qb
 qb
 Gt
-Gt
+Rx
 Gt
 Gt
 Gt
@@ -8633,7 +8759,7 @@ Gt
 Gt
 Uo
 Uo
-Gt
+Rx
 Yi
 Gt
 Gt
@@ -9059,7 +9185,7 @@ MJ
 Gt
 Gt
 Gt
-Gt
+Mo
 Yi
 Gt
 Gt
@@ -9162,11 +9288,11 @@ qb
 qb
 qb
 iF
-pQ
-pQ
-pQ
-pQ
-pQ
+iF
+iF
+iF
+iF
+iF
 iF
 IW
 SP
@@ -9201,7 +9327,7 @@ Mo
 jW
 jW
 jW
-jW
+Mo
 Rd
 Gt
 Uo
@@ -9304,10 +9430,10 @@ qb
 qb
 IW
 iF
-pQ
-pQ
-pQ
-pQ
+iF
+iF
+iF
+iF
 Hq
 iF
 IW
@@ -9343,8 +9469,8 @@ MJ
 Gt
 Gt
 Gt
-Gt
-Yi
+Mo
+Ck
 Uo
 Uo
 Uo
@@ -9446,9 +9572,9 @@ qb
 qb
 IW
 iF
-pQ
-pQ
-pQ
+iF
+iF
+iF
 yN
 Ne
 iF
@@ -9588,10 +9714,10 @@ qb
 qb
 IW
 iF
-pQ
-pQ
-pQ
-pQ
+iF
+iF
+iF
+iF
 bP
 iF
 IW
@@ -9730,11 +9856,11 @@ qb
 qb
 IW
 iF
-pQ
-pQ
-pQ
-pQ
-pQ
+iF
+iF
+iF
+iF
+iF
 iF
 IW
 SP
@@ -9760,7 +9886,7 @@ qb
 qb
 Gt
 Gt
-Gt
+Rx
 Gt
 Gt
 Gt
@@ -10615,14 +10741,14 @@ MP
 MP
 MP
 MP
+lW
 MP
 MP
 MP
 MP
 MP
-MP
-MP
-Bt
+Xc
+In
 zp
 KI
 Ra
@@ -10763,7 +10889,7 @@ pG
 pG
 pG
 pG
-pG
+lE
 JZ
 pG
 hC
@@ -10905,7 +11031,7 @@ MP
 MP
 MP
 MP
-MP
+Xc
 In
 zp
 KI
@@ -11200,9 +11326,9 @@ KI
 KI
 qb
 qb
-qb
-qb
-qb
+bE
+bE
+bE
 qb
 qb
 qb
@@ -11341,11 +11467,11 @@ MP
 MP
 qb
 qb
-qb
-qb
-qb
-qb
-qb
+bE
+bE
+bE
+bE
+bE
 qb
 qb
 qb
@@ -11482,10 +11608,10 @@ bF
 bF
 MP
 qb
-qb
-qb
-qb
-qb
+bE
+bE
+bE
+bE
 qb
 qb
 qb
@@ -12184,20 +12310,20 @@ tl
 tl
 tl
 tl
-bY
+zS
 tl
 tl
 tl
 tl
 qb
 qb
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
+tl
+tl
+tl
+tl
+tl
 Ht
 Ht
 Ht
@@ -12320,26 +12446,26 @@ qb
 qb
 qb
 tl
+pQ
+pQ
+pQ
+pQ
 tl
 tl
-tl
-tl
-tl
-tl
-bY
+zS
 tl
 tl
 tl
 tl
 qb
 qb
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
+tl
+tl
+tl
+tl
+tl
 Ht
 Ht
 Ht
@@ -12461,27 +12587,27 @@ qb
 tl
 tl
 tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-bY
+pQ
+pQ
+pM
+LU
+pQ
+mE
+VV
+xU
 tl
 tl
 tl
 tl
 qb
 qb
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
+tl
+tl
+tl
+tl
+tl
 Ht
 Ht
 Ht
@@ -12602,12 +12728,12 @@ qb
 tl
 tl
 tl
-tl
-tl
-tl
-tl
-tl
-tl
+pQ
+pQ
+pM
+pM
+WS
+pQ
 tl
 tl
 bY
@@ -12616,14 +12742,14 @@ tl
 tl
 tl
 qb
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
 Ht
 Ht
 Ht
@@ -12744,28 +12870,28 @@ tl
 tl
 tl
 tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
+pQ
+pM
+pM
+pM
+WS
+pQ
+Nq
 tl
 bY
 tl
 tl
 tl
 tl
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
 Ht
 Ht
 Ht
@@ -12886,6 +13012,15 @@ tl
 tl
 tl
 tl
+pQ
+qB
+pM
+pM
+pM
+KR
+bU
+bU
+bU
 tl
 tl
 tl
@@ -12894,20 +13029,11 @@ tl
 tl
 tl
 tl
-bY
 tl
 tl
 tl
 tl
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
 Ht
 Ht
 Ht
@@ -13028,6 +13154,15 @@ tl
 tl
 tl
 tl
+pQ
+pM
+pM
+pM
+pM
+pM
+bU
+bU
+bU
 tl
 tl
 tl
@@ -13036,20 +13171,11 @@ tl
 tl
 tl
 tl
-bY
 tl
 tl
 tl
 tl
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
 qb
 qb
 Ht
@@ -13170,6 +13296,13 @@ tl
 tl
 tl
 tl
+pQ
+SN
+pM
+wQ
+pM
+pQ
+Nq
 tl
 tl
 tl
@@ -13183,15 +13316,8 @@ tl
 tl
 tl
 tl
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
 qb
 qb
 qb
@@ -13312,6 +13438,12 @@ tl
 tl
 tl
 tl
+pQ
+pM
+De
+Uz
+UT
+pQ
 tl
 tl
 tl
@@ -13325,16 +13457,10 @@ tl
 tl
 tl
 tl
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
+tl
+tl
 qb
 qb
 Ht
@@ -13454,6 +13580,12 @@ tl
 tl
 tl
 tl
+pQ
+pQ
+pQ
+pQ
+pQ
+pQ
 tl
 tl
 tl
@@ -13467,16 +13599,10 @@ tl
 tl
 tl
 tl
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
+tl
+tl
 qb
 qb
 qb
@@ -13609,16 +13735,16 @@ tl
 tl
 tl
 tl
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
 qb
 qb
 qb
@@ -13736,32 +13862,32 @@ qb
 qb
 qb
 qb
-qb
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
-tl
 Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
 qb
 qb
 Ht
@@ -13886,24 +14012,24 @@ tl
 tl
 tl
 tl
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
-Ht
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
+tl
 qb
 qb
 qb
