@@ -93,6 +93,7 @@
 /obj/machinery/light{
 	dir = 8
 	},
+/obj/structure/flora/pottedplant/minitree,
 /turf/simulated/floor/tiled/eris/white/bluecorner,
 /area/aoi/indoors/sleeve_facility)
 "dS" = (
@@ -103,7 +104,7 @@
 	icon_state = "0-8"
 	},
 /turf/simulated/floor,
-/area/aoi/outdoors)
+/area/aoi/outdoors/east)
 "dU" = (
 /turf/simulated/wall/tgmc/durawall/deco2,
 /area/aoi/indoors/tech)
@@ -201,13 +202,20 @@
 	icon_state = "4-8"
 	},
 /turf/simulated/floor,
-/area/aoi/outdoors)
+/area/aoi/outdoors/east)
 "gj" = (
 /obj/structure/cable/yellow{
 	icon_state = "2-8"
 	},
 /turf/simulated/floor/tiled/eris/white/bluecorner,
 /area/aoi/indoors/sleeve_facility)
+"gn" = (
+/obj/machinery/light/floortube{
+	dir = 1;
+	pixel_x = 2
+	},
+/turf/simulated/floor/outdoors/sidewalk/slab,
+/area/aoi/outdoors/west)
 "gp" = (
 /turf/simulated/wall/tgmc/gray,
 /area/aoi/outdoors/central)
@@ -230,7 +238,7 @@
 /obj/machinery/clonepod/transhuman{
 	icon_scale_x = 6;
 	icon_scale_y = 6;
-	pixel_y = 64
+	pixel_y = 63
 	},
 /turf/simulated/floor/tiled/eris/white/cargo,
 /area/aoi/indoors/sleeve_facility)
@@ -606,6 +614,13 @@
 	},
 /turf/simulated/wall/tgmc/window/darkwall/reinf,
 /area/aoi/indoors/power)
+"vm" = (
+/obj/machinery/light/floortube{
+	dir = 4;
+	pixel_x = 2
+	},
+/turf/simulated/floor/outdoors/sidewalk,
+/area/aoi/outdoors/west)
 "vn" = (
 /obj/structure/cable/yellow{
 	icon_state = "1-8"
@@ -723,7 +738,7 @@
 	dir = 4
 	},
 /turf/simulated/floor,
-/area/aoi/outdoors)
+/area/aoi/outdoors/east)
 "Bl" = (
 /obj/machinery/door/airlock/angled_tgmc/wide/generic_steel{
 	dir = 4
@@ -752,7 +767,7 @@
 	icon_state = "4-8"
 	},
 /turf/simulated/floor,
-/area/aoi/outdoors)
+/area/aoi/outdoors/east)
 "Dc" = (
 /turf/simulated/floor/tiled/techfloor,
 /area/aoi/indoors/research)
@@ -878,6 +893,12 @@
 "Gt" = (
 /turf/simulated/floor/outdoors/grass/seasonal/notrees_nomobs_lowsnow,
 /area/aoi/outdoors/west)
+"Gz" = (
+/obj/machinery/light/lamppost{
+	dir = 1
+	},
+/turf/simulated/floor/outdoors/grass/seasonal/notrees_nomobs_lowsnow,
+/area/aoi/outdoors/west)
 "GE" = (
 /turf/simulated/floor/bluegrid{
 	name = "Mainframe Base";
@@ -984,17 +1005,12 @@
 /turf/unsimulated/wall/dark,
 /area/aoi/outdoors)
 "Jq" = (
-/obj/machinery/power/apc/angled{
-	dir = 1
-	},
-/obj/structure/cable/yellow{
-	icon_state = "0-2"
-	},
-/turf/simulated/floor/tiled/eris/white/bluecorner,
-/area/aoi/indoors/sleeve_facility)
+/obj/machinery/light/floortube,
+/turf/simulated/floor/outdoors/sidewalk/side,
+/area/aoi/outdoors/west)
 "JC" = (
 /turf/simulated/floor,
-/area/aoi/outdoors)
+/area/aoi/outdoors/east)
 "JJ" = (
 /turf/simulated/floor/tiled/steel_dirty/aoi,
 /area/aoi/outdoors/solars)
@@ -1054,7 +1070,12 @@
 	},
 /area/aoi/indoors/tech)
 "Lj" = (
-/obj/structure/flora/pottedplant/minitree,
+/obj/structure/cable/yellow{
+	icon_state = "0-4"
+	},
+/obj/machinery/power/apc/angled{
+	dir = 1
+	},
 /turf/simulated/floor/tiled/eris/white/bluecorner,
 /area/aoi/indoors/sleeve_facility)
 "Lk" = (
@@ -1174,10 +1195,8 @@
 /turf/simulated/floor/outdoors/sidewalk/side,
 /area/aoi/outdoors/west)
 "Qt" = (
-/obj/structure/cable/yellow{
-	icon_state = "1-4"
-	},
-/turf/simulated/floor/tiled/eris/white/bluecorner,
+/obj/effect/blocker,
+/turf/simulated/floor/tiled/eris/white/cargo,
 /area/aoi/indoors/sleeve_facility)
 "Qy" = (
 /obj/machinery/light/small{
@@ -1227,7 +1246,7 @@
 /area/aoi/outdoors/west)
 "RF" = (
 /turf/simulated/wall/tgmc/gray,
-/area/aoi/outdoors)
+/area/aoi/outdoors/east)
 "RH" = (
 /obj/structure/cable/yellow{
 	icon_state = "0-4"
@@ -1276,6 +1295,10 @@
 /obj/item/integrated_electronics/detailer{
 	pixel_x = -4;
 	pixel_y = 3
+	},
+/obj/item/multitool{
+	pixel_x = 6;
+	pixel_y = 4
 	},
 /turf/simulated/floor/tiled/techfloor,
 /area/aoi/indoors/research)
@@ -1391,10 +1414,11 @@
 /turf/simulated/floor/outdoors/newdirt/aoi,
 /area/aoi/outdoors/north)
 "WM" = (
-/obj/machinery/light/lamppost{
-	dir = 8
+/obj/machinery/light/floortube{
+	dir = 8;
+	pixel_x = 2
 	},
-/turf/simulated/floor/outdoors/grass/seasonal/notrees_nomobs_lowsnow,
+/turf/simulated/floor/outdoors/sidewalk,
 /area/aoi/outdoors/west)
 "Xx" = (
 /turf/simulated/wall/tgmc/window/darkwall/reinf,
@@ -9350,7 +9374,7 @@ qb
 qb
 qb
 Gt
-As
+Gt
 Gt
 Gt
 Gt
@@ -9493,10 +9517,10 @@ qb
 Gt
 Gt
 Mo
+vm
 jW
 jW
-jW
-jW
+vm
 Mo
 Gt
 Uo
@@ -9918,18 +9942,18 @@ qb
 Gt
 Gt
 Gt
-MJ
+Jq
 mu
 vQ
 vQ
 mu
-Mo
+gn
 jW
 jW
 jW
 Mo
 Rd
-Gt
+Gz
 Uo
 Uo
 Uo
@@ -10345,10 +10369,10 @@ LL
 Gt
 Gt
 Mo
+WM
 jW
 jW
-jW
-jW
+WM
 Mo
 Gt
 Uo
@@ -10486,7 +10510,7 @@ qb
 qb
 Gt
 Gt
-WM
+Gt
 Gt
 Gt
 Gt
@@ -10503,7 +10527,7 @@ Gt
 Gt
 Gt
 Gt
-Gt
+As
 Gt
 Gt
 Gt
@@ -11339,13 +11363,13 @@ bF
 bF
 MP
 MP
-MP
-MP
 ue
 MP
 MP
 MP
 MP
+MP
+ue
 MP
 IF
 In
@@ -13330,8 +13354,8 @@ tl
 tl
 KD
 KD
-Jq
-Qt
+Ot
+xp
 xD
 nh
 yu
@@ -13471,7 +13495,7 @@ tl
 tl
 tl
 KD
-Ot
+Qt
 TA
 xp
 xD
@@ -13755,7 +13779,7 @@ tl
 tl
 tl
 KD
-Ot
+Qt
 TA
 pQ
 pQ
@@ -13897,7 +13921,7 @@ tl
 tl
 tl
 KD
-Ot
+Qt
 Ot
 pQ
 pQ
@@ -14039,7 +14063,7 @@ tl
 tl
 tl
 KD
-Ot
+Qt
 Ot
 pQ
 pQ
@@ -14181,7 +14205,7 @@ tl
 tl
 tl
 KD
-Ot
+Qt
 TA
 pQ
 pQ
@@ -14465,7 +14489,7 @@ qb
 tl
 tl
 KD
-Ot
+Qt
 MG
 dd
 Et
