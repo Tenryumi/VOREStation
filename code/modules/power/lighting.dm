@@ -959,7 +959,7 @@ GLOBAL_LIST_EMPTY(light_type_cache)
 	///Is this light set to explode
 	var/rigged = 0
 	///The chance (prob()) that this light will be broken at roundstart
-	var/broken_chance = 2
+	var/broken_chance = 0
 
 	///The raidus in turfs this light will reach. It will be at it's most dim this many turfs away.
 	/// This is also used in power draw calculation for machinery/lights.
