@@ -221,8 +221,13 @@
 	holomap_legend_x = 35
 	holomap_legend_y = 47
 
-/datum/map_z_level/aoi/aoi_belly
+/datum/map_z_level/aoi/aoi_belly_lower
 	z = Z_LEVEL_AOI_LOW
+	name = "\improper Aoi's Depths"
+	base_turf = /turf/simulated/floor/flesh/aoi
+
+/datum/map_z_level/aoi/aoi_belly_upper
+	z = Z_LEVEL_AOI_MID
 	name = "\improper Aoi's Belly"
 	base_turf = /turf/simulated/floor/flesh/aoi
 

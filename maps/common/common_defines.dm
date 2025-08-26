@@ -21,7 +21,8 @@
 
 // Aoi
 #define Z_LEVEL_AOI_LOW							1
-#define Z_LEVEL_AOI_HIGH							2
+#define Z_LEVEL_AOI_MID							2
+#define Z_LEVEL_AOI_HIGH						3
 
 // Stellar Delight
 #define Z_LEVEL_SHIP_LOW					1
