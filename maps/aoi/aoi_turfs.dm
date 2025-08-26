@@ -50,6 +50,7 @@ AOI_TURF_CREATE(/turf/simulated/open)
 AOI_TURF_CREATE_INDOOR(/turf/simulated/mineral/floor)
 AOI_TURF_CREATE_INDOOR(/turf/simulated/floor/outdoors/newdirt)
 AOI_TURF_CREATE_INDOOR(/turf/simulated/floor/outdoors/newdirt_nograss)
+AOI_TURF_CREATE_INDOOR(/turf/simulated/open)
 
 
 #undef AOI_ONE_ATMOSPHERE

@@ -586,6 +586,9 @@
 /obj/effect/landmark/start,
 /turf/simulated/floor/tiled/techfloor,
 /area/aoi/indoors/teleporter)
+"sx" = (
+/turf/simulated/floor/tiled/eris/white,
+/area/aoi/outdoors/north)
 "tl" = (
 /turf/simulated/floor/outdoors/grass/seasonal/notrees_nomobs_lowsnow,
 /area/aoi/outdoors/east)
@@ -696,6 +699,12 @@
 "yu" = (
 /turf/simulated/floor/outdoors/newdirt,
 /area/aoi/outdoors/east)
+"yv" = (
+/obj/machinery/light{
+	dir = 4
+	},
+/turf/simulated/floor/tiled/eris/white,
+/area/aoi/outdoors/north)
 "yE" = (
 /turf/simulated/wall/tgmc/durawall,
 /area/aoi/indoors/research)
@@ -816,6 +825,9 @@
 	},
 /turf/simulated/floor/tiled/eris/white/bluecorner,
 /area/aoi/indoors/sleeve_facility)
+"Eu" = (
+/turf/simulated/wall/tgmc/sanitary,
+/area/aoi/outdoors/north)
 "Ez" = (
 /obj/effect/floor_decal/techfloor{
 	dir = 5
@@ -843,8 +855,11 @@
 /turf/simulated/floor/aoi,
 /area/aoi/outdoors/west)
 "FA" = (
-/turf/simulated/floor/outdoors/newdirt,
-/area/aoi/outdoors)
+/obj/machinery/door/airlock/angled_tgmc/wide/medical{
+	dir = 4
+	},
+/turf/simulated/floor/tiled/eris/white/bluecorner,
+/area/aoi/outdoors/north)
 "FJ" = (
 /obj/structure/bed/chair/office/light,
 /turf/simulated/floor/tiled/techfloor,
@@ -1027,6 +1042,9 @@
 /obj/effect/landmark/start,
 /turf/simulated/floor/tiled/techfloor,
 /area/aoi/indoors/teleporter)
+"JX" = (
+/turf/simulated/floor/tiled/eris/white/bluecorner,
+/area/aoi/outdoors/north)
 "JZ" = (
 /obj/structure/cable/yellow{
 	icon_state = "0-4"
@@ -1189,6 +1207,12 @@
 	temperature = 80
 	},
 /area/aoi/indoors/tech)
+"PZ" = (
+/obj/machinery/light{
+	dir = 8
+	},
+/turf/simulated/floor/tiled/eris/white,
+/area/aoi/outdoors/north)
 "Qm" = (
 /obj/structure/cable/yellow{
 	icon_state = "0-8"
@@ -9787,11 +9811,11 @@ WH
 qb
 qb
 qb
-qb
-qb
-qb
-qb
-qb
+Eu
+Eu
+Eu
+Eu
+Eu
 qb
 qb
 qb
@@ -9929,11 +9953,11 @@ wY
 WH
 qb
 qb
-qb
-qb
-qb
-qb
-qb
+Eu
+sx
+sx
+PZ
+Eu
 qb
 qb
 qb
@@ -10070,12 +10094,12 @@ lP
 WH
 WH
 WH
-qb
-qb
-qb
-qb
-qb
-qb
+Eu
+Eu
+sx
+sx
+sx
+Eu
 qb
 qb
 qb
@@ -10212,12 +10236,12 @@ YE
 OT
 OT
 FV
-qb
-qb
-qb
-qb
-qb
-qb
+FA
+sx
+sx
+sx
+sx
+Eu
 qb
 qb
 qb
@@ -10354,12 +10378,12 @@ lP
 WH
 WH
 Lk
-qb
-qb
-qb
-qb
-qb
-qb
+JX
+sx
+yv
+sx
+sx
+Eu
 qb
 qb
 qb
@@ -10496,12 +10520,12 @@ Rc
 wY
 WH
 Lk
-qb
-qb
-qb
-qb
-qb
-qb
+Eu
+Eu
+Eu
+Eu
+Eu
+Eu
 qb
 qb
 qb
@@ -11938,7 +11962,7 @@ iX
 MP
 MP
 dX
-FA
+qb
 qb
 MP
 MP
@@ -12081,7 +12105,7 @@ UD
 MP
 qb
 qb
-dX
+Za
 MP
 bF
 bF

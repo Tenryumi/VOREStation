@@ -166,7 +166,7 @@
 	return 1
 
 /obj/effect/landmark/map_data/aoi
-	height = 2
+	height = 3
 
 /datum/skybox_settings/aoi
 	icon_state = "space5"
