@@ -4,6 +4,7 @@
 	#include "aoi_turfs.dm"
 
 	#ifndef AWAY_MISSION_TEST //Don't include these for just testing away missions
+		#include "aoi_m.dmm"
 		#include "aoi1.dmm"
 		#include "aoi2.dmm"
 		#include "aoi3.dmm"

@@ -33,6 +33,10 @@
 	name = "\improper Data Processing"
 	icon_state = "magwhicir"
 
+/area/aoi/indoors/quarters
+	name = "\improper Quarters"
+	icon_state = "grewhisqu"
+
 
 // OUTDOORS AREAS
 /area/aoi/outdoors/
