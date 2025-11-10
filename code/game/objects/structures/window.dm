@@ -616,12 +616,10 @@
 /obj/structure/window/reinforced/polarized/proc/toggle()
 	if(opacity)
 		animate(src, color="#FFFFFF", time=5)
-		set_opacity(0)
-		AddElement(/datum/element/light_blocking)
+		set_opacity(FALSE)
 	else
 		animate(src, color="#222222", time=5)
-		set_opacity(1)
-		RemoveElement(/datum/element/light_blocking)
+		set_opacity(TRUE)
 	var/turf/T = get_turf(src)
 	T.recalculate_directional_opacity()
 
